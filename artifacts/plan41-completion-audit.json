@@ -1,0 +1,120 @@
+{
+  "audit_contract": "plan41-completion-audit-v1",
+  "audit_date": "2026-08-02",
+  "gate": "GO",
+  "plan": "41-pivot-3",
+  "requirements": [
+    {
+      "id": "P41-01",
+      "requirement": "Use one primary predictive action: use_colocated_distribution.",
+      "status": "PASS",
+      "evidence": [
+        "config/release-spec.json",
+        "artifacts/results/pressure-actionability-v1/colocation_model/model_manifest.json",
+        "artifacts/results/pressure-actionability-v1/contracts/colocation_ranking_v1.yml"
+      ]
+    },
+    {
+      "id": "P41-02",
+      "requirement": "Treat ranking as the primary output and exact gain as secondary.",
+      "status": "PASS",
+      "evidence": [
+        "artifacts/results/pressure-actionability-v1/contracts/colocation_ranking_v1.yml",
+        "artifacts/results/pressure-actionability-v1/ranking/ranking_summary.csv",
+        "artifacts/results/pressure-actionability-v1/n3_result/n3_ranking_metrics.csv"
+      ]
+    },
+    {
+      "id": "P41-03",
+      "requirement": "Compare the median baseline, Ridge, ElasticNet and shallow gradient boosting on identical grouped holdouts.",
+      "status": "PASS",
+      "evidence": [
+        "artifacts/results/pressure-actionability-v1/ranking/benchmark_manifest.json",
+        "artifacts/results/pressure-actionability-v1/ranking/ranking_fold_metrics.csv",
+        "artifacts/results/pressure-actionability-v1/ranking/ranking_summary.csv"
+      ]
+    },
+    {
+      "id": "P41-04",
+      "requirement": "Exclude raw SQL and identity shortcuts from the regressor and use deterministic evidence for action eligibility.",
+      "status": "PASS",
+      "evidence": [
+        "artifacts/results/pressure-actionability-v1/ranking/benchmark_manifest.json",
+        "artifacts/results/pressure-actionability-v1/eligibility/eligibility_manifest.json",
+        "artifacts/results/pressure-actionability-v1/eligibility/execution_eligibility.csv"
+      ]
+    },
+    {
+      "id": "P41-05",
+      "requirement": "Use a grouped core-versus-extended ablation to decide whether OS and node telemetry enters the final feature contract.",
+      "status": "PASS",
+      "decision": "extended",
+      "evidence": [
+        "artifacts/results/pressure-actionability-v1/ranking/feature_view_ablation.csv",
+        "artifacts/results/pressure-actionability-v1/ranking/benchmark_manifest.json"
+      ]
+    },
+    {
+      "id": "P41-06",
+      "requirement": "Run the frozen 96-execution N=3 holdout without refitting and verify three-region evidence plus fixed-dimensional projection.",
+      "status": "PASS",
+      "result": {
+        "executions": 96,
+        "pairs": 16,
+        "regions": [
+          "eu",
+          "us",
+          "apac"
+        ],
+        "model_hash_unchanged": true,
+        "ranking_rule_status": "SUPPORTED_ON_16_TESTED_PAIRS",
+        "outside_training_p99": "16/16",
+        "interpretation": "descriptive_not_production_generalization"
+      },
+      "evidence": [
+        "artifacts/results/pressure-actionability-v1/n3_freeze/freeze_manifest.json",
+        "artifacts/results/pressure-actionability-v1/n3_result/analysis_manifest.json",
+        "artifacts/results/pressure-actionability-v1/n3_result/n3_topology_completeness.csv",
+        "artifacts/results/pressure-actionability-v1/n3_result/n3_bootstrap_intervals.csv",
+        "artifacts/results/pressure-actionability-v1/n3_result/n3_metrics_by_placement.csv",
+        "artifacts/results/pressure-actionability-v1/n3_result/n3_pair_ranking.csv",
+        "artifacts/logical-indexes/pressure-raw-v1-n3-colocation-holdout.tar.gz"
+      ]
+    },
+    {
+      "id": "P41-07",
+      "requirement": "Keep FCM as a comparative description of composite regimes rather than the final actionability mechanism.",
+      "status": "PASS",
+      "evidence": [
+        "config/release-spec.json",
+        "artifacts/results/semantic-v2-model-freeze/semantic_v2_model_manifest.yml",
+        "artifacts/results/pressure-actionability-v1/decision/decision_manifest.json"
+      ]
+    },
+    {
+      "id": "P41-08",
+      "requirement": "Report other actions as intervention or negative results instead of forcing separate predictive models.",
+      "status": "PASS",
+      "evidence": [
+        "artifacts/results/pressure-actionability-v1/action_audit/mitigation_action_summary.csv",
+        "artifacts/results/pressure-actionability-v1/decision/mitigation_modeling_decisions.csv"
+      ]
+    },
+    {
+      "id": "P41-09",
+      "requirement": "Limit portability claims to evidence collection and localization; do not claim universal hardware transfer of the frozen gain model.",
+      "status": "PASS",
+      "evidence": [
+        "docs/00-scope.md",
+        "docs/05-provenance-and-limits.md",
+        "artifacts/results/pressure-actionability-v1/n3_result/analysis_manifest.json"
+      ]
+    }
+  ],
+  "verification": {
+    "plan41_targeted_tests": "15 passed",
+    "n3_statistical_transparency_tests": "9 passed",
+    "release_file_count": 4174,
+    "release_verifier": "PASS"
+  }
+}

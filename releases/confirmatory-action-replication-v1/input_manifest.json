@@ -1,0 +1,60 @@
+{
+  "contract": "confirmatory-action-replication-inputs-v1",
+  "inputs": [
+    {
+      "bytes": 4365,
+      "path": "master-regimes/configs/validation/confirmatory_action_replication_v1.yml",
+      "sha256": "4361b018d4f811271d8e7550f78ea27cee2322167c616818969f6b0a51c82d71"
+    },
+    {
+      "bytes": 8583,
+      "path": "master-regimes/configs/models/fuzzy_intervention_memory_v1.yml",
+      "sha256": "6b25d56f475cfb297644f5794e024a87ef40239ab64055b3f2ea39e9cf1640b5"
+    },
+    {
+      "bytes": 225162,
+      "path": "master-regimes/analysis/reports/fuzzy-intervention-memory-v1/episodes.csv",
+      "sha256": "b8ffc1545b4742443180882d33f1d628abc5676241cac3974201a991b33ce71e"
+    },
+    {
+      "bytes": 575,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/confirmatory-action-replication-v1/logical_run_index_manifest.json",
+      "sha256": "e51adb21e2ac7d782b84a6e3659e0ad95d4d216347c24764a7e84d91096f7928"
+    },
+    {
+      "bytes": 23626392,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/confirmatory-action-replication-v1/_index/query_runs.csv",
+      "sha256": "89680d6b15e09f0b30d437219c442f9e01ca8fd0f0fdede142a486bd58541aa0"
+    },
+    {
+      "bytes": 24445972,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/confirmatory-action-replication-v1/_index/execution_features.csv",
+      "sha256": "35264c3240859057b2b86c82d190552352ffcb50f511a7d5d9c70e6101e51b2e"
+    },
+    {
+      "bytes": 18007997,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/confirmatory-action-replication-v1/_index/remote_edge_observations.csv",
+      "sha256": "b3627742185c561c99d8dcb243abc8231b5ff4afb85310d1999abd0f4c9771b8"
+    },
+    {
+      "bytes": 18046004,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/confirmatory-action-replication-v1/_index/region_fragments.csv",
+      "sha256": "66407bf22d03b56f779dfb8b540ff87660ef0c01f4983f59aef47386a110e2a6"
+    },
+    {
+      "bytes": 1154108616,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/confirmatory-action-replication-v1/_index/worker_task_fragments.csv",
+      "sha256": "0872d402f8417c0ea89bbf216ab949fccd8b033dd64014b0b645acb8f9d3fceb"
+    },
+    {
+      "bytes": 6756397,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/confirmatory-action-replication-v1/_index/node_artifacts.csv",
+      "sha256": "f7ba6663bba4c5f31b10a63bd2bad45dc418c23cc46d0669a8750b17fbd9df54"
+    },
+    {
+      "bytes": 20343,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/confirmatory-action-replication-v1/_index/hardware_nodes.csv",
+      "sha256": "4de0f2ca5553a1201503ca35f690c554edb7d8303672e5b49744638027b3c24d"
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+batch_id: batch-120-skew
+kind: isolated
+pressure_axis: worker_data_skew
+backend: placement_aware_worker
+status: ready
+source_manifest: master-regimes/workloads/corpus/pressure-raw-v1/batch-120-skew.yml
+source_manifest_sha256: 87693cedce9dae1b268736004bb6e7e874bbe98936366add6af6f9051683df07
+rendered_execution_count: 420
+rendered_segment_count: 7
+segments:
+- segment_id: batch-120-skew-raw-small-skew-moderate-v1
+  dataset_profile_id: raw-small-skew-moderate-v1
+  backend: placement_aware_worker
+  config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-moderate-v1/config.yml
+  plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-moderate-v1/plan/corpus_execution_plan.yml
+  execution_count: 60
+  group_count: 2
+  dataset_size_class: small
+  planned_work_units: 80.0
+- segment_id: batch-120-skew-raw-small-skew-heavy-v1
+  dataset_profile_id: raw-small-skew-heavy-v1
+  backend: placement_aware_worker
+  config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-heavy-v1/config.yml
+  plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-heavy-v1/plan/corpus_execution_plan.yml
+  execution_count: 60
+  group_count: 2
+  dataset_size_class: small
+  planned_work_units: 80.0
+- segment_id: batch-120-skew-raw-medium-skew-moderate-v1
+  dataset_profile_id: raw-medium-skew-moderate-v1
+  backend: placement_aware_worker
+  config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-medium-skew-moderate-v1/config.yml
+  plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-medium-skew-moderate-v1/plan/corpus_execution_plan.yml
+  execution_count: 60
+  group_count: 2
+  dataset_size_class: medium
+  planned_work_units: 240.0
+- segment_id: batch-120-skew-pilot-skew-heavy-v1
+  dataset_profile_id: pilot-skew-heavy-v1
+  backend: placement_aware_worker
+  config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/pilot-skew-heavy-v1/config.yml
+  plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/pilot-skew-heavy-v1/plan/corpus_execution_plan.yml
+  execution_count: 60
+  group_count: 2
+  dataset_size_class: medium
+  planned_work_units: 240.0
+- segment_id: batch-120-skew-raw-large-skew-moderate-v1
+  dataset_profile_id: raw-large-skew-moderate-v1
+  backend: placement_aware_worker
+  config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-large-skew-moderate-v1/config.yml
+  plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-large-skew-moderate-v1/plan/corpus_execution_plan.yml
+  execution_count: 60
+  group_count: 2
+  dataset_size_class: large
+  planned_work_units: 640.0
+- segment_id: batch-120-skew-raw-large-skew-heavy-v1
+  dataset_profile_id: raw-large-skew-heavy-v1
+  backend: placement_aware_worker
+  config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-large-skew-heavy-v1/config.yml
+  plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-large-skew-heavy-v1/plan/corpus_execution_plan.yml
+  execution_count: 60
+  group_count: 2
+  dataset_size_class: large
+  planned_work_units: 640.0
+- segment_id: batch-120-skew-pilot-region-local-skew-asymmetric-medium-v1
+  dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+  backend: placement_aware_worker
+  config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/pilot-region-local-skew-asymmetric-medium-v1/config.yml
+  plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/pilot-region-local-skew-asymmetric-medium-v1/plan/corpus_execution_plan.yml
+  execution_count: 60
+  group_count: 2
+  dataset_size_class: medium
+  planned_work_units: 240.0

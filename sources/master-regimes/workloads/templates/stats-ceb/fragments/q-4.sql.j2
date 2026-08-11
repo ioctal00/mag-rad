@@ -1,0 +1,5 @@
+select count(*) as result_count
+FROM {{ schema_name }}.comments AS c, {{ schema_name }}.postHistory AS ph
+WHERE c.UserId = ph.UserId
+  AND ph.PostHistoryTypeId = 1
+  AND ph.CreationDate >= CAST('2010-09-14 11:59:07' AS timestamp)

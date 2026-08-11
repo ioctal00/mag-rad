@@ -1,0 +1,3 @@
+evaluation_scope,method,episode_count,top1_correct_count,top1_accuracy,mean_regret_log2,fixed_action
+matched_warm_first_occurrences,static_action_median,14,8,0.5714285714285714,0.41641298073789795,mitigate_remote_path_bundle
+matched_warm_first_occurrences,knn_warm_start_excluding_same_query,14,12,0.8571428571428571,0.04425578634183839,

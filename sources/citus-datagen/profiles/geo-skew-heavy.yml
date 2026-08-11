@@ -1,0 +1,30 @@
+dataset_id: geo-skew-heavy-v1
+seed: 42
+load_method: copy_pipe
+
+scale:
+  tenants_total: 20000
+  events_per_tenant: 1000
+  users_per_tenant: 500
+  global_users_per_tenant: 500
+  lookback_days: 30
+
+regions:
+  eu:
+    tenant_start: 1
+    tenant_end: 10000
+  us:
+    tenant_start: 10001
+    tenant_end: 20000
+
+distribution:
+  name: hot_tenants
+  hot_tenant_pct: 1
+  hot_event_pct: 50
+
+capabilities:
+  supports_reference_join: true
+  supports_non_colocated_join: true
+  supports_cross_region_user_overlap: false
+  supports_high_group_cardinality: true
+  supports_hot_tenant_skew: true

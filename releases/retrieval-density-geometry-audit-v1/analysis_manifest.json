@@ -1,0 +1,119 @@
+{
+  "active_feature_count": 64,
+  "analysis_contract": "retrieval-density-geometry-audit-v1",
+  "broad_corpus_action_matrix_audit": {
+    "complete_three_target_action_matrix_count": 0,
+    "controlled_pair_count": 418,
+    "distinct_action_count": 13,
+    "distinct_stressed_condition_count": 418,
+    "maximum_actions_per_stressed_condition": 1,
+    "physical_execution_count": 2607
+  },
+  "complete_action_outcome_count": 393,
+  "complete_case_count": 131,
+  "confirmatory_state_count": 15,
+  "coverage_threshold": 1.9533554892194174,
+  "final_dba_state_count": 45,
+  "inputs": [
+    {
+      "bytes": 4365,
+      "path": "sources/master-regimes/configs/validation/confirmatory_action_replication_v1.yml",
+      "sha256": "4361b018d4f811271d8e7550f78ea27cee2322167c616818969f6b0a51c82d71"
+    },
+    {
+      "bytes": 8583,
+      "path": "sources/master-regimes/configs/models/fuzzy_intervention_memory_v1.yml",
+      "sha256": "6b25d56f475cfb297644f5794e024a87ef40239ab64055b3f2ea39e9cf1640b5"
+    },
+    {
+      "bytes": 225162,
+      "path": "releases/retrieval-density-geometry-audit-v1/inputs/reference/episodes.csv",
+      "sha256": "b8ffc1545b4742443180882d33f1d628abc5676241cac3974201a991b33ce71e"
+    },
+    {
+      "bytes": 72631,
+      "path": "releases/retrieval-density-geometry-audit-v1/inputs/final-dba/observed_episode_states.csv",
+      "sha256": "91e55b3314335d88fce9e83a44f05934f05040fea0425f50b8c670b10ed3089d"
+    },
+    {
+      "bytes": 129436,
+      "path": "releases/retrieval-density-geometry-audit-v1/inputs/final-dba/observed_action_outcomes.csv",
+      "sha256": "7b33d673aa7fa40932695ccd5574b7b166edc134ffd7af91e9e474429f5bf76a"
+    },
+    {
+      "bytes": 61188,
+      "path": "releases/retrieval-density-geometry-audit-v1/inputs/topology/episode_states.csv",
+      "sha256": "c0a275241f8444d7491923514f7331b93135e2651d9804d819fe81fb95cbd22d"
+    },
+    {
+      "bytes": 60105,
+      "path": "releases/retrieval-density-geometry-audit-v1/inputs/topology/action_outcomes.csv",
+      "sha256": "78c63a0553644a3c496aea4aae2222f1df369dc712539831a82f34ed2b782676"
+    },
+    {
+      "bytes": 19171,
+      "path": "releases/confirmatory-action-replication-v1/scenario_states.csv",
+      "sha256": "9787543d54de1f11eb1115930bd91aedaca5341e602693447ecc5f038eba5eb4"
+    },
+    {
+      "bytes": 8872,
+      "path": "releases/confirmatory-action-replication-v1/action_outcomes.csv",
+      "sha256": "bf9ae8666f9ad1365dcffdd42cd87d936d5b37ac7a1cb3a138e3dc9c30b5d42a"
+    },
+    {
+      "bytes": 343175,
+      "path": "releases/confirmatory-action-replication-v1/per_scenario_predictions.csv",
+      "sha256": "a7f9b503a1e96a03b1114325e0ce09856225b2d35f73081d4187f006125ba812"
+    },
+    {
+      "bytes": 747,
+      "path": "releases/confirmatory-action-replication-v1/analysis_manifest.json",
+      "sha256": "85d462042b3f4910c3f42d2c0c5c69e4d17ee2c80e62be781bbdf9cc93dd707b"
+    },
+    {
+      "bytes": 14458,
+      "path": "releases/retrieval-density-geometry-audit-v1/inputs/broad/release_manifest.json",
+      "sha256": "3ab53be58ae279c4ff3df6ebca68d125b178eb36bd3c4b30fb93083d3264e9ab"
+    },
+    {
+      "bytes": 1796,
+      "path": "releases/retrieval-density-geometry-audit-v1/inputs/broad/corpus/consolidation_manifest.json",
+      "sha256": "0c4c7431e20290d3475ce4d6000279d3d8afc51d3a2a02b3e32bfb01cc29d192"
+    },
+    {
+      "bytes": 667488,
+      "path": "releases/retrieval-density-geometry-audit-v1/inputs/broad/action_audit/mitigation_pair_audit.csv",
+      "sha256": "d5bdfde4f2b402360f4a09eb92ac1ac6e660e2afec1ef0988d5b944c24c97ada"
+    }
+  ],
+  "limitations": [
+    "retrospective density curve includes later confirmatory outcomes",
+    "26 reference states are parameterizations of one logical Top-K question",
+    "no complete case has increase_gac_work_mem as the strict winner",
+    "131 complete states represent only 31 logical query groups",
+    "repeated q01-q15 states are controlled separately from cross-query pairs",
+    "the expanded prior-panel replay is a post-hoc sensitivity analysis",
+    "earlier panels use less replication per action than the five-repeat confirmatory panel"
+  ],
+  "pair_count": 8515,
+  "pca_component_count": 6,
+  "permutations": 10000,
+  "prior_panel_run_identity_audit": {
+    "final_dba_distinct_run_count": 180,
+    "overlap_count": 0,
+    "status": "PASS",
+    "topology_distinct_run_count": 180
+  },
+  "reference_state_count": 26,
+  "sampling_repetitions": 2000,
+  "seed": 2026081101,
+  "sql_executions_performed": 0,
+  "state_representation_refit_on_confirmatory_data": false,
+  "status": "PASS",
+  "temporal_release_reproduction": {
+    "correct_count": 8,
+    "recommendation_count": 14,
+    "status": "PASS"
+  },
+  "topology_state_count": 45
+}

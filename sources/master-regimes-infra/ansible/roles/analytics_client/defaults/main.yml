@@ -1,0 +1,16 @@
+---
+analytics_client_enabled: false
+analytics_client_repo_dir: /opt/analytics-client
+analytics_client_log_dir: /var/log/analytics-client
+analytics_client_git_clone_suffix: ""
+analytics_client_git_branch: main
+analytics_client_region: ""
+analytics_client_uv_installer_url: https://astral.sh/uv/install.sh
+analytics_client_uv_install_dir: /root/.local/bin
+analytics_client_extra_packages:
+  - postgresql-client
+  - python3
+  - python3-venv
+  - python3-pip
+analytics_client_run_root: /var/lib/analytics-client/runs
+analytics_client_notes: ""

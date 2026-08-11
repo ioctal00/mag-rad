@@ -1,0 +1,251 @@
+contract_version: independent-pressure-profile-v1
+program_id: pressure-raw-v1
+
+pair_contract:
+  strict_gain_eligible: true
+  repetitions_per_member: 3
+  minimum_member_feature_coverage: 0.60
+  negative_control_role: negative_control
+
+estimator:
+  kind: linear_pairwise_softplus
+  margin: 1.0
+  l2_penalty: 0.10
+  control_invariance_penalty: 0.50
+  maximum_iterations: 2000
+  random_seed: 20260803
+
+validation:
+  minimum_positive_pairs_per_domain: 30
+  minimum_control_pairs_per_domain: 10
+  minimum_train_pairs_per_fold: 20
+  minimum_test_pairs_per_fold: 2
+  minimum_direction_accuracy: 0.70
+  holdouts:
+    - name: leave_stressed_template_out
+      group_field: stressed_template_id
+    - name: leave_dataset_out
+      group_field: dataset_profile_id
+
+local_calibration:
+  evaluation_role: prior_only_local_history
+  reference_fit_scope: prior_accepted_mitigated_executions_exact_context_only
+  used_in_model_training: false
+  used_in_grouped_validation: false
+  time_causal_for_live_use: true
+  coordinate_field: coordinate_score
+  feature_contract_version: independent-pressure-profile-v1
+  reference_variants: [mitigated]
+  fallback_enabled: false
+  minimum_reference_executions: 3
+  scale_floor: 0.05
+  exact_group_fields:
+    - sql_normalized_hash
+    - plan_fingerprint
+    - dataset_profile_id
+    - topology_id
+    - database_sweep_id
+    - execution_scope
+  fallback_group_fields:
+    - logical_question_id
+    - plan_fingerprint
+    - dataset_profile_id
+    - topology_id
+    - database_sweep_id
+    - execution_scope
+
+feature_provenance:
+  post_execution_evidence_only: true
+  causal_root_cause_claim: false
+  categories:
+    direct_or_aggregated_measurement:
+      description: Opažena ili po izvršenju agregirana fizička telemetrija.
+      features:
+        - edge_remote_bytes_sum
+        - edge_rtt_context_median_ms_max
+        - edge_source_tx_bps_hmean
+        - edge_boundary_wait_ms_sum
+        - edge_packet_loss_percent_max
+        - edge_qdisc_overlimits_sum
+        - edge_tcp_retrans_sum
+        - remote_citus_repartition_mapmerge_count
+        - remote_citus_dependent_map_task_count_sum
+        - remote_citus_dependent_merge_task_count_sum
+        - remote_citus_tasks_shown_none_count
+    derived_physical_component:
+      description: Omjer, udio, disperzija ili normalizovana veličina izvedena iz opaženog izvršenja.
+      features:
+        - gac_fanin_to_final_rows_ratio
+        - gac_blocking_input_to_final_rows_ratio
+        - gac_temp_written_per_final_row
+        - coordinator_non_foreign_time_share_proxy
+        - gac_sort_time_share
+        - gac_aggregate_time_share
+        - gac_hash_batch_excess
+        - analytics_rx_bytes_per_final_row
+        - edge_boundary_wait_share
+        - foreign_scan_time_share
+        - worker_rows_cv
+        - worker_rows_max_share
+        - worker_scan_rows_cv
+        - worker_scan_rows_max_share
+        - worker_task_count_cv
+        - worker_task_count_max_share
+        - worker_task_within_region_worker_scan_rows_cv_max
+        - worker_task_within_region_worker_scan_rows_cv_mean
+        - worker_rx_bytes_cv
+        - worker_tx_bytes_cv
+        - remote_citus_repartition_fanout_ratio_max
+        - repartition_remote_tuple_bytes_per_final_row
+        - repartition_worker_rx_bytes_per_final_row
+        - regional_temp_written_per_remote_row
+        - regional_temp_read_per_remote_row
+        - regional_spill_region_share
+        - regional_worker_to_remote_rows_ratio
+        - regional_actual_time_per_remote_row
+        - regional_worker_blocking_nodes_per_task
+        - regional_worker_sort_nodes_per_task
+    observed_event_flag:
+      description: Direktno opažena pojava u planskom ili runtime dokazu.
+      features:
+        - coordinator_spill_present
+        - citus_repartition_observed_v2
+        - regional_spill_present
+  descriptive_only_evidence:
+    - name: edge_estimated_fetch_cycles_sum
+      provenance: intervention_sensitive_estimate
+      exclusion_reason: Procjena koristi aktivni fetch_size i zato nije modelski ulaz.
+
+bootstrap:
+  repetitions: 2000
+  confidence_level: 0.95
+
+forbidden_model_inputs:
+  - template_id
+  - dataset_profile_id
+  - runtime_config_id
+  - condition_id
+  - pair_id
+  - intervention_axis
+  - intervention_role
+  - pressure_axis
+  - pressure_level
+  - mitigation_action
+  - elapsed_seconds
+  - target_log2_gain
+  - configured_latency_ms
+  - configured_bandwidth_mbit
+  - configured_loss_percent
+  - configured_jitter_ms
+  - fetch_size
+
+domains:
+  gac_finalization:
+    display_name: GAC finalizacija
+    output_mode: component_profile
+    component_profiles:
+      gac_fanin:
+        - gac_fanin_to_final_rows_ratio
+        - analytics_rx_bytes_per_final_row
+      gac_reduction:
+        - gac_blocking_input_to_final_rows_ratio
+        - coordinator_non_foreign_time_share_proxy
+      gac_sort_spill:
+        - gac_temp_written_per_final_row
+        - gac_sort_time_share
+        - gac_hash_batch_excess
+        - coordinator_spill_present
+      gac_aggregate_finalization:
+        - gac_aggregate_time_share
+    positive_roles: [positive_case]
+    minimum_feature_coverage: 0.60
+    required_features:
+      - gac_fanin_to_final_rows_ratio
+      - coordinator_non_foreign_time_share_proxy
+    features:
+      - {name: gac_fanin_to_final_rows_ratio, transform: log1p, baseline_direction: 1}
+      - {name: gac_blocking_input_to_final_rows_ratio, transform: log1p, baseline_direction: 1}
+      - {name: gac_temp_written_per_final_row, transform: log1p, baseline_direction: 1}
+      - {name: coordinator_non_foreign_time_share_proxy, transform: identity, baseline_direction: 1}
+      - {name: gac_sort_time_share, transform: identity, baseline_direction: 1}
+      - {name: gac_aggregate_time_share, transform: identity, baseline_direction: 1}
+      - {name: gac_hash_batch_excess, transform: log1p, baseline_direction: 1}
+      - {name: coordinator_spill_present, transform: identity, baseline_direction: 1}
+      - {name: analytics_rx_bytes_per_final_row, transform: log1p, baseline_direction: 1}
+
+  remote_path:
+    display_name: Udaljena putanja
+    output_mode: scalar_coordinate
+    positive_roles: [positive_case, calibration]
+    minimum_feature_coverage: 0.40
+    required_features:
+      - edge_remote_bytes_sum
+      - edge_boundary_wait_ms_sum
+      - edge_boundary_wait_share
+      - foreign_scan_time_share
+    features:
+      - {name: edge_remote_bytes_sum, transform: log1p, baseline_direction: 1}
+      - {name: edge_rtt_context_median_ms_max, transform: log1p, baseline_direction: 1}
+      - {name: edge_source_tx_bps_hmean, transform: log1p, baseline_direction: -1}
+      - {name: edge_boundary_wait_ms_sum, transform: log1p, baseline_direction: 1}
+      - {name: edge_boundary_wait_share, transform: identity, baseline_direction: 1}
+      - {name: foreign_scan_time_share, transform: identity, baseline_direction: 1}
+      - {name: edge_packet_loss_percent_max, transform: log1p, baseline_direction: 1}
+      - {name: edge_qdisc_overlimits_sum, transform: log1p, baseline_direction: 1}
+      - {name: edge_tcp_retrans_sum, transform: log1p, baseline_direction: 1}
+
+  worker_data_skew:
+    display_name: Worker i task neravnoteza
+    output_mode: scalar_coordinate
+    positive_roles: [positive_case]
+    minimum_feature_coverage: 0.60
+    required_features:
+      - worker_rows_cv
+      - worker_scan_rows_cv
+    features:
+      - {name: worker_rows_cv, transform: identity, baseline_direction: 1}
+      - {name: worker_rows_max_share, transform: identity, baseline_direction: 1}
+      - {name: worker_scan_rows_cv, transform: identity, baseline_direction: 1}
+      - {name: worker_scan_rows_max_share, transform: identity, baseline_direction: 1}
+      - {name: worker_task_count_cv, transform: identity, baseline_direction: 1}
+      - {name: worker_task_count_max_share, transform: identity, baseline_direction: 1}
+      - {name: worker_task_within_region_worker_scan_rows_cv_max, transform: identity, baseline_direction: 1}
+      - {name: worker_task_within_region_worker_scan_rows_cv_mean, transform: identity, baseline_direction: 1}
+      - {name: worker_rx_bytes_cv, transform: identity, baseline_direction: 1}
+      - {name: worker_tx_bytes_cv, transform: identity, baseline_direction: 1}
+
+  repartition_join:
+    display_name: Repartition join
+    output_mode: scalar_coordinate
+    positive_roles: [positive_case]
+    minimum_feature_coverage: 0.60
+    required_features:
+      - citus_repartition_observed_v2
+      - remote_citus_repartition_mapmerge_count
+    features:
+      - {name: citus_repartition_observed_v2, transform: identity, baseline_direction: 1}
+      - {name: remote_citus_repartition_mapmerge_count, transform: log1p, baseline_direction: 1}
+      - {name: remote_citus_dependent_map_task_count_sum, transform: log1p, baseline_direction: 1}
+      - {name: remote_citus_dependent_merge_task_count_sum, transform: log1p, baseline_direction: 1}
+      - {name: remote_citus_repartition_fanout_ratio_max, transform: log1p, baseline_direction: 1}
+      - {name: repartition_remote_tuple_bytes_per_final_row, transform: log1p, baseline_direction: 1}
+      - {name: repartition_worker_rx_bytes_per_final_row, transform: log1p, baseline_direction: 1}
+      - {name: remote_citus_tasks_shown_none_count, transform: log1p, baseline_direction: 1}
+
+  regional_finalization:
+    display_name: Regionalna finalizacija i spill
+    output_mode: limited_coordinate
+    positive_roles: [positive_case]
+    minimum_feature_coverage: 0.60
+    required_features:
+      - regional_temp_written_per_remote_row
+      - regional_spill_present
+    features:
+      - {name: regional_temp_written_per_remote_row, transform: log1p, baseline_direction: 1}
+      - {name: regional_temp_read_per_remote_row, transform: log1p, baseline_direction: 1}
+      - {name: regional_spill_region_share, transform: identity, baseline_direction: 1}
+      - {name: regional_spill_present, transform: identity, baseline_direction: 1}
+      - {name: regional_worker_to_remote_rows_ratio, transform: log1p, baseline_direction: 1}
+      - {name: regional_actual_time_per_remote_row, transform: log1p, baseline_direction: 1}
+      - {name: regional_worker_blocking_nodes_per_task, transform: log1p, baseline_direction: 1}
+      - {name: regional_worker_sort_nodes_per_task, transform: log1p, baseline_direction: 1}

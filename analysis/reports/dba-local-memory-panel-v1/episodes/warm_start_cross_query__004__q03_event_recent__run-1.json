@@ -1,0 +1,146 @@
+{
+  "episode": {
+    "actual_best_action": "mitigate_remote_path_bundle",
+    "actual_gain__increase_gac_work_mem": 0.007447924678221887,
+    "actual_gain__mitigate_remote_path_bundle": 2.074180777894477,
+    "actual_gain__regional_topk_candidates": 0.04862128898718277,
+    "applicability_source": "explicit_panel_contract_and_result_equivalence",
+    "baseline_elapsed_seconds": 0.95238,
+    "candidate_action": "mitigate_remote_path_bundle",
+    "candidate_regret_log2": 0.0,
+    "candidate_top1_correct": true,
+    "coverage_threshold": 1.9533554892194174,
+    "dataset_profile_id": "raw-small-balanced-v1",
+    "decision_status": "available",
+    "distance_metric": "euclidean",
+    "eligible_history_state_count_before": 29,
+    "episode_id": "q03_event_recent::run-1",
+    "episode_order": 4,
+    "evidence_cpu_busy_max_pct": 20.161,
+    "evidence_gac_fanin_rows": 9176.0,
+    "evidence_gac_temp_blocks": 64.0,
+    "evidence_remote_boundary_wait_ms": 340.35900000000004,
+    "evidence_remote_bytes": 660672.0,
+    "evidence_remote_rtt_ms": 15.475,
+    "history_state_count_before": 29,
+    "memory_mode": "warm_start_cross_query",
+    "nearest_distance": 0.8707501206017914,
+    "normalized_sql_hash": "76893bdca8771bf15968c663228c2bb3475ab41d7df033a16ad555cc74a679a3",
+    "planned_query_occurrences": 3,
+    "predicted_action": "mitigate_remote_path_bundle",
+    "predicted_gain__increase_gac_work_mem": 0.018829630820244966,
+    "predicted_gain__mitigate_remote_path_bundle": 2.297134872421318,
+    "predicted_gain__regional_topk_candidates": 0.35816870780852417,
+    "profile": "balanced",
+    "query_id": "q03_event_recent",
+    "query_occurrence": 1,
+    "query_shape": "event_recent",
+    "region_count": 2,
+    "regret_log2": 0.0,
+    "same_query_history_count_before": 0,
+    "top1_correct": true,
+    "topology_id": "eu_us_gac"
+  },
+  "memory_mode": "warm_start_cross_query",
+  "memory_state_count_after": 30,
+  "neighbors_used_before_decision": [
+    {
+      "action_gains": {
+        "increase_gac_work_mem": 0.0558843856774697,
+        "mitigate_remote_path_bundle": 1.990176655943472,
+        "regional_topk_candidates": 0.44208027974939
+      },
+      "distance": 0.8707501206017914,
+      "episode_id": "reference::fuzzy-memory-topk-panel-v1::fuzzy_topk_balanced::raw-small-balanced-v1::{\"cutoff_ts\":\"2026-06-24 00:00:00+00\",\"limit_k\":100}",
+      "normalized_sql_hash": "nan",
+      "query_id": "fuzzy-memory-topk-panel-v1::fuzzy_topk_balanced::raw-small-balanced-v1::{\"cutoff_ts\":\"2026-06-24 00:00:00+00\",\"limit_k\":100}",
+      "topology_id": "eu_us_gac",
+      "weight": 1.1484337789986219
+    },
+    {
+      "action_gains": {
+        "increase_gac_work_mem": -0.0190705540866633,
+        "mitigate_remote_path_bundle": 3.203301466828472,
+        "regional_topk_candidates": 0.7633310432797628
+      },
+      "distance": 1.3795075512465522,
+      "episode_id": "reference::fuzzy-memory-topk-panel-v1::fuzzy_topk_transport_severe::raw-small-balanced-v1::{\"cutoff_ts\":\"2026-06-24 00:00:00+00\",\"limit_k\":100}",
+      "normalized_sql_hash": "nan",
+      "query_id": "fuzzy-memory-topk-panel-v1::fuzzy_topk_transport_severe::raw-small-balanced-v1::{\"cutoff_ts\":\"2026-06-24 00:00:00+00\",\"limit_k\":100}",
+      "topology_id": "eu_us_gac",
+      "weight": 0.7248958327198332
+    },
+    {
+      "action_gains": {
+        "increase_gac_work_mem": 0.0044125939297464,
+        "mitigate_remote_path_bundle": 2.703776598899469,
+        "regional_topk_candidates": 0.2612314581242365
+      },
+      "distance": 1.3819583307963828,
+      "episode_id": "reference::fuzzy-memory-topk-panel-v1::fuzzy_topk_transport_severe::raw-small-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":100}",
+      "normalized_sql_hash": "nan",
+      "query_id": "fuzzy-memory-topk-panel-v1::fuzzy_topk_transport_severe::raw-small-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":100}",
+      "topology_id": "eu_us_gac",
+      "weight": 0.7236102956978693
+    },
+    {
+      "action_gains": {
+        "increase_gac_work_mem": 0.0157288694887206,
+        "mitigate_remote_path_bundle": 1.88707770205566,
+        "regional_topk_candidates": 0.229469143231732
+      },
+      "distance": 1.4075556534405986,
+      "episode_id": "reference::fuzzy-memory-topk-panel-v1::fuzzy_topk_balanced::raw-small-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":100}",
+      "normalized_sql_hash": "nan",
+      "query_id": "fuzzy-memory-topk-panel-v1::fuzzy_topk_balanced::raw-small-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":100}",
+      "topology_id": "eu_us_gac",
+      "weight": 0.7104509772701677
+    },
+    {
+      "action_gains": {
+        "increase_gac_work_mem": 0.0150523391068186,
+        "mitigate_remote_path_bundle": 1.8226091557332909,
+        "regional_topk_candidates": 0.005319769899148
+      },
+      "distance": 1.5442777860570664,
+      "episode_id": "reference::fuzzy-memory-topk-panel-v1::fuzzy_topk_balanced::raw-small-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":10000}",
+      "normalized_sql_hash": "nan",
+      "query_id": "fuzzy-memory-topk-panel-v1::fuzzy_topk_balanced::raw-small-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":10000}",
+      "topology_id": "eu_us_gac",
+      "weight": 0.6475514712944108
+    }
+  ],
+  "observed_action_outcomes": [
+    {
+      "action_elapsed_seconds": 0.947476,
+      "mitigation_action": "increase_gac_work_mem",
+      "result_equal": true,
+      "target_log2_gain": 0.007447924678221887
+    },
+    {
+      "action_elapsed_seconds": 0.920818,
+      "mitigation_action": "regional_topk_candidates",
+      "result_equal": true,
+      "target_log2_gain": 0.04862128898718277
+    },
+    {
+      "action_elapsed_seconds": 0.226162,
+      "mitigation_action": "mitigate_remote_path_bundle",
+      "result_equal": true,
+      "target_log2_gain": 2.074180777894477
+    }
+  ],
+  "state_evidence": {
+    "cpu_busy_max_pct": 20.161,
+    "elapsed_seconds": 0.95238,
+    "gac_fanin_rows": 9176.0,
+    "gac_non_foreign_time_share": 0.0197262936915296,
+    "gac_temp_blocks": 64.0,
+    "regional_rows_cv": 0.029642545771578,
+    "remote_boundary_wait_ms": 340.35900000000004,
+    "remote_bytes": 660672.0,
+    "remote_edge_count": 2,
+    "remote_rtt_ms": 15.475,
+    "worker_rows_cv": 0.2627377938407463
+  }
+}

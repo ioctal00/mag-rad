@@ -1,0 +1,17 @@
+{
+  "ambiguous_candidate_count": 0,
+  "attempt_row_count": 328,
+  "collector_unresolved_issue_count": 0,
+  "condition_count": 96,
+  "database_result_rows_stored": false,
+  "expected_execution_count": 328,
+  "feature_count": 21,
+  "frozen_model_id": "clean-run-v1-m0_flow_ratio_v3_reduced-fcm-k4",
+  "logical_run_id": "repeatability-v1",
+  "minimum_evidence_completeness": 1.0,
+  "report_id": "repeatability-v1",
+  "resolved_execution_count": 328,
+  "retry_execution_count": 0,
+  "synthetic_fixture": false,
+  "timeout_attempt_count": 0
+}

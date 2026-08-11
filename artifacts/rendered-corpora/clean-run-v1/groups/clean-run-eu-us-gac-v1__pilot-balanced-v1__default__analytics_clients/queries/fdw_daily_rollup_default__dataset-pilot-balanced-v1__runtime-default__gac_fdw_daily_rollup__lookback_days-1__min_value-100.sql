@@ -1,0 +1,10 @@
+select
+  date_trunc('day', e.created_at) as event_day,
+  count(*) as events_count,
+  sum(e.value) as total_value,
+  avg(e.value) as avg_value
+from fdw_eu.events e
+where e.created_at >= now() - make_interval(days => 1::int)
+  and e.value >= 100::double precision
+group by date_trunc('day', e.created_at)
+order by event_day;

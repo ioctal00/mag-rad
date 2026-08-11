@@ -1,0 +1,48 @@
+batch_id: batch-000-collection-smoke
+kind: collection_smoke
+status: ready
+source: master-regimes/configs/collection/batches/batch-000-collection-smoke.yml
+source_sha256: 6c74a346c9f8618b99c157f6ea65392b539a6869952a47c1f40624d8a7e22dbe
+execution_count: 30
+segments:
+- segment_id: batch-000-collection-smoke-gac_finalization
+  pressure_axis: gac_finalization
+  backend: standard_corpus
+  status: ready
+  plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/gac_finalization/corpus_execution_plan.yml
+  execution_count: 6
+- segment_id: batch-000-collection-smoke-remote_path
+  pressure_axis: remote_path
+  backend: standard_corpus
+  status: ready
+  plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/remote_path/corpus_execution_plan.yml
+  execution_count: 6
+- segment_id: batch-000-collection-smoke-worker_data_skew
+  pressure_axis: worker_data_skew
+  backend: placement_aware_worker
+  status: ready
+  config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/worker_data_skew/config.yml
+  plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-heavy-v1/plan/corpus_execution_plan.yml
+  execution_count: 6
+- segment_id: batch-000-collection-smoke-repartition_join
+  pressure_axis: repartition_join
+  backend: standard_corpus
+  status: ready
+  plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/repartition_join/corpus_execution_plan.yml
+  execution_count: 6
+- segment_id: batch-000-collection-smoke-regional_finalization
+  pressure_axis: regional_finalization
+  backend: standard_corpus
+  status: ready
+  plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/regional_finalization/corpus_execution_plan.yml
+  execution_count: 6
+gate:
+  require_pair_resolution: true
+  require_result_hash_equality: true
+  require_intervention_apply_reset: true
+  require_main_plan: true
+  require_regional_and_worker_evidence_when_applicable: true
+  require_network_telemetry_for_remote_pair: true
+  require_system_telemetry: true
+  require_effective_runtime_values: true
+  require_raw_index_without_manual_edits: true

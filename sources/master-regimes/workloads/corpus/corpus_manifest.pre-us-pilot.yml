@@ -1,0 +1,232 @@
+corpus_id: pre-us-eu-gac-corpus-v1
+vocabulary: ../../docs/corpus-vocabulary.md
+query_groups: query-groups.yml
+runtime_catalog: runtime-configs.yml
+topology_id: eu_gac
+topology_scope: eu_gac
+description: >
+  First controlled pre-US regime corpus. This manifest replaces generic
+  dataset->query-sweep thinking with explicit corpus cells: logical question,
+  execution strategy, dataset profile, runtime config and intervention role.
+execution_budget:
+  hard_timeout_seconds: 900
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  repetitions_default: 1
+  cache_features_in_default_model: false
+  order_policy: deterministic_shuffle
+  shuffle_seed: 20260624
+  record_run_order: true
+  record_buffer_features: true
+
+dataset_profiles:
+  geo-balanced-v1:
+    profile: ../../datasets/profiles/geo-balanced.yml
+  geo-skew-heavy-v1:
+    profile: ../../datasets/profiles/geo-skew-heavy.yml
+
+cells:
+  - corpus_cell_id: top_tenants_single_skew_default
+    logical_question_id: top_tenants
+    execution_strategy: single_region_citus
+    template_id: q10_top_tenants
+    dataset_profile_id: geo-skew-heavy-v1
+    runtime_config_id: default
+    topology_id: eu_gac
+    intervention_role: baseline
+    intervention_axis: dataset_skew
+    expected_regime_targets:
+      - well_reduced_localized
+      - gac_finalization_heavy
+
+  - corpus_cell_id: top_tenants_fdw_skew_default
+    logical_question_id: top_tenants
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_top_tenants
+    dataset_profile_id: geo-skew-heavy-v1
+    runtime_config_id: default
+    topology_id: eu_gac
+    intervention_role: baseline
+    intervention_axis: dataset_skew
+    expected_regime_targets:
+      - remote_fetch_heavy
+      - gac_finalization_heavy
+
+  - corpus_cell_id: top_tenants_fdw_skew_fetch_small
+    logical_question_id: top_tenants
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_top_tenants
+    dataset_profile_id: geo-skew-heavy-v1
+    runtime_config_id: fetch_small
+    topology_id: eu_gac
+    intervention_role: positive_case
+    intervention_axis: fetch_size
+    expected_regime_targets:
+      - remote_fetch_heavy
+      - gac_finalization_heavy
+
+  - corpus_cell_id: top_tenants_fdw_skew_fetch_large
+    logical_question_id: top_tenants
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_top_tenants
+    dataset_profile_id: geo-skew-heavy-v1
+    runtime_config_id: fetch_large
+    topology_id: eu_gac
+    intervention_role: positive_case
+    intervention_axis: fetch_size
+    expected_regime_targets:
+      - remote_fetch_heavy
+      - gac_finalization_heavy
+
+  - corpus_cell_id: top_tenants_etl_skew_default
+    logical_question_id: top_tenants
+    execution_strategy: etl_materialized
+    template_id: gac_etl_top_tenants
+    dataset_profile_id: geo-skew-heavy-v1
+    runtime_config_id: default
+    topology_id: eu_gac
+    intervention_role: negative_control
+    intervention_axis: dataset_skew
+    expected_regime_targets:
+      - well_reduced_localized
+
+  - corpus_cell_id: top_tenants_etl_skew_fetch_small_control
+    logical_question_id: top_tenants
+    execution_strategy: etl_materialized
+    template_id: gac_etl_top_tenants
+    dataset_profile_id: geo-skew-heavy-v1
+    runtime_config_id: fetch_small
+    topology_id: eu_gac
+    intervention_role: negative_control
+    intervention_axis: fetch_size
+    expected_regime_targets:
+      - well_reduced_localized
+
+  - corpus_cell_id: tenant_tier_fdw_balanced_default
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_tenant_tier_join
+    dataset_profile_id: geo-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_gac
+    intervention_role: baseline
+    expected_regime_targets:
+      - gac_finalization_heavy
+
+  - corpus_cell_id: tenant_tier_fdw_balanced_work_mem_low
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_tenant_tier_join
+    dataset_profile_id: geo-balanced-v1
+    runtime_config_id: work_mem_low
+    topology_id: eu_gac
+    intervention_role: positive_case
+    intervention_axis: work_mem
+    expected_regime_targets:
+      - gac_finalization_heavy
+
+  - corpus_cell_id: tenant_tier_fdw_balanced_work_mem_high
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_tenant_tier_join
+    dataset_profile_id: geo-balanced-v1
+    runtime_config_id: work_mem_high
+    topology_id: eu_gac
+    intervention_role: positive_case
+    intervention_axis: work_mem
+    expected_regime_targets:
+      - gac_finalization_heavy
+
+  - corpus_cell_id: tenant_tier_etl_balanced_default
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: etl_materialized
+    template_id: gac_etl_tenant_tier_daily_rollup
+    dataset_profile_id: geo-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_gac
+    intervention_role: negative_control
+    expected_regime_targets:
+      - well_reduced_localized
+
+  - corpus_cell_id: tenant_tier_etl_balanced_work_mem_low_control
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: etl_materialized
+    template_id: gac_etl_tenant_tier_daily_rollup
+    dataset_profile_id: geo-balanced-v1
+    runtime_config_id: work_mem_low
+    topology_id: eu_gac
+    intervention_role: negative_control
+    intervention_axis: work_mem
+    expected_regime_targets:
+      - well_reduced_localized
+
+  - corpus_cell_id: user_segment_fdw_balanced_default
+    logical_question_id: user_segment_topk
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_user_segment_join
+    dataset_profile_id: geo-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_gac
+    intervention_role: baseline
+    expected_regime_targets:
+      - gac_finalization_heavy
+
+  - corpus_cell_id: user_segment_etl_balanced_default
+    logical_question_id: user_segment_topk
+    execution_strategy: etl_materialized
+    template_id: gac_etl_user_segment_topk
+    dataset_profile_id: geo-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_gac
+    intervention_role: negative_control
+    expected_regime_targets:
+      - well_reduced_localized
+
+  - corpus_cell_id: global_user_fdw_balanced_default
+    logical_question_id: global_user_topk
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_global_user_join
+    dataset_profile_id: geo-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_gac
+    intervention_role: baseline
+    expected_regime_targets:
+      - join_movement
+      - gac_finalization_heavy
+
+  - corpus_cell_id: global_user_etl_balanced_default
+    logical_question_id: global_user_topk
+    execution_strategy: etl_materialized
+    template_id: gac_etl_global_user_topk
+    dataset_profile_id: geo-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_gac
+    intervention_role: negative_control
+    expected_regime_targets:
+      - well_reduced_localized
+
+  - corpus_cell_id: multi_dimension_fdw_balanced_default
+    logical_question_id: multi_dimension_rollup
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_multi_dimension_rollup
+    dataset_profile_id: geo-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_gac
+    intervention_role: baseline
+    expected_regime_targets:
+      - join_movement
+      - gac_finalization_heavy
+
+  - corpus_cell_id: multi_dimension_etl_balanced_default
+    logical_question_id: multi_dimension_rollup
+    execution_strategy: etl_materialized
+    template_id: gac_etl_multi_dimension_rollup
+    dataset_profile_id: geo-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_gac
+    intervention_role: negative_control
+    expected_regime_targets:
+      - well_reduced_localized

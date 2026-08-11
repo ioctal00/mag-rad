@@ -1,0 +1,25 @@
+{
+  "aggregate_exact_source_checksums_sha256": "5cf7c7b4e7e7900a07c1f66d3ebd75f7d23435bda2bdc1bdc7542eef412ac9fe",
+  "aggregate_exact_source_run": "master-regimes/generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1",
+  "checks_passed": true,
+  "contract_version": "feedback-loop-analysis-v1",
+  "frozen_projection": {
+    "active_feature_count": 64,
+    "artifact_path": "master-regimes/analysis/reports/n3-topology-memory-v1/model_freeze_recomputed.json",
+    "artifact_sha256": "30c86157c8a25d95e0124394f038d856bca6977b9634159612b1531a573c55eb",
+    "candidate_feature_count": 93,
+    "component_count": 6,
+    "development_reference_count": 26,
+    "feedback_states_used_for_fit": 0,
+    "fitted_on_n3": false,
+    "p99_threshold": 1.9533554892194176
+  },
+  "generated_at_utc": "2026-08-07T20:37:46.540839Z",
+  "memory_replay_event_count": 8,
+  "rq_h_changed": false,
+  "source_run": "master-regimes/generated/feedback-loop-runs/20260807T123708Z-pressure-feedback-loop-v1",
+  "source_run_checksums_sha256": "168c91628fd52dd537e3eb3cc5916f0627d6ae5289265fce37b8a6716bc46141",
+  "sql_executions_started": 0,
+  "state_count": 20,
+  "transition_count": 11
+}

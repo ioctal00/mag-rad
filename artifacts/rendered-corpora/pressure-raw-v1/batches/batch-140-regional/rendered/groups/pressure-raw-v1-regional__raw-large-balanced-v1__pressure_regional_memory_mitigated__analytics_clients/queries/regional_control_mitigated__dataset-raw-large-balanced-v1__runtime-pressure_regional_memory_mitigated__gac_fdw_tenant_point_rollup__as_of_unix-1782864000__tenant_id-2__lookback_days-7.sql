@@ -1,0 +1,13 @@
+select
+  e.tenant_id,
+  count(*) as events_count,
+  sum(e.value) as total_value,
+  avg(e.value) as avg_value,
+  max(e.created_at) as last_event_at
+from fdw_eu.events e
+where e.tenant_id = 2::bigint
+  and e.created_at >= coalesce(
+    to_timestamp(nullif(1782864000, 0)),
+    now()
+  ) - make_interval(days => 7::int)
+group by e.tenant_id;

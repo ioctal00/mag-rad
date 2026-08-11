@@ -1,0 +1,7 @@
+select count(*) as result_count
+FROM {{ schema_name }}.votes AS v, {{ schema_name }}.badges AS b, {{ schema_name }}.users AS u
+WHERE u.Id = v.UserId
+  AND v.UserId = b.UserId
+  AND v.BountyAmount >= 0
+  AND v.BountyAmount <= 50
+  AND u.DownVotes = 0

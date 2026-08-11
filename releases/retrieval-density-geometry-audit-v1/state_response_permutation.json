@@ -1,0 +1,17 @@
+{
+  "action_rank": {
+    "spearman_rho": 0.00422449217734574,
+    "stratified_permutation_count": 10000,
+    "stratified_permutation_two_sided_p": 0.893010698930107
+  },
+  "centered": {
+    "spearman_rho": 0.002755358427366724,
+    "stratified_permutation_count": 10000,
+    "stratified_permutation_two_sided_p": 0.9074092590740926
+  },
+  "raw": {
+    "spearman_rho": 0.003036647569197779,
+    "stratified_permutation_count": 10000,
+    "stratified_permutation_two_sided_p": 0.8993100689931007
+  }
+}

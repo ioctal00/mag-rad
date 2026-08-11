@@ -1,0 +1,4 @@
+id,status,chronology,rows,input_features,candidate_features,active_features,output_dimensions,fit_states,fit_scope,primary_k,silhouette_k4,hard_cluster_vs_dataset_id_nmi
+F19,authoritative_fcm_characterization,semantic_v2_promoted_after_f21_development_model,1964,19,,,,,clean_run_v1_only,4,0.6095309433985778,0.025646593124993466
+F21-development,historical_development_ablation_not_final_rq_model,precedes_semantic_v2_f19,1964,21,,,,,clean_run_v1_only,4,0.2139600728032148,
+P64->6,secondary_pca_knn_retrieval_space,separate_intervention_memory_pipeline,,,93,64,6,26,preexisting_development_artifact,,,

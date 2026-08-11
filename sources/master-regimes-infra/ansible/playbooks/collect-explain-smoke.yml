@@ -1,0 +1,60 @@
+---
+- name: Collect a smoke EXPLAIN ANALYZE JSON plan
+  hosts: coordinators
+  become: true
+  gather_facts: false
+  vars_files:
+    - ../group_vars/all.yml
+  vars:
+    explain_smoke_sql: "SELECT 1;"
+    explain_sql_file: ""
+    explain_smoke_output_dir: "../../generated/explain-smoke"
+    explain_remote_sql_file: "/tmp/master-regimes-explain-{{ inventory_hostname }}.sql"
+    explain_citus_all_tasks: true
+  tasks:
+    - name: Build effective EXPLAIN SQL
+      ansible.builtin.set_fact:
+        explain_effective_sql: "{{ lookup('file', explain_sql_file) if explain_sql_file | length > 0 else explain_smoke_sql }}"
+
+    - name: Write remote EXPLAIN SQL file
+      ansible.builtin.copy:
+        content: |
+          EXPLAIN (ANALYZE, BUFFERS, VERBOSE, FORMAT JSON)
+          {{ explain_effective_sql | trim }}
+        dest: "{{ explain_remote_sql_file }}"
+        owner: root
+        group: root
+        mode: "0600"
+
+    - name: Run EXPLAIN ANALYZE FORMAT JSON
+      ansible.builtin.command:
+        cmd: "sudo -u postgres env PGOPTIONS='{{ '-c citus.explain_all_tasks=on' if explain_citus_all_tasks else '' }}' psql -XAt -v ON_ERROR_STOP=1 -d {{ postgresql_app_db }} -f {{ explain_remote_sql_file }}"
+      register: explain_smoke_plan
+      changed_when: false
+
+    - name: Ensure local smoke output directory exists
+      ansible.builtin.file:
+        path: "{{ explain_smoke_output_dir }}"
+        state: directory
+        mode: "0755"
+      delegate_to: localhost
+      connection: local
+      become: false
+      vars:
+        ansible_become: false
+
+    - name: Remove remote EXPLAIN SQL file
+      ansible.builtin.file:
+        path: "{{ explain_remote_sql_file }}"
+        state: absent
+
+    - name: Write smoke plan JSON on controller
+      ansible.builtin.copy:
+        content: "{{ explain_smoke_plan.stdout }}\n"
+        dest: "{{ explain_smoke_output_dir }}/{{ inventory_hostname }}.json"
+        mode: "0644"
+      delegate_to: localhost
+      connection: local
+      become: false
+      vars:
+        ansible_become: false

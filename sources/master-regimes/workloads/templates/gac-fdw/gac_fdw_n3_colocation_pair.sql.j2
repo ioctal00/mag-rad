@@ -1,0 +1,125 @@
+{% macro cutoff_predicate(alias) -%}
+{{ alias }}.created_at >= {% if cutoff_ts is defined %}timestamptz '{{ cutoff_ts }}'{% else %}coalesce(
+  to_timestamp(nullif({{ as_of_unix | default(0) }}, 0)),
+  now()
+) - make_interval(days => {{ lookback_days }}::int){% endif %}
+  and mod({{ alias }}.tenant_id, {{ tenant_modulus | default(1) }}::bigint) = 0
+  and {{ alias }}.user_id <= {{ user_id_max | default(2147483647) }}::bigint
+{%- endmacro %}
+
+{% if output_shape == 'segment_aggregate' %}
+with regional_result as (
+  select 'eu'::text as source_region, e.user_segment, e.user_status,
+         count(*) as events_count, sum(e.value::numeric) as total_value
+  from fdw_eu.{{ relation_name }} e
+  where {{ cutoff_predicate('e') }}
+  group by e.user_segment, e.user_status
+  union all
+  select 'us'::text, e.user_segment, e.user_status,
+         count(*), sum(e.value::numeric)
+  from fdw_us.{{ relation_name }} e
+  where {{ cutoff_predicate('e') }}
+  group by e.user_segment, e.user_status
+  union all
+  select 'apac'::text, e.user_segment, e.user_status,
+         count(*), sum(e.value::numeric)
+  from fdw_apac.{{ relation_name }} e
+  where {{ cutoff_predicate('e') }}
+  group by e.user_segment, e.user_status
+)
+select user_segment, user_status,
+       sum(events_count)::bigint as events_count,
+       round(sum(total_value), 6) as total_value
+from regional_result
+group by user_segment, user_status
+order by total_value desc, user_segment, user_status
+limit {{ limit_k }};
+{% elif output_shape == 'user_value_topk' %}
+with regional_result as (
+  select 'eu'::text as source_region, e.tenant_id, e.user_id,
+         e.user_segment, e.user_status, count(*) as events_count,
+         sum(e.value::numeric) as total_value
+  from fdw_eu.{{ relation_name }} e
+  where {{ cutoff_predicate('e') }}
+  group by e.tenant_id, e.user_id, e.user_segment, e.user_status
+  union all
+  select 'us'::text, e.tenant_id, e.user_id,
+         e.user_segment, e.user_status, count(*), sum(e.value::numeric)
+  from fdw_us.{{ relation_name }} e
+  where {{ cutoff_predicate('e') }}
+  group by e.tenant_id, e.user_id, e.user_segment, e.user_status
+  union all
+  select 'apac'::text, e.tenant_id, e.user_id,
+         e.user_segment, e.user_status, count(*), sum(e.value::numeric)
+  from fdw_apac.{{ relation_name }} e
+  where {{ cutoff_predicate('e') }}
+  group by e.tenant_id, e.user_id, e.user_segment, e.user_status
+)
+select tenant_id, user_id, user_segment, user_status,
+       sum(events_count)::bigint as events_count,
+       round(sum(total_value), 6) as total_value
+from regional_result
+group by tenant_id, user_id, user_segment, user_status
+order by total_value desc, tenant_id, user_id
+limit {{ limit_k }};
+{% elif output_shape == 'joined_row_sample' %}
+with regional_result as (
+  select * from (
+    select 'eu'::text as source_region, e.event_id, e.tenant_id, e.user_id,
+           e.user_segment, e.user_status, e.value
+    from fdw_eu.{{ relation_name }} e
+    where {{ cutoff_predicate('e') }}
+    order by e.event_id, e.tenant_id, e.user_id
+    limit {{ limit_k }}
+  ) eu_rows
+  union all
+  select * from (
+    select 'us'::text, e.event_id, e.tenant_id, e.user_id,
+           e.user_segment, e.user_status, e.value
+    from fdw_us.{{ relation_name }} e
+    where {{ cutoff_predicate('e') }}
+    order by e.event_id, e.tenant_id, e.user_id
+    limit {{ limit_k }}
+  ) us_rows
+  union all
+  select * from (
+    select 'apac'::text, e.event_id, e.tenant_id, e.user_id,
+           e.user_segment, e.user_status, e.value
+    from fdw_apac.{{ relation_name }} e
+    where {{ cutoff_predicate('e') }}
+    order by e.event_id, e.tenant_id, e.user_id
+    limit {{ limit_k }}
+  ) apac_rows
+)
+select source_region, event_id, tenant_id, user_id, user_segment, user_status, value
+from regional_result
+order by event_id, source_region, tenant_id, user_id
+limit {{ limit_k }};
+{% elif output_shape == 'scalar_summary' %}
+with regional_result as (
+  select 'eu'::text as source_region, count(*) as events_count,
+         count(distinct e.tenant_id) as tenant_count,
+         count(distinct e.user_id) as user_count,
+         sum(e.value::numeric) as total_value
+  from fdw_eu.{{ relation_name }} e
+  where {{ cutoff_predicate('e') }}
+  union all
+  select 'us'::text, count(*), count(distinct e.tenant_id),
+         count(distinct e.user_id), sum(e.value::numeric)
+  from fdw_us.{{ relation_name }} e
+  where {{ cutoff_predicate('e') }}
+  union all
+  select 'apac'::text, count(*), count(distinct e.tenant_id),
+         count(distinct e.user_id), sum(e.value::numeric)
+  from fdw_apac.{{ relation_name }} e
+  where {{ cutoff_predicate('e') }}
+)
+select sum(events_count)::bigint as events_count,
+       sum(tenant_count)::bigint as tenant_count,
+       sum(user_count)::bigint as user_count,
+       round(sum(total_value), 6) as total_value,
+       round(sum(total_value) / nullif(sum(events_count), 0), 6) as avg_value
+from regional_result;
+{% else %}
+{{ raise('Unsupported N=3 output_shape: ' ~ output_shape) }}
+{% endif %}

@@ -1,0 +1,32 @@
+---
+- name: Build effective eBPF package list
+  ansible.builtin.set_fact:
+    ebpf_tools_effective_packages: >-
+      {{
+        ebpf_tools_packages | reject('equalto', 'bpftool') | list
+        if ansible_facts["distribution"] == 'Ubuntu'
+        and ansible_facts["distribution_version"] is version('24.04', '<')
+        else ebpf_tools_packages
+      }}
+
+- name: Install eBPF and tracing tools
+  ansible.builtin.apt:
+    name: "{{ ebpf_tools_effective_packages }}"
+    state: present
+  ignore_errors: true
+
+- name: Create observability helper directory
+  ansible.builtin.file:
+    path: /opt/observability
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Install eBPF quick reference
+  ansible.builtin.copy:
+    src: ebpf-quick-reference.txt
+    dest: /opt/observability/ebpf-quick-reference.txt
+    owner: root
+    group: root
+    mode: "0644"

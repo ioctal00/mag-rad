@@ -1,0 +1,66 @@
+{
+  "action_count": 3,
+  "blocks": [
+    {
+      "block_id": "n2_control",
+      "expected_executions": 60,
+      "logical_run_dir": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/n3-topology-memory-v1-n2-control",
+      "logical_run_id": "n3-topology-memory-v1-n2-control",
+      "manifest": "master-regimes/generated/corpus/n3-topology-memory-v1/source/n2_control/corpus_manifest.yml",
+      "phase": "reference",
+      "rendered_dir": "master-regimes/generated/corpus/n3-topology-memory-v1/rendered/n2_control",
+      "topology": "n2"
+    },
+    {
+      "block_id": "phase_a_baseline",
+      "expected_executions": 15,
+      "logical_run_dir": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/n3-topology-memory-v1-phase-a-baseline",
+      "logical_run_id": "n3-topology-memory-v1-phase-a-baseline",
+      "manifest": "master-regimes/generated/corpus/n3-topology-memory-v1/source/phase_a_baseline/corpus_manifest.yml",
+      "phase": "A",
+      "rendered_dir": "master-regimes/generated/corpus/n3-topology-memory-v1/rendered/phase_a_baseline",
+      "topology": "n3"
+    },
+    {
+      "block_id": "phase_a_actions",
+      "expected_executions": 45,
+      "logical_run_dir": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/n3-topology-memory-v1-phase-a-actions",
+      "logical_run_id": "n3-topology-memory-v1-phase-a-actions",
+      "manifest": "master-regimes/generated/corpus/n3-topology-memory-v1/source/phase_a_actions/corpus_manifest.yml",
+      "phase": "A",
+      "rendered_dir": "master-regimes/generated/corpus/n3-topology-memory-v1/rendered/phase_a_actions",
+      "topology": "n3"
+    },
+    {
+      "block_id": "phase_b_baseline",
+      "expected_executions": 15,
+      "logical_run_dir": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/n3-topology-memory-v1-phase-b-baseline",
+      "logical_run_id": "n3-topology-memory-v1-phase-b-baseline",
+      "manifest": "master-regimes/generated/corpus/n3-topology-memory-v1/source/phase_b_baseline/corpus_manifest.yml",
+      "phase": "B",
+      "rendered_dir": "master-regimes/generated/corpus/n3-topology-memory-v1/rendered/phase_b_baseline",
+      "topology": "n3"
+    },
+    {
+      "block_id": "phase_b_actions",
+      "expected_executions": 45,
+      "logical_run_dir": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/n3-topology-memory-v1-phase-b-actions",
+      "logical_run_id": "n3-topology-memory-v1-phase-b-actions",
+      "manifest": "master-regimes/generated/corpus/n3-topology-memory-v1/source/phase_b_actions/corpus_manifest.yml",
+      "phase": "B",
+      "rendered_dir": "master-regimes/generated/corpus/n3-topology-memory-v1/rendered/phase_b_actions",
+      "topology": "n3"
+    }
+  ],
+  "contract_version": "n3-topology-memory-experiment-v1",
+  "experiment_id": "n3-topology-memory-v1",
+  "n2_control_execution_count": 60,
+  "output_locations": {
+    "freeze_dir": "master-regimes/generated/corpus/n3-topology-memory-v1/freezes",
+    "report_dir": "master-regimes/analysis/reports/n3-topology-memory-v1",
+    "work_dir": "master-regimes/generated/corpus/n3-topology-memory-v1"
+  },
+  "primary_n3_execution_count": 120,
+  "scenario_count": 15,
+  "total_execution_count": 180
+}

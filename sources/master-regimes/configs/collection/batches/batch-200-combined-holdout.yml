@@ -1,0 +1,50 @@
+batch_id: batch-200-combined-holdout
+corpus_version: pressure-raw-corpus-v1
+collection_contract_version: pressure-raw-v1
+status: prepared_not_executed
+description: >
+  Combined holdout with two or three active pressure mechanisms. Each target
+  axis has a one-at-a-time mitigated counterpart while secondary pressures
+  remain fixed.
+repetitions: 3
+sql_shapes_per_base_case_group: 3
+planned_base_case_count: 24
+fully_one_at_a_time_mitigated_base_case_count: 12
+planned_configuration_count: 60
+planned_execution_count: 180
+datasets:
+  - pilot-balanced-v1
+  - pilot-region-imbalanced-v1
+  - pilot-region-local-skew-asymmetric-medium-v1
+base_case_groups:
+  - id: gac_remote_intermediate
+    active_pressures: [gac_finalization, remote_path]
+    mitigation_axes: [gac_finalization, remote_path]
+  - id: gac_remote_stressed
+    active_pressures: [gac_finalization, remote_path]
+    mitigation_axes: [gac_finalization, remote_path]
+  - id: regional_repartition
+    active_pressures: [regional_finalization, repartition_join]
+    mitigation_axes: [regional_finalization, repartition_join]
+  - id: worker_remote
+    active_pressures: [worker_data_skew, remote_path]
+    mitigation_axes: [worker_data_skew, remote_path]
+  - id: worker_gac
+    active_pressures: [worker_data_skew, gac_finalization]
+    mitigation_axes: [gac_finalization]
+  - id: gac_remote_worker
+    active_pressures: [gac_finalization, remote_path, worker_data_skew]
+    mitigation_axes: [gac_finalization]
+  - id: remote_gac_regional
+    active_pressures: [remote_path, gac_finalization, regional_finalization]
+    mitigation_axes: [remote_path]
+  - id: worker_regional
+    active_pressures: [worker_data_skew, regional_finalization]
+    mitigation_axes: [worker_data_skew]
+pair_policy:
+  one_combined_stressed_configuration_per_base_case: true
+  one_configuration_per_listed_mitigation_axis: true
+  one_target_axis_changes_per_pair: true
+  secondary_pressures_fixed_within_pair: true
+  sql_and_dataset_fixed_within_pair: true
+  result_hash_must_match: true

@@ -1,0 +1,33 @@
+with regional_kpi as (
+  select
+    'eu'::text as source_region,
+    date_trunc('day', e.created_at) as event_day,
+    count(*) as events_count,
+    sum(e.value) as total_value,
+    count(distinct e.tenant_id) as tenant_count,
+    count(distinct e.user_id) as user_count
+  from fdw_eu.events e
+  where e.created_at >= now() - make_interval(days => {{ lookback_days }}::int)
+  group by date_trunc('day', e.created_at)
+  union all
+  select
+    'us'::text as source_region,
+    date_trunc('day', e.created_at) as event_day,
+    count(*) as events_count,
+    sum(e.value) as total_value,
+    count(distinct e.tenant_id) as tenant_count,
+    count(distinct e.user_id) as user_count
+  from fdw_us.events e
+  where e.created_at >= now() - make_interval(days => {{ lookback_days }}::int)
+  group by date_trunc('day', e.created_at)
+)
+select
+  event_day,
+  count(distinct source_region) as regions_touched,
+  sum(events_count) as events_count,
+  sum(total_value) as total_value,
+  sum(tenant_count) as tenant_count,
+  sum(user_count) as user_count
+from regional_kpi
+group by event_day
+order by event_day desc;

@@ -1,0 +1,45 @@
+{
+  "audited_at_utc": "2026-08-07T14:29:07.386412Z",
+  "checks": {
+    "capture_processes": {
+      "final_node_count": 10,
+      "initial_node_count": 10,
+      "status": "PASS"
+    },
+    "clock_synchronization": {
+      "node_count": 10,
+      "status": "PASS"
+    },
+    "dataset_identity": {
+      "final_node_count": 3,
+      "initial_node_count": 3,
+      "status": "PASS"
+    },
+    "fdw_server_options": {
+      "final_node_count": 1,
+      "initial_node_count": 1,
+      "status": "PASS"
+    },
+    "gac_gucs": {
+      "final_node_count": 1,
+      "initial_node_count": 1,
+      "status": "PASS"
+    },
+    "hardware_snapshot_policy": {
+      "final_count": 0,
+      "initial_count": 1,
+      "status": "PASS"
+    },
+    "regional_gucs": {
+      "final_node_count": 3,
+      "initial_node_count": 3,
+      "status": "PASS"
+    },
+    "traffic_control": {
+      "final_node_count": 10,
+      "initial_node_count": 10,
+      "status": "PASS"
+    }
+  },
+  "status": "PASS"
+}

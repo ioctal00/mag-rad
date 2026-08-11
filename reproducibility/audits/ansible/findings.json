@@ -1,0 +1,817 @@
+{
+  "audit_kind": "offline_ansible_configuration_reproducibility",
+  "checks": [
+    {
+      "description": "Every allow-listed Ansible/configuration file is byte-identical in the packaged snapshot.",
+      "evidence": [
+        {
+          "location": "sources/master-regimes-infra/",
+          "note": "Compared 39 explicit files by SHA-256; mismatches: 0."
+        }
+      ],
+      "id": "snapshot-parity",
+      "status": "pass"
+    },
+    {
+      "description": "Canonical topology intent, PostgreSQL major, Citus package family, and source hash are explicit.",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/configs/systems/eu-us-gac-vps.yml:22",
+          "note": "The canonical N2 topology requests PostgreSQL major 18."
+        },
+        {
+          "location": "master-regimes-infra/configs/systems/eu-us-gac-vps.yml:23",
+          "note": "The topology names the PostgreSQL 18/Citus 14.0 package family."
+        },
+        {
+          "location": "master-regimes-infra/configs/systems/eu-us-apac-gac-vps.yml:60",
+          "note": "Logical regions are rendered onto Amsterdam infrastructure in the N3 topology."
+        },
+        {
+          "location": "master-regimes-infra/src/master_regimes_infra/render.py:447",
+          "note": "Rendered manifests retain the source configuration hash."
+        }
+      ],
+      "id": "declarative-topology",
+      "status": "pass"
+    },
+    {
+      "description": "Inventory shape is deterministic, but addresses/VPC values come from live Terraform outputs and environment-resolved inputs.",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/ansible/inventory/terraform_inventory.py:29",
+          "note": "Inventory addresses and groups are derived from current Terraform outputs."
+        },
+        {
+          "location": "master-regimes-infra/ansible/inventory/terraform_inventory.py:15",
+          "note": "Terraform/output failures can collapse to an empty inventory payload."
+        },
+        {
+          "location": "master-regimes-infra/src/master_regimes_infra/render.py:445",
+          "note": "Rendered metadata contains wall-clock time and is not byte-stable across rerenders."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/up_eu_us_gac_vhp_shared_vpc.sh:236",
+          "note": "The main N2 lifecycle wrapper refuses an inventory with no database nodes."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/extend_eu_us_gac_with_apac.sh:161",
+          "note": "The N3 extension wrapper validates the exact expected APAC node count."
+        }
+      ],
+      "id": "inventory-runtime-inputs",
+      "status": "warn"
+    },
+    {
+      "description": "Product major/minor families are pinned, but exact Ansible, collection, package-build, and installer versions are not fully locked.",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/ansible/requirements.yml:2",
+          "note": "The required collection has no version constraint."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/ansible_shim.py:30",
+          "note": "The launcher patches an internal Ansible RPC method and is version-sensitive."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/run_ansible.sh:20",
+          "note": "Ansible uses the host/system Python unless an external variable overrides it."
+        },
+        {
+          "location": "master-regimes-infra/ansible/roles/postgresql_citus/tasks/main.yml:88",
+          "note": "PostgreSQL/Citus packages are held only after the currently available build is installed."
+        },
+        {
+          "location": "master-regimes-infra/ansible/roles/analytics_node/defaults/main.yml:10",
+          "note": "The uv installer URL is mutable and has no content checksum in the role contract."
+        }
+      ],
+      "id": "toolchain-pins",
+      "status": "warn"
+    },
+    {
+      "description": "psql-benchmarks has an exact-HEAD sync path; citus-datagen deployment remains branch-oriented.",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/configs/systems/eu-us-gac-vps.yml:100",
+          "note": "The topology selects a mutable Git branch for deployed experiment tools."
+        },
+        {
+          "location": "master-regimes-infra/ansible/roles/citus_datagen/tasks/main.yml:107",
+          "note": "The datagen role references an exact-sync target that is absent from the Makefile."
+        },
+        {
+          "location": "master-regimes-infra/Makefile:3",
+          "note": "The declared sync targets cover psql-benchmarks but contain no datagen counterpart."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/sync_remote_repo.py:91",
+          "note": "The psql-benchmarks synchronization path captures the local HEAD."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/sync_remote_repo.py:265",
+          "note": "The same path verifies the remote HEAD after synchronization."
+        }
+      ],
+      "id": "experiment-tool-source",
+      "status": "warn"
+    },
+    {
+      "description": "Static rendered-file drift and basic PostgreSQL/Citus state are checked, but complete live-state drift is not enforced.",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/ansible/playbooks/verify-citus.yml:24",
+          "note": "The verifier checks PostgreSQL major version."
+        },
+        {
+          "location": "master-regimes-infra/ansible/playbooks/verify-citus.yml:71",
+          "note": "The verifier checks the Citus 14.0 extension family."
+        },
+        {
+          "location": "master-regimes-infra/Makefile:346",
+          "note": "The drift target compares rendered files byte-for-byte."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/probe_lab_environment.py:180",
+          "note": "A separate probe can flag residual runtime settings or network state."
+        }
+      ],
+      "id": "drift-and-verification",
+      "status": "warn"
+    },
+    {
+      "description": "Dataset profiles, per-region overrides, generator commit, profile hash, seed/time parameters, counts, shard placement, and aggregate hashes are represented in the loader/audit contract.",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/common-scripts/apply_dataset_profile.py:950",
+          "note": "The loader supports per-region effective distributions."
+        },
+        {
+          "location": "master-regimes-infra/tests/test_apply_dataset_profile.py:37",
+          "note": "An offline test covers a region-specific heavy-skew override."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/apply_dataset_profile.py:1051",
+          "note": "Each load manifest records the deployed datagen commit."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/apply_dataset_profile.py:707",
+          "note": "The snapshot contract explicitly excludes a full row-level checksum."
+        }
+      ],
+      "id": "dataset-contract",
+      "status": "pass"
+    },
+    {
+      "description": "The loader restores temporary configuration and processes, but it does not restore the previous database contents after a failed destructive reload.",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/common-scripts/apply_dataset_profile.py:958",
+          "note": "The loader snapshots the datagen environment file."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/apply_dataset_profile.py:968",
+          "note": "The cleanup trap restores that environment file."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/apply_dataset_profile.py:993",
+          "note": "The actual data operation is destructive reset-and-load."
+        }
+      ],
+      "id": "dataset-failure-rollback",
+      "status": "warn"
+    },
+    {
+      "description": "The experiment removes its root qdisc in both directions and records before/after state, but does not restore an arbitrary prior qdisc configuration.",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/common-scripts/manage_network_pressure.py:144",
+          "note": "Apply and reset remove the complete root qdisc before proceeding."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/manage_network_pressure.py:195",
+          "note": "The tool records the pre-action qdisc for audit."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/run_database_sweep.py:1472",
+          "note": "Network reset failures are tolerated by the sweep cleanup path."
+        },
+        {
+          "location": "master-regimes-infra/tests/test_lab_default_reset_contract.py:10",
+          "note": "The Make contract includes resetting both traffic directions."
+        }
+      ],
+      "id": "network-rollback",
+      "status": "warn"
+    },
+    {
+      "description": "Most roles converge effective state, but strict no-change idempotence and future repository refresh are not guaranteed.",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/ansible/roles/postgresql_citus/tasks/main.yml:534",
+          "note": "Some SQL convergence operations execute on every role run."
+        },
+        {
+          "location": "master-regimes-infra/ansible/roles/postgresql_citus/tasks/main.yml:588",
+          "note": "Citus membership is actively converged by removing unexpected workers."
+        },
+        {
+          "location": "master-regimes-infra/ansible/roles/postgresql_citus/tasks/main.yml:52",
+          "note": "Repository setup is skipped permanently after a marker is created."
+        }
+      ],
+      "id": "ansible-idempotence",
+      "status": "warn"
+    }
+  ],
+  "findings": [
+    {
+      "classification": "reproducible_configuration",
+      "evidence": [
+        {
+          "location": "sources/master-regimes-infra/",
+          "note": "Compared 39 explicit files by SHA-256; mismatches: 0."
+        }
+      ],
+      "id": "A-001",
+      "impact": "The public package preserves the audited playbooks, roles, renderers, and orchestration logic. This does not by itself preserve live Terraform state or installed package builds.",
+      "recommendation": "Keep the package immutable and publish its checksum manifest with the thesis release.",
+      "severity": "positive",
+      "summary": "The 39 critical files in the audit allow-list are byte-identical.",
+      "title": "Packaged configuration source matches the active repository"
+    },
+    {
+      "classification": "mixed",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/ansible/inventory/terraform_inventory.py:29",
+          "note": "Inventory addresses and groups are derived from current Terraform outputs."
+        },
+        {
+          "location": "master-regimes-infra/ansible/inventory/terraform_inventory.py:15",
+          "note": "Terraform/output failures can collapse to an empty inventory payload."
+        },
+        {
+          "location": "master-regimes-infra/src/master_regimes_infra/render.py:445",
+          "note": "Rendered metadata contains wall-clock time and is not byte-stable across rerenders."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/up_eu_us_gac_vhp_shared_vpc.sh:236",
+          "note": "The main N2 lifecycle wrapper refuses an inventory with no database nodes."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/extend_eu_us_gac_with_apac.sh:161",
+          "note": "The N3 extension wrapper validates the exact expected APAC node count."
+        }
+      ],
+      "id": "A-002",
+      "impact": "A fresh deployment can reproduce the topology roles but not the original addresses or provider allocation from this repository alone. Direct invocation of the inventory script can also return an empty payload after a Terraform failure.",
+      "recommendation": "Archive non-secret Terraform outputs needed for provenance, retain wrapper group-count gates, and make inventory generation fail closed outside explicit empty-infrastructure operations.",
+      "severity": "medium",
+      "summary": "Logical group construction is encoded in source, while concrete IP addresses, VPC identifiers, and SSH/CIDR values are runtime inputs.",
+      "title": "Inventory rendering depends on live Terraform and environment state"
+    },
+    {
+      "classification": "runtime_dependent",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/ansible/requirements.yml:2",
+          "note": "The required collection has no version constraint."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/ansible_shim.py:30",
+          "note": "The launcher patches an internal Ansible RPC method and is version-sensitive."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/run_ansible.sh:20",
+          "note": "Ansible uses the host/system Python unless an external variable overrides it."
+        },
+        {
+          "location": "master-regimes-infra/ansible/roles/postgresql_citus/tasks/main.yml:88",
+          "note": "PostgreSQL/Citus packages are held only after the currently available build is installed."
+        },
+        {
+          "location": "master-regimes-infra/ansible/roles/analytics_node/defaults/main.yml:10",
+          "note": "The uv installer URL is mutable and has no content checksum in the role contract."
+        }
+      ],
+      "id": "A-003",
+      "impact": "The same source can converge to functionally similar hosts at different dates while installing different package builds or encountering an incompatible Ansible internal API. This limits bit-for-bit reconstruction, not the documented logical topology.",
+      "recommendation": "Publish an execution image or lock manifest containing Ansible core/collection versions, OS image identity, exact apt package versions, repository key/script hashes, and uv version/checksum.",
+      "severity": "high",
+      "summary": "PostgreSQL 18 and Citus 14.0 are selected by package family, but Ansible core is absent from the Python lock, ansible.posix is unversioned, apt packages omit exact Debian build versions, and remote installers/repository setup are mutable downloads.",
+      "title": "Exact configuration-management toolchain and binary builds are not fully pinned"
+    },
+    {
+      "classification": "mixed",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/configs/systems/eu-us-gac-vps.yml:100",
+          "note": "The topology selects a mutable Git branch for deployed experiment tools."
+        },
+        {
+          "location": "master-regimes-infra/ansible/roles/citus_datagen/tasks/main.yml:107",
+          "note": "The datagen role references an exact-sync target that is absent from the Makefile."
+        },
+        {
+          "location": "master-regimes-infra/Makefile:3",
+          "note": "The declared sync targets cover psql-benchmarks but contain no datagen counterpart."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/sync_remote_repo.py:91",
+          "note": "The psql-benchmarks synchronization path captures the local HEAD."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/sync_remote_repo.py:265",
+          "note": "The same path verifies the remote HEAD after synchronization."
+        }
+      ],
+      "id": "A-004",
+      "impact": "A future dataset reload can use different generator code even with the same YAML profile. Completed load manifests mitigate this by recording the remote datagen commit, but a clean rebuild is not guaranteed to select it automatically.",
+      "recommendation": "Add exact commit variables for both tools, implement or remove repo-sync-datagen, and fail dataset loading when the deployed commit differs from the manifest contract.",
+      "severity": "high",
+      "summary": "The psql-benchmarks helper transfers and verifies a specific Git HEAD, while the citus-datagen Ansible role clones/updates a branch and documents a Make target that does not exist.",
+      "title": "Experiment tool deployment is not uniformly commit-pinned"
+    },
+    {
+      "classification": "runtime_dependent",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/ansible/playbooks/verify-citus.yml:24",
+          "note": "The verifier checks PostgreSQL major version."
+        },
+        {
+          "location": "master-regimes-infra/ansible/playbooks/verify-citus.yml:71",
+          "note": "The verifier checks the Citus 14.0 extension family."
+        },
+        {
+          "location": "master-regimes-infra/Makefile:346",
+          "note": "The drift target compares rendered files byte-for-byte."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/probe_lab_environment.py:180",
+          "note": "A separate probe can flag residual runtime settings or network state."
+        }
+      ],
+      "id": "A-005",
+      "impact": "A host may pass the current verifier while retaining experiment-specific runtime state. The lab probe broadens detection but reports an attention state separately rather than serving as a mandatory convergence gate.",
+      "recommendation": "Create one read-only post-convergence audit that hashes or records every thesis-relevant live setting and make non-baseline attention fail experiment admission.",
+      "severity": "medium",
+      "summary": "The primary drift gate validates generated files, and verify-citus checks major software state and worker count. It does not establish full equivalence of GUCs, TLS/PgBouncer state, FDW mappings/options, tool commits, dataset identity, clock service, or tc/netem baseline.",
+      "title": "Runtime drift checks cover only a subset of managed state"
+    },
+    {
+      "classification": "mixed",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/common-scripts/apply_dataset_profile.py:950",
+          "note": "The loader supports per-region effective distributions."
+        },
+        {
+          "location": "master-regimes-infra/tests/test_apply_dataset_profile.py:37",
+          "note": "An offline test covers a region-specific heavy-skew override."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/apply_dataset_profile.py:1051",
+          "note": "Each load manifest records the deployed datagen commit."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/apply_dataset_profile.py:707",
+          "note": "The snapshot contract explicitly excludes a full row-level checksum."
+        }
+      ],
+      "id": "A-006",
+      "impact": "The package can establish which deterministic construction was requested and whether aggregate placement properties match. It cannot independently prove byte-identical table contents after a new load without trusting the pinned generator and database behavior.",
+      "recommendation": "Retain archived rendered profiles and SQL, pin the generator commit, and add a scalable deterministic table-content checksum for future releases.",
+      "severity": "medium",
+      "summary": "The loader records the profile, seed/time contract, datagen commit, table counts, shard distribution, hot-tenant placement, and component hashes. It explicitly does not checksum every generated row.",
+      "title": "Dataset provenance is strong at profile and aggregate level but not row-complete"
+    },
+    {
+      "classification": "runtime_dependent",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/common-scripts/apply_dataset_profile.py:958",
+          "note": "The loader snapshots the datagen environment file."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/apply_dataset_profile.py:968",
+          "note": "The cleanup trap restores that environment file."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/apply_dataset_profile.py:993",
+          "note": "The actual data operation is destructive reset-and-load."
+        }
+      ],
+      "id": "A-007",
+      "impact": "A failed load can leave an unusable or partial dataset while the wrapper has restored its configuration file. Experiment admission must therefore depend on a successful post-load capability audit, not merely cleanup completion.",
+      "recommendation": "Require a pre-load backup/snapshot or load into a replacement database, and gate every experiment on a completed dataset audit and expected snapshot identity.",
+      "severity": "high",
+      "summary": "The cleanup trap restores .env and terminates the generator process, but reset-and-load can already have dropped or partially recreated data.",
+      "title": "Dataset apply is not transactionally reversible"
+    },
+    {
+      "classification": "runtime_dependent",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/common-scripts/manage_network_pressure.py:144",
+          "note": "Apply and reset remove the complete root qdisc before proceeding."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/manage_network_pressure.py:195",
+          "note": "The tool records the pre-action qdisc for audit."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/run_database_sweep.py:1472",
+          "note": "Network reset failures are tolerated by the sweep cleanup path."
+        },
+        {
+          "location": "master-regimes-infra/tests/test_lab_default_reset_contract.py:10",
+          "note": "The Make contract includes resetting both traffic directions."
+        }
+      ],
+      "id": "A-008",
+      "impact": "This is reproducible when the admitted baseline is deliberately 'no experiment root qdisc'. It is unsafe as a generic rollback on hosts with pre-existing traffic control or when cleanup fails silently.",
+      "recommendation": "Make the no-root-qdisc precondition explicit, reject non-baseline admission, and treat reset failure or residual netem as a hard stop.",
+      "severity": "medium",
+      "summary": "The reset path deletes the root qdisc and the sweep invokes it in a finally block with failure allowed. It does not replay the saved prior qdisc graph or enforce equality with a baseline profile.",
+      "title": "Network rollback means removal of the experiment qdisc, not exact restoration"
+    },
+    {
+      "classification": "mixed",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/ansible/roles/postgresql_citus/tasks/main.yml:534",
+          "note": "Some SQL convergence operations execute on every role run."
+        },
+        {
+          "location": "master-regimes-infra/ansible/roles/postgresql_citus/tasks/main.yml:588",
+          "note": "Citus membership is actively converged by removing unexpected workers."
+        },
+        {
+          "location": "master-regimes-infra/ansible/roles/postgresql_citus/tasks/main.yml:52",
+          "note": "Repository setup is skipped permanently after a marker is created."
+        }
+      ],
+      "id": "A-009",
+      "impact": "Repeated application should usually preserve effective service behavior, but an Ansible zero-change second run is not established and repository fixes may require explicit marker removal.",
+      "recommendation": "Add check-mode/idempotence CI against disposable hosts and version the repository marker by installer hash or desired repository revision.",
+      "severity": "low",
+      "summary": "Declarative apt/file/template tasks and explicit Citus membership checks converge host state, while password/ownership SQL, builds, and branch updates may report changes repeatedly. A repository marker also freezes setup logic after first use.",
+      "title": "Roles are mostly convergent rather than strictly idempotent"
+    },
+    {
+      "classification": "runtime_dependent",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/common-scripts/run_gac_fdw_bootstrap.py:117",
+          "note": "Regional helper views are changed before the external GAC bootstrap."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/run_gac_fdw_bootstrap.py:329",
+          "note": "GAC FDW creation/import is delegated to a separately deployed tool."
+        },
+        {
+          "location": "master-regimes-infra/tests/test_gac_fdw_bootstrap.py:24",
+          "note": "The offline test verifies expected view names, not distributed transactional rollback."
+        }
+      ],
+      "id": "A-010",
+      "impact": "A failed bootstrap can leave regional definitions and GAC foreign objects at different revisions until the idempotent bootstrap is rerun successfully.",
+      "recommendation": "Add a post-bootstrap contract audit covering every region and GAC object, and require it before query collection.",
+      "severity": "medium",
+      "summary": "Regional views are created/replaced and the GAC bootstrap then runs as a separate remote operation. No distributed transaction restores all nodes after an intermediate failure.",
+      "title": "FDW bootstrap is auditable but not atomic across regional and GAC nodes"
+    },
+    {
+      "classification": "runtime_dependent",
+      "evidence": [
+        {
+          "location": "master-regimes-infra/common-scripts/run_query_collection.py:1456",
+          "note": "The collector maintains per-node runtime clock calibration."
+        },
+        {
+          "location": "master-regimes-infra/common-scripts/run_query_collection.py:1986",
+          "note": "Calibration data is retained in the collection manifest."
+        }
+      ],
+      "id": "A-011",
+      "impact": "This supports trace correlation for a completed run but does not establish identical host clock discipline across fresh deployments.",
+      "recommendation": "Record time-service state and offset bounds in the preflight audit, while retaining the existing per-run calibration evidence.",
+      "severity": "low",
+      "summary": "No NTP/chrony role is present in the audited configuration. The collector instead probes node clocks, translates capture windows, and saves the calibrations.",
+      "title": "Clock correlation is calibrated at collection time rather than configuration-managed"
+    }
+  ],
+  "schema_version": "1.0",
+  "scope": {
+    "excluded": [
+      "generated ansible/group_vars/all.yml",
+      "generated inventory and Terraform state/output",
+      "secrets, .env files, SSH keys, and credentials",
+      "live hosts, cloud APIs, package repositories, and SSH",
+      "experiment dataset profiles/results outside the two assigned roots"
+    ],
+    "files_read": [
+      "Makefile",
+      "pyproject.toml",
+      "uv.lock",
+      "ansible/requirements.yml",
+      "ansible/playbooks/site.yml",
+      "ansible/playbooks/verify-citus.yml",
+      "ansible/playbooks/reinstall-postgresql.yml",
+      "ansible/inventory/terraform_inventory.py",
+      "ansible/roles/common/defaults/main.yml",
+      "ansible/roles/common/tasks/main.yml",
+      "ansible/roles/postgresql_citus/defaults/main.yml",
+      "ansible/roles/postgresql_citus/tasks/main.yml",
+      "ansible/roles/analytics_node/defaults/main.yml",
+      "ansible/roles/analytics_node/tasks/main.yml",
+      "ansible/roles/citus_datagen/defaults/main.yml",
+      "ansible/roles/citus_datagen/tasks/main.yml",
+      "ansible/roles/psql_benchmarks/defaults/main.yml",
+      "ansible/roles/psql_benchmarks/tasks/main.yml",
+      "ansible/roles/pgbouncer/tasks/main.yml",
+      "common-scripts/ansible_shim.py",
+      "common-scripts/run_ansible.sh",
+      "common-scripts/up_eu_us_gac_vhp_shared_vpc.sh",
+      "common-scripts/extend_eu_us_gac_with_apac.sh",
+      "common-scripts/sync_remote_repo.py",
+      "common-scripts/apply_dataset_profile.py",
+      "common-scripts/run_database_sweep.py",
+      "common-scripts/run_gac_fdw_bootstrap.py",
+      "common-scripts/manage_network_pressure.py",
+      "common-scripts/manage_network_latency.py",
+      "common-scripts/probe_lab_environment.py",
+      "common-scripts/run_query_collection.py",
+      "common-scripts/collect_single_eu_manifest.py",
+      "src/master_regimes_infra/render.py",
+      "configs/systems/eu-vps-single.yml",
+      "configs/systems/eu-us-gac-vps.yml",
+      "configs/systems/eu-us-apac-gac-vps.yml",
+      "tests/test_apply_dataset_profile.py",
+      "tests/test_gac_fdw_bootstrap.py",
+      "tests/test_lab_default_reset_contract.py"
+    ],
+    "package_label": "master-thesis-final/sources/master-regimes-infra",
+    "source_label": "master-regimes-infra"
+  },
+  "scope_limitations": [
+    "This audit proves source-package parity only for the explicit allow-list, not for generated state or secrets.",
+    "It does not determine which dataset profile was used by a particular archived experiment because experiment profiles and run artifacts are outside this subaudit's assigned roots.",
+    "The code supports per-region distribution overrides, including one-region heavy skew, but actual use must be established from archived dataset manifests by the dataset/corpus audit.",
+    "No Ansible syntax/check-mode/idempotence run was executed because that would load generated inventory/group variables or contact managed hosts.",
+    "No package repository, Git remote, cloud provider, or live database state was queried."
+  ],
+  "snapshot_parity": [
+    {
+      "match": true,
+      "package_sha256": "7cd4dce3b9edc1109e10e3282b85a8c7d9680c2497785f0d03c7cc86c68a531f",
+      "path": "Makefile",
+      "source_sha256": "7cd4dce3b9edc1109e10e3282b85a8c7d9680c2497785f0d03c7cc86c68a531f"
+    },
+    {
+      "match": true,
+      "package_sha256": "a82b9bf71a229f1a93b7f2e387e5d3676722ec0e7f0b2e422d942c9358b86c9e",
+      "path": "pyproject.toml",
+      "source_sha256": "a82b9bf71a229f1a93b7f2e387e5d3676722ec0e7f0b2e422d942c9358b86c9e"
+    },
+    {
+      "match": true,
+      "package_sha256": "fc014e0dba7b62ce5dce89410a04ad0845ab4864e8bb32a10d4a242f83eb7ddd",
+      "path": "uv.lock",
+      "source_sha256": "fc014e0dba7b62ce5dce89410a04ad0845ab4864e8bb32a10d4a242f83eb7ddd"
+    },
+    {
+      "match": true,
+      "package_sha256": "ae05fcd2854ad4d12f825223d2a0e23c2e04602fbe1e31d70190a762a0dd02c1",
+      "path": "ansible/requirements.yml",
+      "source_sha256": "ae05fcd2854ad4d12f825223d2a0e23c2e04602fbe1e31d70190a762a0dd02c1"
+    },
+    {
+      "match": true,
+      "package_sha256": "2853cde75ce6da32d4f063b5821f2b0fb96d592688044e5126ea2169fef70842",
+      "path": "ansible/playbooks/site.yml",
+      "source_sha256": "2853cde75ce6da32d4f063b5821f2b0fb96d592688044e5126ea2169fef70842"
+    },
+    {
+      "match": true,
+      "package_sha256": "85679358936f181b111e0954d6d734b84405eb57f069e94e7578c769ef57797d",
+      "path": "ansible/playbooks/verify-citus.yml",
+      "source_sha256": "85679358936f181b111e0954d6d734b84405eb57f069e94e7578c769ef57797d"
+    },
+    {
+      "match": true,
+      "package_sha256": "93a3d7751238916eb38f9b8fa46980cf113d0d1073412d6cefcdab53a76d2938",
+      "path": "ansible/playbooks/reinstall-postgresql.yml",
+      "source_sha256": "93a3d7751238916eb38f9b8fa46980cf113d0d1073412d6cefcdab53a76d2938"
+    },
+    {
+      "match": true,
+      "package_sha256": "adb4a0ae57121c6d9c87d90740fdd710eb9d049e06b327ecd6b17d5e962f6ba8",
+      "path": "ansible/inventory/terraform_inventory.py",
+      "source_sha256": "adb4a0ae57121c6d9c87d90740fdd710eb9d049e06b327ecd6b17d5e962f6ba8"
+    },
+    {
+      "match": true,
+      "package_sha256": "39fafb9effd7225dbab7b6704dc5f97af9e9cb4e83418f1077428a646129e9f1",
+      "path": "ansible/roles/common/defaults/main.yml",
+      "source_sha256": "39fafb9effd7225dbab7b6704dc5f97af9e9cb4e83418f1077428a646129e9f1"
+    },
+    {
+      "match": true,
+      "package_sha256": "ab124e71a1dc0cb0e71084e2b9f6180c03052045f3d8ef887f8a44f90d8bb098",
+      "path": "ansible/roles/common/tasks/main.yml",
+      "source_sha256": "ab124e71a1dc0cb0e71084e2b9f6180c03052045f3d8ef887f8a44f90d8bb098"
+    },
+    {
+      "match": true,
+      "package_sha256": "e230f0fac280d95b795dd0f9dd4c2c9cd0bf221bdc9a37bd9f0071e86112efc7",
+      "path": "ansible/roles/postgresql_citus/defaults/main.yml",
+      "source_sha256": "e230f0fac280d95b795dd0f9dd4c2c9cd0bf221bdc9a37bd9f0071e86112efc7"
+    },
+    {
+      "match": true,
+      "package_sha256": "768b523cdd245002f56b3a253063bcf871b2f7851b70bcf7cd6c663c082c334c",
+      "path": "ansible/roles/postgresql_citus/tasks/main.yml",
+      "source_sha256": "768b523cdd245002f56b3a253063bcf871b2f7851b70bcf7cd6c663c082c334c"
+    },
+    {
+      "match": true,
+      "package_sha256": "518bb08397575d8c5bbeb7f68a3266c076417c9e382ffffdaa84aa668a0644b2",
+      "path": "ansible/roles/analytics_node/defaults/main.yml",
+      "source_sha256": "518bb08397575d8c5bbeb7f68a3266c076417c9e382ffffdaa84aa668a0644b2"
+    },
+    {
+      "match": true,
+      "package_sha256": "6b562b1ce710743eafdfa5d22600c897d526a9de4158071572b1e867c55857d1",
+      "path": "ansible/roles/analytics_node/tasks/main.yml",
+      "source_sha256": "6b562b1ce710743eafdfa5d22600c897d526a9de4158071572b1e867c55857d1"
+    },
+    {
+      "match": true,
+      "package_sha256": "c38b0bbc9604cc0318c582c1e37e6225a5b401b3b8f1a99fe7445b0e4e5ea5b7",
+      "path": "ansible/roles/citus_datagen/defaults/main.yml",
+      "source_sha256": "c38b0bbc9604cc0318c582c1e37e6225a5b401b3b8f1a99fe7445b0e4e5ea5b7"
+    },
+    {
+      "match": true,
+      "package_sha256": "694d949036645f2108efa830c651c536dbfebcac18776b940c0199da3ce3fcf2",
+      "path": "ansible/roles/citus_datagen/tasks/main.yml",
+      "source_sha256": "694d949036645f2108efa830c651c536dbfebcac18776b940c0199da3ce3fcf2"
+    },
+    {
+      "match": true,
+      "package_sha256": "ce177aeb177c869977c0048b40d3b5113e19dcc721361ebb1cd14698e70191bc",
+      "path": "ansible/roles/psql_benchmarks/defaults/main.yml",
+      "source_sha256": "ce177aeb177c869977c0048b40d3b5113e19dcc721361ebb1cd14698e70191bc"
+    },
+    {
+      "match": true,
+      "package_sha256": "71b287f7e154388b7cc4f4ea4e368dda3b393d3cdadfcddab07bf293e29b8158",
+      "path": "ansible/roles/psql_benchmarks/tasks/main.yml",
+      "source_sha256": "71b287f7e154388b7cc4f4ea4e368dda3b393d3cdadfcddab07bf293e29b8158"
+    },
+    {
+      "match": true,
+      "package_sha256": "90b74ba8160e75bd081416e5f3002757b1f60b05f1cdc66d1b1ff890e5f354d0",
+      "path": "ansible/roles/pgbouncer/tasks/main.yml",
+      "source_sha256": "90b74ba8160e75bd081416e5f3002757b1f60b05f1cdc66d1b1ff890e5f354d0"
+    },
+    {
+      "match": true,
+      "package_sha256": "45cda980616169d8348680108ebfc102e30aa23e904262fcfc4b4784e4c1bfec",
+      "path": "common-scripts/ansible_shim.py",
+      "source_sha256": "45cda980616169d8348680108ebfc102e30aa23e904262fcfc4b4784e4c1bfec"
+    },
+    {
+      "match": true,
+      "package_sha256": "064042acb116fd9657452d02cd654468387ee2ce62dafbbe5dd7dbf8f6b8e25b",
+      "path": "common-scripts/run_ansible.sh",
+      "source_sha256": "064042acb116fd9657452d02cd654468387ee2ce62dafbbe5dd7dbf8f6b8e25b"
+    },
+    {
+      "match": true,
+      "package_sha256": "52e4e6c8a40e632dd0235cdf92c226332ab4e043133b32ce74468c34bf843adf",
+      "path": "common-scripts/up_eu_us_gac_vhp_shared_vpc.sh",
+      "source_sha256": "52e4e6c8a40e632dd0235cdf92c226332ab4e043133b32ce74468c34bf843adf"
+    },
+    {
+      "match": true,
+      "package_sha256": "f685cf89a2a575e2a2d48f23c4130b2d4d843e7a2a42e806e1871c471c7a5c8f",
+      "path": "common-scripts/extend_eu_us_gac_with_apac.sh",
+      "source_sha256": "f685cf89a2a575e2a2d48f23c4130b2d4d843e7a2a42e806e1871c471c7a5c8f"
+    },
+    {
+      "match": true,
+      "package_sha256": "46448bb14eaceca1760de16a639e7b0f9df5ef7e9a0dfce82b2c1715ac6a8529",
+      "path": "common-scripts/sync_remote_repo.py",
+      "source_sha256": "46448bb14eaceca1760de16a639e7b0f9df5ef7e9a0dfce82b2c1715ac6a8529"
+    },
+    {
+      "match": true,
+      "package_sha256": "b004a860de22533ddeeb69663eb03480c6cf7f25e91ef70bf4d7214c9ef7ba7e",
+      "path": "common-scripts/apply_dataset_profile.py",
+      "source_sha256": "b004a860de22533ddeeb69663eb03480c6cf7f25e91ef70bf4d7214c9ef7ba7e"
+    },
+    {
+      "match": true,
+      "package_sha256": "8aaffa86c853e89cfa9321cbb809a68fcbf78f662be023e296ba8ae382d3bb66",
+      "path": "common-scripts/run_database_sweep.py",
+      "source_sha256": "8aaffa86c853e89cfa9321cbb809a68fcbf78f662be023e296ba8ae382d3bb66"
+    },
+    {
+      "match": true,
+      "package_sha256": "6fe831c8a2ea3ee1c164e7702c4a8ce66aef8a291dd0276b9a942bcfa775d43a",
+      "path": "common-scripts/run_gac_fdw_bootstrap.py",
+      "source_sha256": "6fe831c8a2ea3ee1c164e7702c4a8ce66aef8a291dd0276b9a942bcfa775d43a"
+    },
+    {
+      "match": true,
+      "package_sha256": "fa6e70f3ee5aae3e244f5894fb72d2732a6b34e1cb3764cbafd6979a0191b22d",
+      "path": "common-scripts/manage_network_pressure.py",
+      "source_sha256": "fa6e70f3ee5aae3e244f5894fb72d2732a6b34e1cb3764cbafd6979a0191b22d"
+    },
+    {
+      "match": true,
+      "package_sha256": "d3e165dafa520d4650ef7902d83d101841594fdc41d423d7f37dc835106e9fa0",
+      "path": "common-scripts/manage_network_latency.py",
+      "source_sha256": "d3e165dafa520d4650ef7902d83d101841594fdc41d423d7f37dc835106e9fa0"
+    },
+    {
+      "match": true,
+      "package_sha256": "b1346fd9a3472afca426191b1b86e315dc1d0537a3fe3398dc8ecc7258db17ea",
+      "path": "common-scripts/probe_lab_environment.py",
+      "source_sha256": "b1346fd9a3472afca426191b1b86e315dc1d0537a3fe3398dc8ecc7258db17ea"
+    },
+    {
+      "match": true,
+      "package_sha256": "301344e50cc7f7f50969c944361f0f71a99ddfd539fd760cdfa2c91b5b817055",
+      "path": "common-scripts/run_query_collection.py",
+      "source_sha256": "301344e50cc7f7f50969c944361f0f71a99ddfd539fd760cdfa2c91b5b817055"
+    },
+    {
+      "match": true,
+      "package_sha256": "336849274743182a1736935a89146248dbd828902099aeb9dd6d892da24a461f",
+      "path": "common-scripts/collect_single_eu_manifest.py",
+      "source_sha256": "336849274743182a1736935a89146248dbd828902099aeb9dd6d892da24a461f"
+    },
+    {
+      "match": true,
+      "package_sha256": "02f38b2e99dff1f4b1d31a6d5ba783aaf16308017dafad76ffcb710de9bcc2e6",
+      "path": "src/master_regimes_infra/render.py",
+      "source_sha256": "02f38b2e99dff1f4b1d31a6d5ba783aaf16308017dafad76ffcb710de9bcc2e6"
+    },
+    {
+      "match": true,
+      "package_sha256": "c285b297b20e074c42fde6bdb276c84adabba334026064628f36e7cf8dc2eb89",
+      "path": "configs/systems/eu-vps-single.yml",
+      "source_sha256": "c285b297b20e074c42fde6bdb276c84adabba334026064628f36e7cf8dc2eb89"
+    },
+    {
+      "match": true,
+      "package_sha256": "e1f135fdbe2d23f4f62de9d9131e1452ab37349f5c4b31b2b610721c17cde2f1",
+      "path": "configs/systems/eu-us-gac-vps.yml",
+      "source_sha256": "e1f135fdbe2d23f4f62de9d9131e1452ab37349f5c4b31b2b610721c17cde2f1"
+    },
+    {
+      "match": true,
+      "package_sha256": "0b76f6882be366f170fa98a91a5f739177e922fcd7b117a93dd420e8d85b664c",
+      "path": "configs/systems/eu-us-apac-gac-vps.yml",
+      "source_sha256": "0b76f6882be366f170fa98a91a5f739177e922fcd7b117a93dd420e8d85b664c"
+    },
+    {
+      "match": true,
+      "package_sha256": "b647641be56287422a7562389ab2ccfd03be207d078e39e775997034b493dd9b",
+      "path": "tests/test_apply_dataset_profile.py",
+      "source_sha256": "b647641be56287422a7562389ab2ccfd03be207d078e39e775997034b493dd9b"
+    },
+    {
+      "match": true,
+      "package_sha256": "c8e82917855d23bbc05629b14dd25dd596b6c118a21931d3bdb377cff02bec34",
+      "path": "tests/test_gac_fdw_bootstrap.py",
+      "source_sha256": "c8e82917855d23bbc05629b14dd25dd596b6c118a21931d3bdb377cff02bec34"
+    },
+    {
+      "match": true,
+      "package_sha256": "b30d4e10f6be74c0c2c0f20e4909b4805089077bf1dcda09413f09d97e8001be",
+      "path": "tests/test_lab_default_reset_contract.py",
+      "source_sha256": "b30d4e10f6be74c0c2c0f20e4909b4805089077bf1dcda09413f09d97e8001be"
+    }
+  ],
+  "summary": {
+    "checks": {
+      "pass": 3,
+      "warn": 7
+    },
+    "critical_files_compared": 39,
+    "findings": {
+      "high": 3,
+      "low": 2,
+      "medium": 5,
+      "positive": 1
+    },
+    "overall_assessment": "The packaged source reproduces declarative topology and orchestration intent, but exact binary/runtime reconstruction requires additional pinned external inputs and stronger post-convergence/rollback gates.",
+    "snapshot_mismatches": 0
+  }
+}

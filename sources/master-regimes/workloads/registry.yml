@@ -1,0 +1,70 @@
+# Compatibility alias for older single-region workflows.
+# New workload definitions should go into workloads/suites/*.yml.
+templates:
+  q01_tenant_rollup:
+    file: templates/single-region/q01_tenant_rollup.sql.j2
+    family: aggregation
+    logical_question_id: daily_tenant_rollup
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: low
+      wan_latency: none
+    description: Regionalno reducibilna agregacija po tenant-u.
+    expected_pressure_tags:
+      - regional_reduction
+      - low_global_fanin
+    parameters:
+      lookback_days: [1, 7, 30]
+      min_value: [0, 500]
+    required_dataset_capabilities:
+      - supports_reference_join
+
+  q02_global_user_topk:
+    file: templates/single-region/q02_global_user_topk.sql.j2
+    family: topk
+    logical_question_id: user_value_topk
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - gac_finalization_heavy
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: high
+      wan_latency: none
+    description: Globalni Top-K korisnika kroz vise regiona.
+    expected_pressure_tags:
+      - global_fanin
+      - final_ordering
+      - topk
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [10, 100]
+    required_dataset_capabilities:
+      - supports_high_group_cardinality
+
+  q10_top_tenants:
+    file: templates/single-region/q10_top_tenants.sql.j2
+    family: topk
+    logical_question_id: top_tenants
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - well_reduced_localized
+      - gac_finalization_heavy
+      - skew_imbalance
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: high
+      wan_latency: none
+    description: Regional Top-K tenants baseline for paired FDW/ETL top_tenants corpus cells.
+    expected_pressure_tags:
+      - topk
+      - final_ordering
+      - high_group_cardinality
+      - worker_skew_probe
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [10, 50]
+    intervention_roles:
+      - baseline

@@ -1,0 +1,17 @@
+                                           QUERY PLAN
+------------------------------------------------------------------------------------------------
+ Aggregate  (cost=310.07..310.08 rows=1 width=48)
+   Output: sum((count(*))), min((min(e.created_at))), max((max(e.created_at)))
+   ->  Append  (cost=119.20..310.05 rows=2 width=24)
+         ->  Foreign Scan  (cost=119.20..155.02 rows=1 width=24)
+               Output: (count(*)), (min(e.created_at)), (max(e.created_at))
+               Relations: Aggregate on (fdw_eu.events e)
+               Remote SQL: SELECT count(*), min(created_at), max(created_at) FROM public.events
+         ->  Foreign Scan  (cost=119.20..155.02 rows=1 width=24)
+               Output: (count(*)), (min(e_1.created_at)), (max(e_1.created_at))
+               Relations: Aggregate on (fdw_us.events e_1)
+               Remote SQL: SELECT count(*), min(created_at), max(created_at) FROM public.events
+ Query Identifier: 4893493543323817182
+ Planning:
+   Buffers: shared hit=66
+(14 rows)

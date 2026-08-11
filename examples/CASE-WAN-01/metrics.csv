@@ -1,0 +1,21 @@
+state,role,repetitions,metric,median,unit,meaning
+regional_aggregate,before,5,elapsed_seconds,0.604713,s,End-to-end trajanje
+regional_aggregate,before,5,edge_remote_bytes_sum,48,bytes,Procijenjeni udaljeni obim prema GAC-u
+regional_aggregate,before,5,edge_boundary_wait_share,0.0203965203486,ratio,Udio čekanja na FDW granici
+regional_aggregate,before,5,edge_rtt_context_median_ms_max,0.412,ms,Najveći medijan RTT konteksta
+regional_aggregate,before,5,regional_input_to_remote_rows_ratio,1500000,ratio,Regionalni ulaz po redu vraćenom GAC-u
+regional_aggregate,before,5,remote_region_has_aggregate_share,1,ratio,Udio udaljenih grana sa regionalnom agregacijom
+regional_aggregate,before,5,gac_fanin_to_final_rows_ratio,2,ratio,Broj GAC ulaznih redova po finalnom redu
+regional_aggregate,before,5,gac_temp_written_per_final_row,0,blocks/row,Privremeni blokovi zapisani po finalnom redu
+regional_aggregate,before,5,gac_hash_batch_excess,NA,count,Dodatne hash serije na GAC-u
+regional_aggregate,before,5,spill_location_count,0,count,Broj slojeva sa opaženim preljevom
+regional_aggregate_with_wan_delay,after,5,elapsed_seconds,0.76892,s,End-to-end trajanje
+regional_aggregate_with_wan_delay,after,5,edge_remote_bytes_sum,48,bytes,Procijenjeni udaljeni obim prema GAC-u
+regional_aggregate_with_wan_delay,after,5,edge_boundary_wait_share,0.0587007820928,ratio,Udio čekanja na FDW granici
+regional_aggregate_with_wan_delay,after,5,edge_rtt_context_median_ms_max,10.4,ms,Najveći medijan RTT konteksta
+regional_aggregate_with_wan_delay,after,5,regional_input_to_remote_rows_ratio,1500000,ratio,Regionalni ulaz po redu vraćenom GAC-u
+regional_aggregate_with_wan_delay,after,5,remote_region_has_aggregate_share,1,ratio,Udio udaljenih grana sa regionalnom agregacijom
+regional_aggregate_with_wan_delay,after,5,gac_fanin_to_final_rows_ratio,2,ratio,Broj GAC ulaznih redova po finalnom redu
+regional_aggregate_with_wan_delay,after,5,gac_temp_written_per_final_row,0,blocks/row,Privremeni blokovi zapisani po finalnom redu
+regional_aggregate_with_wan_delay,after,5,gac_hash_batch_excess,NA,count,Dodatne hash serije na GAC-u
+regional_aggregate_with_wan_delay,after,5,spill_location_count,0,count,Broj slojeva sa opaženim preljevom

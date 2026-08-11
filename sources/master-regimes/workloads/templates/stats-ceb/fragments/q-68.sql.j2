@@ -1,0 +1,14 @@
+select count(*) as result_count
+FROM {{ schema_name }}.comments AS c,
+  {{ schema_name }}.posts AS p,
+  {{ schema_name }}.postLinks AS pl,
+  {{ schema_name }}.postHistory AS ph,
+  {{ schema_name }}.votes AS v,
+  {{ schema_name }}.badges AS b
+WHERE p.Id = c.PostId
+  AND p.Id = pl.RelatedPostId
+  AND p.Id = ph.PostId
+  AND p.Id = v.PostId
+  AND b.UserId = c.UserId
+  AND v.CreationDate >= CAST('2010-07-19 00:00:00' AS timestamp)
+  AND v.CreationDate <= CAST('2014-09-10 00:00:00' AS timestamp)

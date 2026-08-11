@@ -1,0 +1,4 @@
+model,feature_count,silhouette,partition_coefficient,average_max_membership,average_top2_margin,dataset_id_nmi,interpretation
+old_m0_reduced,21,0.255,0.521,0.619,0.391,0.248,"Higher separation than final ratio-first space but greater dataset association"
+flow_no_runtime_v2_reduced,26,0.256,0.518,0.640,0.459,0.374,"Runtime removed, but remaining representation has strongest dataset association"
+flow_ratio_v3_reduced,21,0.214,0.530,0.644,0.457,0.001,"Frozen ratio-first space; lower hard-label silhouette but minimal dataset association"

@@ -1,0 +1,7 @@
+evidence_block,physical_executions,measured_conditions_or_states,before_after_pairs,temporal_decisions,distinct_sql_units,repetitions_per_condition,complete_competing_action_matrix,valid_primary_use,invalid_use
+F19 characterization corpus,1964,1964,,,not an action-ranking unit,archived execution states,no,descriptive FCM characterization for RQ1-RQ4,Top-1 action-selection accuracy
+broad intervention corpus,2607,869,418,,30 templates; 13 logical questions,3,no; one measured action per pair,"collector, equivalence, physical response, intervention contract",best-of-three Top-1 ranking
+development/reference ranking panel,312,26,78,26,4 templates; 1 logical question,3,"yes, three actions","development of P64->6, k, distance, P99 and comparators",final independent holdout claim
+final temporal DBA panel,180,45,135,45,15,1,"yes, three actions",temporal first occurrence and repeated-query behavior,45 independent new-query generalization cases
+controlled topology-memory panel,180,45,135,45,15,1,"yes, three actions",controlled N2/N3 shift and local adaptation,independent 45-query action-selection sample
+confirmatory new-query panel,300,15,45,15,15,5,"yes, three actions plus baseline",stability of winners and bounded new-query transfer test,300 independent Top-1 decisions or universal accuracy

@@ -1,0 +1,9 @@
+evaluation_scope,method,episode_count,recommendation_count,coverage,top1_accuracy,mean_regret_log2,fixed_action
+first_occurrence_per_query,static_action_median,15,15,1.0,0.6,0.3886521153553714,mitigate_remote_path_bundle
+first_occurrence_per_query,knn_cold_start,15,11,0.7333333333333333,0.8181818181818182,0.05632554625324886,
+first_occurrence_per_query,knn_cold_start_excluding_same_query,15,11,0.7333333333333333,0.8181818181818182,0.05632554625324886,
+first_occurrence_per_query,exact_query_memory,15,0,0.0,,,
+first_occurrence_per_query,hierarchical_cold_start,15,11,0.7333333333333333,0.8181818181818182,0.05632554625324886,
+first_occurrence_per_query,hierarchical_warm_start,15,14,0.9333333333333333,0.8571428571428571,0.04425578634183839,
+first_occurrence_per_query,knn_warm_start,15,14,0.9333333333333333,0.8571428571428571,0.04425578634183839,
+first_occurrence_per_query,knn_warm_start_excluding_same_query,15,14,0.9333333333333333,0.8571428571428571,0.04425578634183839,

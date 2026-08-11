@@ -1,0 +1,4 @@
+select count(*) as result_count
+FROM {{ schema_name }}.comments AS c, {{ schema_name }}.votes AS v
+WHERE c.UserId = v.UserId
+  AND c.Score = 0

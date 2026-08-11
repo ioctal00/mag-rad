@@ -1,0 +1,10 @@
+evaluation,metric,estimate,ci_lower,ci_upper,bootstrap_samples,cluster_key
+E2,coverage,0.9122147483512203,0.7209302325581395,1.0,10000,query_id
+E2,top1_accuracy,0.9241358716026556,0.7894338118022333,1.0,10000,query_id
+E2,mean_regret_log2,0.02240233720731886,0.0,0.0626480553686393,10000,query_id
+E3,coverage,0.0,0.0,0.0,10000,query_id
+E3,top1_accuracy,,,,10000,query_id
+E3,mean_regret_log2,,,,10000,query_id
+E4,coverage,1.0,1.0,1.0,10000,query_id
+E4,top1_accuracy,0.8012466666666667,0.6,1.0,10000,query_id
+E4,mean_regret_log2,0.22695412802323317,0.0,0.633414041780971,10000,query_id

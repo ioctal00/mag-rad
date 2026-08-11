@@ -1,0 +1,41 @@
+---
+citus_datagen_enabled: false
+citus_datagen_repo_dir: /opt/citus-datagen
+citus_datagen_output_root: /var/lib/citus-datagen/generated
+citus_datagen_log_dir: /var/log/citus-datagen
+citus_datagen_git_clone_suffix: ""
+citus_datagen_git_branch: main
+citus_datagen_region: ""
+citus_datagen_tenant_ranges:
+  eu:
+    start: 1
+    end: 10000
+  us:
+    start: 10001
+    end: 20000
+  apac:
+    start: 20001
+    end: 30000
+citus_datagen_random_seed: 42
+citus_datagen_events_per_tenant: 1000
+citus_datagen_users_per_tenant: 500
+citus_datagen_global_users_per_tenant: "{{ citus_datagen_users_per_tenant }}"
+citus_datagen_enable_global_users: true
+citus_datagen_lookback_days: 30
+citus_datagen_progress_every_tenants: 1000
+citus_datagen_load_method: copy_pipe
+citus_datagen_sql_batch_tenants: 1000
+citus_datagen_copy_generator_path: tools/cpp/citus_datagen
+citus_datagen_distribution: uniform
+citus_datagen_hot_tenant_pct: 1
+citus_datagen_hot_event_pct: 50
+citus_datagen_base_time_unix: 0
+citus_datagen_remote_postgres_host: 127.0.0.1
+citus_datagen_remote_postgres_port: 5432
+citus_datagen_remote_postgres_user: "{{ postgresql_admin_user | default('postgres') }}"
+citus_datagen_remote_postgres_password: "{{ postgresql_admin_password }}"
+citus_datagen_remote_postgres_db: "{{ postgresql_app_db }}"
+citus_datagen_remote_postgres_ssl_mode: disable
+citus_datagen_remote_postgres_ssl_root_cert: ""
+citus_datagen_uv_installer_url: https://astral.sh/uv/install.sh
+citus_datagen_uv_install_dir: /root/.local/bin

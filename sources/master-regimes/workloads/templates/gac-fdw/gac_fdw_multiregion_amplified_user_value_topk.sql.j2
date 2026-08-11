@@ -1,0 +1,32 @@
+with events_all as (
+  select
+    e.tenant_id,
+    e.user_id,
+    e.value,
+    e.created_at
+  from fdw_eu.events e
+  union all
+  select
+    e.tenant_id,
+    e.user_id,
+    e.value,
+    e.created_at
+  from fdw_us.events e
+),
+expanded as (
+  select
+    e.tenant_id,
+    e.user_id,
+    e.value
+  from events_all e
+  cross join generate_series(1, {{ amplification_factor }}) as replica(replica_id)
+  where e.created_at >= coalesce(to_timestamp(nullif({{ as_of_unix | default(0) }}, 0)), now()) - make_interval(days => {{ lookback_days }}::int)
+)
+select
+  tenant_id,
+  user_id,
+  sum(value) as total_value
+from expanded
+group by tenant_id, user_id
+order by total_value desc, tenant_id, user_id
+limit {{ limit_k }};

@@ -1,0 +1,74 @@
+digraph G {
+  graph [
+    rankdir=TB,
+    bgcolor="white",
+    fontname="DejaVu Sans",
+    fontsize=13,
+    pad=0.18,
+    nodesep=0.35,
+    ranksep=0.55,
+    labelloc="t",
+    label="Sljedivost jednog globalnog SQL izvršenja"
+  ];
+
+  node [
+    shape=box,
+    style="filled",
+    fontname="DejaVu Sans",
+    fontsize=9.2,
+    color="#263238",
+    fillcolor="#f3f5f5",
+    margin="0.14,0.09"
+  ];
+
+  edge [
+    fontname="DejaVu Sans",
+    fontsize=8.2,
+    color="#4f585b",
+    arrowsize=0.72
+  ];
+
+  attempts [label="Attempt zapisi\nsvi pokušaji logical instance"];
+  resolver [label="Logical resolver\njedan kanonski uspješan attempt", fillcolor="#dfeceb"];
+  query [label="query_run_id\njedno globalno izvršenje", fillcolor="#dfeceb", penwidth=1.4];
+  gac [label="GAC plan\n1 glavni EXPLAIN ANALYZE"];
+  eu [label="EU regionalni plan\nremote SQL auto_explain"];
+  us [label="US regionalni plan\nremote SQL auto_explain"];
+  tasks [label="Worker/task planovi\npromjenljiv broj fragmenata"];
+
+  attempts -> resolver [label="status + attempt broj"];
+  resolver -> query [label="resolved_query_run_id"];
+  query -> gac [label="plan_scope = main"];
+  query -> eu [label="marker + log-prozor"];
+  query -> us [label="marker + log-prozor"];
+  eu -> tasks [label="remote_plan_id"];
+  us -> tasks [label="remote_plan_id"];
+
+  plan_nodes [label="plan_nodes / plan_edges\nnormalizovana stabla"];
+  regions [label="region_fragments\njedan red po remote planu"];
+  workers [label="worker_task_fragments\njedan red po tasku"];
+
+  gac -> plan_nodes;
+  eu -> plan_nodes;
+  us -> plan_nodes;
+  eu -> regions;
+  us -> regions;
+  tasks -> workers;
+
+  aggregate [label="Determinističko sažimanje\nzbir, odnosi, ISF, CV, najveći udio", fillcolor="#dfeceb"];
+  plan_nodes -> aggregate;
+  regions -> aggregate;
+  workers -> aggregate;
+
+  feature [label="Red pokazatelja izvršenja\njedan red za query_run_id", fillcolor="#dfeceb", penwidth=1.4];
+  aggregate -> feature;
+
+  note [
+    shape=note,
+    label="Regionalni i task planovi nisu\nzasebne clustering opservacije.",
+    fillcolor="#f7f8f8",
+    color="#899194",
+    fontsize=8.5
+  ];
+  note -> feature [style=dotted, arrowhead=none];
+}

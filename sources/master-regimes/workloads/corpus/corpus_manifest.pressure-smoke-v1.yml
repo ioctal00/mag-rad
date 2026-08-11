@@ -1,0 +1,230 @@
+corpus_id: pressure-smoke-v1
+description: >
+  Thirty-execution gate for five independently controlled pressure axes. Each
+  stressed/mitigated pair uses identical SQL semantics inside its axis and
+  three repetitions. The worker-skew pair is a capability probe; it is not
+  accepted as a final label unless worker/task evidence confirms activation.
+query_groups: query-groups.yml
+runtime_catalog: runtime-configs.yml
+
+dataset_profiles:
+  pilot-balanced-v1:
+    profile: ../../datasets/profiles/pilot-balanced.yml
+    load_method: copy_pipe
+  pilot-skew-heavy-v1:
+    profile: ../../datasets/profiles/pilot-skew-heavy.yml
+    load_method: copy_pipe
+
+execution_budget:
+  hard_timeout_seconds: 300
+  timeout_grace_seconds: 30
+
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260729
+  repetitions_default: 3
+  sentinel_repetitions: 3
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  os_sampler: true
+
+cells:
+  - corpus_cell_id: pressure_gac_finalization_stressed
+    logical_question_id: user_value_topk
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_raw_user_value_topk
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: pressure_gac_memory_stressed
+    topology_id: eu_us_gac
+    intervention_role: final_check
+    intervention_axis: gac_finalization
+    pressure_axis: gac_finalization
+    pressure_level: stressed
+    pressure_pair_key: gac_finalization__raw_user_topk__balanced
+    mitigation_action: increase_gac_work_mem
+    target_metric: execution_time_seconds
+    dataset_role: pressure_smoke
+    expected_regime_targets: [gac_finalization_heavy, remote_fetch_heavy]
+    parameters:
+      lookback_days: [7]
+      limit_k: [100]
+
+  - corpus_cell_id: pressure_gac_finalization_mitigated
+    logical_question_id: user_value_topk
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_raw_user_value_topk
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: pressure_gac_memory_mitigated
+    topology_id: eu_us_gac
+    intervention_role: final_check
+    intervention_axis: gac_finalization
+    pressure_axis: gac_finalization
+    pressure_level: mitigated
+    pressure_pair_key: gac_finalization__raw_user_topk__balanced
+    mitigation_action: increase_gac_work_mem
+    target_metric: execution_time_seconds
+    dataset_role: pressure_smoke
+    expected_regime_targets: [gac_finalization_heavy, remote_fetch_heavy]
+    parameters:
+      lookback_days: [7]
+      limit_k: [100]
+
+  - corpus_cell_id: pressure_remote_path_stressed
+    logical_question_id: event_full_scan_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_raw_region_rollup
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: pressure_remote_stressed
+    topology_id: eu_us_gac
+    intervention_role: final_check
+    intervention_axis: remote_path
+    pressure_axis: remote_path
+    pressure_level: stressed
+    pressure_pair_key: remote_path__raw_region_rollup__balanced
+    mitigation_action: remove_delay_bandwidth_limit_and_increase_fetch_size
+    target_metric: execution_time_seconds
+    dataset_role: pressure_smoke
+    expected_regime_targets: [remote_fetch_heavy]
+    parameters:
+      lookback_days: [7]
+
+  - corpus_cell_id: pressure_remote_path_mitigated
+    logical_question_id: event_full_scan_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_raw_region_rollup
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: pressure_remote_mitigated
+    topology_id: eu_us_gac
+    intervention_role: final_check
+    intervention_axis: remote_path
+    pressure_axis: remote_path
+    pressure_level: mitigated
+    pressure_pair_key: remote_path__raw_region_rollup__balanced
+    mitigation_action: remove_delay_bandwidth_limit_and_increase_fetch_size
+    target_metric: execution_time_seconds
+    dataset_role: pressure_smoke
+    expected_regime_targets: [remote_fetch_heavy]
+    parameters:
+      lookback_days: [7]
+
+  - corpus_cell_id: pressure_join_repartition_stressed
+    logical_question_id: user_segment_topk
+    execution_strategy: single_region_citus
+    template_id: q12_repartition_user_join_pair
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: final_check
+    intervention_axis: join_strategy
+    pressure_axis: repartition_join
+    pressure_level: stressed
+    pressure_pair_key: repartition_join__paired_user_join__balanced
+    mitigation_action: use_colocated_distribution
+    target_metric: execution_time_seconds
+    dataset_role: pressure_smoke
+    expected_regime_targets: [join_movement]
+    parameters:
+      lookback_days: [7]
+      limit_k: [50]
+
+  - corpus_cell_id: pressure_join_colocated_mitigated
+    logical_question_id: user_segment_topk
+    execution_strategy: single_region_citus
+    template_id: q11_colocated_user_join_pair
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: final_check
+    intervention_axis: join_strategy
+    pressure_axis: repartition_join
+    pressure_level: mitigated
+    pressure_pair_key: repartition_join__paired_user_join__balanced
+    mitigation_action: use_colocated_distribution
+    target_metric: execution_time_seconds
+    dataset_role: pressure_smoke
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      lookback_days: [7]
+      limit_k: [50]
+
+  - corpus_cell_id: pressure_regional_finalization_stressed
+    logical_question_id: user_value_topk
+    execution_strategy: single_region_citus
+    template_id: q02_global_user_topk
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: pressure_regional_memory_stressed
+    topology_id: eu_us_gac
+    intervention_role: final_check
+    intervention_axis: regional_finalization
+    pressure_axis: regional_finalization
+    pressure_level: stressed
+    pressure_pair_key: regional_finalization__user_topk__balanced
+    mitigation_action: increase_regional_work_mem
+    target_metric: execution_time_seconds
+    dataset_role: pressure_smoke
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [7]
+      limit_k: [100]
+
+  - corpus_cell_id: pressure_regional_finalization_mitigated
+    logical_question_id: user_value_topk
+    execution_strategy: single_region_citus
+    template_id: q02_global_user_topk
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: pressure_regional_memory_mitigated
+    topology_id: eu_us_gac
+    intervention_role: final_check
+    intervention_axis: regional_finalization
+    pressure_axis: regional_finalization
+    pressure_level: mitigated
+    pressure_pair_key: regional_finalization__user_topk__balanced
+    mitigation_action: increase_regional_work_mem
+    target_metric: execution_time_seconds
+    dataset_role: pressure_smoke
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [7]
+      limit_k: [100]
+
+  - corpus_cell_id: pressure_worker_skew_stressed
+    logical_question_id: top_tenants
+    execution_strategy: single_region_citus
+    template_id: q10_top_tenants
+    dataset_profile_id: pilot-skew-heavy-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: final_check
+    intervention_axis: dataset_and_shard_placement
+    pressure_axis: worker_data_skew
+    pressure_level: stressed
+    pressure_pair_key: worker_data_skew__top_tenants
+    mitigation_action: balance_data_and_hot_shard_placement
+    target_metric: execution_time_seconds
+    dataset_role: pressure_smoke_candidate
+    expected_regime_targets: [skew_imbalance]
+    parameters:
+      lookback_days: [7]
+      limit_k: [50]
+
+  - corpus_cell_id: pressure_worker_skew_mitigated
+    logical_question_id: top_tenants
+    execution_strategy: single_region_citus
+    template_id: q10_top_tenants
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: final_check
+    intervention_axis: dataset_and_shard_placement
+    pressure_axis: worker_data_skew
+    pressure_level: mitigated
+    pressure_pair_key: worker_data_skew__top_tenants
+    mitigation_action: balance_data_and_hot_shard_placement
+    target_metric: execution_time_seconds
+    dataset_role: pressure_smoke_candidate
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      lookback_days: [7]
+      limit_k: [50]

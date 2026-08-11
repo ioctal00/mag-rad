@@ -1,0 +1,3 @@
+k,silhouette,partition_coefficient,partition_entropy,average_max_membership,average_top2_margin,seed_ari,decision
+4,0.214,0.530,0.886,0.644,0.457,1.000,"selected: clearer fuzzy memberships and stable four-prototype interpretation"
+5,0.225,0.454,1.081,0.567,0.374,0.907,"not selected: slightly higher hard silhouette but weaker fuzzy readability and stability"

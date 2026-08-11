@@ -1,0 +1,110 @@
+suite_id: gac-n3-colocation-holdout-v1
+description: >
+  Frozen three-region no-refit holdout for the colocated-distribution ranking
+  model. Every template reads EU, US and APAC in one GAC execution.
+
+x-common-parameters: &common_parameters
+  lookback_days: [30]
+  limit_k: [100]
+  tenant_modulus: [1]
+  user_id_max: [2147483647]
+x-common: &common
+  execution_strategy: multiregion_union
+  runtime_sensitivity:
+    fetch_size: low
+    work_mem: high
+    wan_latency: low
+    join_strategy: high
+  distribution_key_usage:
+    filter_uses_distribution_key: false
+    join_uses_distribution_key: true
+    group_by_uses_distribution_key: false
+    order_by_uses_distribution_key: false
+    tenant_filter_present: false
+    single_tenant_scope: false
+    multi_tenant_scope: true
+
+templates:
+  gac_fdw_n3_colocated_user_join:
+    <<: *common
+    file: templates/gac-fdw/gac_fdw_n3_colocated_user_join.sql.j2
+    family: n3_colocated_join
+    logical_question_id: user_segment_topk
+    description: Three-edge regional colocated joins with GAC segment finalization.
+    expected_regime_targets: [well_reduced_localized]
+    expected_pressure_tags: [n3_holdout, colocated_join, fdw_union_all]
+    parameters: *common_parameters
+    required_dataset_capabilities: [supports_colocated_user_join]
+  gac_fdw_n3_repartition_user_join:
+    <<: *common
+    file: templates/gac-fdw/gac_fdw_n3_repartition_user_join.sql.j2
+    family: n3_repartition_join
+    logical_question_id: user_segment_topk
+    description: Three-edge regional MapMerge joins with GAC segment finalization.
+    expected_regime_targets: [join_movement, remote_fetch_heavy]
+    expected_pressure_tags: [n3_holdout, non_colocated_join, repartition_candidate, fdw_union_all]
+    parameters: *common_parameters
+    required_dataset_capabilities: [supports_global_users, supports_non_colocated_join]
+
+  gac_fdw_n3_colocated_user_value_topk:
+    <<: *common
+    file: templates/gac-fdw/gac_fdw_n3_colocated_user_value_topk.sql.j2
+    family: n3_colocated_join
+    logical_question_id: joined_user_value_topk
+    description: Three-edge colocated joins with global user-level Top-K.
+    expected_regime_targets: [well_reduced_localized]
+    expected_pressure_tags: [n3_holdout, colocated_join, high_group_cardinality]
+    parameters: *common_parameters
+    required_dataset_capabilities: [supports_colocated_user_join]
+  gac_fdw_n3_repartition_user_value_topk:
+    <<: *common
+    file: templates/gac-fdw/gac_fdw_n3_repartition_user_value_topk.sql.j2
+    family: n3_repartition_join
+    logical_question_id: joined_user_value_topk
+    description: Three-edge MapMerge joins with global user-level Top-K.
+    expected_regime_targets: [join_movement, remote_fetch_heavy]
+    expected_pressure_tags: [n3_holdout, non_colocated_join, repartition_candidate, high_group_cardinality]
+    parameters: *common_parameters
+    required_dataset_capabilities: [supports_global_users, supports_non_colocated_join]
+
+  gac_fdw_n3_colocated_joined_event_sample:
+    <<: *common
+    file: templates/gac-fdw/gac_fdw_n3_colocated_joined_event_sample.sql.j2
+    family: n3_colocated_join
+    logical_question_id: joined_event_sample
+    description: Three-edge colocated joins with a bounded global row sample.
+    expected_regime_targets: [well_reduced_localized]
+    expected_pressure_tags: [n3_holdout, colocated_join, remote_row_sample]
+    parameters: *common_parameters
+    required_dataset_capabilities: [supports_colocated_user_join]
+  gac_fdw_n3_repartition_joined_event_sample:
+    <<: *common
+    file: templates/gac-fdw/gac_fdw_n3_repartition_joined_event_sample.sql.j2
+    family: n3_repartition_join
+    logical_question_id: joined_event_sample
+    description: Three-edge MapMerge joins with a bounded global row sample.
+    expected_regime_targets: [join_movement, remote_fetch_heavy]
+    expected_pressure_tags: [n3_holdout, non_colocated_join, repartition_candidate, remote_row_sample]
+    parameters: *common_parameters
+    required_dataset_capabilities: [supports_global_users, supports_non_colocated_join]
+
+  gac_fdw_n3_colocated_join_summary:
+    <<: *common
+    file: templates/gac-fdw/gac_fdw_n3_colocated_join_summary.sql.j2
+    family: n3_colocated_join
+    logical_question_id: joined_event_summary
+    description: Three-edge colocated joins with a scalar global summary.
+    expected_regime_targets: [well_reduced_localized]
+    expected_pressure_tags: [n3_holdout, colocated_join, scalar_summary]
+    parameters: *common_parameters
+    required_dataset_capabilities: [supports_colocated_user_join]
+  gac_fdw_n3_repartition_join_summary:
+    <<: *common
+    file: templates/gac-fdw/gac_fdw_n3_repartition_join_summary.sql.j2
+    family: n3_repartition_join
+    logical_question_id: joined_event_summary
+    description: Three-edge MapMerge joins with a scalar global summary.
+    expected_regime_targets: [join_movement, remote_fetch_heavy]
+    expected_pressure_tags: [n3_holdout, non_colocated_join, repartition_candidate, scalar_summary]
+    parameters: *common_parameters
+    required_dataset_capabilities: [supports_global_users, supports_non_colocated_join]

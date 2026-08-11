@@ -1,0 +1,1251 @@
+{
+  "archived_dataset_loads": {
+    "base_time_values": [
+      "0"
+    ],
+    "citations": [
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T025836Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients/dataset-loads/20260706T025855Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T025836Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients/dataset-loads/20260706T025908Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T031147Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__default__coordinators/dataset-loads/20260706T031205Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T031243Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_large__analytics_clients/dataset-loads/20260706T031300Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T031243Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_large__analytics_clients/dataset-loads/20260706T031311Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T031432Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_small__analytics_clients/dataset-loads/20260706T031451Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T031432Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_small__analytics_clients/dataset-loads/20260706T031503Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T031629Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_0ms__analytics_clients/dataset-loads/20260706T031647Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T031629Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_0ms__analytics_clients/dataset-loads/20260706T031657Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T031849Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_100ms__analytics_clients/dataset-loads/20260706T031909Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T031849Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_100ms__analytics_clients/dataset-loads/20260706T031920Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T033048Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_40ms__analytics_clients/dataset-loads/20260706T033107Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T033048Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_40ms__analytics_clients/dataset-loads/20260706T033119Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T120656Z-clean-run-v1-validation-holdout-rerun-02-wan40/database-sweeps/20260706T120656Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_40ms__analytics_clients/dataset-loads/20260706T120717Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T120656Z-clean-run-v1-validation-holdout-rerun-02-wan40/database-sweeps/20260706T120656Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_40ms__analytics_clients/dataset-loads/20260706T120730Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T121220Z-clean-run-v1-validation-holdout-rerun-02-workmem-high/database-sweeps/20260706T121220Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_high__analytics_clients/dataset-loads/20260706T121238Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T121220Z-clean-run-v1-validation-holdout-rerun-02-workmem-high/database-sweeps/20260706T121220Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_high__analytics_clients/dataset-loads/20260706T121252Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T121456Z-clean-run-v1-validation-holdout-rerun-02-workmem-low/database-sweeps/20260706T121456Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_low__analytics_clients/dataset-loads/20260706T121516Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz::20260706T121456Z-clean-run-v1-validation-holdout-rerun-02-workmem-low/database-sweeps/20260706T121456Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_low__analytics_clients/dataset-loads/20260706T121529Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-region-asymmetry.tar.gz::20260702T012956Z-clean-run-v1-region-asymmetry-attempt-01/database-sweeps/20260702T020726Z-clean-run-eu-us-gac-region-asymmetry-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients/dataset-loads/20260702T020745Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-region-asymmetry.tar.gz::20260702T012956Z-clean-run-v1-region-asymmetry-attempt-01/database-sweeps/20260702T020726Z-clean-run-eu-us-gac-region-asymmetry-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients/dataset-loads/20260702T020756Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-region-asymmetry.tar.gz::20260702T012956Z-clean-run-v1-region-asymmetry-attempt-01/database-sweeps/20260702T022303Z-clean-run-eu-us-gac-region-asymmetry-v1__pilot-region-local-skew-asymmetric-medium-v1__default__coordinators/dataset-loads/20260702T022322Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-region-asymmetry-skew-rerun.tar.gz::20260704T021504Z-clean-run-v1-region-asymmetry-skew-rerun-20260704T021438Z-skew-replacement-rerun/database-sweeps/20260704T031127Z-clean-run-eu-us-gac-region-asymmetry-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients/dataset-loads/20260704T031144Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-region-asymmetry-skew-rerun.tar.gz::20260704T021504Z-clean-run-v1-region-asymmetry-skew-rerun-20260704T021438Z-skew-replacement-rerun/database-sweeps/20260704T031127Z-clean-run-eu-us-gac-region-asymmetry-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients/dataset-loads/20260704T031154Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json:datagen_env",
+      "artifacts/raw-attempts/clean-run-v1-region-asymmetry-skew-rerun.tar.gz::20260704T021504Z-clean-run-v1-region-asymmetry-skew-rerun-20260704T021438Z-skew-replacement-rerun/database-sweeps/20260704T033712Z-clean-run-eu-us-gac-region-asymmetry-v1__pilot-region-local-skew-asymmetric-medium-v1__default__coordinators/dataset-loads/20260704T033731Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json:datagen_env"
+    ],
+    "manifest_count": 83,
+    "region_local_skew_loads": [
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "hot_tenants",
+        "hot_event_pct": "65",
+        "hot_tenant_pct": "5",
+        "lookback_days": "30",
+        "member": "20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T025836Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients/dataset-loads/20260706T025855Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json",
+        "region": "eu",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "800",
+        "tenant_start": "1"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "uniform",
+        "hot_event_pct": "50",
+        "hot_tenant_pct": "1",
+        "lookback_days": "30",
+        "member": "20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T025836Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients/dataset-loads/20260706T025908Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json",
+        "region": "us",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "10800",
+        "tenant_start": "10001"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "hot_tenants",
+        "hot_event_pct": "65",
+        "hot_tenant_pct": "5",
+        "lookback_days": "30",
+        "member": "20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T031147Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__default__coordinators/dataset-loads/20260706T031205Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json",
+        "region": "eu",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "800",
+        "tenant_start": "1"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "hot_tenants",
+        "hot_event_pct": "65",
+        "hot_tenant_pct": "5",
+        "lookback_days": "30",
+        "member": "20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T031243Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_large__analytics_clients/dataset-loads/20260706T031300Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json",
+        "region": "eu",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "800",
+        "tenant_start": "1"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "uniform",
+        "hot_event_pct": "50",
+        "hot_tenant_pct": "1",
+        "lookback_days": "30",
+        "member": "20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T031243Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_large__analytics_clients/dataset-loads/20260706T031311Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json",
+        "region": "us",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "10800",
+        "tenant_start": "10001"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "hot_tenants",
+        "hot_event_pct": "65",
+        "hot_tenant_pct": "5",
+        "lookback_days": "30",
+        "member": "20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T031432Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_small__analytics_clients/dataset-loads/20260706T031451Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json",
+        "region": "eu",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "800",
+        "tenant_start": "1"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "uniform",
+        "hot_event_pct": "50",
+        "hot_tenant_pct": "1",
+        "lookback_days": "30",
+        "member": "20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T031432Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_small__analytics_clients/dataset-loads/20260706T031503Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json",
+        "region": "us",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "10800",
+        "tenant_start": "10001"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "hot_tenants",
+        "hot_event_pct": "65",
+        "hot_tenant_pct": "5",
+        "lookback_days": "30",
+        "member": "20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T031629Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_0ms__analytics_clients/dataset-loads/20260706T031647Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json",
+        "region": "eu",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "800",
+        "tenant_start": "1"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "uniform",
+        "hot_event_pct": "50",
+        "hot_tenant_pct": "1",
+        "lookback_days": "30",
+        "member": "20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T031629Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_0ms__analytics_clients/dataset-loads/20260706T031657Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json",
+        "region": "us",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "10800",
+        "tenant_start": "10001"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "hot_tenants",
+        "hot_event_pct": "65",
+        "hot_tenant_pct": "5",
+        "lookback_days": "30",
+        "member": "20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T031849Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_100ms__analytics_clients/dataset-loads/20260706T031909Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json",
+        "region": "eu",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "800",
+        "tenant_start": "1"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "uniform",
+        "hot_event_pct": "50",
+        "hot_tenant_pct": "1",
+        "lookback_days": "30",
+        "member": "20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T031849Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_100ms__analytics_clients/dataset-loads/20260706T031920Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json",
+        "region": "us",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "10800",
+        "tenant_start": "10001"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "hot_tenants",
+        "hot_event_pct": "65",
+        "hot_tenant_pct": "5",
+        "lookback_days": "30",
+        "member": "20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T033048Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_40ms__analytics_clients/dataset-loads/20260706T033107Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json",
+        "region": "eu",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "800",
+        "tenant_start": "1"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "uniform",
+        "hot_event_pct": "50",
+        "hot_tenant_pct": "1",
+        "lookback_days": "30",
+        "member": "20260706T013432Z-clean-run-v1-validation-holdout-attempt-01/database-sweeps/20260706T033048Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_40ms__analytics_clients/dataset-loads/20260706T033119Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json",
+        "region": "us",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "10800",
+        "tenant_start": "10001"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "hot_tenants",
+        "hot_event_pct": "65",
+        "hot_tenant_pct": "5",
+        "lookback_days": "30",
+        "member": "20260706T120656Z-clean-run-v1-validation-holdout-rerun-02-wan40/database-sweeps/20260706T120656Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_40ms__analytics_clients/dataset-loads/20260706T120717Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json",
+        "region": "eu",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "800",
+        "tenant_start": "1"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "uniform",
+        "hot_event_pct": "50",
+        "hot_tenant_pct": "1",
+        "lookback_days": "30",
+        "member": "20260706T120656Z-clean-run-v1-validation-holdout-rerun-02-wan40/database-sweeps/20260706T120656Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_40ms__analytics_clients/dataset-loads/20260706T120730Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json",
+        "region": "us",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "10800",
+        "tenant_start": "10001"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "hot_tenants",
+        "hot_event_pct": "65",
+        "hot_tenant_pct": "5",
+        "lookback_days": "30",
+        "member": "20260706T121220Z-clean-run-v1-validation-holdout-rerun-02-workmem-high/database-sweeps/20260706T121220Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_high__analytics_clients/dataset-loads/20260706T121238Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json",
+        "region": "eu",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "800",
+        "tenant_start": "1"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "uniform",
+        "hot_event_pct": "50",
+        "hot_tenant_pct": "1",
+        "lookback_days": "30",
+        "member": "20260706T121220Z-clean-run-v1-validation-holdout-rerun-02-workmem-high/database-sweeps/20260706T121220Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_high__analytics_clients/dataset-loads/20260706T121252Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json",
+        "region": "us",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "10800",
+        "tenant_start": "10001"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "hot_tenants",
+        "hot_event_pct": "65",
+        "hot_tenant_pct": "5",
+        "lookback_days": "30",
+        "member": "20260706T121456Z-clean-run-v1-validation-holdout-rerun-02-workmem-low/database-sweeps/20260706T121456Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_low__analytics_clients/dataset-loads/20260706T121516Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json",
+        "region": "eu",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "800",
+        "tenant_start": "1"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-validation-holdout.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "uniform",
+        "hot_event_pct": "50",
+        "hot_tenant_pct": "1",
+        "lookback_days": "30",
+        "member": "20260706T121456Z-clean-run-v1-validation-holdout-rerun-02-workmem-low/database-sweeps/20260706T121456Z-clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_low__analytics_clients/dataset-loads/20260706T121529Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json",
+        "region": "us",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "10800",
+        "tenant_start": "10001"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-region-asymmetry.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "hot_tenants",
+        "hot_event_pct": "65",
+        "hot_tenant_pct": "5",
+        "lookback_days": "30",
+        "member": "20260702T012956Z-clean-run-v1-region-asymmetry-attempt-01/database-sweeps/20260702T020726Z-clean-run-eu-us-gac-region-asymmetry-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients/dataset-loads/20260702T020745Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json",
+        "region": "eu",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "800",
+        "tenant_start": "1"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-region-asymmetry.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "uniform",
+        "hot_event_pct": "50",
+        "hot_tenant_pct": "1",
+        "lookback_days": "30",
+        "member": "20260702T012956Z-clean-run-v1-region-asymmetry-attempt-01/database-sweeps/20260702T020726Z-clean-run-eu-us-gac-region-asymmetry-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients/dataset-loads/20260702T020756Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json",
+        "region": "us",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "10800",
+        "tenant_start": "10001"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-region-asymmetry.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "hot_tenants",
+        "hot_event_pct": "65",
+        "hot_tenant_pct": "5",
+        "lookback_days": "30",
+        "member": "20260702T012956Z-clean-run-v1-region-asymmetry-attempt-01/database-sweeps/20260702T022303Z-clean-run-eu-us-gac-region-asymmetry-v1__pilot-region-local-skew-asymmetric-medium-v1__default__coordinators/dataset-loads/20260702T022322Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json",
+        "region": "eu",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "800",
+        "tenant_start": "1"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-region-asymmetry-skew-rerun.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "hot_tenants",
+        "hot_event_pct": "65",
+        "hot_tenant_pct": "5",
+        "lookback_days": "30",
+        "member": "20260704T021504Z-clean-run-v1-region-asymmetry-skew-rerun-20260704T021438Z-skew-replacement-rerun/database-sweeps/20260704T031127Z-clean-run-eu-us-gac-region-asymmetry-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients/dataset-loads/20260704T031144Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json",
+        "region": "eu",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "800",
+        "tenant_start": "1"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-region-asymmetry-skew-rerun.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "uniform",
+        "hot_event_pct": "50",
+        "hot_tenant_pct": "1",
+        "lookback_days": "30",
+        "member": "20260704T021504Z-clean-run-v1-region-asymmetry-skew-rerun-20260704T021438Z-skew-replacement-rerun/database-sweeps/20260704T031127Z-clean-run-eu-us-gac-region-asymmetry-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients/dataset-loads/20260704T031154Z-pilot-region-local-skew-asymmetric-medium-v1-us/dataset_load_manifest.json",
+        "region": "us",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "10800",
+        "tenant_start": "10001"
+      },
+      {
+        "archive": "artifacts/raw-attempts/clean-run-v1-region-asymmetry-skew-rerun.tar.gz",
+        "base_time_unix": "0",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "distribution": "hot_tenants",
+        "hot_event_pct": "65",
+        "hot_tenant_pct": "5",
+        "lookback_days": "30",
+        "member": "20260704T021504Z-clean-run-v1-region-asymmetry-skew-rerun-20260704T021438Z-skew-replacement-rerun/database-sweeps/20260704T033712Z-clean-run-eu-us-gac-region-asymmetry-v1__pilot-region-local-skew-asymmetric-medium-v1__default__coordinators/dataset-loads/20260704T033731Z-pilot-region-local-skew-asymmetric-medium-v1-eu/dataset_load_manifest.json",
+        "region": "eu",
+        "seed": "42",
+        "shard_count": 32,
+        "tenant_end": "800",
+        "tenant_start": "1"
+      }
+    ]
+  },
+  "audit_id": "dataset-reproducibility-and-coverage-v1",
+  "citations": [
+    "reproducibility/dataset-catalog.csv:rows 2-30",
+    "reproducibility/query-catalog.csv:identified by evidence_block + dataset_profile_id",
+    "artifacts/rendered-corpora/pressure-raw-v1/execution_matrix.csv:identified by execution_slot_id",
+    "artifacts/rendered-corpora/pressure-raw-v1/program_summary.json:3-29",
+    "artifacts/rendered-corpora/pressure-raw-v1/manifest_coverage_audit.json:143-171,257-296",
+    "releases/temporal-validity-audit-v1/temporal_validity_audit.json:13-31,35-96",
+    "sources/master-regimes/datasets/profiles/pilot-region-local-skew-asymmetric-medium.yml:13-28,38-43,77-92",
+    "sources/master-regimes/datasets/profiles/pilot-region-imbalanced.yml:13-22,32-37,53-60",
+    "sources/citus-datagen/tools/cpp/citus_datagen.cpp:313-317,428-459"
+  ],
+  "errors": [],
+  "evidence_blocks": {
+    "characterization_companion": {
+      "catalog_row_count": 314,
+      "dataset_catalog_rows": {
+        "pilot-balanced-v1": 106,
+        "pilot-region-imbalanced-v1": 98,
+        "pilot-region-local-skew-asymmetric-medium-v1": 98,
+        "pilot-skew-heavy-v1": 12
+      }
+    },
+    "characterization_corpus": {
+      "catalog_row_count": 1964,
+      "dataset_catalog_rows": {
+        "pilot-balanced-v1": 955,
+        "pilot-skew-heavy-v1": 1009
+      }
+    },
+    "characterization_validation": {
+      "catalog_row_count": 159,
+      "dataset_catalog_rows": {
+        "pilot-balanced-v1": 54,
+        "pilot-region-imbalanced-v1": 53,
+        "pilot-region-local-skew-asymmetric-medium-v1": 52
+      }
+    },
+    "confirmatory_action_panel": {
+      "catalog_row_count": 60,
+      "dataset_catalog_rows": {
+        "topology-isolation-large-n3-v1": 60
+      }
+    },
+    "controlled_skew_validation": {
+      "catalog_row_count": 48,
+      "dataset_catalog_rows": {
+        "pilot-balanced-v1": 12,
+        "pilot-region-imbalanced-v1": 12,
+        "pilot-skew-heavy-v1": 24
+      }
+    },
+    "controlled_topology_memory_panel": {
+      "catalog_row_count": 180,
+      "dataset_catalog_rows": {
+        "topology-isolation-large-n2-v1": 16,
+        "topology-isolation-large-n3-v1": 32,
+        "topology-isolation-medium-n2-v1": 16,
+        "topology-isolation-medium-n3-v1": 32,
+        "topology-isolation-small-n2-v1": 16,
+        "topology-isolation-small-n3-v1": 32,
+        "topology-isolation-xlarge-n2-v1": 12,
+        "topology-isolation-xlarge-n3-v1": 24
+      }
+    },
+    "external_schema_development": {
+      "catalog_row_count": 12,
+      "dataset_catalog_rows": {
+        "stats-ceb-semantic-v2b-holdout": 12
+      }
+    },
+    "external_schema_no_refit_audit": {
+      "catalog_row_count": 146,
+      "dataset_catalog_rows": {
+        "stats-ceb-full-no-refit-v1": 146
+      }
+    },
+    "final_dba_panel": {
+      "catalog_row_count": 60,
+      "dataset_catalog_rows": {
+        "n3-large-balanced-wide-global-dim-v1": 12,
+        "n3-medium-balanced-wide-global-dim-v1": 16,
+        "raw-large-balanced-v1": 16,
+        "raw-small-balanced-v1": 16
+      }
+    },
+    "legacy_n3_colocation_audit": {
+      "catalog_row_count": 32,
+      "dataset_catalog_rows": {
+        "n3-large-apac-dominant-wide-global-dim-v1": 8,
+        "n3-large-balanced-wide-global-dim-v1": 8,
+        "n3-medium-apac-dominant-wide-global-dim-v1": 8,
+        "n3-medium-balanced-wide-global-dim-v1": 8
+      }
+    },
+    "longitudinal_feedback_loop": {
+      "catalog_row_count": 9,
+      "dataset_catalog_rows": {
+        "locked_current_dataset_snapshot": 9
+      }
+    },
+    "measurement_repeatability": {
+      "catalog_row_count": 36,
+      "dataset_catalog_rows": {
+        "pilot-balanced-v1": 11,
+        "pilot-region-imbalanced-v1": 12,
+        "pilot-region-local-skew-asymmetric-medium-v1": 13
+      }
+    },
+    "wide_intervention_corpus": {
+      "catalog_row_count": 799,
+      "dataset_catalog_rows": {
+        "pilot-balanced-v1": 187,
+        "pilot-balanced-wide-global-dim-v1": 32,
+        "pilot-region-local-skew-asymmetric-medium-v1": 10,
+        "pilot-skew-heavy-v1": 10,
+        "raw-large-balanced-v1": 223,
+        "raw-large-balanced-wide-global-dim-v1": 32,
+        "raw-large-skew-heavy-v1": 10,
+        "raw-large-skew-moderate-v1": 10,
+        "raw-medium-skew-moderate-v1": 10,
+        "raw-small-balanced-v1": 223,
+        "raw-small-balanced-wide-global-dim-v1": 32,
+        "raw-small-skew-heavy-v1": 10,
+        "raw-small-skew-moderate-v1": 10
+      }
+    }
+  },
+  "interpretation": {
+    "exact_f19_f21_temporal_reload_guaranteed": false,
+    "exact_feedback_dataset_reload_guaranteed": false,
+    "final_action_panels_cover_worker_skew": false,
+    "hot_tenant_skew_is_generic_shard_count_skew": false,
+    "one_region_worker_skew_executed": true,
+    "one_region_worker_skew_profile": "pilot-region-local-skew-asymmetric-medium-v1",
+    "region_level_imbalance_is_worker_skew": false,
+    "wide_substantive_pair_validity_retained": true
+  },
+  "offline_only": true,
+  "pressure": {
+    "as_of_unix_counts": {
+      "1782864000": 2607
+    },
+    "condition_count": 869,
+    "dataset_count": 13,
+    "datasets": [
+      "pilot-balanced-v1",
+      "pilot-balanced-wide-global-dim-v1",
+      "pilot-region-local-skew-asymmetric-medium-v1",
+      "pilot-skew-heavy-v1",
+      "raw-large-balanced-v1",
+      "raw-large-balanced-wide-global-dim-v1",
+      "raw-large-skew-heavy-v1",
+      "raw-large-skew-moderate-v1",
+      "raw-medium-skew-moderate-v1",
+      "raw-small-balanced-v1",
+      "raw-small-balanced-wide-global-dim-v1",
+      "raw-small-skew-heavy-v1",
+      "raw-small-skew-moderate-v1"
+    ],
+    "execution_rows": 2607,
+    "pair_count": 418,
+    "prepared_not_executed": [
+      "combined_holdout",
+      "n3_holdout",
+      "sentinels"
+    ],
+    "region_local_worker_skew_execution_rows": 60,
+    "worker_skew_execution_rows": 420
+  },
+  "profile_catalog": {
+    "catalog_missing_inline_shard_count": [],
+    "catalog_rows": 29,
+    "content_present": 29,
+    "hash_mismatches": [],
+    "missing_profiles": [],
+    "parsed_profiles": {
+      "n3-large-apac-dominant-wide-global-dim-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "n3-large-apac-dominant-wide-global-dim-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "apac": [
+            20001,
+            22000
+          ],
+          "eu": [
+            1,
+            500
+          ],
+          "us": [
+            10001,
+            10500
+          ]
+        },
+        "seed": "243",
+        "shard_count": "64",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": true,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "n3-large-balanced-wide-global-dim-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "n3-large-balanced-wide-global-dim-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "apac": [
+            20001,
+            21000
+          ],
+          "eu": [
+            1,
+            1000
+          ],
+          "us": [
+            10001,
+            11000
+          ]
+        },
+        "seed": "242",
+        "shard_count": "64",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "n3-medium-apac-dominant-wide-global-dim-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "n3-medium-apac-dominant-wide-global-dim-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "apac": [
+            20001,
+            22000
+          ],
+          "eu": [
+            1,
+            500
+          ],
+          "us": [
+            10001,
+            10500
+          ]
+        },
+        "seed": "143",
+        "shard_count": "32",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": true,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "n3-medium-balanced-wide-global-dim-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "n3-medium-balanced-wide-global-dim-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "apac": [
+            20001,
+            21000
+          ],
+          "eu": [
+            1,
+            1000
+          ],
+          "us": [
+            10001,
+            11000
+          ]
+        },
+        "seed": "142",
+        "shard_count": "32",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "pilot-balanced-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "pilot-balanced-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "eu": [
+            1,
+            1000
+          ],
+          "us": [
+            10001,
+            11000
+          ]
+        },
+        "seed": "42",
+        "shard_count": "32",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "pilot-balanced-wide-global-dim-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "pilot-balanced-wide-global-dim-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "eu": [
+            1,
+            1000
+          ],
+          "us": [
+            10001,
+            11000
+          ]
+        },
+        "seed": "42",
+        "shard_count": "32",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "pilot-region-imbalanced-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "pilot-region-imbalanced-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "eu": [
+            1,
+            1800
+          ],
+          "us": [
+            10001,
+            10200
+          ]
+        },
+        "seed": "42",
+        "shard_count": "32",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": true,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "pilot-region-local-skew-asymmetric-medium-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "pilot-region-local-skew-asymmetric-medium-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "eu": [
+            1,
+            800
+          ],
+          "us": [
+            10001,
+            10800
+          ]
+        },
+        "seed": "42",
+        "shard_count": "32",
+        "supports_hot_tenant_skew": true,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": true,
+        "supports_shard_skew": false
+      },
+      "pilot-skew-heavy-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "pilot-skew-heavy-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "eu": [
+            1,
+            1000
+          ],
+          "us": [
+            10001,
+            11000
+          ]
+        },
+        "seed": "42",
+        "shard_count": "32",
+        "supports_hot_tenant_skew": true,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "raw-large-balanced-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "raw-large-balanced-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "eu": [
+            1,
+            2000
+          ],
+          "us": [
+            10001,
+            12000
+          ]
+        },
+        "seed": "73",
+        "shard_count": "64",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "raw-large-balanced-wide-global-dim-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "raw-large-balanced-wide-global-dim-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "eu": [
+            1,
+            2000
+          ],
+          "us": [
+            10001,
+            12000
+          ]
+        },
+        "seed": "73",
+        "shard_count": "64",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "raw-large-skew-heavy-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "raw-large-skew-heavy-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "eu": [
+            1,
+            2000
+          ],
+          "us": [
+            10001,
+            12000
+          ]
+        },
+        "seed": "73",
+        "shard_count": "64",
+        "supports_hot_tenant_skew": true,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "raw-large-skew-moderate-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "raw-large-skew-moderate-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "eu": [
+            1,
+            2000
+          ],
+          "us": [
+            10001,
+            12000
+          ]
+        },
+        "seed": "73",
+        "shard_count": "64",
+        "supports_hot_tenant_skew": true,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "raw-medium-skew-moderate-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "raw-medium-skew-moderate-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "eu": [
+            1,
+            1000
+          ],
+          "us": [
+            10001,
+            11000
+          ]
+        },
+        "seed": "73",
+        "shard_count": "32",
+        "supports_hot_tenant_skew": true,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "raw-small-balanced-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "raw-small-balanced-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "eu": [
+            1,
+            200
+          ],
+          "us": [
+            10001,
+            10200
+          ]
+        },
+        "seed": "73",
+        "shard_count": "16",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "raw-small-balanced-wide-global-dim-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "raw-small-balanced-wide-global-dim-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "eu": [
+            1,
+            200
+          ],
+          "us": [
+            10001,
+            10200
+          ]
+        },
+        "seed": "73",
+        "shard_count": "16",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "raw-small-skew-heavy-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "raw-small-skew-heavy-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "eu": [
+            1,
+            200
+          ],
+          "us": [
+            10001,
+            10200
+          ]
+        },
+        "seed": "73",
+        "shard_count": "16",
+        "supports_hot_tenant_skew": true,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "raw-small-skew-moderate-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "raw-small-skew-moderate-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "eu": [
+            1,
+            200
+          ],
+          "us": [
+            10001,
+            10200
+          ]
+        },
+        "seed": "73",
+        "shard_count": "16",
+        "supports_hot_tenant_skew": true,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "stats-ceb-full-no-refit-v1": {
+        "base_time_unix": null,
+        "dataset_id": "stats-ceb-full-no-refit-v1",
+        "lookback_days": null,
+        "region_ranges": {},
+        "seed": "0",
+        "shard_count": "32",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "stats-ceb-semantic-v2b-holdout": {
+        "base_time_unix": null,
+        "dataset_id": "stats-ceb-semantic-v2b-holdout",
+        "lookback_days": null,
+        "region_ranges": {},
+        "seed": "0",
+        "shard_count": "32",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "topology-isolation-large-n2-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "topology-isolation-large-n2-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "eu": [
+            1,
+            2000
+          ],
+          "us": [
+            10001,
+            12000
+          ]
+        },
+        "seed": "73",
+        "shard_count": "64",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "topology-isolation-large-n3-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "topology-isolation-large-n3-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "apac": [
+            11001,
+            12000
+          ],
+          "eu": [
+            1,
+            2000
+          ],
+          "us": [
+            10001,
+            11000
+          ]
+        },
+        "seed": "73",
+        "shard_count": "64",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "topology-isolation-medium-n2-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "topology-isolation-medium-n2-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "eu": [
+            1,
+            1000
+          ]
+        },
+        "seed": "142",
+        "shard_count": "32",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "topology-isolation-medium-n3-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "topology-isolation-medium-n3-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "apac": [
+            20001,
+            21000
+          ],
+          "eu": [
+            1,
+            1000
+          ],
+          "us": [
+            10001,
+            11000
+          ]
+        },
+        "seed": "142",
+        "shard_count": "32",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "topology-isolation-small-n2-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "topology-isolation-small-n2-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "eu": [
+            1,
+            200
+          ],
+          "us": [
+            10001,
+            10200
+          ]
+        },
+        "seed": "73",
+        "shard_count": "16",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "topology-isolation-small-n3-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "topology-isolation-small-n3-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "apac": [
+            10101,
+            10200
+          ],
+          "eu": [
+            1,
+            200
+          ],
+          "us": [
+            10001,
+            10100
+          ]
+        },
+        "seed": "73",
+        "shard_count": "16",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "topology-isolation-xlarge-n2-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "topology-isolation-xlarge-n2-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "eu": [
+            1,
+            1000
+          ]
+        },
+        "seed": "242",
+        "shard_count": "64",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      },
+      "topology-isolation-xlarge-n3-v1": {
+        "base_time_unix": "1782864000",
+        "dataset_id": "topology-isolation-xlarge-n3-v1",
+        "lookback_days": "30",
+        "region_ranges": {
+          "apac": [
+            20001,
+            21000
+          ],
+          "eu": [
+            1,
+            1000
+          ],
+          "us": [
+            10001,
+            11000
+          ]
+        },
+        "seed": "242",
+        "shard_count": "64",
+        "supports_hot_tenant_skew": false,
+        "supports_region_imbalance": false,
+        "supports_region_local_skew_asymmetry": false,
+        "supports_shard_skew": false
+      }
+    },
+    "sha256_matches": 29
+  },
+  "profile_references": {
+    "broken_at_original_relative_location": 90,
+    "content_missing_after_fallback": 0,
+    "examples": [
+      {
+        "reference": "../../datasets/profiles/pilot-balanced.yml",
+        "source": "artifacts/rendered-corpora/clean-run-v1/corpus_manifest.yml",
+        "source_snapshot_fallback": "sources/master-regimes/datasets/profiles/pilot-balanced.yml"
+      },
+      {
+        "reference": "../../datasets/profiles/pilot-skew-heavy.yml",
+        "source": "artifacts/rendered-corpora/clean-run-v1/corpus_manifest.yml",
+        "source_snapshot_fallback": "sources/master-regimes/datasets/profiles/pilot-skew-heavy.yml"
+      },
+      {
+        "reference": "../../../datasets/profiles/topology-isolation-large-n3.yml",
+        "source": "artifacts/rendered-corpora/confirmatory-action-replication-v1/corpus_manifest.yml",
+        "source_snapshot_fallback": "sources/master-regimes/datasets/profiles/topology-isolation-large-n3.yml"
+      },
+      {
+        "reference": "../../../datasets/profiles/raw-small-balanced.yml",
+        "source": "artifacts/rendered-corpora/dba-local-memory-v1/corpus_manifest.yml",
+        "source_snapshot_fallback": "sources/master-regimes/datasets/profiles/raw-small-balanced.yml"
+      },
+      {
+        "reference": "../../../datasets/profiles/raw-large-balanced.yml",
+        "source": "artifacts/rendered-corpora/dba-local-memory-v1/corpus_manifest.yml",
+        "source_snapshot_fallback": "sources/master-regimes/datasets/profiles/raw-large-balanced.yml"
+      },
+      {
+        "reference": "../../../datasets/profiles/n3-medium-balanced-wide-global-dim.yml",
+        "source": "artifacts/rendered-corpora/dba-local-memory-v1/corpus_manifest.yml",
+        "source_snapshot_fallback": "sources/master-regimes/datasets/profiles/n3-medium-balanced-wide-global-dim.yml"
+      },
+      {
+        "reference": "../../../datasets/profiles/n3-large-balanced-wide-global-dim.yml",
+        "source": "artifacts/rendered-corpora/dba-local-memory-v1/corpus_manifest.yml",
+        "source_snapshot_fallback": "sources/master-regimes/datasets/profiles/n3-large-balanced-wide-global-dim.yml"
+      },
+      {
+        "reference": "../../../../../datasets/profiles/topology-isolation-small-n2.yml",
+        "source": "artifacts/rendered-corpora/n3-topology-memory-v1/rendered/n2_control/corpus_manifest.yml",
+        "source_snapshot_fallback": "sources/master-regimes/datasets/profiles/topology-isolation-small-n2.yml"
+      }
+    ],
+    "references_scanned": 90,
+    "resolved_by_source_snapshot_basename": 90
+  },
+  "sql_executed": false,
+  "status": "PASS_WITH_WARNINGS",
+  "temporal_contract": {
+    "fcm_archived_base_time_values": [
+      "0"
+    ],
+    "fcm_execution_count": 1964,
+    "fcm_maximum_lag_hours": 3.6860938869582283,
+    "wide_empty_current_date_controls": 21,
+    "wide_substantive_pairs": 397
+  },
+  "warnings": [
+    "90 rendered-corpus relative profile references require source-snapshot fallback",
+    "Feedback-loop exact original profile, seed and shard count are not recorded",
+    "No row-level full-dataset checksum or database dump is packaged",
+    "Exact temporal reload of the shared F19/F21 corpus is weak because archived base_time was wall-clock derived"
+  ]
+}

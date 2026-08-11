@@ -1,0 +1,9 @@
+contrast,query_condition_id,pair_count,median_direct_signal_delta,median_semantic_feature_l2,median_membership_l1,dominant_cluster_change_share
+A-D_regional_asymmetry,tenant_point__raw_gac_finalize,3,0.0,0.3208753903207924,0.49886687069162,0.0
+A-D_regional_asymmetry,tenant_point__regional_reduced,3,0.0,0.3208753714298954,0.5478534698034137,0.0
+A-D_regional_asymmetry,top_tenants__raw_gac_finalize,3,0.8,0.5322292392423912,0.5160696954193141,0.0
+A-D_regional_asymmetry,top_tenants__regional_reduced,3,0.8,0.5322919919058618,0.5380483303210886,0.0
+B-C_worker_placement,tenant_point__raw_gac_finalize,3,0.0,0.0005278587675671893,0.0001976115054874543,0.0
+B-C_worker_placement,tenant_point__regional_reduced,3,0.0,7.745170395633173e-05,2.6405556174304706e-05,0.0
+B-C_worker_placement,top_tenants__raw_gac_finalize,3,0.5482313728338939,0.18274461102325032,0.04147127723133362,0.0
+B-C_worker_placement,top_tenants__regional_reduced,3,0.5482313728338939,0.18274380781168184,0.04451773427894003,0.0

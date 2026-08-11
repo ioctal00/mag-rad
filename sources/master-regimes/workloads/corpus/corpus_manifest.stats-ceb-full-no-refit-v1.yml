@@ -1,0 +1,203 @@
+corpus_id: stats-ceb-full-no-refit-v1
+vocabulary: ../../docs/corpus-vocabulary.md
+query_groups: query-groups.yml
+runtime_catalog: runtime-configs.yml
+topology_id: eu_us_gac
+topology_scope: eu_us_gac
+description: >
+  Complete 146-query STATS-CEB no-refit external audit. The final semantic-v2
+  feature contract, family weights, k=4 centers, fuzzifier m=1.7, P99
+  threshold and prototype names remain frozen.
+execution_budget:
+  hard_timeout_seconds: 300
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  repetitions_default: 1
+  cache_features_in_default_model: false
+  order_policy: manifest_order
+  shuffle_seed: 20260727
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  correctness_filter_workload_to_passed: true
+dataset_profiles:
+  stats-ceb-full-no-refit-v1:
+    profile: ../../datasets/profiles/stats-ceb-full-no-refit.yml
+    load_method: custom_dump
+cells:
+  - corpus_cell_id: stats_ceb_full_no_refit
+    logical_question_id: stats_ceb_count
+    execution_strategy: multiregion_union
+    template_id: stats_ceb_multiregion_count
+    dataset_profile_id: stats-ceb-full-no-refit-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: final_check
+    intervention_axis: external_schema_portability
+    expected_regime_targets:
+      - remote_fetch_heavy
+      - join_movement
+      - well_reduced_localized
+    execution_class: pilot
+    parameters:
+      query_id:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+        - 11
+        - 12
+        - 13
+        - 14
+        - 15
+        - 16
+        - 17
+        - 18
+        - 19
+        - 20
+        - 21
+        - 22
+        - 23
+        - 24
+        - 25
+        - 26
+        - 27
+        - 28
+        - 29
+        - 30
+        - 31
+        - 32
+        - 33
+        - 34
+        - 35
+        - 36
+        - 37
+        - 38
+        - 39
+        - 40
+        - 41
+        - 42
+        - 43
+        - 44
+        - 45
+        - 46
+        - 47
+        - 48
+        - 49
+        - 50
+        - 51
+        - 52
+        - 53
+        - 54
+        - 55
+        - 56
+        - 57
+        - 58
+        - 59
+        - 60
+        - 61
+        - 62
+        - 63
+        - 64
+        - 65
+        - 66
+        - 67
+        - 68
+        - 69
+        - 70
+        - 71
+        - 72
+        - 73
+        - 74
+        - 75
+        - 76
+        - 77
+        - 78
+        - 79
+        - 80
+        - 81
+        - 82
+        - 83
+        - 84
+        - 85
+        - 86
+        - 87
+        - 88
+        - 89
+        - 90
+        - 91
+        - 92
+        - 93
+        - 94
+        - 95
+        - 96
+        - 97
+        - 98
+        - 99
+        - 100
+        - 101
+        - 102
+        - 103
+        - 104
+        - 105
+        - 106
+        - 107
+        - 108
+        - 109
+        - 110
+        - 111
+        - 112
+        - 113
+        - 114
+        - 115
+        - 116
+        - 117
+        - 118
+        - 119
+        - 120
+        - 121
+        - 122
+        - 123
+        - 124
+        - 125
+        - 126
+        - 127
+        - 128
+        - 129
+        - 130
+        - 131
+        - 132
+        - 133
+        - 134
+        - 135
+        - 136
+        - 137
+        - 138
+        - 139
+        - 140
+        - 141
+        - 142
+        - 143
+        - 144
+        - 145
+        - 146
+frozen_model_contract:
+  model_id: semantic-v2-transfer-oriented-fcm
+  feature_contract: ../../configs/features/feature_semantic_contract_v2.yml
+  model_freeze: ../../analysis/reports/semantic-v2-model-freeze/semantic_v2_model_manifest.yml
+  fuzzifier: 1.7
+  primary_resolution: 4
+  refit_allowed: false
+  feature_schema_change_allowed: false
+  post_observation_contract_changes_allowed: false
+  projection_role: external_full_workload_no_refit_audit
+  ood_requires_absolute_distance: true

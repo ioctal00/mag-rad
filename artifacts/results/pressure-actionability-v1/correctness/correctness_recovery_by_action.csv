@@ -1,0 +1,10 @@
+mitigation_action,intervention_role,pair_count,accepted_pair_count,exact_pair_count,tolerance_pair_count
+disperse_hot_shards,negative_control,6,6,2,4
+disperse_hot_shards,positive_case,28,28,0,28
+increase_fetch_size,calibration,6,6,1,5
+increase_gac_work_mem,negative_control,10,10,0,10
+mitigate_remote_path_bundle,calibration,6,6,1,5
+mitigate_remote_path_bundle,positive_case,12,12,0,12
+null_join_strategy_intervention,negative_control,4,4,1,3
+remove_added_delay,calibration,5,5,0,5
+remove_bandwidth_limit,calibration,6,6,0,6

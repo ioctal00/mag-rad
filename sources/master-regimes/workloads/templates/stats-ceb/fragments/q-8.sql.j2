@@ -1,0 +1,9 @@
+select count(*) as result_count
+FROM {{ schema_name }}.comments AS c, {{ schema_name }}.posts AS p, {{ schema_name }}.postLinks AS pl
+WHERE c.UserId = p.OwnerUserId
+  AND p.Id = pl.PostId
+  AND c.Score = 0
+  AND p.CreationDate >= CAST('2010-09-06 00:58:21' AS timestamp)
+  AND p.CreationDate <= CAST('2014-09-12 10:02:21' AS timestamp)
+  AND pl.LinkTypeId = 1
+  AND pl.CreationDate >= CAST('2011-07-09 22:35:44' AS timestamp)

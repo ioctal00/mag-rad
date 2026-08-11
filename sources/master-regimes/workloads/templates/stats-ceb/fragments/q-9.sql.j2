@@ -1,0 +1,6 @@
+select count(*) as result_count
+FROM {{ schema_name }}.comments AS c, {{ schema_name }}.posts AS p, {{ schema_name }}.postHistory AS ph
+WHERE p.Id = c.PostId
+  AND p.Id = ph.PostId
+  AND p.CommentCount >= 0
+  AND p.CommentCount <= 25

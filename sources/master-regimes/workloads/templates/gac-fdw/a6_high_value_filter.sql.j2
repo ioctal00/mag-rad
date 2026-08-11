@@ -1,0 +1,11 @@
+with all_events as (
+  select * from fdw_eu.events
+  union all
+  select * from fdw_us.events
+)
+select tenant_id, count(*) as high_value_events
+from all_events
+where value > {{ min_value }}::double precision
+  and created_at >= timestamptz '{{ from_ts_tz }}'
+group by tenant_id
+order by high_value_events desc, tenant_id;

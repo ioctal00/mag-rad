@@ -1,0 +1,41 @@
+corpus_id: batch-000-collection-smoke-remote_path
+source_manifest: master-regimes/configs/collection/batches/batch-000-collection-smoke.yml
+corpus_version: pressure-raw-corpus-v1
+collection_contract_version: pressure-raw-v1
+execution_backend: master-regimes-infra.database_sweep
+group_count: 2
+groups:
+- group_id: batch-000-collection-smoke__remote_path__pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_10mbit__analytics_clients
+  sweep_id: batch-000-collection-smoke__remote_path__pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_10mbit__analytics_clients
+  dataset_profile_id: raw-small-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_bandwidth_10mbit
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Isolate a strong bandwidth ceiling.
+  network_profile_id: pressure_remote_bandwidth_10mbit
+  cell_count: 4
+  instance_count: 3
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/remote_path/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_10mbit__analytics_clients.instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/remote_path/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_10mbit__analytics_clients.sweep.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: batch-000-collection-smoke__remote_path__pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_unlimited__analytics_clients
+  sweep_id: batch-000-collection-smoke__remote_path__pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_unlimited__analytics_clients
+  dataset_profile_id: raw-small-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_bandwidth_unlimited
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Bandwidth-only calibration baseline.
+  network_profile_id: pressure_remote_bandwidth_unlimited
+  cell_count: 4
+  instance_count: 3
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/remote_path/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_unlimited__analytics_clients.instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/remote_path/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_unlimited__analytics_clients.sweep.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false

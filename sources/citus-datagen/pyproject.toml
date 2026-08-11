@@ -1,0 +1,23 @@
+[project]
+name = "citus-datagen"
+version = "0.1.0"
+description = "Dataset generator for geo-partitioned Citus clusters"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115.0,<1.0.0",
+  "httpx>=0.28.0,<1.0.0",
+  "asyncpg>=0.30.0",
+  "pydantic>=2.12.5",
+  "python-dotenv>=1.1.0,<2.0.0",
+  "sqlalchemy>=2.0.48",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.15.11",
+]
+
+[tool.pyright]
+typeCheckingMode = "off"
+ignore = ["*"]

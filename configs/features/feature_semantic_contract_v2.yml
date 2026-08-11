@@ -1,0 +1,420 @@
+contract: master_regimes_feature_semantics_v2
+status: corrective_refreeze_before_second_external_holdout
+observation_unit: query_run_id
+normalization_scope: corpus_independent_semantic_contract
+prototype_scope: corpus_conditioned_original_baseline
+representation_scope: >
+  corpus-independent semantic normalization with corpus-conditioned FCM
+  prototypes
+development_sets:
+  - clean-run-v1
+  - stats-ceb-portability-v1
+  - stats-ceb-semantic-v2-holdout
+  - clean-run-v1-validation-holdout
+  - repeatability-v1
+confirmatory_holdout:
+  logical_run_id: stats-ceb-semantic-v2b-holdout
+  may_change_contract_after_observation: false
+  acceptance:
+    result_correctness_share_min: 1.0
+    projected_completed_rows_share_min: 1.0
+    finite_projection_share_min: 1.0
+    within_frozen_p99_share_min: 0.75
+  interpretation: >
+    Passing these gates supports transfer-oriented feature geometry only for
+    this external holdout and fixed topology. It does not establish a
+    workload-independent taxonomy or permit refitting after observation.
+missing_policy: semantic_neutral_with_explicit_applicability_audit
+family_weighting: inverse_sqrt_feature_count
+fuzzifier: 1.7
+k_values: [3, 4]
+seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+features:
+  foreign_scan_time_to_root_ratio:
+    family: remote_fanin_fetch
+    transform: nonnegative_log_atan
+    neutral: 0.0
+    formula: sum(main Foreign Scan actual_total_time) / main root actual_total_time
+    unit: ratio
+    raw_domain: "[0,+inf)"
+    applicability: main root timing is positive
+    null_semantics: not_applicable_or_timing_unavailable
+    dataset_dependence: indirect through plan and row flow
+    topology_dependence: can grow when several Foreign Scan times are summed
+    sql_shape_dependence: requires a Foreign Scan path
+    expected_response: remote path dominance and WAN/fetch intervention
+    raw_display: preserve unbounded ratio
+    model_status: KEEP_TRANSFORM
+  remote_to_final_rows_ratio:
+    family: remote_fanin_fetch
+    transform: nonnegative_log_atan
+    neutral: 0.0
+    formula: sum(remote root actual rows) / max(main final rows,1)
+    unit: rows_per_final_row
+    raw_domain: "[0,+inf)"
+    applicability: remote root rows and main final rows are available
+    null_semantics: not_applicable_without_remote_plan
+    dataset_dependence: not invariant when final cardinality stays fixed
+    topology_dependence: numerator is summed over observed remote roots
+    sql_shape_dependence: high for scalar and Top-K final results
+    expected_response: remote fan-in before final output
+    raw_display: preserve raw ratio
+    model_status: KEEP_TRANSFORM
+  regional_input_to_wan_rows_ratio:
+    family: remote_fanin_fetch
+    transform: nonnegative_log_atan
+    neutral: 0.0
+    formula: worker task scan rows / WAN output rows
+    unit: rows_per_wan_row
+    raw_domain: "[0,+inf)"
+    applicability: worker scan rows and WAN output rows are positive
+    null_semantics: not_applicable_or_worker_evidence_unavailable
+    dataset_dependence: can grow with input size for scalar output
+    topology_dependence: numerator aggregates all observed task scans
+    sql_shape_dependence: high for aggregate and selective reduction
+    expected_response: regional reduction before WAN transfer
+    raw_display: preserve raw DRF row proxy
+    model_status: KEEP_TRANSFORM
+  global_group_merge_ratio:
+    family: regional_reduction
+    transform: nonnegative_log_atan
+    neutral: 0.0
+    formula: WAN output rows / max(main final rows,1)
+    unit: wan_rows_per_final_row
+    raw_domain: "[0,+inf)"
+    applicability: WAN output and final rows are available
+    null_semantics: not_applicable_without_remote_output
+    dataset_dependence: can grow with input size for bounded final output
+    topology_dependence: WAN rows are summed over observed regions
+    sql_shape_dependence: high for global aggregate and Top-K
+    expected_response: global merge or finalization pressure
+    raw_display: preserve raw ratio
+    model_status: KEEP_TRANSFORM
+  spill_present:
+    family: normalized_spill_pressure
+    transform: binary
+    neutral: 0.0
+    formula: temp IO or external sort or hash_batches > 1
+    unit: flag
+    raw_domain: "{0,1}"
+    applicability: parsed main or remote plan
+    null_semantics: zero_only_after_plan_parse
+    dataset_dependence: threshold event can change with data size
+    topology_dependence: any observed plan layer may activate it
+    sql_shape_dependence: blocking operators are required
+    expected_response: low work_mem and spill-producing plans
+    raw_display: show presence separately from magnitude
+    model_status: SPLIT
+  spill_bytes_to_wan_bytes_ratio:
+    family: normalized_spill_pressure
+    transform: nonnegative_log_atan
+    neutral: 0.0
+    formula: temp_blocks * 8192 / WAN output bytes proxy
+    unit: bytes_per_wan_byte
+    raw_domain: "[0,+inf)"
+    applicability: WAN output bytes proxy is positive
+    null_semantics: not_applicable_without_wan_output
+    dataset_dependence: relative but not guaranteed invariant
+    topology_dependence: temp blocks include parsed main and remote plans
+    sql_shape_dependence: blocking operators and WAN path required
+    expected_response: spill magnitude relative to transferred output
+    raw_display: preserve raw ratio and temp blocks
+    model_status: KEEP_TRANSFORM
+  temp_blocks_per_final_row:
+    family: normalized_spill_pressure
+    transform: nonnegative_log_atan
+    neutral: 0.0
+    formula: temp blocks / max(main final rows,1)
+    unit: blocks_per_final_row
+    raw_domain: "[0,+inf)"
+    applicability: parsed plan and final cardinality
+    null_semantics: missing_means_temp_io_unavailable
+    dataset_dependence: can grow for bounded final output
+    topology_dependence: includes parsed main and remote temp IO
+    sql_shape_dependence: finalization and blocking operators
+    expected_response: spill-heavy finalization
+    raw_display: preserve raw ratio
+    model_status: KEEP_TRANSFORM
+  hash_batch_excess:
+    family: normalized_spill_pressure
+    transform: nonnegative_log_atan
+    neutral: 0.0
+    formula: max(hash_batches_max - 1,0)
+    unit: extra_batches
+    raw_domain: "[0,+inf)"
+    applicability: parsed hash plan or neutral absence
+    null_semantics: zero_means_no_extra_hash_batch
+    dataset_dependence: depends on hash input relative to memory
+    topology_dependence: maximum over parsed main and remote plans
+    sql_shape_dependence: hash operator required
+    expected_response: low work_mem and oversized hash input
+    raw_display: show hash_batches_max and excess
+    model_status: SPLIT
+  remote_region_rows_isf_normalized:
+    family: skew_imbalance
+    transform: bounded_share
+    neutral: 0.0
+    formula: (max(region_rows)/mean(region_rows)-1)/(n_regions-1)
+    unit: normalized_ratio
+    raw_domain: "[0,1]"
+    applicability: complete row evidence for at least one observed region
+    null_semantics: not_applicable_without_region_row_distribution
+    dataset_dependence: invariant to uniform scaling of region rows
+    topology_dependence: explicitly normalized by observed region count
+    sql_shape_dependence: query must activate multiple regional paths
+    expected_response: controlled regional asymmetry
+    raw_display: show raw ISF and normalized value
+    model_status: REDEFINE
+  worker_task_scan_rows_isf_normalized:
+    family: skew_imbalance
+    transform: bounded_share
+    neutral: 0.0
+    formula: (max(task_scan_rows)/mean(task_scan_rows)-1)/(n_tasks-1)
+    unit: normalized_ratio
+    raw_domain: "[0,1]"
+    applicability: complete worker task scan rows
+    null_semantics: not_applicable_without_worker_task_scan_rows
+    dataset_dependence: invariant to uniform scaling of task scan rows
+    topology_dependence: explicitly normalized by observed task count
+    sql_shape_dependence: distributed task execution required
+    expected_response: shard or task-level scan imbalance
+    raw_display: show raw task ISF and normalized value
+    model_status: REDEFINE
+  worker_scan_rows_cv_normalized:
+    family: skew_imbalance
+    transform: bounded_share
+    neutral: 0.0
+    formula: population_cv(sum(task scan rows by worker))/sqrt(n_workers-1)
+    unit: normalized_ratio
+    raw_domain: "[0,1]"
+    applicability: complete task-to-worker mapping and scan rows
+    null_semantics: not_applicable_without_complete_worker_scan_mapping
+    dataset_dependence: invariant to uniform scaling of worker scan rows
+    topology_dependence: explicitly normalized by observed worker count
+    sql_shape_dependence: query must activate worker task scans
+    expected_response: B-C worker placement intervention
+    raw_display: show worker sums, raw CV and normalized CV
+    model_status: ADD_FROM_Z
+  task_count_to_shard_count_ratio:
+    family: citus_topology_normalized
+    transform: nonnegative_log_atan
+    neutral: 0.0
+    formula: observed task count / configured shard count
+    unit: tasks_per_shard
+    raw_domain: "[0,+inf)"
+    applicability: task count and shard count available
+    null_semantics: not_applicable_without_citus_task_evidence
+    dataset_dependence: independent of row magnitude
+    topology_dependence: normalized by configured shard count
+    sql_shape_dependence: router, multi-shard and repartition differ
+    expected_response: task fan-out and repartition
+    raw_display: show task and shard counts
+    model_status: KEEP_TRANSFORM
+  active_task_share:
+    family: citus_topology_normalized
+    transform: nonnegative_log_atan
+    neutral: 0.0
+    formula: task count / (shard count * observed region count)
+    unit: tasks_per_region_shard_slot
+    raw_domain: "[0,+inf)"
+    applicability: task, shard and region counts available
+    null_semantics: not_applicable_without_citus_task_evidence
+    dataset_dependence: independent of row magnitude
+    topology_dependence: normalized by observed region-shard slots
+    sql_shape_dependence: router, multi-shard and repartition differ
+    expected_response: active distributed task footprint
+    raw_display: show numerator and slot denominator
+    model_status: KEEP_TRANSFORM
+  citus_repartition_observed_v2:
+    family: citus_topology_normalized
+    transform: binary
+    neutral: 0.0
+    formula: >
+      main-plan repartition marker OR regional MapMergeJob/repartition marker
+      present
+    unit: flag
+    raw_domain: "{0,1}"
+    applicability: main or regional Citus plan text available
+    null_semantics: zero_only_after_main_and_regional_plan_evidence_aggregation
+    dataset_dependence: independent of row magnitude
+    topology_dependence: Citus plan strategy observed at GAC or regional layer
+    sql_shape_dependence: non-colocated joins
+    expected_response: repartition query families
+    raw_display: show marker and map/merge counts
+    model_status: KEEP_IDENTITY
+  worker_task_seq_scan_share:
+    family: citus_topology_normalized
+    transform: bounded_share
+    neutral: 0.0
+    formula: sequential worker scans / all classified worker scans
+    unit: share
+    raw_domain: "[0,1]"
+    applicability: worker scan type histogram available
+    null_semantics: not_applicable_without_worker_scan_types
+    dataset_dependence: independent of row magnitude
+    topology_dependence: aggregated over observed tasks
+    sql_shape_dependence: access path and predicates
+    expected_response: full-scan versus indexed access path
+    raw_display: show scan histogram and share
+    model_status: KEEP_IDENTITY
+  root_rows_estimate_error_log:
+    family: estimate_error
+    transform: signed_atan
+    neutral: 0.5
+    neutral_semantics: zero_signed_log_error
+    formula: log((actual_rows+1)/(plan_rows+1)) at main root
+    unit: signed_log_ratio
+    raw_domain: "(-inf,+inf)"
+    applicability: actual and estimated root rows available
+    null_semantics: not_applicable_without_analyze_or_estimate
+    dataset_dependence: relative but statistics-sensitive
+    topology_dependence: main GAC plan only
+    sql_shape_dependence: root operator
+    expected_response: cardinality misestimate at final output
+    raw_display: show signed log error and raw rows
+    model_status: KEEP_TRANSFORM
+  foreign_scan_rows_estimate_error_log:
+    family: estimate_error
+    transform: signed_atan
+    neutral: 0.5
+    neutral_semantics: zero_signed_log_error
+    formula: largest-absolute signed log row error over Foreign Scan nodes
+    unit: signed_log_ratio
+    raw_domain: "(-inf,+inf)"
+    applicability: Foreign Scan actual and estimated rows available
+    null_semantics: not_applicable_without_foreign_scan
+    dataset_dependence: relative but statistics-sensitive
+    topology_dependence: main GAC plan only
+    sql_shape_dependence: FDW path required
+    expected_response: FDW boundary cardinality misestimate
+    raw_display: show signed log error and selected node
+    model_status: KEEP_TRANSFORM
+  aggregate_rows_estimate_error_log:
+    family: estimate_error
+    transform: signed_atan
+    neutral: 0.5
+    neutral_semantics: zero_signed_log_error
+    formula: largest-absolute signed log row error over Aggregate nodes
+    unit: signed_log_ratio
+    raw_domain: "(-inf,+inf)"
+    applicability: aggregate actual and estimated rows available
+    null_semantics: not_applicable_without_aggregate
+    dataset_dependence: relative but statistics-sensitive
+    topology_dependence: parsed main plan
+    sql_shape_dependence: aggregate required
+    expected_response: aggregate cardinality misestimate
+    raw_display: show signed log error and selected node
+    model_status: KEEP_TRANSFORM
+  remote_root_rows_estimate_error_log:
+    family: estimate_error
+    transform: signed_atan
+    neutral: 0.5
+    neutral_semantics: zero_signed_log_error
+    formula: largest-absolute signed log row error over remote roots
+    unit: signed_log_ratio
+    raw_domain: "(-inf,+inf)"
+    applicability: regional remote root actual and estimated rows available
+    null_semantics: not_applicable_without_remote_root_plan
+    dataset_dependence: relative but statistics-sensitive
+    topology_dependence: aggregated selection over observed remote roots
+    sql_shape_dependence: remote execution required
+    expected_response: regional root cardinality misestimate
+    raw_display: show signed log error and selected remote root
+    model_status: KEEP_TRANSFORM
+
+legacy_audit:
+  remote_path_share:
+    decision: REDEFINE
+    replacement: foreign_scan_time_to_root_ratio
+    reason: sum of Foreign Scan times is not guaranteed to be a bounded share
+  remote_to_final_rows_ratio:
+    decision: KEEP_TRANSFORM
+    replacement: remote_to_final_rows_ratio
+    reason: useful unbounded fan-in ratio after monotone saturation
+  wan_output_to_final_rows_ratio:
+    decision: REMOVE
+    replacement: global_group_merge_ratio
+    reason: deterministically identical in the current implementation
+  drf_bytes_proxy:
+    decision: REDEFINE
+    replacement: regional_input_to_wan_rows_ratio
+    reason: common width proxy cancels, so the value is a row ratio
+  global_group_merge_ratio:
+    decision: KEEP_TRANSFORM
+    replacement: global_group_merge_ratio
+    reason: interpretable global merge ratio
+  temp_bytes_to_wan_bytes_ratio:
+    decision: REDEFINE
+    replacement: spill_bytes_to_wan_bytes_ratio
+    reason: precise spill-byte naming
+  temp_blocks_per_wan_row:
+    decision: REMOVE
+    replacement: spill_bytes_to_wan_bytes_ratio
+    reason: weaker unit semantics than the byte-compatible ratio
+  temp_blocks_per_final_row:
+    decision: KEEP_TRANSFORM
+    replacement: temp_blocks_per_final_row
+    reason: captures finalization spill intensity
+  spill_per_wan_mb:
+    decision: REMOVE
+    replacement: spill_bytes_to_wan_bytes_ratio
+    reason: exact constant multiple of temp_bytes_to_wan_bytes_ratio
+  hash_batches_max:
+    decision: SPLIT
+    replacement: hash_batch_excess
+    reason: one batch is neutral and excess magnitude should start at zero
+  remote_region_rows_isf:
+    decision: REDEFINE
+    replacement: remote_region_rows_isf_normalized
+    reason: legacy denominator excludes zero-row regions
+  worker_task_scan_rows_isf:
+    decision: REDEFINE
+    replacement: worker_task_scan_rows_isf_normalized
+    reason: raw ISF upper bound changes with task count
+  worker_task_scan_actual_rows_max_share:
+    decision: REMOVE
+    replacement: worker_task_scan_rows_isf_normalized
+    reason: algebraically determined by task ISF and task count
+  task_count_to_shard_count_ratio:
+    decision: KEEP_TRANSFORM
+    replacement: task_count_to_shard_count_ratio
+    reason: explicit shard normalization
+  active_task_share:
+    decision: KEEP_TRANSFORM
+    replacement: active_task_share
+    reason: explicit observed region-shard normalization
+  citus_repartition_query:
+    decision: REDEFINE
+    replacement: citus_repartition_observed_v2
+    reason: >
+      the GAC plan can hide regional MapMerge execution, so the versioned flag
+      combines main-plan and regional Citus evidence
+  worker_task_seq_scan_share:
+    decision: KEEP_IDENTITY
+    replacement: worker_task_seq_scan_share
+    reason: naturally bounded access-path share
+  root_rows_estimate_error_log:
+    decision: KEEP_TRANSFORM
+    replacement: root_rows_estimate_error_log
+    reason: signed error retained with 0.5 semantic neutral after transform
+  foreign_scan_rows_estimate_error_log:
+    decision: KEEP_TRANSFORM
+    replacement: foreign_scan_rows_estimate_error_log
+    reason: signed error retained with 0.5 semantic neutral after transform
+  aggregate_rows_estimate_error_log:
+    decision: KEEP_TRANSFORM
+    replacement: aggregate_rows_estimate_error_log
+    reason: signed error retained with 0.5 semantic neutral after transform
+  remote_root_rows_estimate_error_log:
+    decision: KEEP_TRANSFORM
+    replacement: remote_root_rows_estimate_error_log
+    reason: signed error retained with 0.5 semantic neutral after transform
+
+added_from_derived_layer:
+  worker_scan_rows_cv_normalized:
+    decision: ADD_FROM_Z
+    reason: distinguishes worker placement from task-level imbalance
+  spill_present:
+    decision: SPLIT
+    reason: separates spill occurrence from magnitude

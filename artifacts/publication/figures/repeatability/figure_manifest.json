@@ -1,0 +1,72 @@
+{
+  "figure_count": 5,
+  "files": {
+    "01-feature-stability.pdf": {
+      "bytes": 30785,
+      "sha256": "b11c71f503a53b58c06963ebba3c1faa1af08d3b6d5feb089842496aed67a91b"
+    },
+    "01-feature-stability.svg": {
+      "bytes": 118451,
+      "sha256": "0a184a23157bcb4f4a70d81f092d35e58887fdb53c99ab5191da66a14a9f9769"
+    },
+    "02-membership-stability.pdf": {
+      "bytes": 33538,
+      "sha256": "83d709509a6f9e6d49cd76330c16027b6aefc3bc0c0348b40d458363414a7671"
+    },
+    "02-membership-stability.svg": {
+      "bytes": 98767,
+      "sha256": "6782072679fdc86e8b7e66f4a871125e367efb554e76a0271b14dccaf86e6f40"
+    },
+    "03-runtime-vs-diagnostic-stability.pdf": {
+      "bytes": 26843,
+      "sha256": "cb51b35813248ba64ef527f90c5caa1f910d6bef7c55d99ccab4dcc921c5028d"
+    },
+    "03-runtime-vs-diagnostic-stability.svg": {
+      "bytes": 54779,
+      "sha256": "8ff6ce9fa7f5d3dfefbf57ef09fe974ea5f2a9f227a9106f2764c886d7f57ae9"
+    },
+    "04-strategy-summary.pdf": {
+      "bytes": 27702,
+      "sha256": "0d4df96bbe890f614c610975d9a94b7930a23649f96004156004120e00d94266"
+    },
+    "04-strategy-summary.svg": {
+      "bytes": 65976,
+      "sha256": "75fbef85e2d67e1bc4500f8f44f135cc421c9d3a9fc05f2d006c86a4136f1aa3"
+    },
+    "05-display-state-transitions.pdf": {
+      "bytes": 26830,
+      "sha256": "f77c8df6232298071d0024ac950c2367bd2334f4d6ff5d9e52af893ba7ef2c22"
+    },
+    "05-display-state-transitions.svg": {
+      "bytes": 53645,
+      "sha256": "939199ae8796a7917314ff89363229823833d3298f01e6637d79c73ee6369423"
+    },
+    "figure_01_feature_stability.csv": {
+      "bytes": 1755,
+      "sha256": "ba55361dded5f1be7d05b5a5e23b5e38e70e110965117238f1f39e61f9070ce7"
+    },
+    "figure_02_membership_stability.csv": {
+      "bytes": 16730,
+      "sha256": "54df8bcfca63ba80c48626fc52ab225d6dad18a36e956340bfeee1a4933740c3"
+    },
+    "figure_03_stability_comparison.csv": {
+      "bytes": 433,
+      "sha256": "b15625653563deaafce48f39833daa74c08cb568a4299cbf4b01bbb540440d36"
+    },
+    "figure_04_strategy_summary.csv": {
+      "bytes": 520,
+      "sha256": "edbd0bce9bb4377ac5561e4f97e248c3a681aee628319eedcd50bf537d3e0691"
+    },
+    "figure_05_display_transitions.csv": {
+      "bytes": 142,
+      "sha256": "413a144d28de04d6d60a04c8c8c60cdf3bfe30b96c580aee39f14a8d2db9bdda"
+    }
+  },
+  "formats": [
+    "pdf",
+    "svg"
+  ],
+  "output_dir": "../master-regimes-thesis/figures/repeatability",
+  "semantic_report_dir": "analysis/reports/semantic-v2-final-consistency",
+  "source_report_dir": "analysis/reports/repeatability-v1"
+}

@@ -1,0 +1,91 @@
+---
+analytics_node_enabled: false
+analytics_node_repo_dir: /opt/analytics-client
+analytics_node_log_dir: /var/log/analytics-client
+analytics_node_run_root: /var/lib/analytics-client/runs
+analytics_node_git_clone_suffix: ""
+analytics_node_git_branch: main
+analytics_node_region: ""
+analytics_node_notes: ""
+analytics_node_uv_installer_url: https://astral.sh/uv/install.sh
+analytics_node_uv_install_dir: /root/.local/bin
+analytics_node_tls_dir: /etc/thesis/analytics-client
+analytics_node_tls_ca_src: "{{ playbook_dir }}/../../pki/dev-ca/ca.crt"
+analytics_node_tls_ca_key_src: "{{ playbook_dir }}/../../pki/dev-ca/ca.key"
+analytics_node_tls_issued_dir: "{{ playbook_dir }}/../../pki/dev-ca/issued"
+analytics_node_tls_ca_filename: ca.crt
+analytics_node_tls_server_cert_filename: server.crt
+analytics_node_tls_server_key_filename: server.key
+analytics_node_tls_server_days: 825
+analytics_node_tls_server_key_size: 2048
+analytics_node_extra_packages:
+  - htop
+  - iftop
+  - iotop
+  - net-tools
+  - postgresql-client
+  - python3
+  - python3-venv
+  - python3-pip
+  - slurm
+  - sysstat
+
+analytics_node_postgresql_enabled: true
+analytics_node_postgresql_version: "{{ postgresql_version | default('18') }}"
+analytics_node_citus_package: "{{ citus_package | default('postgresql-18-citus-14.0') }}"
+analytics_node_postgresql_package_hold: true
+analytics_node_postgresql_app_db: analytics
+analytics_node_postgresql_app_user: analytics
+analytics_node_postgresql_app_password: "{{ postgresql_app_password | default('replace-with-strong-password') }}"
+analytics_node_postgresql_admin_password: "{{ analytics_node_postgresql_app_password }}"
+analytics_node_postgresql_experiment_user: postgres
+analytics_node_postgresql_experiment_password: "{{ analytics_node_postgresql_admin_password }}"
+analytics_node_postgresql_listen_addresses: "127.0.0.1,::1"
+analytics_node_postgresql_max_connections: 100
+analytics_node_postgresql_shared_preload_libraries: "pg_stat_statements"
+analytics_node_postgresql_password_encryption: "scram-sha-256"
+analytics_node_postgresql_data_checksums: true
+analytics_node_postgresql_allowed_cidrs:
+  - "127.0.0.1/32"
+  - "::1/128"
+analytics_node_postgresql_extensions:
+  - pg_stat_statements
+  - postgres_fdw
+
+analytics_node_pgbouncer_enabled: true
+analytics_node_pgbouncer_listen_addr: "0.0.0.0"
+analytics_node_pgbouncer_listen_port: 6432
+analytics_node_pgbouncer_auth_type: "scram-sha-256"
+analytics_node_pgbouncer_pool_mode: transaction
+analytics_node_pgbouncer_default_pool_size: 50
+analytics_node_pgbouncer_max_client_conn: 500
+analytics_node_pgbouncer_client_tls_sslmode: require
+analytics_node_pgbouncer_client_tls_protocols: secure
+analytics_node_pgbouncer_allowed_cidrs: []
+
+analytics_node_iperf_measurement_enabled: true
+analytics_node_iperf_port_range: "5210:5299"
+analytics_node_iperf_allowed_cidrs: []
+
+analytics_node_remote_regions:
+  eu:
+    host: "{{ hostvars[groups['coordinators'] | select('match', '^eu-') | first].private_ip | default(hostvars[groups['coordinators'] | select('match', '^eu-') | first].ansible_host) if (groups.get('coordinators', []) | select('match', '^eu-') | list | length) > 0 else '' }}"
+    port: 5432
+    db: "{{ postgresql_app_db | default('app') }}"
+    user: "{{ postgresql_admin_user | default('postgres') }}"
+    password: "{{ postgresql_admin_password | default('') }}"
+    sslmode: verify-ca
+  us:
+    host: "{{ hostvars[groups['coordinators'] | select('match', '^us-') | first].private_ip | default(hostvars[groups['coordinators'] | select('match', '^us-') | first].ansible_host) if (groups.get('coordinators', []) | select('match', '^us-') | list | length) > 0 else '' }}"
+    port: 5432
+    db: "{{ postgresql_app_db | default('app') }}"
+    user: "{{ postgresql_admin_user | default('postgres') }}"
+    password: "{{ postgresql_admin_password | default('') }}"
+    sslmode: verify-ca
+  apac:
+    host: "{{ hostvars[groups['coordinators'] | select('match', '^apac-') | first].private_ip | default(hostvars[groups['coordinators'] | select('match', '^apac-') | first].ansible_host) if (groups.get('coordinators', []) | select('match', '^apac-') | list | length) > 0 else '' }}"
+    port: 5432
+    db: "{{ postgresql_app_db | default('app') }}"
+    user: "{{ postgresql_admin_user | default('postgres') }}"
+    password: "{{ postgresql_admin_password | default('') }}"
+    sslmode: verify-ca

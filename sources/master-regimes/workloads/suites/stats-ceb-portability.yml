@@ -1,0 +1,45 @@
+suite_id: stats-ceb-portability
+scope: external_portability
+description: >
+  STATS-CEB scalar-count portability template. Development and confirmatory
+  query IDs are supplied by separately frozen corpus manifests.
+required_topology_capabilities:
+  - fdw_eu
+  - fdw_us
+templates:
+  stats_ceb_multiregion_count:
+    file: templates/stats-ceb/stats_ceb_multiregion_count.sql.j2
+    family: stats_ceb_external_count
+    logical_question_id: stats_ceb_count
+    execution_strategy: multiregion_union
+    description: >
+      Two independent regional scalar counts. The result rows are not summed;
+      each region is compared with the canonical baseline by a pre-query
+      correctness gate.
+    expected_regime_targets:
+      - remote_fetch_heavy
+      - join_movement
+      - well_reduced_localized
+    expected_pressure_tags:
+      - external_schema
+      - fdw_union_all
+      - scalar_aggregate
+      - citus_join_strategy_probe
+    runtime_sensitivity:
+      fetch_size: low
+      work_mem: medium
+      wan_latency: medium
+    parameters:
+      query_id: [1, 2, 3, 4, 5, 6, 8, 9, 15, 22, 24, 35, 38, 47, 50, 72, 74, 75, 76, 78, 80, 86, 94, 98, 100, 101, 109, 111, 113, 121, 129, 130]
+    required_dataset_capabilities:
+      - supports_reference_join
+      - supports_non_colocated_join
+      - supports_selective_filters
+    distribution_key_usage:
+      filter_uses_distribution_key: false
+      join_uses_distribution_key: true
+      group_by_uses_distribution_key: false
+      order_by_uses_distribution_key: false
+      tenant_filter_present: false
+      single_tenant_scope: false
+      multi_tenant_scope: false

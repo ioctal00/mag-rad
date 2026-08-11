@@ -1,0 +1,20 @@
+with joined_events as (
+  select t.region,
+         e.created_at,
+         e.value
+  from fdw_eu.events e
+  join fdw_eu.tenants t on e.tenant_id = t.tenant_id
+  union all
+  select t.region,
+         e.created_at,
+         e.value
+  from fdw_us.events e
+  join fdw_us.tenants t on e.tenant_id = t.tenant_id
+)
+select region,
+       date_trunc('day', created_at) as day,
+       sum(value) as total_value
+from joined_events
+where created_at >= now() - make_interval(days => {{ lookback_days }}::int)
+group by region, day
+order by day, region;

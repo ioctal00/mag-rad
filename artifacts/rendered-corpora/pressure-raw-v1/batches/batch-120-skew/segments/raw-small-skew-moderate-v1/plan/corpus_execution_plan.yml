@@ -1,0 +1,100 @@
+corpus_id: batch-120-skew-raw-small-skew-moderate-v1
+protocol_version: 1
+source_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-moderate-v1/source_manifest.yml
+source_execution_plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-moderate-v1/source-render/corpus_execution_plan.yml
+source_selection: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-moderate-v1/selection.csv
+design_matrix: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-moderate-v1/plan/design_matrix.csv
+execution_backend: master-regimes-infra.database_sweep
+placement_aware_runner_required: true
+locally_rendered_without_infrastructure: true
+dry_run_only_until_capability_gate: true
+database_result_rows_stored: false
+query_condition_count: 10
+state_condition_count: 20
+execution_condition_count: 20
+execution_count: 60
+state_count: 2
+state_order:
+- B
+- C
+execution_policy:
+  cache_policy: mixed_cache_worker_skew_raw
+  order_policy: deterministic_shuffle_within_state
+  shuffle_seed: 20260730
+  repetitions: 3
+  warmup_per_instance: false
+  explicit_cache_reset: false
+placement_contract:
+  metadata_source: citus_shards
+  move_function: citus_move_shard_placement
+  shard_transfer_mode: block_writes
+  dispersed:
+    dominant_hot_event_share_max: 0.65
+  concentrated:
+    dominant_hot_event_share_min: 0.8
+  rollback:
+    primary: replay_inverse_moves_from_placement_intervention_manifest
+    fallback: clean_reload_same_dataset_profile_and_seed
+artifact_contract:
+  collection_contract_version: pressure-raw-v1
+  required_query_scopes:
+  - main
+  - regional_coordinator
+  - worker_task
+  database_result_rows_stored: false
+  result_signature_required: true
+  result_signature_scope: first_repetition_per_condition
+  os_sampler_required: true
+group_count: 2
+groups:
+- group_id: batch-120-skew-raw-small-skew-moderate-v1--state-B--raw-small-skew-moderate-v1--default--analytics-clients
+  sweep_id: batch-120-skew-raw-small-skew-moderate-v1--state-B--raw-small-skew-moderate-v1--default--analytics-clients
+  dataset_profile_id: raw-small-skew-moderate-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: default
+  target_group: analytics_clients
+  strategies: &id001
+  - multiregion_union
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  network_profile_id: ''
+  cell_count: 10
+  instance_count: 30
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-moderate-v1/plan/groups/batch-120-skew-raw-small-skew-moderate-v1--state-B--raw-small-skew-moderate-v1--default--analytics-clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-moderate-v1/plan/sweeps/batch-120-skew-raw-small-skew-moderate-v1--state-B--raw-small-skew-moderate-v1--default--analytics-clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  state_id: B
+  state_name: skew_dispersed
+  placement_state_id: hot_shards_dispersed
+  placement_action: disperse_hot_shards
+  logical_data_contract_id: raw-small-skew-moderate-v1-seed-73
+  dataset_transition: clean_load
+  pre_group_action: disperse_hot_shards
+  requires_placement_orchestrator: true
+  condition_count: 10
+- group_id: batch-120-skew-raw-small-skew-moderate-v1--state-C--raw-small-skew-moderate-v1--default--analytics-clients
+  sweep_id: batch-120-skew-raw-small-skew-moderate-v1--state-C--raw-small-skew-moderate-v1--default--analytics-clients
+  dataset_profile_id: raw-small-skew-moderate-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: default
+  target_group: analytics_clients
+  strategies: *id001
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  network_profile_id: ''
+  cell_count: 10
+  instance_count: 30
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-moderate-v1/plan/groups/batch-120-skew-raw-small-skew-moderate-v1--state-C--raw-small-skew-moderate-v1--default--analytics-clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-moderate-v1/plan/sweeps/batch-120-skew-raw-small-skew-moderate-v1--state-C--raw-small-skew-moderate-v1--default--analytics-clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  state_id: C
+  state_name: skew_concentrated
+  placement_state_id: hot_shards_concentrated
+  placement_action: concentrate_hot_shards
+  logical_data_contract_id: raw-small-skew-moderate-v1-seed-73
+  dataset_transition: reuse_previous_loaded_dataset
+  pre_group_action: concentrate_hot_shards
+  requires_placement_orchestrator: true
+  condition_count: 10

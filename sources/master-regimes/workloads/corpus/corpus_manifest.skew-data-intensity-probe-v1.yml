@@ -1,0 +1,99 @@
+corpus_id: skew-data-intensity-probe-v1
+description: >
+  Bounded pre-corpus calibration of logical data skew. The same scale and seed
+  are rendered as balanced, moderate-skew and heavy-skew datasets. Broad scans
+  measure whether dataset frequency skew reaches Citus task and worker
+  evidence. Tenant-point queries are pruning controls for which task/worker
+  skew is not applicable.
+query_groups: query-groups.yml
+runtime_catalog: runtime-configs.yml
+
+dataset_profiles:
+  raw-small-balanced-v1:
+    profile: ../../datasets/profiles/raw-small-balanced.yml
+    load_method: copy_pipe
+  raw-small-skew-moderate-v1:
+    profile: ../../datasets/profiles/raw-small-skew-moderate.yml
+    load_method: copy_pipe
+  raw-small-skew-heavy-v1:
+    profile: ../../datasets/profiles/raw-small-skew-heavy.yml
+    load_method: copy_pipe
+
+execution_budget:
+  hard_timeout_seconds: 300
+  timeout_grace_seconds: 30
+
+execution_policy:
+  cache_policy: mixed_cache_skew_taxonomy_probe
+  order_policy: deterministic_shuffle
+  shuffle_seed: 20260730
+  repetitions_default: 1
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  os_sampler: true
+  result_signature: true
+
+cells:
+  - corpus_cell_id: broad_all_shards
+    logical_question_id: event_full_scan_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_raw_region_rollup
+    dataset_profile_id:
+      - raw-small-balanced-v1
+      - raw-small-skew-moderate-v1
+      - raw-small-skew-heavy-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    parameters:
+      lookback_days: [30]
+
+  - corpus_cell_id: hot_key_range
+    logical_question_id: top_tenants
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_hot_worker_probe
+    dataset_profile_id:
+      - raw-small-skew-moderate-v1
+      - raw-small-skew-heavy-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    parameters:
+      eu_hot_tenant_min: [1]
+      eu_hot_tenant_max: [4]
+      us_hot_tenant_min: [10001]
+      us_hot_tenant_max: [10004]
+      cpu_terms: [32]
+
+  - corpus_cell_id: tenant_point_hot_pruning_control
+    logical_question_id: tenant_point_rollup
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_tenant_point_rollup
+    dataset_profile_id:
+      - raw-small-balanced-v1
+      - raw-small-skew-moderate-v1
+      - raw-small-skew-heavy-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    parameters:
+      eu_tenant_id: [1]
+      us_tenant_id: [10001]
+      lookback_days: [30]
+
+  - corpus_cell_id: tenant_point_cold_pruning_control
+    logical_question_id: tenant_point_rollup
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_tenant_point_rollup
+    dataset_profile_id:
+      - raw-small-balanced-v1
+      - raw-small-skew-moderate-v1
+      - raw-small-skew-heavy-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    parameters:
+      eu_tenant_id: [100]
+      us_tenant_id: [10100]
+      lookback_days: [30]

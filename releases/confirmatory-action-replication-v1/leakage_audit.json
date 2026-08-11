@@ -1,0 +1,15 @@
+{
+  "checks": {
+    "all_replays_evaluate_identical_oracle_rows": true,
+    "confirmatory_query_ids_absent_from_reference_memory": true,
+    "confirmatory_sql_hashes_absent_from_reference_memory": true,
+    "frozen_transfer_memory_is_constant": true,
+    "frozen_transfer_neighbors_exclude_confirmatory_queries": true,
+    "one_outcome_row_per_scenario_action": true,
+    "state_features_exclude_actions_outcomes_and_ids": true
+  },
+  "confirmatory_query_count": 15,
+  "feature_count": 93,
+  "reference_query_count": 26,
+  "status": "PASS"
+}

@@ -1,0 +1,26 @@
+with regional_events as materialized (
+  select
+    'eu'::text as source_region,
+    e.tenant_id,
+    e.value
+  from fdw_eu.events e
+  where e.tenant_id = {{ eu_tenant_id }}::bigint
+    and e.created_at >= coalesce(to_timestamp(nullif({{ as_of_unix | default(0) }}, 0)), now()) - make_interval(days => {{ lookback_days }}::int)
+  union all
+  select
+    'us'::text as source_region,
+    e.tenant_id,
+    e.value
+  from fdw_us.events e
+  where e.tenant_id = {{ us_tenant_id }}::bigint
+    and e.created_at >= coalesce(to_timestamp(nullif({{ as_of_unix | default(0) }}, 0)), now()) - make_interval(days => {{ lookback_days }}::int)
+)
+select
+  source_region,
+  tenant_id,
+  count(*) as events_count,
+  sum(value) as total_value,
+  avg(value) as avg_value
+from regional_events
+group by source_region, tenant_id
+order by source_region, tenant_id;

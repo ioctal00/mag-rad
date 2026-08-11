@@ -1,0 +1,68 @@
+---
+cloudb_web_enabled: "{{ web_portal_enabled | default(false) }}"
+cloudb_web_root: /opt/cloudb-web
+cloudb_web_viewer_root: /opt/regime-diagnosis-viewer
+cloudb_web_static_root: /var/www/cloudb-web
+cloudb_web_nginx_site: /etc/nginx/sites-available/cloudb-web.conf
+cloudb_web_nginx_site_link: /etc/nginx/sites-enabled/cloudb-web.conf
+cloudb_web_htpasswd_file: /etc/nginx/cloudb-web.htpasswd
+cloudb_web_server_name: "{{ web_portal_server_name | default('_') }}"
+cloudb_web_tls_enabled: "{{ web_portal_tls_enabled | default(false) }}"
+cloudb_web_tls_domain: "{{ web_portal_tls_domain | default(cloudb_web_server_name) }}"
+cloudb_web_tls_provider: "{{ web_portal_tls_provider | default('letsencrypt') }}"
+cloudb_web_tls_cloudflare_proxy: "{{ web_portal_tls_cloudflare_proxy | default(false) }}"
+cloudb_web_tls_origin_cert_local_path: "{{ web_portal_tls_origin_cert_local_path | default('') }}"
+cloudb_web_tls_origin_key_local_path: "{{ web_portal_tls_origin_key_local_path | default('') }}"
+cloudb_web_tls_force_https: "{{ web_portal_tls_force_https | default(true) }}"
+cloudb_web_tls_webroot: /var/www/letsencrypt
+cloudb_web_tls_cert_name: "{{ cloudb_web_tls_domain }}"
+cloudb_web_tls_live_dir: "/etc/letsencrypt/live/{{ cloudb_web_tls_cert_name }}"
+cloudb_web_tls_origin_dir: /etc/ssl/cloudb-web
+cloudb_web_tls_origin_cert_remote_path: "{{ cloudb_web_tls_origin_dir }}/cloudflare-origin.pem"
+cloudb_web_tls_origin_key_remote_path: "{{ cloudb_web_tls_origin_dir }}/cloudflare-origin.key"
+cloudb_web_tls_fullchain: "{{ cloudb_web_tls_origin_cert_remote_path if cloudb_web_tls_provider == 'cloudflare_origin' else cloudb_web_tls_live_dir + '/fullchain.pem' }}"
+cloudb_web_tls_privkey: "{{ cloudb_web_tls_origin_key_remote_path if cloudb_web_tls_provider == 'cloudflare_origin' else cloudb_web_tls_live_dir + '/privkey.pem' }}"
+cloudb_web_tls_skip_when_dns_not_ready: true
+cloudb_web_db_user: "{{ web_portal_db_readonly_user | default('prof_demo') }}"
+cloudb_web_db_password: "{{ web_portal_db_readonly_password | default('') }}"
+cloudb_web_pgweb_query_timeout_seconds: "{{ web_portal_pgweb_query_timeout_seconds | default(20) }}"
+cloudb_web_basic_auth_users: "{{ web_portal_basic_auth_users | default('') }}"
+cloudb_web_viewer_auth_users: "{{ web_portal_viewer_auth_users | default('') }}"
+cloudb_web_viewer_auth_disabled: "{{ web_portal_viewer_auth_disabled | default(false) }}"
+cloudb_web_allowed_cidrs: "{{ web_portal_allowed_cidrs | default([]) }}"
+cloudb_web_cloudb_source_hint: "{{ web_portal_cloudb_web_local_source_hint | default('../cloudb-web') }}"
+cloudb_web_viewer_source_hint: "{{ web_portal_viewer_local_source_hint | default('../master-regimes-apps/apps/regime-diagnosis-viewer') }}"
+cloudb_web_app_source_mode: "{{ web_portal_app_source_mode | default('local') }}"
+cloudb_web_apps_repo: "{{ web_portal_apps_repo | default('') }}"
+cloudb_web_apps_branch: "{{ web_portal_apps_branch | default('main') }}"
+cloudb_web_apps_repo_dir: "{{ web_portal_apps_repo_dir | default('/opt/master-regimes-apps') }}"
+cloudb_web_apps_cloudb_subdir: "{{ web_portal_apps_cloudb_subdir | default('apps/cloudb-web') }}"
+cloudb_web_apps_viewer_subdir: "{{ web_portal_apps_viewer_subdir | default('apps/regime-diagnosis-viewer') }}"
+cloudb_web_live_pipeline_enabled: "{{ web_portal_live_pipeline_enabled | default(true) }}"
+cloudb_web_live_diagnosis_python: "{{ web_portal_live_diagnosis_python | default('3.14') }}"
+cloudb_web_live_diagnosis_expose_debug: "{{ web_portal_live_diagnosis_expose_debug | default(false) }}"
+cloudb_web_live_diagnosis_refresh_inventory: "{{ web_portal_live_diagnosis_refresh_inventory | default(false) }}"
+cloudb_web_live_config_dir: /root/.config/master-regimes-infra
+cloudb_web_live_ssh_key_remote_path: /root/.ssh/master-regimes-live
+cloudb_web_live_model_bundle_paths:
+  - analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact
+  - analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy
+  - analysis/reports/clean-run-v1-final-model
+cloudb_web_master_regimes_repo: "{{ web_portal_master_regimes_repo | default('https://github.com/PTF-Projects/master-regimes.git') }}"
+cloudb_web_master_regimes_branch: "{{ web_portal_master_regimes_branch | default('main') }}"
+cloudb_web_master_regimes_repo_dir: "{{ web_portal_master_regimes_repo_dir | default('/opt/master-regimes') }}"
+cloudb_web_master_regimes_infra_repo: "{{ web_portal_master_regimes_infra_repo | default('https://github.com/PTF-Projects/master-regimes-infra.git') }}"
+cloudb_web_master_regimes_infra_branch: "{{ web_portal_master_regimes_infra_branch | default('main') }}"
+cloudb_web_master_regimes_infra_repo_dir: "{{ web_portal_master_regimes_infra_repo_dir | default('/opt/master-regimes-infra') }}"
+cloudb_web_packages:
+  - apache2-utils
+  - ca-certificates
+  - certbot
+  - curl
+  - docker-compose
+  - docker.io
+  - git
+  - nginx
+  - rsync
+cloudb_web_viewer_snapshot_local_path: "{{ web_portal_viewer_snapshot_local_path | default('../master-regimes-apps/apps/regime-diagnosis-viewer/public/diagnosis-data.json') }}"
+cloudb_web_compose_command: docker-compose

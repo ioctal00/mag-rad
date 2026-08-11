@@ -1,0 +1,7 @@
+representation,evaluation,episode_count,recommendation_count,abstention_count,coverage,correct_decision_count,top1_accuracy,mean_regret_log2
+coordinator_physical,first_occurrence,15,14,1,0.9333333333333333,11,0.7857142857142857,0.30865958406169286
+coordinator_physical,same_query_excluded,45,41,4,0.9111111111111111,27,0.6585365853658537,0.4429701449510557
+full_multilayer,first_occurrence,15,14,1,0.9333333333333333,12,0.8571428571428571,0.044255786341838355
+full_multilayer,same_query_excluded,45,41,4,0.9111111111111111,38,0.926829268292683,0.021395336210752444
+sql_structural,first_occurrence,15,9,6,0.6,7,0.7777777777777778,0.15994150256932194
+sql_structural,same_query_excluded,45,33,12,0.7333333333333333,25,0.7575757575757576,0.15427807146639552

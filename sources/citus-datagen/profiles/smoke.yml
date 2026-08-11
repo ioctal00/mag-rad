@@ -1,0 +1,30 @@
+dataset_id: smoke-v1
+seed: 42
+load_method: copy_pipe
+
+scale:
+  tenants_total: 20
+  events_per_tenant: 100
+  users_per_tenant: 50
+  global_users_per_tenant: 50
+  lookback_days: 30
+
+regions:
+  eu:
+    tenant_start: 1
+    tenant_end: 10
+  us:
+    tenant_start: 11
+    tenant_end: 20
+
+distribution:
+  name: uniform
+  hot_tenant_pct: 0
+  hot_event_pct: 0
+
+capabilities:
+  supports_reference_join: true
+  supports_non_colocated_join: true
+  supports_cross_region_user_overlap: false
+  supports_high_group_cardinality: false
+  supports_hot_tenant_skew: false

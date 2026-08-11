@@ -1,0 +1,29 @@
+---
+common_base_packages:
+  - acl
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - git
+  - gpg
+  - jq
+  - python3-apt
+  - rsync
+  - sudo
+  - unzip
+
+common_observability_packages:
+  - htop
+  - iftop
+  - iperf3
+  - iotop
+  - mtr-tiny
+  - net-tools
+  - slurm
+  - sysstat
+  - traceroute
+
+common_build_packages:
+  - build-essential
+  - g++
+  - make

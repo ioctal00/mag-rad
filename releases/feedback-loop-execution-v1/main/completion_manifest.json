@@ -1,0 +1,28 @@
+{
+  "completed_at_utc": "2026-08-07T14:29:07.413585Z",
+  "contract_version": "pressure-feedback-loop-live-v1",
+  "execution_counts": {
+    "correctness_only_execution_count": 5,
+    "instrumented_execution_count": 60,
+    "superseded_instrumented_execution_count": 20,
+    "total_execution_count": 85
+  },
+  "infrastructure_status": "PASS",
+  "required_outputs": [
+    "decision_log.jsonl",
+    "execution_manifest.csv",
+    "trajectory_states.csv",
+    "trajectory_transitions.csv",
+    "raw_signal_deltas.csv",
+    "domain_profile_deltas.csv",
+    "result_equivalence_audit.csv",
+    "rollback_audit.csv",
+    "exploratory_report.md",
+    "frozen_replay_manifest.yaml",
+    "confirmatory_replay_report.md",
+    "provenance.json",
+    "infrastructure_final_audit.json",
+    "final_validation.json"
+  ],
+  "validation_status": "PASS"
+}

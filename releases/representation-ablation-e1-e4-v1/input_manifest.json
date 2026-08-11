@@ -1,0 +1,77 @@
+{
+  "archived_results_modified": false,
+  "experiment_id": "representation-ablation-e1-e4-v1",
+  "inputs": {
+    "archived_ablation_results": {
+      "path": "master-regimes/releases/representation-value-ablation-v1/episode_results.csv",
+      "sha256": "a3862e4e23db98b760198895dd1f7578bae6f26892fc1169fa496f7fac8c77a9",
+      "size_bytes": 430330
+    },
+    "base_ablation_contract": {
+      "path": "master-regimes/configs/validation/representation_value_ablation_v1.yml",
+      "sha256": "211e261be8221c2aa2ce8b07fb8dce2d6eaca1bfbc62625a287ae777eec50419",
+      "size_bytes": 5085
+    },
+    "development_episodes": {
+      "path": "master-regimes/analysis/reports/fuzzy-intervention-memory-v1/episodes.csv",
+      "sha256": "b8ffc1545b4742443180882d33f1d628abc5676241cac3974201a991b33ce71e",
+      "size_bytes": 225162
+    },
+    "development_state_contract": {
+      "path": "master-regimes/configs/models/fuzzy_intervention_memory_v1.yml",
+      "sha256": "6b25d56f475cfb297644f5794e024a87ef40239ab64055b3f2ea39e9cf1640b5",
+      "size_bytes": 8583
+    },
+    "experiment_contract": {
+      "path": "master-regimes/configs/validation/representation_ablation_e1_e4_v1.yml",
+      "sha256": "b51cd964ab7b71963d716607901e09556acfc007fe131743b13bdd31c009d13b",
+      "size_bytes": 2508
+    },
+    "final_action_outcomes": {
+      "path": "master-regimes/analysis/reports/dba-local-memory-panel-v1/observed_action_outcomes.csv",
+      "sha256": "9fd8d6279fd7c61e5ddf7f4d16de27f264a76863d2e9c63cbde5692578138207",
+      "size_bytes": 131866
+    },
+    "final_episode_states": {
+      "path": "master-regimes/analysis/reports/dba-local-memory-panel-v1/observed_episode_states.csv",
+      "sha256": "c5055630c688c35bc10276956b6b027a80708b577df2999f86fedd63e4152c38",
+      "size_bytes": 73441
+    },
+    "final_execution_features": {
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/dba-local-memory-panel-v1/_index/execution_features.csv",
+      "sha256": "8db0096728ed04247676b7f7f130a10937e8b5d1e65d7f5eb88054805d38cd1e",
+      "size_bytes": 13298340
+    },
+    "final_panel_contract": {
+      "path": "master-regimes/configs/validation/dba_local_memory_panel_v1.yml",
+      "sha256": "e5789aec79c66158d3b18339ab474788779ee8b6448d15acb7ef40e74e80f18a",
+      "size_bytes": 5472
+    },
+    "frozen_full_model": {
+      "path": "master-regimes/analysis/reports/n3-topology-memory-v1/model_freeze_recomputed.json",
+      "sha256": "30c86157c8a25d95e0124394f038d856bca6977b9634159612b1531a573c55eb",
+      "size_bytes": 21430
+    },
+    "topology_action_outcomes": {
+      "path": "master-regimes/analysis/reports/n3-topology-memory-v1/action_outcomes.csv",
+      "sha256": "78c63a0553644a3c496aea4aae2222f1df369dc712539831a82f34ed2b782676",
+      "size_bytes": 60105
+    },
+    "topology_contract": {
+      "path": "master-regimes/configs/validation/n3_topology_memory_experiment_v1.yml",
+      "sha256": "60e58b02d3108138d6798412905fe233866457fd07366f24a4b404d42717959b",
+      "size_bytes": 6365
+    },
+    "topology_episode_states": {
+      "path": "master-regimes/analysis/reports/n3-topology-memory-v1/episode_states.csv",
+      "sha256": "c0a275241f8444d7491923514f7331b93135e2651d9804d819fe81fb95cbd22d",
+      "size_bytes": 61188
+    },
+    "topology_frozen_recommendations": {
+      "path": "master-regimes/analysis/reports/n3-topology-memory-v1/phase_recommendations_scored.csv",
+      "sha256": "e1f498a90c3213d48b201bfd57ca9c690db8f6560aa3b6ea34153f2b019b7bcf",
+      "size_bytes": 259359
+    }
+  },
+  "offline_only": true
+}

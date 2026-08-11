@@ -1,0 +1,7 @@
+measure,definition,interpretation
+dominant_fingerprint_share,Udio ponavljanja sa najčešćim plan fingerprintom.,1 znači isti dominantni fingerprint u svim ponavljanjima.
+robust_relative_dispersion,1.4826 * MAD / abs(median); null kada je medijana nula.,Robusna relativna promjena pokazatelja ili vremena.
+mean_l1_to_condition_mean,Srednja L1 udaljenost membership vektora od srednjeg vektora uslova.,Niža vrijednost znači stabilnije fuzzy članstvo.
+dominant_cluster_agreement,Najveći udio ponavljanja sa istim argmax prototipom.,1 znači isti dominantni prototip u svim ponavljanjima.
+display_state_transition,Broj prijelaza između uzastopnih display-state vrijednosti.,Off-diagonal prijelaz znači promjenu dijagnostičke kategorije.
+coefficient_of_variation,Standardna devijacija podijeljena apsolutnom sredinom.,Audit relativne runtime varijabilnosti; nije model feature.

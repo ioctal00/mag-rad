@@ -1,0 +1,2138 @@
+corpus_id: confirmatory-action-replication-v1
+corpus_version: confirmatory-action-replication-v1
+batch_id: batch-confirmatory-action-replication-v1
+collection_contract_version: fuzzy-intervention-memory-v1
+description: 'Locked replication panel over fifteen previously unseen N=3 SQL shapes. Every shape is measured under
+  one baseline and three frozen actions with five repetitions. A balanced Williams schedule rotates condition position
+  while the dataset, topology, runtime family, state representation, k and P99 rule remain frozen.
+
+  '
+query_groups: ../../../workloads/corpus/query-groups.yml
+runtime_catalog: ../../../workloads/corpus/runtime-configs.yml
+dataset_profiles:
+  topology-isolation-large-n3-v1:
+    profile: ../../../datasets/profiles/topology-isolation-large-n3.yml
+    load_method: copy_pipe
+execution_budget:
+  hard_timeout_seconds: 1800
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: balanced_williams_confirmatory
+  order_policy: explicit_schedule
+  explicit_schedule:
+  - corpus_cell_id: q27_user_sum__baseline
+    repetition_index: 0
+  - corpus_cell_id: q27_user_sum__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q27_user_sum__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q27_user_sum__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q26_tenant_hour_count__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q26_tenant_hour_count__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q26_tenant_hour_count__baseline
+    repetition_index: 0
+  - corpus_cell_id: q26_tenant_hour_count__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q18_event_recent_high_value__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q18_event_recent_high_value__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q18_event_recent_high_value__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q18_event_recent_high_value__baseline
+    repetition_index: 0
+  - corpus_cell_id: q24_tenant_midband_sum__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q24_tenant_midband_sum__baseline
+    repetition_index: 0
+  - corpus_cell_id: q24_tenant_midband_sum__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q24_tenant_midband_sum__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q20_event_tenant_weighted__baseline
+    repetition_index: 0
+  - corpus_cell_id: q20_event_tenant_weighted__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q20_event_tenant_weighted__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q20_event_tenant_weighted__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q25_tenant_day_avg__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q25_tenant_day_avg__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q25_tenant_day_avg__baseline
+    repetition_index: 0
+  - corpus_cell_id: q25_tenant_day_avg__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q21_tenant_value_range__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q21_tenant_value_range__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q21_tenant_value_range__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q21_tenant_value_range__baseline
+    repetition_index: 0
+  - corpus_cell_id: q17_event_log_value__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q17_event_log_value__baseline
+    repetition_index: 0
+  - corpus_cell_id: q17_event_log_value__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q17_event_log_value__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q22_tenant_distinct_users__baseline
+    repetition_index: 0
+  - corpus_cell_id: q22_tenant_distinct_users__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q22_tenant_distinct_users__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q22_tenant_distinct_users__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q23_tenant_even_user_count__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q23_tenant_even_user_count__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q23_tenant_even_user_count__baseline
+    repetition_index: 0
+  - corpus_cell_id: q23_tenant_even_user_count__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q16_event_value_squared__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q16_event_value_squared__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q16_event_value_squared__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q16_event_value_squared__baseline
+    repetition_index: 0
+  - corpus_cell_id: q30_user_day_sum__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q30_user_day_sum__baseline
+    repetition_index: 0
+  - corpus_cell_id: q30_user_day_sum__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q30_user_day_sum__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q19_event_old_low_value__baseline
+    repetition_index: 0
+  - corpus_cell_id: q19_event_old_low_value__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q19_event_old_low_value__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q19_event_old_low_value__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q29_user_value_range__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q29_user_value_range__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q29_user_value_range__baseline
+    repetition_index: 0
+  - corpus_cell_id: q29_user_value_range__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q28_user_count__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q28_user_count__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q28_user_count__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q28_user_count__baseline
+    repetition_index: 0
+  - corpus_cell_id: q30_user_day_sum__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q30_user_day_sum__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q30_user_day_sum__baseline
+    repetition_index: 1
+  - corpus_cell_id: q30_user_day_sum__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q21_tenant_value_range__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q21_tenant_value_range__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q21_tenant_value_range__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q21_tenant_value_range__baseline
+    repetition_index: 1
+  - corpus_cell_id: q18_event_recent_high_value__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q18_event_recent_high_value__baseline
+    repetition_index: 1
+  - corpus_cell_id: q18_event_recent_high_value__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q18_event_recent_high_value__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q20_event_tenant_weighted__baseline
+    repetition_index: 1
+  - corpus_cell_id: q20_event_tenant_weighted__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q20_event_tenant_weighted__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q20_event_tenant_weighted__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q29_user_value_range__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q29_user_value_range__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q29_user_value_range__baseline
+    repetition_index: 1
+  - corpus_cell_id: q29_user_value_range__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q16_event_value_squared__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q16_event_value_squared__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q16_event_value_squared__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q16_event_value_squared__baseline
+    repetition_index: 1
+  - corpus_cell_id: q26_tenant_hour_count__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q26_tenant_hour_count__baseline
+    repetition_index: 1
+  - corpus_cell_id: q26_tenant_hour_count__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q26_tenant_hour_count__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q27_user_sum__baseline
+    repetition_index: 1
+  - corpus_cell_id: q27_user_sum__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q27_user_sum__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q27_user_sum__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q22_tenant_distinct_users__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q22_tenant_distinct_users__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q22_tenant_distinct_users__baseline
+    repetition_index: 1
+  - corpus_cell_id: q22_tenant_distinct_users__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q24_tenant_midband_sum__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q24_tenant_midband_sum__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q24_tenant_midband_sum__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q24_tenant_midband_sum__baseline
+    repetition_index: 1
+  - corpus_cell_id: q19_event_old_low_value__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q19_event_old_low_value__baseline
+    repetition_index: 1
+  - corpus_cell_id: q19_event_old_low_value__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q19_event_old_low_value__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q23_tenant_even_user_count__baseline
+    repetition_index: 1
+  - corpus_cell_id: q23_tenant_even_user_count__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q23_tenant_even_user_count__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q23_tenant_even_user_count__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q28_user_count__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q28_user_count__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q28_user_count__baseline
+    repetition_index: 1
+  - corpus_cell_id: q28_user_count__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q17_event_log_value__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q17_event_log_value__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q17_event_log_value__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q17_event_log_value__baseline
+    repetition_index: 1
+  - corpus_cell_id: q25_tenant_day_avg__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q25_tenant_day_avg__baseline
+    repetition_index: 1
+  - corpus_cell_id: q25_tenant_day_avg__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q25_tenant_day_avg__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q20_event_tenant_weighted__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q20_event_tenant_weighted__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q20_event_tenant_weighted__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q20_event_tenant_weighted__baseline
+    repetition_index: 2
+  - corpus_cell_id: q30_user_day_sum__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q30_user_day_sum__baseline
+    repetition_index: 2
+  - corpus_cell_id: q30_user_day_sum__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q30_user_day_sum__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q26_tenant_hour_count__baseline
+    repetition_index: 2
+  - corpus_cell_id: q26_tenant_hour_count__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q26_tenant_hour_count__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q26_tenant_hour_count__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q23_tenant_even_user_count__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q23_tenant_even_user_count__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q23_tenant_even_user_count__baseline
+    repetition_index: 2
+  - corpus_cell_id: q23_tenant_even_user_count__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q16_event_value_squared__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q16_event_value_squared__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q16_event_value_squared__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q16_event_value_squared__baseline
+    repetition_index: 2
+  - corpus_cell_id: q19_event_old_low_value__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q19_event_old_low_value__baseline
+    repetition_index: 2
+  - corpus_cell_id: q19_event_old_low_value__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q19_event_old_low_value__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q22_tenant_distinct_users__baseline
+    repetition_index: 2
+  - corpus_cell_id: q22_tenant_distinct_users__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q22_tenant_distinct_users__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q22_tenant_distinct_users__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q27_user_sum__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q27_user_sum__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q27_user_sum__baseline
+    repetition_index: 2
+  - corpus_cell_id: q27_user_sum__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q18_event_recent_high_value__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q18_event_recent_high_value__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q18_event_recent_high_value__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q18_event_recent_high_value__baseline
+    repetition_index: 2
+  - corpus_cell_id: q24_tenant_midband_sum__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q24_tenant_midband_sum__baseline
+    repetition_index: 2
+  - corpus_cell_id: q24_tenant_midband_sum__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q24_tenant_midband_sum__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q21_tenant_value_range__baseline
+    repetition_index: 2
+  - corpus_cell_id: q21_tenant_value_range__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q21_tenant_value_range__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q21_tenant_value_range__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q17_event_log_value__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q17_event_log_value__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q17_event_log_value__baseline
+    repetition_index: 2
+  - corpus_cell_id: q17_event_log_value__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q28_user_count__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q28_user_count__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q28_user_count__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q28_user_count__baseline
+    repetition_index: 2
+  - corpus_cell_id: q29_user_value_range__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q29_user_value_range__baseline
+    repetition_index: 2
+  - corpus_cell_id: q29_user_value_range__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q29_user_value_range__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q25_tenant_day_avg__baseline
+    repetition_index: 2
+  - corpus_cell_id: q25_tenant_day_avg__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q25_tenant_day_avg__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q25_tenant_day_avg__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q27_user_sum__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q27_user_sum__baseline
+    repetition_index: 3
+  - corpus_cell_id: q27_user_sum__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q27_user_sum__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q23_tenant_even_user_count__baseline
+    repetition_index: 3
+  - corpus_cell_id: q23_tenant_even_user_count__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q23_tenant_even_user_count__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q23_tenant_even_user_count__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q20_event_tenant_weighted__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q20_event_tenant_weighted__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q20_event_tenant_weighted__baseline
+    repetition_index: 3
+  - corpus_cell_id: q20_event_tenant_weighted__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q16_event_value_squared__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q16_event_value_squared__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q16_event_value_squared__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q16_event_value_squared__baseline
+    repetition_index: 3
+  - corpus_cell_id: q26_tenant_hour_count__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q26_tenant_hour_count__baseline
+    repetition_index: 3
+  - corpus_cell_id: q26_tenant_hour_count__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q26_tenant_hour_count__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q21_tenant_value_range__baseline
+    repetition_index: 3
+  - corpus_cell_id: q21_tenant_value_range__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q21_tenant_value_range__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q21_tenant_value_range__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q29_user_value_range__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q29_user_value_range__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q29_user_value_range__baseline
+    repetition_index: 3
+  - corpus_cell_id: q29_user_value_range__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q30_user_day_sum__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q30_user_day_sum__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q30_user_day_sum__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q30_user_day_sum__baseline
+    repetition_index: 3
+  - corpus_cell_id: q28_user_count__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q28_user_count__baseline
+    repetition_index: 3
+  - corpus_cell_id: q28_user_count__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q28_user_count__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q19_event_old_low_value__baseline
+    repetition_index: 3
+  - corpus_cell_id: q19_event_old_low_value__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q19_event_old_low_value__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q19_event_old_low_value__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q24_tenant_midband_sum__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q24_tenant_midband_sum__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q24_tenant_midband_sum__baseline
+    repetition_index: 3
+  - corpus_cell_id: q24_tenant_midband_sum__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q18_event_recent_high_value__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q18_event_recent_high_value__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q18_event_recent_high_value__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q18_event_recent_high_value__baseline
+    repetition_index: 3
+  - corpus_cell_id: q25_tenant_day_avg__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q25_tenant_day_avg__baseline
+    repetition_index: 3
+  - corpus_cell_id: q25_tenant_day_avg__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q25_tenant_day_avg__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q17_event_log_value__baseline
+    repetition_index: 3
+  - corpus_cell_id: q17_event_log_value__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q17_event_log_value__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q17_event_log_value__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q22_tenant_distinct_users__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q22_tenant_distinct_users__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q22_tenant_distinct_users__baseline
+    repetition_index: 3
+  - corpus_cell_id: q22_tenant_distinct_users__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q17_event_log_value__baseline
+    repetition_index: 4
+  - corpus_cell_id: q17_event_log_value__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q17_event_log_value__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q17_event_log_value__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q18_event_recent_high_value__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q18_event_recent_high_value__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q18_event_recent_high_value__baseline
+    repetition_index: 4
+  - corpus_cell_id: q18_event_recent_high_value__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q27_user_sum__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q27_user_sum__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q27_user_sum__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q27_user_sum__baseline
+    repetition_index: 4
+  - corpus_cell_id: q19_event_old_low_value__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q19_event_old_low_value__baseline
+    repetition_index: 4
+  - corpus_cell_id: q19_event_old_low_value__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q19_event_old_low_value__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q30_user_day_sum__baseline
+    repetition_index: 4
+  - corpus_cell_id: q30_user_day_sum__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q30_user_day_sum__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q30_user_day_sum__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q28_user_count__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q28_user_count__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q28_user_count__baseline
+    repetition_index: 4
+  - corpus_cell_id: q28_user_count__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q26_tenant_hour_count__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q26_tenant_hour_count__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q26_tenant_hour_count__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q26_tenant_hour_count__baseline
+    repetition_index: 4
+  - corpus_cell_id: q23_tenant_even_user_count__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q23_tenant_even_user_count__baseline
+    repetition_index: 4
+  - corpus_cell_id: q23_tenant_even_user_count__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q23_tenant_even_user_count__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q16_event_value_squared__baseline
+    repetition_index: 4
+  - corpus_cell_id: q16_event_value_squared__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q16_event_value_squared__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q16_event_value_squared__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q24_tenant_midband_sum__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q24_tenant_midband_sum__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q24_tenant_midband_sum__baseline
+    repetition_index: 4
+  - corpus_cell_id: q24_tenant_midband_sum__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q20_event_tenant_weighted__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q20_event_tenant_weighted__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q20_event_tenant_weighted__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q20_event_tenant_weighted__baseline
+    repetition_index: 4
+  - corpus_cell_id: q21_tenant_value_range__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q21_tenant_value_range__baseline
+    repetition_index: 4
+  - corpus_cell_id: q21_tenant_value_range__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q21_tenant_value_range__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q25_tenant_day_avg__baseline
+    repetition_index: 4
+  - corpus_cell_id: q25_tenant_day_avg__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q25_tenant_day_avg__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q25_tenant_day_avg__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q22_tenant_distinct_users__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q22_tenant_distinct_users__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q22_tenant_distinct_users__baseline
+    repetition_index: 4
+  - corpus_cell_id: q22_tenant_distinct_users__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q29_user_value_range__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q29_user_value_range__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q29_user_value_range__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q29_user_value_range__baseline
+    repetition_index: 4
+  repetitions_default: 1
+  record_run_order: true
+  record_buffer_features: true
+  preserve_instance_order_across_runtime_configs: true
+  fdw_auto_explain: true
+  fdw_auto_explain_regions:
+  - active_regions
+  os_sampler: true
+  os_sampler_node_groups:
+  - active_regions
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: true
+  remote_edge_context: true
+  group_runtime_configs_by_active_scope: true
+cells:
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q16_event_value_squared
+  dataset_profile_id: &id001
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: &id002
+    query_shape:
+    - event_value_squared
+    cutoff_ts:
+    - '2026-06-30 00:00:00+00'
+    limit_k:
+    - 25
+    include_apac:
+    - true
+  corpus_cell_id: q16_event_value_squared__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q16_event_value_squared__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q16_event_value_squared
+  dataset_profile_id: *id001
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id002
+  corpus_cell_id: q16_event_value_squared__increase_gac_work_mem
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_gac_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: gac_memory_increase
+  pressure_pair_key: q16_event_value_squared__increase_gac_work_mem
+  mitigation_action: increase_gac_work_mem
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q16_event_value_squared
+  dataset_profile_id: *id001
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id002
+  corpus_cell_id: q16_event_value_squared__regional_topk_candidates
+  template_id: gac_fdw_dba_topk_regional
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: regional_topk_candidates
+  pressure_pair_key: q16_event_value_squared__regional_topk_candidates
+  mitigation_action: regional_topk_candidates
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q16_event_value_squared
+  dataset_profile_id: *id001
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id002
+  corpus_cell_id: q16_event_value_squared__mitigate_remote_path_bundle
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_remote_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: remote_transport_bundle
+  pressure_pair_key: q16_event_value_squared__mitigate_remote_path_bundle
+  mitigation_action: mitigate_remote_path_bundle
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q17_event_log_value
+  dataset_profile_id: &id003
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: &id004
+    query_shape:
+    - event_log_value
+    cutoff_ts:
+    - '2026-06-29 00:00:00+00'
+    limit_k:
+    - 50
+    include_apac:
+    - true
+  corpus_cell_id: q17_event_log_value__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q17_event_log_value__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q17_event_log_value
+  dataset_profile_id: *id003
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id004
+  corpus_cell_id: q17_event_log_value__increase_gac_work_mem
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_gac_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: gac_memory_increase
+  pressure_pair_key: q17_event_log_value__increase_gac_work_mem
+  mitigation_action: increase_gac_work_mem
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q17_event_log_value
+  dataset_profile_id: *id003
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id004
+  corpus_cell_id: q17_event_log_value__regional_topk_candidates
+  template_id: gac_fdw_dba_topk_regional
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: regional_topk_candidates
+  pressure_pair_key: q17_event_log_value__regional_topk_candidates
+  mitigation_action: regional_topk_candidates
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q17_event_log_value
+  dataset_profile_id: *id003
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id004
+  corpus_cell_id: q17_event_log_value__mitigate_remote_path_bundle
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_remote_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: remote_transport_bundle
+  pressure_pair_key: q17_event_log_value__mitigate_remote_path_bundle
+  mitigation_action: mitigate_remote_path_bundle
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q18_event_recent_high_value
+  dataset_profile_id: &id005
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: &id006
+    query_shape:
+    - event_recent_high_value
+    cutoff_ts:
+    - '2026-06-27 00:00:00+00'
+    limit_k:
+    - 100
+    include_apac:
+    - true
+  corpus_cell_id: q18_event_recent_high_value__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q18_event_recent_high_value__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q18_event_recent_high_value
+  dataset_profile_id: *id005
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id006
+  corpus_cell_id: q18_event_recent_high_value__increase_gac_work_mem
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_gac_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: gac_memory_increase
+  pressure_pair_key: q18_event_recent_high_value__increase_gac_work_mem
+  mitigation_action: increase_gac_work_mem
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q18_event_recent_high_value
+  dataset_profile_id: *id005
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id006
+  corpus_cell_id: q18_event_recent_high_value__regional_topk_candidates
+  template_id: gac_fdw_dba_topk_regional
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: regional_topk_candidates
+  pressure_pair_key: q18_event_recent_high_value__regional_topk_candidates
+  mitigation_action: regional_topk_candidates
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q18_event_recent_high_value
+  dataset_profile_id: *id005
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id006
+  corpus_cell_id: q18_event_recent_high_value__mitigate_remote_path_bundle
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_remote_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: remote_transport_bundle
+  pressure_pair_key: q18_event_recent_high_value__mitigate_remote_path_bundle
+  mitigation_action: mitigate_remote_path_bundle
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q19_event_old_low_value
+  dataset_profile_id: &id007
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: &id008
+    query_shape:
+    - event_old_low_value
+    cutoff_ts:
+    - '2026-06-24 00:00:00+00'
+    limit_k:
+    - 250
+    include_apac:
+    - true
+  corpus_cell_id: q19_event_old_low_value__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q19_event_old_low_value__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q19_event_old_low_value
+  dataset_profile_id: *id007
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id008
+  corpus_cell_id: q19_event_old_low_value__increase_gac_work_mem
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_gac_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: gac_memory_increase
+  pressure_pair_key: q19_event_old_low_value__increase_gac_work_mem
+  mitigation_action: increase_gac_work_mem
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q19_event_old_low_value
+  dataset_profile_id: *id007
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id008
+  corpus_cell_id: q19_event_old_low_value__regional_topk_candidates
+  template_id: gac_fdw_dba_topk_regional
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: regional_topk_candidates
+  pressure_pair_key: q19_event_old_low_value__regional_topk_candidates
+  mitigation_action: regional_topk_candidates
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q19_event_old_low_value
+  dataset_profile_id: *id007
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id008
+  corpus_cell_id: q19_event_old_low_value__mitigate_remote_path_bundle
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_remote_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: remote_transport_bundle
+  pressure_pair_key: q19_event_old_low_value__mitigate_remote_path_bundle
+  mitigation_action: mitigate_remote_path_bundle
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q20_event_tenant_weighted
+  dataset_profile_id: &id009
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: &id010
+    query_shape:
+    - event_tenant_weighted
+    cutoff_ts:
+    - '2026-06-30 00:00:00+00'
+    limit_k:
+    - 500
+    include_apac:
+    - true
+  corpus_cell_id: q20_event_tenant_weighted__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q20_event_tenant_weighted__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q20_event_tenant_weighted
+  dataset_profile_id: *id009
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id010
+  corpus_cell_id: q20_event_tenant_weighted__increase_gac_work_mem
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_gac_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: gac_memory_increase
+  pressure_pair_key: q20_event_tenant_weighted__increase_gac_work_mem
+  mitigation_action: increase_gac_work_mem
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q20_event_tenant_weighted
+  dataset_profile_id: *id009
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id010
+  corpus_cell_id: q20_event_tenant_weighted__regional_topk_candidates
+  template_id: gac_fdw_dba_topk_regional
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: regional_topk_candidates
+  pressure_pair_key: q20_event_tenant_weighted__regional_topk_candidates
+  mitigation_action: regional_topk_candidates
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q20_event_tenant_weighted
+  dataset_profile_id: *id009
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id010
+  corpus_cell_id: q20_event_tenant_weighted__mitigate_remote_path_bundle
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_remote_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: remote_transport_bundle
+  pressure_pair_key: q20_event_tenant_weighted__mitigate_remote_path_bundle
+  mitigation_action: mitigate_remote_path_bundle
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q21_tenant_value_range
+  dataset_profile_id: &id011
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: &id012
+    query_shape:
+    - tenant_value_range
+    cutoff_ts:
+    - '2026-06-29 00:00:00+00'
+    limit_k:
+    - 25
+    include_apac:
+    - true
+  corpus_cell_id: q21_tenant_value_range__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q21_tenant_value_range__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q21_tenant_value_range
+  dataset_profile_id: *id011
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id012
+  corpus_cell_id: q21_tenant_value_range__increase_gac_work_mem
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_gac_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: gac_memory_increase
+  pressure_pair_key: q21_tenant_value_range__increase_gac_work_mem
+  mitigation_action: increase_gac_work_mem
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q21_tenant_value_range
+  dataset_profile_id: *id011
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id012
+  corpus_cell_id: q21_tenant_value_range__regional_topk_candidates
+  template_id: gac_fdw_dba_topk_regional
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: regional_topk_candidates
+  pressure_pair_key: q21_tenant_value_range__regional_topk_candidates
+  mitigation_action: regional_topk_candidates
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q21_tenant_value_range
+  dataset_profile_id: *id011
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id012
+  corpus_cell_id: q21_tenant_value_range__mitigate_remote_path_bundle
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_remote_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: remote_transport_bundle
+  pressure_pair_key: q21_tenant_value_range__mitigate_remote_path_bundle
+  mitigation_action: mitigate_remote_path_bundle
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q22_tenant_distinct_users
+  dataset_profile_id: &id013
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: &id014
+    query_shape:
+    - tenant_distinct_users
+    cutoff_ts:
+    - '2026-06-27 00:00:00+00'
+    limit_k:
+    - 50
+    include_apac:
+    - true
+  corpus_cell_id: q22_tenant_distinct_users__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q22_tenant_distinct_users__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q22_tenant_distinct_users
+  dataset_profile_id: *id013
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id014
+  corpus_cell_id: q22_tenant_distinct_users__increase_gac_work_mem
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_gac_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: gac_memory_increase
+  pressure_pair_key: q22_tenant_distinct_users__increase_gac_work_mem
+  mitigation_action: increase_gac_work_mem
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q22_tenant_distinct_users
+  dataset_profile_id: *id013
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id014
+  corpus_cell_id: q22_tenant_distinct_users__regional_topk_candidates
+  template_id: gac_fdw_dba_topk_regional
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: regional_topk_candidates
+  pressure_pair_key: q22_tenant_distinct_users__regional_topk_candidates
+  mitigation_action: regional_topk_candidates
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q22_tenant_distinct_users
+  dataset_profile_id: *id013
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id014
+  corpus_cell_id: q22_tenant_distinct_users__mitigate_remote_path_bundle
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_remote_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: remote_transport_bundle
+  pressure_pair_key: q22_tenant_distinct_users__mitigate_remote_path_bundle
+  mitigation_action: mitigate_remote_path_bundle
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q23_tenant_even_user_count
+  dataset_profile_id: &id015
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: &id016
+    query_shape:
+    - tenant_even_user_count
+    cutoff_ts:
+    - '2026-06-24 00:00:00+00'
+    limit_k:
+    - 100
+    include_apac:
+    - true
+  corpus_cell_id: q23_tenant_even_user_count__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q23_tenant_even_user_count__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q23_tenant_even_user_count
+  dataset_profile_id: *id015
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id016
+  corpus_cell_id: q23_tenant_even_user_count__increase_gac_work_mem
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_gac_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: gac_memory_increase
+  pressure_pair_key: q23_tenant_even_user_count__increase_gac_work_mem
+  mitigation_action: increase_gac_work_mem
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q23_tenant_even_user_count
+  dataset_profile_id: *id015
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id016
+  corpus_cell_id: q23_tenant_even_user_count__regional_topk_candidates
+  template_id: gac_fdw_dba_topk_regional
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: regional_topk_candidates
+  pressure_pair_key: q23_tenant_even_user_count__regional_topk_candidates
+  mitigation_action: regional_topk_candidates
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q23_tenant_even_user_count
+  dataset_profile_id: *id015
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id016
+  corpus_cell_id: q23_tenant_even_user_count__mitigate_remote_path_bundle
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_remote_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: remote_transport_bundle
+  pressure_pair_key: q23_tenant_even_user_count__mitigate_remote_path_bundle
+  mitigation_action: mitigate_remote_path_bundle
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q24_tenant_midband_sum
+  dataset_profile_id: &id017
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: &id018
+    query_shape:
+    - tenant_midband_sum
+    cutoff_ts:
+    - '2026-06-30 00:00:00+00'
+    limit_k:
+    - 250
+    include_apac:
+    - true
+  corpus_cell_id: q24_tenant_midband_sum__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q24_tenant_midband_sum__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q24_tenant_midband_sum
+  dataset_profile_id: *id017
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id018
+  corpus_cell_id: q24_tenant_midband_sum__increase_gac_work_mem
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_gac_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: gac_memory_increase
+  pressure_pair_key: q24_tenant_midband_sum__increase_gac_work_mem
+  mitigation_action: increase_gac_work_mem
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q24_tenant_midband_sum
+  dataset_profile_id: *id017
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id018
+  corpus_cell_id: q24_tenant_midband_sum__regional_topk_candidates
+  template_id: gac_fdw_dba_topk_regional
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: regional_topk_candidates
+  pressure_pair_key: q24_tenant_midband_sum__regional_topk_candidates
+  mitigation_action: regional_topk_candidates
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q24_tenant_midband_sum
+  dataset_profile_id: *id017
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id018
+  corpus_cell_id: q24_tenant_midband_sum__mitigate_remote_path_bundle
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_remote_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: remote_transport_bundle
+  pressure_pair_key: q24_tenant_midband_sum__mitigate_remote_path_bundle
+  mitigation_action: mitigate_remote_path_bundle
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q25_tenant_day_avg
+  dataset_profile_id: &id019
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: &id020
+    query_shape:
+    - tenant_day_avg
+    cutoff_ts:
+    - '2026-06-29 00:00:00+00'
+    limit_k:
+    - 500
+    include_apac:
+    - true
+  corpus_cell_id: q25_tenant_day_avg__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q25_tenant_day_avg__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q25_tenant_day_avg
+  dataset_profile_id: *id019
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id020
+  corpus_cell_id: q25_tenant_day_avg__increase_gac_work_mem
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_gac_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: gac_memory_increase
+  pressure_pair_key: q25_tenant_day_avg__increase_gac_work_mem
+  mitigation_action: increase_gac_work_mem
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q25_tenant_day_avg
+  dataset_profile_id: *id019
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id020
+  corpus_cell_id: q25_tenant_day_avg__regional_topk_candidates
+  template_id: gac_fdw_dba_topk_regional
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: regional_topk_candidates
+  pressure_pair_key: q25_tenant_day_avg__regional_topk_candidates
+  mitigation_action: regional_topk_candidates
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q25_tenant_day_avg
+  dataset_profile_id: *id019
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id020
+  corpus_cell_id: q25_tenant_day_avg__mitigate_remote_path_bundle
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_remote_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: remote_transport_bundle
+  pressure_pair_key: q25_tenant_day_avg__mitigate_remote_path_bundle
+  mitigation_action: mitigate_remote_path_bundle
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q26_tenant_hour_count
+  dataset_profile_id: &id021
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: &id022
+    query_shape:
+    - tenant_hour_count
+    cutoff_ts:
+    - '2026-06-30 00:00:00+00'
+    limit_k:
+    - 25
+    include_apac:
+    - true
+  corpus_cell_id: q26_tenant_hour_count__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q26_tenant_hour_count__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q26_tenant_hour_count
+  dataset_profile_id: *id021
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id022
+  corpus_cell_id: q26_tenant_hour_count__increase_gac_work_mem
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_gac_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: gac_memory_increase
+  pressure_pair_key: q26_tenant_hour_count__increase_gac_work_mem
+  mitigation_action: increase_gac_work_mem
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q26_tenant_hour_count
+  dataset_profile_id: *id021
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id022
+  corpus_cell_id: q26_tenant_hour_count__regional_topk_candidates
+  template_id: gac_fdw_dba_topk_regional
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: regional_topk_candidates
+  pressure_pair_key: q26_tenant_hour_count__regional_topk_candidates
+  mitigation_action: regional_topk_candidates
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q26_tenant_hour_count
+  dataset_profile_id: *id021
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id022
+  corpus_cell_id: q26_tenant_hour_count__mitigate_remote_path_bundle
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_remote_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: remote_transport_bundle
+  pressure_pair_key: q26_tenant_hour_count__mitigate_remote_path_bundle
+  mitigation_action: mitigate_remote_path_bundle
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q27_user_sum
+  dataset_profile_id: &id023
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: &id024
+    query_shape:
+    - user_sum
+    cutoff_ts:
+    - '2026-06-29 00:00:00+00'
+    limit_k:
+    - 50
+    include_apac:
+    - true
+  corpus_cell_id: q27_user_sum__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q27_user_sum__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q27_user_sum
+  dataset_profile_id: *id023
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id024
+  corpus_cell_id: q27_user_sum__increase_gac_work_mem
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_gac_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: gac_memory_increase
+  pressure_pair_key: q27_user_sum__increase_gac_work_mem
+  mitigation_action: increase_gac_work_mem
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q27_user_sum
+  dataset_profile_id: *id023
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id024
+  corpus_cell_id: q27_user_sum__regional_topk_candidates
+  template_id: gac_fdw_dba_topk_regional
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: regional_topk_candidates
+  pressure_pair_key: q27_user_sum__regional_topk_candidates
+  mitigation_action: regional_topk_candidates
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q27_user_sum
+  dataset_profile_id: *id023
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id024
+  corpus_cell_id: q27_user_sum__mitigate_remote_path_bundle
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_remote_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: remote_transport_bundle
+  pressure_pair_key: q27_user_sum__mitigate_remote_path_bundle
+  mitigation_action: mitigate_remote_path_bundle
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q28_user_count
+  dataset_profile_id: &id025
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: &id026
+    query_shape:
+    - user_count
+    cutoff_ts:
+    - '2026-06-27 00:00:00+00'
+    limit_k:
+    - 100
+    include_apac:
+    - true
+  corpus_cell_id: q28_user_count__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q28_user_count__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q28_user_count
+  dataset_profile_id: *id025
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id026
+  corpus_cell_id: q28_user_count__increase_gac_work_mem
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_gac_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: gac_memory_increase
+  pressure_pair_key: q28_user_count__increase_gac_work_mem
+  mitigation_action: increase_gac_work_mem
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q28_user_count
+  dataset_profile_id: *id025
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id026
+  corpus_cell_id: q28_user_count__regional_topk_candidates
+  template_id: gac_fdw_dba_topk_regional
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: regional_topk_candidates
+  pressure_pair_key: q28_user_count__regional_topk_candidates
+  mitigation_action: regional_topk_candidates
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q28_user_count
+  dataset_profile_id: *id025
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id026
+  corpus_cell_id: q28_user_count__mitigate_remote_path_bundle
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_remote_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: remote_transport_bundle
+  pressure_pair_key: q28_user_count__mitigate_remote_path_bundle
+  mitigation_action: mitigate_remote_path_bundle
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q29_user_value_range
+  dataset_profile_id: &id027
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: &id028
+    query_shape:
+    - user_value_range
+    cutoff_ts:
+    - '2026-06-24 00:00:00+00'
+    limit_k:
+    - 250
+    include_apac:
+    - true
+  corpus_cell_id: q29_user_value_range__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q29_user_value_range__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q29_user_value_range
+  dataset_profile_id: *id027
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id028
+  corpus_cell_id: q29_user_value_range__increase_gac_work_mem
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_gac_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: gac_memory_increase
+  pressure_pair_key: q29_user_value_range__increase_gac_work_mem
+  mitigation_action: increase_gac_work_mem
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q29_user_value_range
+  dataset_profile_id: *id027
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id028
+  corpus_cell_id: q29_user_value_range__regional_topk_candidates
+  template_id: gac_fdw_dba_topk_regional
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: regional_topk_candidates
+  pressure_pair_key: q29_user_value_range__regional_topk_candidates
+  mitigation_action: regional_topk_candidates
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q29_user_value_range
+  dataset_profile_id: *id027
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id028
+  corpus_cell_id: q29_user_value_range__mitigate_remote_path_bundle
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_remote_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: remote_transport_bundle
+  pressure_pair_key: q29_user_value_range__mitigate_remote_path_bundle
+  mitigation_action: mitigate_remote_path_bundle
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q30_user_day_sum
+  dataset_profile_id: &id029
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: &id030
+    query_shape:
+    - user_day_sum
+    cutoff_ts:
+    - '2026-06-30 00:00:00+00'
+    limit_k:
+    - 500
+    include_apac:
+    - true
+  corpus_cell_id: q30_user_day_sum__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q30_user_day_sum__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q30_user_day_sum
+  dataset_profile_id: *id029
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id030
+  corpus_cell_id: q30_user_day_sum__increase_gac_work_mem
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_gac_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: gac_memory_increase
+  pressure_pair_key: q30_user_day_sum__increase_gac_work_mem
+  mitigation_action: increase_gac_work_mem
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q30_user_day_sum
+  dataset_profile_id: *id029
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id030
+  corpus_cell_id: q30_user_day_sum__regional_topk_candidates
+  template_id: gac_fdw_dba_topk_regional
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: regional_topk_candidates
+  pressure_pair_key: q30_user_day_sum__regional_topk_candidates
+  mitigation_action: regional_topk_candidates
+- logical_question_id: dba_local_memory_topk
+  component_match_id: confirmatory_q30_user_day_sum
+  dataset_profile_id: *id029
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: final_check
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: confirmatory_action_replication
+  scenario_level: confirmatory_holdout
+  repeatability_repetitions: 5
+  parameters: *id030
+  corpus_cell_id: q30_user_day_sum__mitigate_remote_path_bundle
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_remote_mitigated
+  pressure_level: mitigated
+  variant: mitigated
+  physical_strategy_id: remote_transport_bundle
+  pressure_pair_key: q30_user_day_sum__mitigate_remote_path_bundle
+  mitigation_action: mitigate_remote_path_bundle

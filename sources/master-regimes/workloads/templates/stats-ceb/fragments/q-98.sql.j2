@@ -1,0 +1,14 @@
+select count(*) as result_count
+FROM {{ schema_name }}.comments AS c,
+  {{ schema_name }}.posts AS p,
+  {{ schema_name }}.votes AS v,
+  {{ schema_name }}.users AS u
+WHERE u.Id = p.OwnerUserId
+  AND u.Id = c.UserId
+  AND u.Id = v.UserId
+  AND p.Score <= 52
+  AND p.AnswerCount >= 0
+  AND v.CreationDate >= CAST('2010-07-20 00:00:00' AS timestamp)
+  AND u.UpVotes >= 0
+  AND u.CreationDate >= CAST('2010-10-05 05:52:35' AS timestamp)
+  AND u.CreationDate <= CAST('2014-09-08 15:55:02' AS timestamp)

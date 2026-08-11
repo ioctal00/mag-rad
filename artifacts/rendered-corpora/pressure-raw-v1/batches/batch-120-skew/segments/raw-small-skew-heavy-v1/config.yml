@@ -1,0 +1,242 @@
+analysis_id: batch-120-skew-raw-small-skew-heavy-v1
+protocol_version: 1
+source_manifest: generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-heavy-v1/source_manifest.yml
+source_render_dir: generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-heavy-v1/source-render
+output_dir: generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-heavy-v1/plan
+selection: generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-heavy-v1/selection.csv
+design:
+  topology_id: eu_us_gac
+  runtime_config_id: default
+  repetitions: 3
+  state_order:
+  - B
+  - C
+  order_policy: deterministic_shuffle_within_state
+  shuffle_seed: 20260730
+  cache_policy: mixed_cache_worker_skew_raw
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  database_result_rows_stored: false
+states:
+  B:
+    state_name: skew_dispersed
+    dataset_profile_id: raw-small-skew-heavy-v1
+    placement_state_id: hot_shards_dispersed
+    logical_data_contract_id: raw-small-skew-heavy-v1-seed-73
+    placement_action: disperse_hot_shards
+  C:
+    state_name: skew_concentrated
+    dataset_profile_id: raw-small-skew-heavy-v1
+    placement_state_id: hot_shards_concentrated
+    logical_data_contract_id: raw-small-skew-heavy-v1-seed-73
+    placement_action: concentrate_hot_shards
+query_conditions:
+- condition_id: hot_worker_probe_low_cpu
+  corpus_cell_id: hot_worker_probe_low_cpu
+  logical_question_id: top_tenants
+  physical_strategy_id: hot_data_activation
+  activates_hot_data: true
+  task_skew_expected: true
+  worker_skew_placement_sensitive: true
+  shard_pruning_expected: false
+  skew_signature_role: task_and_worker_positive
+  expected_hot_regions: &id001
+  - eu
+  - us
+  template_id: gac_fdw_multiregion_hot_worker_probe
+  parameters:
+    as_of_unix: 1782864000
+    eu_hot_tenant_min: 1
+    eu_hot_tenant_max: 4
+    us_hot_tenant_min: 10001
+    us_hot_tenant_max: 10004
+    cpu_terms: 32
+- condition_id: hot_worker_probe_high_cpu
+  corpus_cell_id: hot_worker_probe_high_cpu
+  logical_question_id: top_tenants
+  physical_strategy_id: hot_data_activation
+  activates_hot_data: true
+  task_skew_expected: true
+  worker_skew_placement_sensitive: true
+  shard_pruning_expected: false
+  skew_signature_role: task_and_worker_positive
+  expected_hot_regions: *id001
+  template_id: gac_fdw_multiregion_hot_worker_probe
+  parameters:
+    as_of_unix: 1782864000
+    eu_hot_tenant_min: 1
+    eu_hot_tenant_max: 4
+    us_hot_tenant_min: 10001
+    us_hot_tenant_max: 10004
+    cpu_terms: 128
+- condition_id: top_tenants_short
+  corpus_cell_id: top_tenants_short
+  logical_question_id: top_tenants
+  physical_strategy_id: hot_data_activation
+  activates_hot_data: true
+  task_skew_expected: true
+  worker_skew_placement_sensitive: true
+  shard_pruning_expected: false
+  skew_signature_role: task_and_worker_positive
+  expected_hot_regions: *id001
+  template_id: gac_fdw_multiregion_top_tenants
+  parameters:
+    as_of_unix: 1782864000
+    lookback_days: 7
+    limit_k: 50
+- condition_id: top_tenants_full
+  corpus_cell_id: top_tenants_full
+  logical_question_id: top_tenants
+  physical_strategy_id: hot_data_activation
+  activates_hot_data: true
+  task_skew_expected: true
+  worker_skew_placement_sensitive: true
+  shard_pruning_expected: false
+  skew_signature_role: task_and_worker_positive
+  expected_hot_regions: *id001
+  template_id: gac_fdw_multiregion_top_tenants
+  parameters:
+    as_of_unix: 1782864000
+    lookback_days: 30
+    limit_k: 100
+- condition_id: top_tenants_medium
+  corpus_cell_id: top_tenants_medium
+  logical_question_id: top_tenants
+  physical_strategy_id: hot_data_activation
+  activates_hot_data: true
+  task_skew_expected: true
+  worker_skew_placement_sensitive: true
+  shard_pruning_expected: false
+  skew_signature_role: task_and_worker_positive
+  expected_hot_regions: *id001
+  template_id: gac_fdw_multiregion_top_tenants
+  parameters:
+    as_of_unix: 1782864000
+    lookback_days: 14
+    limit_k: 75
+- condition_id: tenant_point_hot
+  corpus_cell_id: tenant_point_hot
+  logical_question_id: tenant_point_rollup
+  physical_strategy_id: hot_data_activation
+  activates_hot_data: true
+  task_skew_expected: false
+  worker_skew_placement_sensitive: false
+  shard_pruning_expected: true
+  skew_signature_role: hot_data_pruning_control
+  expected_hot_regions: *id001
+  template_id: gac_fdw_multiregion_tenant_point_rollup
+  parameters:
+    as_of_unix: 1782864000
+    eu_tenant_id: 1
+    us_tenant_id: 10001
+    lookback_days: 30
+- condition_id: tenant_point_cold_control
+  corpus_cell_id: tenant_point_cold_control
+  logical_question_id: tenant_point_rollup
+  physical_strategy_id: cold_or_selective_control
+  activates_hot_data: false
+  task_skew_expected: false
+  worker_skew_placement_sensitive: false
+  shard_pruning_expected: true
+  skew_signature_role: cold_data_pruning_control
+  expected_hot_regions: *id001
+  template_id: gac_fdw_multiregion_tenant_point_rollup
+  parameters:
+    as_of_unix: 1782864000
+    eu_tenant_id: 100
+    us_tenant_id: 10100
+    lookback_days: 30
+- condition_id: selective_filter_control
+  corpus_cell_id: selective_filter_control
+  logical_question_id: event_filter_summary
+  physical_strategy_id: cold_or_selective_control
+  activates_hot_data: false
+  task_skew_expected: false
+  worker_skew_placement_sensitive: false
+  shard_pruning_expected: false
+  skew_signature_role: multishard_negative_control
+  expected_hot_regions: *id001
+  template_id: gac_fdw_multiregion_event_filter_summary
+  parameters:
+    as_of_unix: 1782864000
+    lookback_days: 1
+    min_value: 950
+- condition_id: broad_filter_hot
+  corpus_cell_id: broad_filter_hot
+  logical_question_id: event_filter_summary
+  physical_strategy_id: hot_data_activation
+  activates_hot_data: true
+  task_skew_expected: true
+  worker_skew_placement_sensitive: true
+  shard_pruning_expected: false
+  skew_signature_role: task_and_worker_positive
+  expected_hot_regions: *id001
+  template_id: gac_fdw_multiregion_event_filter_summary
+  parameters:
+    as_of_unix: 1782864000
+    lookback_days: 30
+    min_value: 0
+- condition_id: global_rollup
+  corpus_cell_id: global_rollup
+  logical_question_id: event_full_scan_summary
+  physical_strategy_id: hot_data_activation
+  activates_hot_data: true
+  task_skew_expected: true
+  worker_skew_placement_sensitive: true
+  shard_pruning_expected: false
+  skew_signature_role: task_and_worker_positive
+  expected_hot_regions: *id001
+  template_id: gac_fdw_multiregion_event_count_rollup
+  parameters:
+    as_of_unix: 1782864000
+    lookback_days: 30
+capability_smoke:
+  condition_ids:
+  - hot_worker_probe_low_cpu
+  - hot_worker_probe_high_cpu
+  - top_tenants_short
+  - top_tenants_full
+  - top_tenants_medium
+  - tenant_point_hot
+  - tenant_point_cold_control
+  - selective_filter_control
+  - broad_filter_hot
+  - global_rollup
+  repetition_indices:
+  - 0
+  - 1
+  - 2
+  require_checkpoint: false
+hot_tenant_contract:
+  source_profile: datasets/profiles/raw-small-skew-heavy.yml
+  eu_hot_tenant_ids:
+  - 1
+  - 2
+  - 3
+  - 4
+  us_hot_tenant_ids:
+  - 10001
+  - 10002
+  - 10003
+  - 10004
+placement:
+  metadata_source: citus_shards
+  move_function: citus_move_shard_placement
+  shard_transfer_mode: block_writes
+  dispersed:
+    dominant_hot_event_share_max: 0.65
+  concentrated:
+    dominant_hot_event_share_min: 0.8
+  rollback:
+    primary: replay_inverse_moves_from_placement_intervention_manifest
+    fallback: clean_reload_same_dataset_profile_and_seed
+artifact_contract:
+  collection_contract_version: pressure-raw-v1
+  required_query_scopes:
+  - main
+  - regional_coordinator
+  - worker_task
+  database_result_rows_stored: false
+  result_signature_required: true
+  result_signature_scope: first_repetition_per_condition
+  os_sampler_required: true

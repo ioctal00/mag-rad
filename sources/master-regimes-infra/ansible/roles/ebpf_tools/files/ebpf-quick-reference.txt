@@ -1,0 +1,17 @@
+Host-level eBPF quick reference for thesis experiments
+
+1. Show open TCP sockets for postgres and pgbouncer:
+   ss -tpn | egrep 'postgres|pgbouncer'
+
+2. Sample bpftrace by process name:
+   sudo bpftrace -e 'tracepoint:syscalls:sys_enter_sendto /comm == "postgres"/ { @[pid] = count(); }'
+
+3. Trace network send bytes by process:
+   sudo bpftrace -e 'tracepoint:syscalls:sys_exit_sendto /comm == "postgres"/ { @bytes[pid] = sum(args->ret); }'
+
+4. Check available BCC tools:
+   ls /usr/sbin/*bcc* /usr/share/bcc/tools 2>/dev/null
+
+5. Capture per-process bandwidth snapshots:
+   sudo /usr/share/bcc/tools/tcptop -C
+

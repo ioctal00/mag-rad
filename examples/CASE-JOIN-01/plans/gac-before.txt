@@ -1,0 +1,40 @@
+                                                                               QUERY PLAN
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=809.81..809.82 rows=1 width=104)
+   Output: u.user_segment, u.user_status, (count(*)), (round(sum((e.value)::numeric), 6))
+   Sort Key: (round(sum((e.value)::numeric), 6)) DESC, u.user_segment, u.user_status
+   CTE events_all
+     ->  Append  (cost=100.00..281.00 rows=6 width=56)
+           ->  Foreign Scan on fdw_eu.events e_1  (cost=100.00..140.49 rows=3 width=56)
+                 Output: 'eu'::text, e_1.tenant_id, e_1.user_id, e_1.value
+                 Remote SQL: SELECT tenant_id, user_id, value FROM public.events WHERE ((created_at >= '2026-06-01 00:00:00+00')) AND ((mod(tenant_id, 1::bigint) = 0))
+           ->  Foreign Scan on fdw_us.events e_2  (cost=100.00..140.49 rows=3 width=56)
+                 Output: 'us'::text, e_2.tenant_id, e_2.user_id, e_2.value
+                 Remote SQL: SELECT tenant_id, user_id, value FROM public.events WHERE ((created_at >= '2026-06-01 00:00:00+00')) AND ((mod(tenant_id, 1::bigint) = 0))
+   CTE users_all
+     ->  Append  (cost=100.00..490.90 rows=1204 width=112)
+           ->  Foreign Scan on fdw_eu.users u_1  (cost=100.00..242.44 rows=602 width=112)
+                 Output: 'eu'::text, u_1.tenant_id, u_1.user_id, u_1.user_segment, u_1.user_status
+                 Remote SQL: SELECT tenant_id, user_id, user_segment, user_status FROM public.users
+           ->  Foreign Scan on fdw_us.users u_2  (cost=100.00..242.44 rows=602 width=112)
+                 Output: 'us'::text, u_2.tenant_id, u_2.user_id, u_2.user_segment, u_2.user_status
+                 Remote SQL: SELECT tenant_id, user_id, user_segment, user_status FROM public.users
+   ->  GroupAggregate  (cost=37.87..37.90 rows=1 width=104)
+         Output: u.user_segment, u.user_status, count(*), round(sum((e.value)::numeric), 6)
+         Group Key: u.user_segment, u.user_status
+         ->  Sort  (cost=37.87..37.88 rows=1 width=72)
+               Output: u.user_segment, u.user_status, e.value
+               Sort Key: u.user_segment, u.user_status
+               ->  Hash Join  (cost=0.23..37.86 rows=1 width=72)
+                     Output: u.user_segment, u.user_status, e.value
+                     Hash Cond: ((u.source_region = e.source_region) AND (u.tenant_id = e.tenant_id) AND (u.user_id = e.user_id))
+                     ->  CTE Scan on users_all u  (cost=0.00..24.08 rows=1204 width=112)
+                           Output: u.source_region, u.tenant_id, u.user_id, u.user_segment, u.user_status
+                     ->  Hash  (cost=0.12..0.12 rows=6 width=56)
+                           Output: e.value, e.source_region, e.tenant_id, e.user_id
+                           ->  CTE Scan on events_all e  (cost=0.00..0.12 rows=6 width=56)
+                                 Output: e.value, e.source_region, e.tenant_id, e.user_id
+ Query Identifier: -6602576741801922158
+ Planning:
+   Buffers: shared hit=263
+(37 rows)

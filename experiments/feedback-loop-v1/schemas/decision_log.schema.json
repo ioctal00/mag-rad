@@ -1,0 +1,160 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://master-regimes.local/schemas/decision-log-v1.json",
+  "title": "Pressure feedback-loop append-only decision log",
+  "oneOf": [
+    {"$ref": "#/$defs/decision"},
+    {"$ref": "#/$defs/outcome"}
+  ],
+  "$defs": {
+    "base": {
+      "type": "object",
+      "required": [
+        "record_type",
+        "decision_id",
+        "trajectory_id",
+        "step_index",
+        "recorded_at_utc"
+      ],
+      "properties": {
+        "record_type": {"enum": ["decision", "outcome"]},
+        "decision_id": {"type": "string", "minLength": 1},
+        "trajectory_id": {"type": "string", "minLength": 1},
+        "step_index": {"type": "integer", "minimum": 1},
+        "recorded_at_utc": {"type": "string", "format": "date-time"}
+      }
+    },
+    "decision": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {
+          "type": "object",
+          "required": [
+            "record_type",
+            "decision_id",
+            "trajectory_id",
+            "step_index",
+            "recorded_at_utc",
+            "history_cutoff_utc",
+            "source_state_id",
+            "action_id",
+            "hypothesis",
+            "target_domains",
+            "expected_domain_directions",
+            "expected_end_to_end_impact",
+            "known_risks",
+            "rollback_plan",
+            "evidence_snapshot_refs",
+            "identity_mode",
+            "applicability_status",
+            "status",
+            "domain_contract_version"
+          ],
+          "properties": {
+            "record_type": {"const": "decision"},
+            "history_cutoff_utc": {"type": "string", "format": "date-time"},
+            "source_state_id": {"type": "string", "minLength": 1},
+            "action_id": {"type": "string", "minLength": 1},
+            "hypothesis": {"type": "string", "minLength": 1},
+            "target_domains": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "remote_fdw_path",
+                  "regional_reduction",
+                  "gac_finalization",
+                  "imbalance",
+                  "disk_spill",
+                  "repartition_locality"
+                ]
+              }
+            },
+            "expected_domain_directions": {
+              "type": "object",
+              "additionalProperties": {"enum": ["increase", "decrease", "no_clear_change"]}
+            },
+            "expected_end_to_end_impact": {"type": "string", "minLength": 1},
+            "known_risks": {
+              "type": "array",
+              "minItems": 1,
+              "items": {"type": "string", "minLength": 1}
+            },
+            "rollback_plan": {"type": "string", "minLength": 1},
+            "evidence_snapshot_refs": {
+              "type": "array",
+              "minItems": 1,
+              "items": {"type": "string", "minLength": 1}
+            },
+            "identity_mode": {
+              "enum": [
+                "same_normalized_sql",
+                "same_sql_declared_intervention",
+                "manual_logical_question_link"
+              ]
+            },
+            "applicability_status": {"enum": ["applicable", "conditionally_applicable"]},
+            "status": {"const": "locked_pre_execution"},
+            "domain_contract_version": {"const": "pressure-relative-profile-v1"}
+          },
+          "not": {
+            "anyOf": [
+              {"required": ["actual_outcome"]},
+              {"required": ["delta_outcome"]},
+              {"required": ["outcome_label"]},
+              {"required": ["result_after"]},
+              {"required": ["target_state_id"]}
+            ]
+          },
+          "unevaluatedProperties": false
+        }
+      ]
+    },
+    "outcome": {
+      "allOf": [
+        {"$ref": "#/$defs/base"},
+        {
+          "type": "object",
+          "required": [
+            "record_type",
+            "decision_id",
+            "trajectory_id",
+            "step_index",
+            "recorded_at_utc",
+            "source_state_id",
+            "target_state_id",
+            "action_id",
+            "result_validation_status",
+            "profile_before_ref",
+            "profile_after_ref",
+            "delta_outcome",
+            "outcome_label",
+            "rollback_status"
+          ],
+          "properties": {
+            "record_type": {"const": "outcome"},
+            "source_state_id": {"type": "string", "minLength": 1},
+            "target_state_id": {"type": "string", "minLength": 1},
+            "action_id": {"type": "string", "minLength": 1},
+            "result_validation_status": {"enum": ["equivalent", "different", "unresolved"]},
+            "profile_before_ref": {"type": "string", "minLength": 1},
+            "profile_after_ref": {"type": "string", "minLength": 1},
+            "delta_outcome": {
+              "type": "object",
+              "required": ["elapsed_log2_gain", "noise_status"],
+              "properties": {
+                "elapsed_log2_gain": {"type": ["number", "null"]},
+                "noise_status": {"enum": ["resolved", "within_noise", "insufficient"]}
+              },
+              "additionalProperties": true
+            },
+            "outcome_label": {"enum": ["positive", "negative", "mixed", "indeterminate"]},
+            "rollback_status": {"enum": ["verified", "failed", "not_applicable"]}
+          },
+          "unevaluatedProperties": false
+        }
+      ]
+    }
+  }
+}

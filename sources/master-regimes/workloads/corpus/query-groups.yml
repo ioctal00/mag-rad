@@ -1,0 +1,572 @@
+catalog_id: query-groups-v1
+vocabulary: ../../docs/corpus-vocabulary.md
+purpose: >
+  Canonical logical-question groups for regime-corpus design. This file maps
+  analytic intent to execution strategies and statuses before generating
+  corpus cells or expanding SQL instance counts.
+
+status_values:
+  runnable_now: Strategy has a template and can run on the current EU+US+GAC setup.
+  template_ready_needs_us: Legacy status for templates that existed before US/fdw_us was active.
+  needs_template: SQL template or suite entry does not exist yet.
+  needs_etl_view: ETL/materialized object is missing or not wired for this question.
+  needs_strategy_design: Strategy concept is valid but needs a clearer execution design.
+  future_optional: Useful later, not required for the first regime corpus.
+
+strategy_values:
+  - single_region_citus
+  - fdw_raw
+  - etl_materialized
+  - regional_partial
+  - multiregion_union
+
+groups:
+  - logical_question_id: stats_ceb_count
+    description: >
+      External STATS-CEB scalar-count queries selected before execution by
+      expected Citus physical strategy.
+    primary_regime_targets:
+      - remote_fetch_heavy
+      - join_movement
+      - well_reduced_localized
+    strategies:
+      single_region_citus:
+        status: future_optional
+        notes: >
+          Canonical correctness is handled by the isolated GAC baseline schema,
+          not by a corpus-facing single-region template.
+      fdw_raw:
+        status: future_optional
+        notes: >
+          The pilot intentionally requires both independent regional branches
+          in one global observation.
+      etl_materialized:
+        status: future_optional
+        notes: STATS-CEB has no ETL-equivalent question in this bounded pilot.
+      regional_partial:
+        status: future_optional
+        notes: Scalar COUNT pushdown already represents the regional reduction.
+      multiregion_union:
+        status: runnable_now
+        template_id: stats_ceb_multiregion_count
+        suite: workloads/suites/stats-ceb-portability.yml
+
+  - logical_question_id: daily_tenant_rollup
+    description: Daily tenant-level aggregate over events.
+    primary_regime_targets:
+      - gac_finalization_heavy
+      - well_reduced_localized
+    strategies:
+      single_region_citus:
+        status: runnable_now
+        template_id: q01_tenant_rollup
+        suite: workloads/suites/single-region-core.yml
+      fdw_raw:
+        status: runnable_now
+        template_id: gac_fdw_daily_rollup
+        suite: workloads/suites/gac-current-runnable.yml
+      etl_materialized:
+        status: runnable_now
+        template_id: gac_etl_local_rollup
+        suite: workloads/suites/gac-current-runnable.yml
+        materialized_object: etl.daily_tenant_rollup
+      regional_partial:
+        status: needs_strategy_design
+        notes: >
+          Candidate for explicit regional partial aggregate followed by GAC
+          finalization. Current FDW remote probe can approximate the regional
+          plan, but there is no separate regional-partial template yet.
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_multiregion_daily_tenant_rollup
+        suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+
+  - logical_question_id: top_tenants
+    description: Top tenants by event value or event activity in a time window.
+    primary_regime_targets:
+      - remote_fetch_heavy
+      - gac_finalization_heavy
+    strategies:
+      single_region_citus:
+        status: runnable_now
+        template_id: q10_top_tenants
+        suite: workloads/suites/single-region-core.yml
+      fdw_raw:
+        status: runnable_now
+        template_id: gac_fdw_top_tenants
+        suite: workloads/suites/gac-current-runnable.yml
+      etl_materialized:
+        status: runnable_now
+        template_id: gac_etl_top_tenants
+        suite: workloads/suites/gac-current-runnable.yml
+        materialized_object: etl.daily_tenant_rollup
+      regional_partial:
+        status: needs_template
+        notes: >
+          Add explicit regional top-k/partial aggregate before final GAC top-k.
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_multiregion_top_tenants
+        alternate_template_ids:
+          - gac_fdw_multiregion_top_tenants_raw_finalize
+          - gac_fdw_multiregion_hot_worker_probe
+        suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+
+  - logical_question_id: tenant_point_rollup
+    description: Tenant-filtered point lookup/rollup expected to prune to a small scope.
+    primary_regime_targets:
+      - well_reduced_localized
+    strategies:
+      single_region_citus:
+        status: runnable_now
+        template_id: q04_tenant_point_rollup
+        suite: workloads/suites/single-region-core.yml
+      fdw_raw:
+        status: runnable_now
+        template_id: gac_fdw_tenant_point_rollup
+        suite: workloads/suites/gac-current-runnable.yml
+      etl_materialized:
+        status: runnable_now
+        template_id: gac_etl_tenant_point_rollup
+        suite: workloads/suites/gac-current-runnable.yml
+        materialized_object: etl.daily_tenant_rollup
+      regional_partial:
+        status: future_optional
+        notes: Already localized; useful as negative control for fetch/WAN.
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_multiregion_tenant_point_rollup
+        alternate_template_ids:
+          - gac_fdw_multiregion_tenant_point_raw_finalize
+        suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+
+  - logical_question_id: event_filter_summary
+    description: Selective event filter summary.
+    primary_regime_targets:
+      - well_reduced_localized
+    strategies:
+      single_region_citus:
+        status: runnable_now
+        template_id: q03_event_filter_summary
+        suite: workloads/suites/single-region-core.yml
+      fdw_raw:
+        status: runnable_now
+        template_id: gac_fdw_event_filter_summary
+        suite: workloads/suites/gac-current-runnable.yml
+      etl_materialized:
+        status: needs_etl_view
+        notes: >
+          Existing ETL rollup does not preserve raw event filter predicates well.
+          Add only if a materialized event-filter view is intentionally needed.
+      regional_partial:
+        status: future_optional
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_multiregion_event_filter_summary
+        suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+
+  - logical_question_id: event_full_scan_summary
+    description: Full event-table summary used as scan/fan-in boundary probe.
+    primary_regime_targets:
+      - well_reduced_localized
+      - remote_fetch_heavy
+    strategies:
+      single_region_citus:
+        status: runnable_now
+        template_id: q09_event_full_scan_summary
+        suite: workloads/suites/single-region-core.yml
+      fdw_raw:
+        status: runnable_now
+        template_id: gac_fdw_event_full_scan_summary
+        suite: workloads/suites/gac-current-runnable.yml
+      etl_materialized:
+        status: needs_etl_view
+        notes: >
+          Current ETL rollup cannot reproduce full raw scan semantics; this may
+          stay a negative-control FDW/raw probe instead.
+      regional_partial:
+        status: needs_strategy_design
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_multiregion_event_full_scan_summary
+        alternate_template_ids:
+          - gac_fdw_multiregion_raw_region_rollup
+          - gac_fdw_multiregion_event_count_rollup
+        suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+
+  - logical_question_id: event_exact_full_flow_summary
+    description: >
+      Exact COUNT/MIN/MAX summary used by the frozen aggregate feedback-loop
+      addendum to compare raw fan-in with result-equivalent regional reduction.
+    primary_regime_targets:
+      - remote_fetch_heavy
+      - gac_finalization_heavy
+      - well_reduced_localized
+    strategies:
+      single_region_citus:
+        status: future_optional
+      fdw_raw:
+        status: future_optional
+      etl_materialized:
+        status: future_optional
+      regional_partial:
+        status: future_optional
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_multiregion_event_exact_raw_summary
+        alternate_template_ids:
+          - gac_fdw_multiregion_event_exact_regional_summary
+        suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+
+  - logical_question_id: event_raw_wide_sample
+    description: >
+      Bounded raw event-row sample with a synthetic payload expression used to
+      probe FDW fetch and row-width pressure without changing dataset schema.
+    primary_regime_targets:
+      - remote_fetch_heavy
+    strategies:
+      single_region_citus:
+        status: future_optional
+        notes: >
+          Useful later as a coordinator/Citus-only row-width control, but not
+          needed for the first GAC fetch-pressure pilot.
+      fdw_raw:
+        status: runnable_now
+        template_id: gac_fdw_event_raw_wide_sample
+        suite: workloads/suites/gac-current-runnable.yml
+      etl_materialized:
+        status: future_optional
+        notes: >
+          ETL/materialized semantics are not equivalent to raw remote row fetch
+          for this question. Keep ETL controls in the top_tenants/full_scan
+          families instead.
+      regional_partial:
+        status: needs_strategy_design
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_multiregion_event_raw_wide_sample
+        alternate_template_ids:
+          - gac_fdw_coordinator_raw_event_topk
+          - gac_fdw_coordinator_regional_event_topk
+        suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+
+  - logical_question_id: dba_local_memory_topk
+    description: >
+      Parameterized Top-K analytical shapes used to replay and confirm a DBA's
+      local intervention memory over N=2 and N=3 global executions.
+    primary_regime_targets:
+      - remote_fetch_heavy
+      - gac_finalization_heavy
+      - well_reduced_localized
+    strategies:
+      single_region_citus:
+        status: future_optional
+      fdw_raw:
+        status: future_optional
+      etl_materialized:
+        status: future_optional
+      regional_partial:
+        status: future_optional
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_dba_topk_raw
+        alternate_template_ids:
+          - gac_fdw_dba_topk_regional
+        suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+
+  - logical_question_id: distinct_active_users
+    description: >
+      Global deduplication of active user identifiers, with raw and
+      regionally pre-deduplicated physical variants.
+    primary_regime_targets:
+      - gac_finalization_heavy
+      - remote_fetch_heavy
+    strategies:
+      single_region_citus:
+        status: future_optional
+      fdw_raw:
+        status: needs_template
+      etl_materialized:
+        status: future_optional
+      regional_partial:
+        status: needs_strategy_design
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_coordinator_raw_distinct_users
+        alternate_template_ids:
+          - gac_fdw_coordinator_regional_distinct_users
+        suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+
+  - logical_question_id: tenant_tier_daily_join
+    description: Event-to-tenant dimension join grouped by tenant tier and day.
+    primary_regime_targets:
+      - gac_finalization_heavy
+      - well_reduced_localized
+    strategies:
+      single_region_citus:
+        status: runnable_now
+        template_id: q05_tenant_tier_daily_join
+        suite: workloads/suites/single-region-core.yml
+      fdw_raw:
+        status: runnable_now
+        template_id: gac_fdw_tenant_tier_join
+        alternate_template_ids:
+          - gac_fdw_tenant_tier_left_join
+        suite: workloads/suites/gac-current-runnable.yml
+      etl_materialized:
+        status: runnable_now
+        template_id: gac_etl_tenant_tier_daily_rollup
+        suite: workloads/suites/gac-current-runnable.yml
+        materialized_object: etl.daily_tenant_tier_rollup
+      regional_partial:
+        status: needs_strategy_design
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_multiregion_tenant_tier_join
+        alternate_template_ids:
+          - gac_fdw_multiregion_tenant_tier_left_join
+        suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+
+  - logical_question_id: user_segment_topk
+    description: Event-to-user colocated join with top-k/grouped output.
+    primary_regime_targets:
+      - gac_finalization_heavy
+      - well_reduced_localized
+    strategies:
+      single_region_citus:
+        status: runnable_now
+        template_id: q06_user_segment_join
+        alternate_template_ids:
+          - q11_colocated_user_join_pair
+          - q12_repartition_user_join_pair
+          - q20_colocated_user_join_pushdown_pair
+          - q21_repartition_user_join_pushdown_pair
+        suite: workloads/suites/single-region-core.yml
+      fdw_raw:
+        status: runnable_now
+        template_id: gac_fdw_user_segment_join
+        alternate_template_ids:
+          - gac_fdw_single_edge_colocated_user_join_pair
+          - gac_fdw_single_edge_repartition_user_join_pair
+        suite: workloads/suites/gac-current-runnable.yml
+      etl_materialized:
+        status: runnable_now
+        template_id: gac_etl_user_segment_topk
+        suite: workloads/suites/gac-current-runnable.yml
+        materialized_object: etl.user_segment_topk_rollup
+      regional_partial:
+        status: needs_strategy_design
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_multiregion_user_segment_join
+        alternate_template_ids:
+          - gac_fdw_multiregion_repartition_user_join_pair
+          - gac_fdw_coordinator_local_user_join
+          - gac_fdw_coordinator_regional_user_join
+          - gac_fdw_n3_colocated_user_join
+          - gac_fdw_n3_repartition_user_join
+        suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+
+  - logical_question_id: joined_user_value_topk
+    description: High-cardinality user-level Top-K after a distributed dimension join.
+    primary_regime_targets:
+      - join_movement
+    strategies:
+      single_region_citus:
+        status: runnable_now
+        template_id: q14_colocated_user_value_topk_pair
+        alternate_template_ids:
+          - q15_repartition_user_value_topk_pair
+        suite: workloads/suites/single-region-core.yml
+      fdw_raw:
+        status: runnable_now
+        template_id: gac_fdw_single_edge_colocated_user_value_topk_pair
+        alternate_template_ids:
+          - gac_fdw_single_edge_repartition_user_value_topk_pair
+        suite: workloads/suites/gac-current-runnable.yml
+      etl_materialized:
+        status: needs_etl_view
+      regional_partial:
+        status: needs_strategy_design
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_n3_colocated_user_value_topk
+        alternate_template_ids:
+          - gac_fdw_n3_repartition_user_value_topk
+        suite: workloads/suites/gac-n3-colocation-holdout.yml
+
+  - logical_question_id: joined_event_sample
+    description: Ordered sample of joined event and user rows.
+    primary_regime_targets:
+      - join_movement
+    strategies:
+      single_region_citus:
+        status: runnable_now
+        template_id: q16_colocated_joined_event_sample_pair
+        alternate_template_ids:
+          - q17_repartition_joined_event_sample_pair
+        suite: workloads/suites/single-region-core.yml
+      fdw_raw:
+        status: runnable_now
+        template_id: gac_fdw_single_edge_colocated_joined_event_sample_pair
+        alternate_template_ids:
+          - gac_fdw_single_edge_repartition_joined_event_sample_pair
+        suite: workloads/suites/gac-current-runnable.yml
+      etl_materialized:
+        status: needs_etl_view
+      regional_partial:
+        status: needs_strategy_design
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_n3_colocated_joined_event_sample
+        alternate_template_ids:
+          - gac_fdw_n3_repartition_joined_event_sample
+        suite: workloads/suites/gac-n3-colocation-holdout.yml
+
+  - logical_question_id: joined_event_summary
+    description: Scalar summary after a distributed event and user join.
+    primary_regime_targets:
+      - join_movement
+    strategies:
+      single_region_citus:
+        status: runnable_now
+        template_id: q18_colocated_join_summary_pair
+        alternate_template_ids:
+          - q19_repartition_join_summary_pair
+        suite: workloads/suites/single-region-core.yml
+      fdw_raw:
+        status: runnable_now
+        template_id: gac_fdw_single_edge_colocated_join_summary_pair
+        alternate_template_ids:
+          - gac_fdw_single_edge_repartition_join_summary_pair
+        suite: workloads/suites/gac-current-runnable.yml
+      etl_materialized:
+        status: needs_etl_view
+      regional_partial:
+        status: needs_strategy_design
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_n3_colocated_join_summary
+        alternate_template_ids:
+          - gac_fdw_n3_repartition_join_summary
+        suite: workloads/suites/gac-n3-colocation-holdout.yml
+
+  - logical_question_id: user_value_topk
+    description: User-level Top-K over regional events without a dimension join.
+    primary_regime_targets:
+      - gac_finalization_heavy
+    strategies:
+      single_region_citus:
+        status: runnable_now
+        template_id: q02_global_user_topk
+        alternate_template_ids:
+          - q13_amplified_user_topk
+          - q22_regional_user_value_topk_pushdown
+        suite: workloads/suites/single-region-core.yml
+      fdw_raw:
+        status: runnable_now
+        template_id: gac_fdw_user_value_topk
+        alternate_template_ids:
+          - gac_fdw_single_edge_regional_user_value_topk
+        suite: workloads/suites/gac-current-runnable.yml
+      etl_materialized:
+        status: needs_etl_view
+      regional_partial:
+        status: needs_strategy_design
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_multiregion_user_value_topk
+        alternate_template_ids:
+          - gac_fdw_multiregion_raw_user_value_topk
+          - gac_fdw_multiregion_amplified_user_value_topk
+          - gac_fdw_coordinator_raw_user_topk
+          - gac_fdw_coordinator_partial_user_topk
+        suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+
+  - logical_question_id: global_user_topk
+    description: Event-to-global-user join/top-k intended to expose non-colocated movement.
+    primary_regime_targets:
+      - join_movement
+      - gac_finalization_heavy
+    strategies:
+      single_region_citus:
+        status: runnable_now
+        template_id: q07_global_user_segment_join
+        suite: workloads/suites/single-region-core.yml
+      fdw_raw:
+        status: runnable_now
+        template_id: gac_fdw_global_user_join
+        suite: workloads/suites/gac-current-runnable.yml
+      etl_materialized:
+        status: runnable_now
+        template_id: gac_etl_global_user_topk
+        suite: workloads/suites/gac-current-runnable.yml
+        materialized_object: etl.global_user_topk_rollup
+      regional_partial:
+        status: needs_strategy_design
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_multiregion_global_user_join
+        suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+
+  - logical_question_id: multi_dimension_rollup
+    description: Events joined with tenant and user dimensions before grouped output.
+    primary_regime_targets:
+      - join_movement
+      - gac_finalization_heavy
+    strategies:
+      single_region_citus:
+        status: runnable_now
+        template_id: q08_multi_dimension_rollup
+        suite: workloads/suites/single-region-core.yml
+      fdw_raw:
+        status: runnable_now
+        template_id: gac_fdw_multi_dimension_rollup
+        suite: workloads/suites/gac-current-runnable.yml
+      etl_materialized:
+        status: runnable_now
+        template_id: gac_etl_multi_dimension_rollup
+        suite: workloads/suites/gac-current-runnable.yml
+        materialized_object: etl.multi_dimension_rollup
+      regional_partial:
+        status: needs_strategy_design
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_multiregion_multi_dimension_rollup
+        suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+
+  - logical_question_id: daily_kpi
+    description: Multi-region daily KPI aggregate from legacy analytics-client shape.
+    primary_regime_targets:
+      - gac_finalization_heavy
+    strategies:
+      single_region_citus:
+        status: needs_template
+      fdw_raw:
+        status: needs_template
+      etl_materialized:
+        status: needs_etl_view
+      regional_partial:
+        status: needs_strategy_design
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_multiregion_daily_kpi
+        suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+
+  - logical_question_id: region_daily_join
+    description: Multi-region regional daily aggregate after tenant dimension join.
+    primary_regime_targets:
+      - gac_finalization_heavy
+    strategies:
+      single_region_citus:
+        status: needs_template
+      fdw_raw:
+        status: needs_template
+      etl_materialized:
+        status: needs_etl_view
+      regional_partial:
+        status: needs_strategy_design
+      multiregion_union:
+        status: runnable_now
+        template_id: gac_fdw_multiregion_region_daily_join
+        suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml

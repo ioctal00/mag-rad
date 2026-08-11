@@ -1,0 +1,18 @@
+{
+  "adaptive_transition_count": true,
+  "aggregate_exact_logical_identity_complete": true,
+  "aggregate_exact_state_count": true,
+  "aggregate_exact_transition_count": true,
+  "all_rq_h_present": true,
+  "fixed_domains_unchanged": true,
+  "fixed_rq_h_text_exact": true,
+  "future_outcomes_unused": true,
+  "independent_outcome_axes_complete": true,
+  "missing_outcomes_not_zero": true,
+  "no_r3_refit": true,
+  "pass": true,
+  "replay_outcomes_not_fed_back": true,
+  "replay_transition_count": true,
+  "required_figures_exist": true,
+  "state_projection_complete": true
+}

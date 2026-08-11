@@ -1,0 +1,5 @@
+query_run_id,regime_id,regime_name,distance_to_center,membership,hard_assignment,interpretation
+20260630T143959Z-viewer-gac-30b6e29d8640,R1,"GAC/FDW fan-in and finalization profile",5.783269193696089,0.31476227917019944,1,"hard assignment keeps only R1"
+20260630T143959Z-viewer-gac-30b6e29d8640,R2,"Skew-amplified remote/fan-in pressure",5.820996002362372,0.30896864992979717,0,"near-equal secondary membership retained only by fuzzy representation"
+20260630T143959Z-viewer-gac-30b6e29d8640,R0,"Selective remote lookup / low-output multi-region",6.909790044046475,0.18929972606847828,0,"secondary geometric similarity"
+20260630T143959Z-viewer-gac-30b6e29d8640,R3,"Local/materialized low-pressure",6.939811977972767,0.18696934483152522,0,"secondary geometric similarity"

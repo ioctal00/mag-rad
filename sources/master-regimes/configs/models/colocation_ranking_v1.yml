@@ -1,0 +1,127 @@
+contract_version: colocation-ranking-robustness-v1
+program_id: pressure-raw-v1
+mitigation_action: use_colocated_distribution
+source_matrix: analysis/reports/pressure-raw-v1-colocation-gain-model/colocation_pair_matrix.csv
+target:
+  field: target_log2_gain
+  meaning: log2(median_stressed_elapsed_seconds / median_mitigated_elapsed_seconds)
+  scope: global_query
+primary_estimator: ridge
+benchmark_policy:
+  fixed_before_n3_holdout: true
+  model_selection_from_intensity_holdout: false
+  purpose: robustness_check_only
+holdouts:
+  - name: leave_stressed_template_out
+    group_field: stressed_template_id
+  - name: leave_dataset_out
+    group_field: dataset_profile_id
+  - name: leave_scenario_level_out
+    group_field: scenario_level
+  - name: leave_size_class_out
+    group_field: dataset_size_class
+feature_views:
+  core:
+    - coordinator_fanin_rows
+    - coordinator_fanin_bytes_estimated
+    - coordinator_final_rows
+    - coordinator_non_foreign_time_share_proxy
+    - coordinator_join_operator_count
+    - remote_region_actual_rows_sum
+    - remote_region_tuple_bytes_sum
+    - remote_region_task_count_sum
+    - remote_citus_dependent_map_task_count_sum
+    - remote_citus_repartition_fanout_ratio_max
+    - worker_task_actual_rows_sum
+    - worker_task_scan_actual_rows_sum
+  extended:
+    - coordinator_fanin_rows
+    - coordinator_fanin_bytes_estimated
+    - coordinator_final_rows
+    - coordinator_non_foreign_time_share_proxy
+    - coordinator_join_operator_count
+    - remote_region_actual_rows_sum
+    - remote_region_tuple_bytes_sum
+    - remote_region_task_count_sum
+    - remote_citus_dependent_map_task_count_sum
+    - remote_citus_repartition_fanout_ratio_max
+    - worker_task_actual_rows_sum
+    - worker_task_scan_actual_rows_sum
+    - regional_coordinator_tx_bytes_sum
+    - analytics_rx_bytes_sum
+    - worker_tx_bytes_sum
+    - os_cpu_busy_pct_mean
+    - os_mem_used_peak_bytes_max
+    - os_disk_read_bytes_sum
+    - os_disk_written_bytes_sum
+feature_transforms:
+  log1p:
+    - coordinator_fanin_rows
+    - coordinator_fanin_bytes_estimated
+    - coordinator_final_rows
+    - coordinator_join_operator_count
+    - remote_region_actual_rows_sum
+    - remote_region_tuple_bytes_sum
+    - remote_region_task_count_sum
+    - remote_citus_dependent_map_task_count_sum
+    - remote_citus_repartition_fanout_ratio_max
+    - worker_task_actual_rows_sum
+    - worker_task_scan_actual_rows_sum
+    - regional_coordinator_tx_bytes_sum
+    - analytics_rx_bytes_sum
+    - worker_tx_bytes_sum
+    - os_mem_used_peak_bytes_max
+    - os_disk_read_bytes_sum
+    - os_disk_written_bytes_sum
+  identity:
+    - coordinator_non_foreign_time_share_proxy
+    - os_cpu_busy_pct_mean
+estimators:
+  median_baseline:
+    kind: median_baseline
+  ridge:
+    kind: ridge
+    alpha: 1.0
+  elastic_net:
+    kind: elastic_net
+    alpha: 0.03
+    l1_ratio: 0.2
+    max_iter: 20000
+  shallow_gradient_boosting:
+    kind: gradient_boosting
+    n_estimators: 80
+    learning_rate: 0.05
+    max_depth: 2
+    min_samples_leaf: 5
+    loss: huber
+    random_state: 42
+ranking_metrics:
+  top_k: [3, 5]
+  ndcg_k: 5
+  relevance: speedup_minus_one
+coverage:
+  distance: euclidean_in_fold_standardized_feature_space
+  training_nearest_neighbor_quantile: 0.99
+feature_view_decision:
+  primary_model: ridge
+  minimum_holdout_wins: 3
+  maximum_allowed_spearman_drop: 0.05
+  required_metrics: [mae, ndcg_at_5]
+forbidden_input_patterns:
+  - pair_id
+  - template_id
+  - dataset_profile_id
+  - condition_id
+  - runtime_config_id
+  - physical_strategy_id
+  - mitigation_action
+  - variant
+  - elapsed_seconds
+  - target_
+  - configured_
+  - fetch_size
+  - ^worker_1
+  - ^worker_2
+  - ^eu_
+  - ^us_
+  - ^apac_

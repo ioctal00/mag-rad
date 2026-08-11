@@ -1,0 +1,118 @@
+package_id: experimental-reproducibility-v2
+description: >
+  Versioned catalog of the logical runs used in the thesis. Runtime snapshots
+  are authoritative for observed hardware and dataset audits. Environment
+  profiles only reconstruct values that were not persisted by the run.
+
+environment_profiles:
+  baseline_20260626:
+    software:
+      postgresql_version: "18"
+      citus_version: "14.0"
+    distribution:
+      distribution_key: tenant_id
+      shard_replication_factor: null
+    node_locations:
+      eu-analytics-1: cdg
+      eu-coord-1: ams
+      eu-worker-1: ams
+      eu-worker-2: ams
+      us-coord-1: ewr
+      us-worker-1: ewr
+      us-worker-2: ewr
+    source:
+      repository: master-regimes-infra
+      commit: eb15b8e97112c0eadc31b80005e96c784f914d66
+      path: configs/systems/eu-us-gac.example.yml
+    note: >
+      Physical provider locations are reconstructed from the versioned
+      infrastructure configuration. CPU, RAM and storage are read from each
+      logical run's hardware snapshot.
+
+  repeatability_20260724:
+    software:
+      postgresql_version: "18"
+      citus_version: "14.0"
+    distribution:
+      distribution_key: tenant_id
+      shard_replication_factor: null
+    node_locations:
+      eu-analytics-1: ams
+      eu-coord-1: ams
+      eu-worker-1: ams
+      eu-worker-2: ams
+      us-coord-1: ams
+      us-worker-1: ams
+      us-worker-2: ams
+    source:
+      repository: master-regimes-infra
+      commit: 8794985db540aac4e80f2bc91b99ed49e37ff340
+      path: configs/systems/eu-us-gac-vps.yml
+    note: >
+      EU and US are logical regions in one physical Vultr AMS environment.
+      WAN conditions are introduced only by recorded tc netem interventions.
+
+  companion_20260703:
+    software:
+      postgresql_version: "18"
+      citus_version: "14.0"
+    distribution:
+      distribution_key: tenant_id
+      shard_replication_factor: null
+    node_locations:
+      eu-analytics-1: ams
+      eu-coord-1: ams
+      eu-worker-1: ams
+      eu-worker-2: ams
+      us-coord-1: ams
+      us-worker-1: ams
+      us-worker-2: ams
+    source:
+      repository: master-regimes-infra
+      commit: 36276016a062e98c70750072942074592242d1a3
+      path: configs/systems/eu-us-gac-vps.yml
+    note: >
+      Region-asymmetry and validation runs used logical EU/US regions in one
+      physical AMS environment. Their 1-vCPU/2-GB hardware values are taken
+      from runtime snapshots rather than inferred from the provider plan.
+
+logical_runs:
+  clean-run-v1:
+    role: training_baseline
+    environment_profile: baseline_20260626
+    corpus_manifest: workloads/corpus/corpus_manifest.clean-run-v1.yml
+    description: Main corpus used to fit the locked preprocessing and FCM model.
+
+  clean-run-v1-wan-latency:
+    role: targeted_wan_companion
+    environment_profile: baseline_20260626
+    corpus_manifest: workloads/corpus/corpus_manifest.wan-latency-companion-v1.yml
+    description: Targeted tc netem delay and FDW row-flow intervention corpus.
+
+  clean-run-v1-validation-holdout:
+    role: validation_holdout
+    environment_profile: companion_20260703
+    corpus_manifest: workloads/corpus/corpus_manifest.validation-holdout-v1.yml
+    description: Frozen-model projection on unseen parameter combinations.
+
+  clean-run-v1-region-asymmetry:
+    role: regional_asymmetry_companion
+    environment_profile: companion_20260703
+    corpus_manifest: workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml
+    description: Regional volume and region-local skew contrast corpus.
+
+  clean-run-v1-region-asymmetry-skew-rerun:
+    role: worker_skew_evidence_companion
+    environment_profile: companion_20260703
+    corpus_manifest: workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml
+    description: Corrected worker/task skew evidence for asymmetric datasets.
+
+  repeatability-v1:
+    role: measurement_repeatability_audit
+    environment_profile: repeatability_20260724
+    corpus_manifest: null
+    selection: workloads/corpus/repeatability_selection.csv
+    protocol: docs/experiments/repeatability_protocol.md
+    description: >
+      Three repetitions for 96 conditions, with two additional repetitions
+      for 20 sentinel conditions; not used as extra training observations.

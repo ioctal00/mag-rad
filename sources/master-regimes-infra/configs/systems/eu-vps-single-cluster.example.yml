@@ -1,0 +1,63 @@
+system_id: eu-vps-single-cluster
+provider: vultr
+project_tag: master-regimes
+
+ssh:
+  authorized_keys:
+    laptop: env:MASTER_REGIMES_SSH_PUBLIC_KEY
+  private_key_path: env:MASTER_REGIMES_SSH_PRIVATE_KEY_FILE
+
+access:
+  admin_ipv4_cidrs: env:MASTER_REGIMES_ADMIN_IPV4_CIDRS
+  web_ipv4_cidrs: env:MASTER_REGIMES_WEB_IPV4_CIDRS
+  database_client_ipv4_cidrs: env:MASTER_REGIMES_DATABASE_CLIENT_IPV4_CIDRS
+
+secrets:
+  vultr_api_key: env:VULTR_API_KEY
+  postgres_admin_password: env:MASTER_REGIMES_POSTGRES_ADMIN_PASSWORD
+  app_db_password: env:MASTER_REGIMES_APP_DB_PASSWORD
+
+postgres:
+  version: "18"
+  citus_package: "postgresql-18-citus-14.0"
+  app_db: app
+  app_user: app
+  passwords_source: env
+  shared_preload_libraries:
+    - citus
+    - pg_stat_statements
+  max_connections: 300
+  pg_stat_statements_track: all
+  citus_enable_repartition_joins: true
+
+compute_profiles:
+  vps:
+    resource_type: instance
+    coordinator_plan: vc2-2c-4gb
+    worker_plan: vc2-2c-4gb
+    analytics_plan: vc2-1c-1gb
+
+active_profile: vps
+
+regions:
+  eu:
+    vultr_region: ams
+    worker_count: 2
+    tags: ["eu", "citus", "single-cluster"]
+
+global_analytics:
+  enabled: false
+
+tools:
+  citus_datagen:
+    enabled: false
+    repo: ""
+    branch: main
+  psql_benchmarks:
+    enabled: false
+    repo: ""
+    branch: main
+  analytics_client:
+    enabled: false
+    repo: ""
+    branch: main

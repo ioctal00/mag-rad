@@ -1,0 +1,11 @@
+rounded_vector_hash,row_count,query_ids,plan_fingerprint_count,remote_plan_fingerprint_count,query_run_ids
+eb2508edd018f5ce,3,"22,80,121",3,3,20260726T113842Z-stats-ceb-semantic-v2b-holdout__stat--c10223f2eedb--b_holdout__stats_ceb_multiregion_count__query_id-80 | 20260726T113929Z-stats-ceb-semantic-v2b-holdout__stat--ff246701ae0e--b_holdout__stats_ceb_multiregion_count__query_id-22 | 20260726T113959Z-stats-ceb-semantic-v2b-holdout__stat--2015c11e49b5--_holdout__stats_ceb_multiregion_count__query_id-121
+026e59ebb21b77d6,1,72,1,1,20260726T114709Z-stats-ceb-semantic-v2b-holdout__stat--64798b3f35e3--b_holdout__stats_ceb_multiregion_count__query_id-72
+0cdc46778b631076,1,4,1,1,20260726T113811Z-stats-ceb-semantic-v2b-holdout__stat--3182c0472437--2b_holdout__stats_ceb_multiregion_count__query_id-4
+5cb7fb7e641703c6,1,98,1,1,20260726T114031Z-stats-ceb-semantic-v2b-holdout__stat--e0bd672ba2f1--b_holdout__stats_ceb_multiregion_count__query_id-98
+67fa4793bffea31b,1,111,1,1,20260726T114629Z-stats-ceb-semantic-v2b-holdout__stat--4496e17046a2--_holdout__stats_ceb_multiregion_count__query_id-111
+8fbda885c2961af9,1,113,1,1,20260726T114101Z-stats-ceb-semantic-v2b-holdout__stat--a70e0ccc7b4e--_holdout__stats_ceb_multiregion_count__query_id-113
+95b1c8741b6146c9,1,47,1,1,20260726T114515Z-stats-ceb-semantic-v2b-holdout__stat--4618c3dd3a23--b_holdout__stats_ceb_multiregion_count__query_id-47
+d26d6cedd9b7348e,1,15,1,1,20260726T113913Z-stats-ceb-semantic-v2b-holdout__stat--7911992033d0--b_holdout__stats_ceb_multiregion_count__query_id-15
+dff7a86788e6d64f,1,101,1,1,20260726T114459Z-stats-ceb-semantic-v2b-holdout__stat--144b1ae70844--_holdout__stats_ceb_multiregion_count__query_id-101
+e2a4c628a3e42130,1,78,1,1,20260726T114649Z-stats-ceb-semantic-v2b-holdout__stat--1fdad2660ad7--b_holdout__stats_ceb_multiregion_count__query_id-78

@@ -1,0 +1,79 @@
+digraph G {
+  graph [
+    rankdir=TB,
+    bgcolor="white",
+    fontname="DejaVu Sans",
+    fontsize=13,
+    pad=0.16,
+    nodesep=0.35,
+    ranksep=0.48,
+    labelloc="t",
+    label="Kontrolisana promjena rasporeda hot shardova"
+  ];
+
+  node [
+    shape=box,
+    style="filled",
+    fontname="DejaVu Sans",
+    fontsize=9.2,
+    color="#263238",
+    fillcolor="#f3f5f5",
+    margin="0.14,0.09"
+  ];
+
+  edge [
+    fontname="DejaVu Sans",
+    fontsize=8.2,
+    color="#4f585b",
+    arrowsize=0.70
+  ];
+
+  contract [
+    label="Isti logički skup podataka\nisti hot tenanti i hot_event_share\nisti SQL i parametri",
+    fillcolor="#dfeceb",
+    penwidth=1.4
+  ];
+
+  subgraph cluster_b {
+    label="B: hot shardovi raspršeni";
+    color="#7c898e";
+    fontname="DejaVu Sans";
+    fontsize=10;
+    style="rounded";
+
+    b_hot [label="Hot događaji\n100%"];
+    b_w1 [label="Worker 1\n50% hot događaja", fillcolor="#e6efef"];
+    b_w2 [label="Worker 2\n50% hot događaja", fillcolor="#e6efef"];
+
+    b_hot -> b_w1 [label="50%"];
+    b_hot -> b_w2 [label="50%"];
+  }
+
+  subgraph cluster_c {
+    label="C: hot shardovi koncentrisani";
+    color="#00717a";
+    fontname="DejaVu Sans";
+    fontsize=10;
+    style="rounded";
+
+    c_hot [label="Hot događaji\n100%"];
+    c_w1 [label="Worker 1\n100% hot događaja", fillcolor="#d7e9e9", penwidth=1.4];
+    c_w2 [label="Worker 2\n0% hot događaja", fillcolor="#f7f8f8"];
+
+    c_hot -> c_w1 [label="100%", color="#00717a", penwidth=1.4];
+    c_hot -> c_w2 [label="0%", style=dashed, color="#899194"];
+  }
+
+  contract -> b_hot [label="stanje B"];
+  contract -> c_hot [label="stanje C"];
+
+  result [
+    shape=note,
+    label="Promijenjen je worker placement,\nne task-level raspodjela redova.\nNulti query uslovi ostaju u analizi.",
+    fillcolor="#f7f8f8",
+    color="#899194",
+    fontsize=8.7
+  ];
+  b_w1 -> result [style=dotted, arrowhead=none];
+  c_w1 -> result [style=dotted, arrowhead=none];
+}

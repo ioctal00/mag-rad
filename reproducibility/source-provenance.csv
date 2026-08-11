@@ -1,0 +1,6 @@
+repository,commit,snapshot_path
+master-regimes,1892a85c0576017f898df9162c4c1b5ac21f1d03,sources/master-regimes
+master-regimes-infra,1138de50262b36d86af17259c9fc87fb1fe3dede,sources/master-regimes-infra
+citus-datagen,cacbfdd7f7ac3f38d8e4f1e4469accae24aa6f53,sources/citus-datagen
+psql-benchmarks,98fa47e708c13de4257e3a804c10a395f069b93a,sources/psql-benchmarks
+master-regimes-thesis,6f54029edb36dc51d49f28b9dc1e7205d9804855,not_packaged

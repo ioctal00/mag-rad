@@ -1,0 +1,9 @@
+select count(*) as result_count
+FROM {{ schema_name }}.comments AS c,
+  {{ schema_name }}.postHistory AS ph,
+  {{ schema_name }}.votes AS v,
+  {{ schema_name }}.posts AS p
+WHERE ph.PostId = p.Id
+  AND c.PostId = p.Id
+  AND v.PostId = p.Id
+  AND v.CreationDate <= CAST('2014-09-12 00:00:00' AS timestamp)

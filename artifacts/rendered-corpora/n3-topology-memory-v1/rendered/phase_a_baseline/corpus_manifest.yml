@@ -1,0 +1,512 @@
+corpus_id: n3-topology-memory-v1-phase_a_baseline
+corpus_version: n3-topology-memory-experiment-v1
+batch_id: batch-n3-topology-memory-v1-phase_a_baseline
+collection_contract_version: n3-topology-memory-v1
+description: 'Controlled topology-isolation experiment over the fifteen frozen DBA Top-K SQL shapes. A
+  fresh N=2 control panel is followed by two N=3 rounds. Phase A recommendations are frozen from N=2 evidence
+  before any N=3 action outcome; Phase B recommendations are frozen after all Phase A outcomes and before
+  any Phase B action outcome.
+
+  '
+query_groups: ../../../../../workloads/corpus/query-groups.yml
+runtime_catalog: ../../../../../workloads/corpus/runtime-configs.yml
+dataset_profiles:
+  topology-isolation-small-n3-v1:
+    profile: ../../../../../datasets/profiles/topology-isolation-small-n3.yml
+    load_method: copy_pipe
+  topology-isolation-large-n3-v1:
+    profile: ../../../../../datasets/profiles/topology-isolation-large-n3.yml
+    load_method: copy_pipe
+  topology-isolation-medium-n3-v1:
+    profile: ../../../../../datasets/profiles/topology-isolation-medium-n3.yml
+    load_method: copy_pipe
+  topology-isolation-xlarge-n3-v1:
+    profile: ../../../../../datasets/profiles/topology-isolation-xlarge-n3.yml
+    load_method: copy_pipe
+execution_budget:
+  hard_timeout_seconds: 1800
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: mixed_cache_n3_topology_memory
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 202608062
+  repetitions_default: 1
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  fdw_auto_explain_regions:
+  - active_regions
+  os_sampler: true
+  os_sampler_node_groups:
+  - active_regions
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: true
+  remote_edge_context: true
+  group_runtime_configs_by_active_scope: true
+cells:
+- logical_question_id: dba_local_memory_topk
+  component_match_id: n3_topology_q01_event_value_desc
+  dataset_profile_id:
+  - topology-isolation-small-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: calibration
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: topology_isolation
+  scenario_level: A
+  repeatability_repetitions: 1
+  parameters:
+    query_shape:
+    - event_value_desc
+    cutoff_ts:
+    - '2026-06-30 00:00:00+00'
+    limit_k:
+    - 25
+    include_apac:
+    - true
+  corpus_cell_id: q01_event_value_desc__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_transport_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q01_event_value_desc__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: n3_topology_q02_event_value_asc
+  dataset_profile_id:
+  - topology-isolation-small-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: calibration
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: topology_isolation
+  scenario_level: A
+  repeatability_repetitions: 1
+  parameters:
+    query_shape:
+    - event_value_asc
+    cutoff_ts:
+    - '2026-06-29 00:00:00+00'
+    limit_k:
+    - 100
+    include_apac:
+    - true
+  corpus_cell_id: q02_event_value_asc__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_memory_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q02_event_value_asc__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: n3_topology_q03_event_recent
+  dataset_profile_id:
+  - topology-isolation-small-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: calibration
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: topology_isolation
+  scenario_level: A
+  repeatability_repetitions: 1
+  parameters:
+    query_shape:
+    - event_recent
+    cutoff_ts:
+    - '2026-06-24 00:00:00+00'
+    limit_k:
+    - 250
+    include_apac:
+    - true
+  corpus_cell_id: q03_event_recent__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q03_event_recent__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: n3_topology_q04_event_oldest
+  dataset_profile_id:
+  - topology-isolation-small-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: calibration
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: topology_isolation
+  scenario_level: A
+  repeatability_repetitions: 1
+  parameters:
+    query_shape:
+    - event_oldest
+    cutoff_ts:
+    - '2026-06-17 00:00:00+00'
+    limit_k:
+    - 500
+    include_apac:
+    - true
+  corpus_cell_id: q04_event_oldest__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_transport_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q04_event_oldest__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: n3_topology_q05_event_deviation
+  dataset_profile_id:
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: calibration
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: topology_isolation
+  scenario_level: A
+  repeatability_repetitions: 1
+  parameters:
+    query_shape:
+    - event_deviation
+    cutoff_ts:
+    - '2026-06-30 00:00:00+00'
+    limit_k:
+    - 50
+    include_apac:
+    - true
+  corpus_cell_id: q05_event_deviation__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_memory_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q05_event_deviation__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: n3_topology_q06_tenant_sum
+  dataset_profile_id:
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: calibration
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: topology_isolation
+  scenario_level: A
+  repeatability_repetitions: 1
+  parameters:
+    query_shape:
+    - tenant_sum
+    cutoff_ts:
+    - '2026-06-29 00:00:00+00'
+    limit_k:
+    - 100
+    include_apac:
+    - true
+  corpus_cell_id: q06_tenant_sum__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q06_tenant_sum__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: n3_topology_q07_tenant_count
+  dataset_profile_id:
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: calibration
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: topology_isolation
+  scenario_level: A
+  repeatability_repetitions: 1
+  parameters:
+    query_shape:
+    - tenant_count
+    cutoff_ts:
+    - '2026-06-24 00:00:00+00'
+    limit_k:
+    - 250
+    include_apac:
+    - true
+  corpus_cell_id: q07_tenant_count__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_transport_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q07_tenant_count__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: n3_topology_q08_tenant_avg
+  dataset_profile_id:
+  - topology-isolation-large-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: calibration
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: topology_isolation
+  scenario_level: A
+  repeatability_repetitions: 1
+  parameters:
+    query_shape:
+    - tenant_avg
+    cutoff_ts:
+    - '2026-06-17 00:00:00+00'
+    limit_k:
+    - 500
+    include_apac:
+    - true
+  corpus_cell_id: q08_tenant_avg__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_memory_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q08_tenant_avg__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: n3_topology_q09_tenant_max
+  dataset_profile_id:
+  - topology-isolation-medium-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: calibration
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: topology_isolation
+  scenario_level: A
+  repeatability_repetitions: 1
+  parameters:
+    query_shape:
+    - tenant_max
+    cutoff_ts:
+    - '2026-06-30 00:00:00+00'
+    limit_k:
+    - 50
+    include_apac:
+    - true
+  corpus_cell_id: q09_tenant_max__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q09_tenant_max__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: n3_topology_q10_tenant_min
+  dataset_profile_id:
+  - topology-isolation-medium-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: calibration
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: topology_isolation
+  scenario_level: A
+  repeatability_repetitions: 1
+  parameters:
+    query_shape:
+    - tenant_min
+    cutoff_ts:
+    - '2026-06-29 00:00:00+00'
+    limit_k:
+    - 100
+    include_apac:
+    - true
+  corpus_cell_id: q10_tenant_min__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_transport_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q10_tenant_min__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: n3_topology_q11_tenant_high_count
+  dataset_profile_id:
+  - topology-isolation-medium-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: calibration
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: topology_isolation
+  scenario_level: A
+  repeatability_repetitions: 1
+  parameters:
+    query_shape:
+    - tenant_high_count
+    cutoff_ts:
+    - '2026-06-24 00:00:00+00'
+    limit_k:
+    - 250
+    include_apac:
+    - true
+  corpus_cell_id: q11_tenant_high_count__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_memory_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q11_tenant_high_count__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: n3_topology_q12_tenant_user_sum
+  dataset_profile_id:
+  - topology-isolation-medium-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: calibration
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: topology_isolation
+  scenario_level: A
+  repeatability_repetitions: 1
+  parameters:
+    query_shape:
+    - tenant_user_sum
+    cutoff_ts:
+    - '2026-06-17 00:00:00+00'
+    limit_k:
+    - 500
+    include_apac:
+    - true
+  corpus_cell_id: q12_tenant_user_sum__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q12_tenant_user_sum__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: n3_topology_q13_tenant_user_count
+  dataset_profile_id:
+  - topology-isolation-xlarge-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: calibration
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: topology_isolation
+  scenario_level: A
+  repeatability_repetitions: 1
+  parameters:
+    query_shape:
+    - tenant_user_count
+    cutoff_ts:
+    - '2026-06-30 00:00:00+00'
+    limit_k:
+    - 50
+    include_apac:
+    - true
+  corpus_cell_id: q13_tenant_user_count__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_transport_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q13_tenant_user_count__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: n3_topology_q14_tenant_day_sum
+  dataset_profile_id:
+  - topology-isolation-xlarge-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: calibration
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: topology_isolation
+  scenario_level: A
+  repeatability_repetitions: 1
+  parameters:
+    query_shape:
+    - tenant_day_sum
+    cutoff_ts:
+    - '2026-06-24 00:00:00+00'
+    limit_k:
+    - 100
+    include_apac:
+    - true
+  corpus_cell_id: q14_tenant_day_sum__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_memory_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q14_tenant_day_sum__shared_baseline
+- logical_question_id: dba_local_memory_topk
+  component_match_id: n3_topology_q15_tenant_day_count
+  dataset_profile_id:
+  - topology-isolation-xlarge-n3-v1
+  topology_id: eu_us_apac_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  intervention_role: calibration
+  intervention_axis: combined_pressure
+  pressure_axis: local_intervention_memory
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: topology_isolation
+  scenario_level: A
+  repeatability_repetitions: 1
+  parameters:
+    query_shape:
+    - tenant_day_count
+    cutoff_ts:
+    - '2026-06-17 00:00:00+00'
+    limit_k:
+    - 250
+    include_apac:
+    - true
+  corpus_cell_id: q15_tenant_day_count__baseline
+  template_id: gac_fdw_dba_topk_raw
+  runtime_config_id: dba_topk_balanced_stressed
+  pressure_level: stressed
+  variant: stressed
+  physical_strategy_id: gac_raw_topk
+  pressure_pair_key: q15_tenant_day_count__shared_baseline

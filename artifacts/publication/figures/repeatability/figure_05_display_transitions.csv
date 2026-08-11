@@ -1,0 +1,4 @@
+from_state,clear_prototype,mixed_boundary,weak_prototype_coverage
+clear_prototype,208,0,0
+mixed_boundary,0,16,0
+weak_prototype_coverage,0,0,8

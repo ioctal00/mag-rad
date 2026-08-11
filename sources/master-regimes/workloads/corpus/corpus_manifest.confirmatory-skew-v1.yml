@@ -1,0 +1,120 @@
+corpus_id: confirmatory-skew-v1-source
+vocabulary: ../../docs/corpus-vocabulary.md
+query_groups: query-groups.yml
+runtime_catalog: runtime-configs.yml
+topology_id: eu_us_gac
+topology_scope: eu_us_gac
+description: >
+  Preregistered source corpus for the confirmatory skew experiment. It renders
+  two logical intents through regional-reduced and raw/GAC-finalize physical
+  strategies over balanced, hot-tenant-skew and region-imbalanced datasets.
+  The Plan-09 builder expands this source into A/B/C/D placement states and
+  three repetitions without changing SQL or parameters between B and C.
+
+execution_budget:
+  hard_timeout_seconds: 300
+  timeout_grace_seconds: 30
+
+execution_policy:
+  cache_policy: mixed_cache_confirmatory_first_observed
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  repetitions_default: 1
+  cache_features_in_default_model: false
+  order_policy: manifest_order
+  shuffle_seed: 20260725
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+
+dataset_profiles:
+  pilot-balanced-v1:
+    profile: ../../datasets/profiles/pilot-balanced.yml
+    load_method: copy_pipe
+  pilot-skew-heavy-v1:
+    profile: ../../datasets/profiles/pilot-skew-heavy.yml
+    load_method: copy_pipe
+  pilot-region-imbalanced-v1:
+    profile: ../../datasets/profiles/pilot-region-imbalanced.yml
+    load_method: copy_pipe
+
+cells:
+  - corpus_cell_id: confirm_top_tenants_regional_reduced
+    logical_question_id: top_tenants
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_top_tenants
+    dataset_profile_id:
+      - pilot-balanced-v1
+      - pilot-skew-heavy-v1
+      - pilot-region-imbalanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: final_check
+    intervention_axis: dataset_and_shard_placement
+    expected_regime_targets:
+      - remote_fetch_heavy
+      - gac_finalization_heavy
+      - skew_imbalance
+    parameters:
+      lookback_days: [7]
+      limit_k: [50]
+
+  - corpus_cell_id: confirm_top_tenants_raw_finalize
+    logical_question_id: top_tenants
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_top_tenants_raw_finalize
+    dataset_profile_id:
+      - pilot-balanced-v1
+      - pilot-skew-heavy-v1
+      - pilot-region-imbalanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: final_check
+    intervention_axis: dataset_and_shard_placement
+    expected_regime_targets:
+      - remote_fetch_heavy
+      - gac_finalization_heavy
+      - skew_imbalance
+    parameters:
+      lookback_days: [7]
+      limit_k: [50]
+
+  - corpus_cell_id: confirm_tenant_point_regional_reduced
+    logical_question_id: tenant_point_rollup
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_tenant_point_rollup
+    dataset_profile_id:
+      - pilot-balanced-v1
+      - pilot-skew-heavy-v1
+      - pilot-region-imbalanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: final_check
+    intervention_axis: dataset_and_shard_placement
+    expected_regime_targets:
+      - well_reduced_localized
+    parameters:
+      eu_tenant_id: [1]
+      us_tenant_id: [10001]
+      lookback_days: [7]
+
+  - corpus_cell_id: confirm_tenant_point_raw_finalize
+    logical_question_id: tenant_point_rollup
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_tenant_point_raw_finalize
+    dataset_profile_id:
+      - pilot-balanced-v1
+      - pilot-skew-heavy-v1
+      - pilot-region-imbalanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: final_check
+    intervention_axis: dataset_and_shard_placement
+    expected_regime_targets:
+      - well_reduced_localized
+      - remote_fetch_heavy
+      - skew_imbalance
+    parameters:
+      eu_tenant_id: [1]
+      us_tenant_id: [10001]
+      lookback_days: [7]

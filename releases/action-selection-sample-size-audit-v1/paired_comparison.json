@@ -1,0 +1,17 @@
+{
+  "both_correct": 7,
+  "both_wrong": 6,
+  "common_recommended_sql_shapes": 14,
+  "confirmatory_physical_executions": 300,
+  "confirmatory_sql_shapes": 15,
+  "exact_mcnemar_two_sided_p": 1.0,
+  "interpretation": "The prequential method and the static baseline each made eight correct decisions. On the 14 SQL shapes where both issued a recommendation, the prequential method changed only one baseline error into a correct result. This is not evidence of a robust improvement.",
+  "prequential_only_correct": 1,
+  "prequential_total_correct": 8,
+  "random_partial_feedback_coverage_max": 0.9333333333333333,
+  "random_partial_feedback_coverage_min": 0.4,
+  "random_partial_feedback_top1_max": 0.6666666666666666,
+  "random_partial_feedback_top1_min": 0.38461538461538464,
+  "static_only_correct": 0,
+  "static_total_correct": 8
+}

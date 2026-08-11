@@ -1,0 +1,161 @@
+---
+- name: Deploy psql-benchmarks
+  when: psql_benchmarks_enabled | bool
+  block:
+    - name: Derive benchmark region from inventory metadata
+      ansible.builtin.set_fact:
+        psql_benchmarks_region_effective: >-
+          {{
+            psql_benchmarks_region
+            if psql_benchmarks_region | length > 0
+            else (
+              'global'
+              if 'analytics_clients' in group_names
+              else (hostvars[inventory_hostname].logical_region | default(''))
+            )
+          }}
+
+    - name: Derive benchmark node role from inventory groups
+      ansible.builtin.set_fact:
+        psql_benchmarks_node_role_effective: >-
+          {{
+            psql_benchmarks_node_role
+            if psql_benchmarks_node_role | length > 0
+            else (
+              'coordinator'
+              if 'coordinators' in group_names
+              else (
+                'worker'
+                if 'workers' in group_names
+                else ('analytics-client' if 'analytics_clients' in group_names else 'db-node')
+              )
+            )
+          }}
+
+    - name: Fail when benchmark region cannot be derived
+      ansible.builtin.fail:
+        msg: "Unable to derive psql_benchmarks_region. Set it explicitly or provide logical_region in inventory host variables."
+      when: psql_benchmarks_region_effective | length == 0
+
+    - name: Ensure psql-benchmarks directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      loop:
+        - "{{ psql_benchmarks_repo_dir | dirname }}"
+        - "{{ psql_benchmarks_run_dir }}"
+        - "{{ psql_benchmarks_log_dir }}"
+
+    - name: Install uv via official installer
+      ansible.builtin.shell: "curl -LsSf {{ psql_benchmarks_uv_installer_url }} | sh"
+      args:
+        creates: "{{ psql_benchmarks_uv_install_dir }}/uv"
+
+    - name: Symlink uv into /usr/local/bin
+      ansible.builtin.file:
+        src: "{{ psql_benchmarks_uv_install_dir }}/uv"
+        dest: /usr/local/bin/uv
+        state: link
+
+    - name: Check for locally synced psql-benchmarks source
+      ansible.builtin.stat:
+        path: "{{ psql_benchmarks_repo_dir }}/pyproject.toml"
+      register: psql_benchmarks_local_source
+
+    - name: Clone or update psql-benchmarks repository
+      when:
+        - not (psql_benchmarks_skip_git_update | bool)
+        - psql_benchmarks_git_clone_suffix | length > 0
+      no_log: true
+      block:
+        - name: Write temporary Git netrc for psql-benchmarks clone
+          ansible.builtin.copy:
+            dest: /root/.netrc
+            owner: root
+            group: root
+            mode: "0600"
+            content: |
+              machine {{ psql_benchmarks_git_clone_suffix | regex_replace('^https://([^/]+)/.*$', '\1') }}
+              login {{ master_regimes_git_username | default('x-access-token', true) }}
+              password {{ master_regimes_git_pat }}
+          when:
+            - psql_benchmarks_git_clone_suffix is match('^https://')
+            - master_regimes_git_pat | default('', true) | length > 0
+
+        - name: Mark psql-benchmarks repository as safe for Git
+          ansible.builtin.command:
+            cmd: "git config --global --add safe.directory {{ psql_benchmarks_repo_dir }}"
+          changed_when: false
+
+        - name: Clone or update psql-benchmarks repository with clean remote URL
+          ansible.builtin.git:
+            repo: "{{ psql_benchmarks_git_clone_suffix }}"
+            dest: "{{ psql_benchmarks_repo_dir }}"
+            version: "{{ psql_benchmarks_git_branch }}"
+            update: true
+            force: true
+      always:
+        - name: Remove temporary Git netrc after psql-benchmarks clone
+          ansible.builtin.file:
+            path: /root/.netrc
+            state: absent
+          when:
+            - psql_benchmarks_git_clone_suffix is match('^https://')
+            - master_regimes_git_pat | default('', true) | length > 0
+          no_log: true
+
+    - name: Fail when psql-benchmarks source is missing
+      ansible.builtin.fail:
+        msg: "Sync local psql-benchmarks first with `make repo-sync-psql-benchmarks`, or set psql_benchmarks_git_clone_suffix as an explicit fallback."
+      when:
+        - psql_benchmarks_git_clone_suffix | length == 0
+        - not psql_benchmarks_local_source.stat.exists
+
+    - name: Read deployed psql-benchmarks branch
+      ansible.builtin.command:
+        cmd: "git -C {{ psql_benchmarks_repo_dir }} branch --show-current"
+      register: psql_benchmarks_deployed_branch
+      changed_when: false
+      when: psql_benchmarks_git_clone_suffix | length > 0
+
+    - name: Verify deployed psql-benchmarks branch
+      ansible.builtin.assert:
+        that:
+          - psql_benchmarks_deployed_branch.stdout == psql_benchmarks_git_branch
+        fail_msg: >-
+          psql-benchmarks is on branch
+          {{ psql_benchmarks_deployed_branch.stdout | default('unknown') }},
+          expected {{ psql_benchmarks_git_branch }}.
+      when: psql_benchmarks_git_clone_suffix | length > 0
+
+    - name: Render psql-benchmarks environment file
+      ansible.builtin.template:
+        src: env.j2
+        dest: "{{ psql_benchmarks_repo_dir }}/.env"
+        owner: root
+        group: root
+        mode: "0600"
+      no_log: true
+
+    - name: Find psql-benchmarks helper scripts
+      ansible.builtin.find:
+        paths: "{{ psql_benchmarks_repo_dir }}/bin"
+        file_type: file
+      register: psql_benchmarks_helper_scripts
+      failed_when: false
+
+    - name: Ensure psql-benchmarks helper scripts are executable
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        mode: "0755"
+      loop: "{{ psql_benchmarks_helper_scripts.files | default([]) }}"
+
+    - name: Sync psql-benchmarks virtual environment with uv
+      ansible.builtin.command:
+        cmd: /usr/local/bin/uv sync
+        chdir: "{{ psql_benchmarks_repo_dir }}"
+      environment:
+        PATH: "{{ psql_benchmarks_uv_install_dir }}:{{ ansible_facts['env']['PATH'] }}"

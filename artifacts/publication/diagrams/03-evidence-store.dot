@@ -1,0 +1,79 @@
+digraph G {
+  graph [
+    rankdir=LR,
+    bgcolor="white",
+    fontname="DejaVu Sans",
+    fontsize=13,
+    pad=0.20,
+    nodesep=0.34,
+    ranksep=0.66,
+    labelloc="t",
+    label="Razdvajanje sirovih izvršnih dokaza i izvedenih analitičkih slojeva"
+  ];
+
+  node [
+    shape=box,
+    style="filled",
+    fontname="DejaVu Sans",
+    fontsize=9.0,
+    color="#263238",
+    fillcolor="#f3f5f5",
+    margin="0.14,0.09"
+  ];
+
+  edge [
+    fontname="DejaVu Sans",
+    fontsize=8.1,
+    color="#4f585b",
+    arrowsize=0.72
+  ];
+
+  subgraph cluster_infra {
+    label="master-regimes-infra";
+    color="#aeb5b7";
+    fontname="DejaVu Sans";
+    fontsize=10;
+
+    attempts [label="Attempt direktoriji\nnepromjenjivi sirovi dokazi", shape=folder];
+    status [label="Manifest, status,\nbindings i hardware snapshot"];
+    plans [label="GAC planovi\nregionalni auto_explain\nfragmenti poslova na radnim čvorovima"];
+    logical [label="Logički indeks izvršenja\nrazrješavanje ponovnih pokušaja", shape=folder, fillcolor="#dfeceb", color="#176b61"];
+
+    attempts -> status;
+    attempts -> plans;
+    status -> logical;
+    plans -> logical;
+  }
+
+  subgraph cluster_analysis {
+    label="master-regimes";
+    color="#aeb5b7";
+    fontname="DejaVu Sans";
+    fontsize=10;
+
+    normalized [label="Normalizovane tabele\nplan_nodes, plan_edges,\nfragmenti regiona i poslova"];
+    features [label="Matrica pokazatelja\njedan red po query_run_id", fillcolor="#dfeceb", color="#176b61"];
+    frozen [label="Opisni model F19\n19 semantičkih pokazatelja,\nčetiri FCM centra i pragovi"];
+    reports [label="Izvještaji, tabele,\nfigure i dijagnostički paket", shape=folder];
+
+    normalized -> features -> frozen -> reports;
+  }
+
+  logical -> normalized [label="determinističko indeksiranje"];
+
+  no_rows [
+    shape=note,
+    label="SQL rezultatski redovi\nnisu dio evidence storea.",
+    fillcolor="#f7f8f8",
+    color="#899194"
+  ];
+  plans -> no_rows [style=dotted, arrowhead=none, constraint=false];
+
+  audit [
+    shape=note,
+    label="Vrijeme i konfiguracija ostaju\naudit kontekst, ne ulaz modela.",
+    fillcolor="#f7f8f8",
+    color="#899194"
+  ];
+  features -> audit [style=dotted, arrowhead=none, constraint=false];
+}

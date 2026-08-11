@@ -1,0 +1,2 @@
+check_id,feature,frozen_squared_distance_share,semantic_baseline_percentile,interpretation
+q100_single_axis_dominance,drf_bytes_proxy,0.8660952101136259,0.9740325865580448,raw magnitude is physically unusual; formal P99 OOD is representation-sensitive

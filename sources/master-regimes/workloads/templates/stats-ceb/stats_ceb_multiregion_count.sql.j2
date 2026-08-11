@@ -1,0 +1,15 @@
+with eu_result as (
+  {% set schema_name = "stats_eu" %}
+  {% include "templates/stats-ceb/fragments/q-" ~ query_id ~ ".sql.j2" %}
+),
+us_result as (
+  {% set schema_name = "stats_us" %}
+  {% include "templates/stats-ceb/fragments/q-" ~ query_id ~ ".sql.j2" %}
+)
+select 'eu'::text as source_region, result_count
+from eu_result
+union all
+select 'us'::text as source_region, result_count
+from us_result
+order by source_region;
+

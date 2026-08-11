@@ -1,0 +1,101 @@
+{
+  "clean-run-v1": {
+    "role": "training_baseline",
+    "manifest": "sources/master-regimes/workloads/corpus/corpus_manifest.clean-run-v1.yml",
+    "frozen_plan": "artifacts/rendered-corpora/clean-run-v1/corpus_execution_plan.yml",
+    "logical_run_id": "clean-run-v1",
+    "expected_query_runs": 1964,
+    "rendered_corpus_id": "clean-run-v1",
+    "runner": "corpus"
+  },
+  "clean-run-v1-wan-latency": {
+    "role": "targeted_wan_companion",
+    "manifest": "sources/master-regimes/workloads/corpus/corpus_manifest.wan-latency-companion-v1.yml",
+    "frozen_plan": "artifacts/rendered-corpora/wan-latency-companion-v1/corpus_execution_plan.yml",
+    "logical_run_id": "clean-run-v1-wan-latency",
+    "expected_query_runs": 16,
+    "rendered_corpus_id": "wan-latency-companion-v1",
+    "runner": "corpus"
+  },
+  "clean-run-v1-region-asymmetry": {
+    "role": "regional_asymmetry_companion",
+    "manifest": "sources/master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml",
+    "frozen_plan": "artifacts/rendered-corpora/region-asymmetry-companion-v1/corpus_execution_plan.yml",
+    "logical_run_id": "clean-run-v1-region-asymmetry",
+    "expected_query_runs": 150,
+    "rendered_corpus_id": "region-asymmetry-companion-v1",
+    "default_max_instances_per_group": 48,
+    "runner": "corpus"
+  },
+  "clean-run-v1-region-asymmetry-skew-rerun": {
+    "role": "worker_skew_evidence_companion",
+    "manifest": "sources/master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml",
+    "frozen_plan": "artifacts/rendered-corpora/region-asymmetry-companion-v1/corpus_execution_plan.yml",
+    "logical_run_id": "clean-run-v1-region-asymmetry-skew-rerun",
+    "expected_query_runs": 294,
+    "rendered_corpus_id": "region-asymmetry-companion-v1",
+    "runner": "corpus"
+  },
+  "clean-run-v1-validation-holdout": {
+    "role": "validation_holdout",
+    "manifest": "sources/master-regimes/workloads/corpus/corpus_manifest.validation-holdout-v1.yml",
+    "frozen_plan": "artifacts/rendered-corpora/validation-holdout-v1/corpus_execution_plan.yml",
+    "logical_run_id": "clean-run-v1-validation-holdout",
+    "expected_query_runs": 195,
+    "rendered_corpus_id": "validation-holdout-v1",
+    "runner": "corpus"
+  },
+  "repeatability-v1": {
+    "role": "measurement_repeatability_audit",
+    "manifest": null,
+    "frozen_plan": "artifacts/rendered-corpora/repeatability-v1/corpus_execution_plan.yml",
+    "logical_run_id": "repeatability-v1",
+    "expected_query_runs": 328,
+    "rendered_corpus_id": "repeatability-v1",
+    "runner": "corpus"
+  },
+  "confirmatory-skew-v1": {
+    "role": "controlled_worker_placement_experiment",
+    "manifest": "sources/master-regimes/workloads/corpus/corpus_manifest.confirmatory-skew-v1.yml",
+    "frozen_plan": "artifacts/rendered-corpora/confirmatory-skew-v1/corpus_execution_plan.yml",
+    "logical_run_id": "confirmatory-skew-v1",
+    "expected_query_runs": 48,
+    "rendered_corpus_id": "confirmatory-skew-v1",
+    "runner": "confirmatory_skew"
+  },
+  "stats-ceb-semantic-v2b-holdout": {
+    "role": "development_external_schema_holdout_not_used_for_final_claim",
+    "manifest": "sources/master-regimes/workloads/corpus/corpus_manifest.stats-ceb-semantic-v2b-holdout.yml",
+    "frozen_plan": "artifacts/rendered-corpora/stats-ceb-semantic-v2b-holdout/corpus_execution_plan.yml",
+    "logical_run_id": "stats-ceb-semantic-v2b-holdout",
+    "expected_query_runs": 12,
+    "rendered_corpus_id": "stats-ceb-semantic-v2b-holdout",
+    "runner": "corpus",
+    "prepare_target": "eu-us-gac-vps-stats-ceb-prepare",
+    "prepare_profile": "sources/master-regimes/datasets/profiles/stats-ceb-semantic-v2b-holdout.yml",
+    "prepare_selection": "sources/master-regimes/external/stats-ceb/query-selection.semantic-v2b-holdout.yml"
+  },
+  "stats-ceb-full-no-refit-v1": {
+    "role": "final_external_schema_full_workload_no_refit_audit",
+    "manifest": "sources/master-regimes/workloads/corpus/corpus_manifest.stats-ceb-full-no-refit-v1.yml",
+    "frozen_plan": "artifacts/rendered-corpora/stats-ceb-full-no-refit-v1/corpus_execution_plan.yml",
+    "logical_run_id": "stats-ceb-full-no-refit-v1",
+    "expected_query_runs": 146,
+    "rendered_corpus_id": "stats-ceb-full-no-refit-v1",
+    "runner": "corpus",
+    "prepare_target": "eu-us-gac-vps-stats-ceb-prepare",
+    "prepare_profile": "sources/master-regimes/datasets/profiles/stats-ceb-full-no-refit.yml",
+    "prepare_selection": "sources/master-regimes/external/stats-ceb/query-selection.full-no-refit-v1.yml"
+  },
+  "pressure-raw-v1-n3-colocation-holdout": {
+    "role": "frozen_three_region_colocation_ranking_no_refit_holdout",
+    "manifest": "sources/master-regimes/workloads/corpus/pressure-raw-v1/batch-300-n3-colocation-holdout.yml",
+    "frozen_plan": "artifacts/rendered-corpora/pressure-raw-v1-n3-colocation-holdout/corpus_execution_plan.yml",
+    "logical_run_id": "pressure-raw-v1-n3-colocation-holdout",
+    "expected_query_runs": 96,
+    "rendered_corpus_id": "pressure-raw-v1-n3-colocation-holdout",
+    "runner": "corpus",
+    "required_regions": ["eu", "us", "apac"],
+    "model_refit_allowed": false
+  }
+}

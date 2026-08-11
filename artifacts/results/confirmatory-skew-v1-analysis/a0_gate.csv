@@ -1,0 +1,12 @@
+check,status
+manipulation_checks_pass,PASS
+bc_all_four_conditions_complete,PASS
+ad_all_four_conditions_complete,PASS
+frozen_artifact_hashes_match,PASS
+frozen_preprocessing_reproduced,PASS
+frozen_feature_contract_exact,PASS
+confirmatory_rows_not_in_training,PASS
+no_refit_performed,PASS
+all_null_and_unfavorable_pairs_retained,PASS
+task_and_worker_skew_reported_separately,PASS
+database_result_rows_not_stored,PASS

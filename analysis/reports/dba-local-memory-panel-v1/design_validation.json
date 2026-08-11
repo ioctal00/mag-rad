@@ -1,0 +1,15 @@
+{
+  "checks": {
+    "condition_count": true,
+    "n2_and_n3_present": true,
+    "per_query_repetition_contract": true,
+    "query_count": true,
+    "rendered_execution_count": true,
+    "scenario_count": true,
+    "three_actions_present": true
+  },
+  "condition_count": 60,
+  "expected_execution_count": 180,
+  "rendered_execution_count": 180,
+  "status": "PASS"
+}

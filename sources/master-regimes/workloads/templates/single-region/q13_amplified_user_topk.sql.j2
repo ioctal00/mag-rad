@@ -1,0 +1,28 @@
+with expanded as (
+  select
+    e.tenant_id,
+    e.user_id,
+    e.value
+  from events e
+  cross join generate_series(1, {{ amplification_factor }}) as replica(replica_id)
+  where e.created_at >= coalesce(to_timestamp(nullif({{ as_of_unix | default(0) }}, 0)), now()) - make_interval(days => {{ lookback_days }}::int)
+),
+grouped as (
+  select
+    tenant_id,
+    user_id,
+    sum(value) as total_value
+  from expanded
+  group by tenant_id, user_id
+)
+select
+  tenant_id,
+  user_id,
+  total_value,
+  repeat(
+    md5(tenant_id::text || ':' || user_id::text),
+    {{ payload_repeat }}
+  ) as pressure_payload
+from grouped
+order by total_value desc, tenant_id, user_id
+limit {{ limit_k }};

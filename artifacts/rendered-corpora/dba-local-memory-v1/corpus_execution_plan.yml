@@ -1,0 +1,143 @@
+corpus_id: dba-local-memory-panel-v1
+source_manifest: master-regimes/generated/corpus/dba-local-memory-v1-source/corpus_manifest.yml
+rendered_corpus_manifest: master-regimes/generated/corpus/dba-local-memory-v1/corpus_manifest.yml
+corpus_cells: master-regimes/generated/corpus/dba-local-memory-v1/corpus_cells.csv
+region: eu
+max_instances_per_cell: null
+execution_budget:
+  hard_timeout_seconds: 1800
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: mixed_cache_dba_local_memory
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260805
+  repetitions_default: 1
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  fdw_auto_explain_regions:
+  - active_regions
+  os_sampler: true
+  os_sampler_node_groups:
+  - active_regions
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: true
+  remote_edge_context: true
+  group_runtime_configs_by_active_scope: true
+execution_backend: master-regimes-infra.database_sweep
+included_execution_classes:
+- pilot
+source_cell_count: 60
+manifest_cell_count: 60
+excluded_cell_count: 0
+group_count: 4
+groups:
+- group_id: dba-local-memory-panel-v1__n3-large-balanced-wide-global-dim-v1__runtime-bundle-multi-edge__analytics_clients
+  sweep_id: dba-local-memory-panel-v1__n3-large-balanced-wide-global-dim-v1__runtime-bundle-multi-edge__analytics_clients
+  dataset_profile_id: n3-large-balanced-wide-global-dim-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: multiple
+  runtime_config_ids:
+  - dba_topk_balanced_gac_mitigated
+  - dba_topk_balanced_remote_mitigated
+  - dba_topk_balanced_stressed
+  - dba_topk_memory_gac_mitigated
+  - dba_topk_memory_remote_mitigated
+  - dba_topk_memory_stressed
+  - dba_topk_transport_gac_mitigated
+  - dba_topk_transport_remote_mitigated
+  - dba_topk_transport_stressed
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: combined_pressure
+  runtime_expected_effect: multiple
+  network_profile_id: multiple
+  cell_count: 12
+  instance_count: 48
+  instance_manifest: master-regimes/generated/corpus/dba-local-memory-v1/groups/dba-local-memory-panel-v1__n3-large-balanced-wide-global-dim-v1__runtime-bundle-multi-edge__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/dba-local-memory-v1/sweeps/dba-local-memory-panel-v1__n3-large-balanced-wide-global-dim-v1__runtime-bundle-multi-edge__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: dba-local-memory-panel-v1__n3-medium-balanced-wide-global-dim-v1__runtime-bundle-multi-edge__analytics_clients
+  sweep_id: dba-local-memory-panel-v1__n3-medium-balanced-wide-global-dim-v1__runtime-bundle-multi-edge__analytics_clients
+  dataset_profile_id: n3-medium-balanced-wide-global-dim-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: multiple
+  runtime_config_ids:
+  - dba_topk_balanced_gac_mitigated
+  - dba_topk_balanced_remote_mitigated
+  - dba_topk_balanced_stressed
+  - dba_topk_memory_gac_mitigated
+  - dba_topk_memory_remote_mitigated
+  - dba_topk_memory_stressed
+  - dba_topk_transport_gac_mitigated
+  - dba_topk_transport_remote_mitigated
+  - dba_topk_transport_stressed
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: combined_pressure
+  runtime_expected_effect: multiple
+  network_profile_id: multiple
+  cell_count: 16
+  instance_count: 48
+  instance_manifest: master-regimes/generated/corpus/dba-local-memory-v1/groups/dba-local-memory-panel-v1__n3-medium-balanced-wide-global-dim-v1__runtime-bundle-multi-edge__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/dba-local-memory-v1/sweeps/dba-local-memory-panel-v1__n3-medium-balanced-wide-global-dim-v1__runtime-bundle-multi-edge__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: dba-local-memory-panel-v1__raw-large-balanced-v1__runtime-bundle-multi-edge__analytics_clients
+  sweep_id: dba-local-memory-panel-v1__raw-large-balanced-v1__runtime-bundle-multi-edge__analytics_clients
+  dataset_profile_id: raw-large-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: multiple
+  runtime_config_ids:
+  - dba_topk_balanced_gac_mitigated
+  - dba_topk_balanced_remote_mitigated
+  - dba_topk_balanced_stressed
+  - dba_topk_memory_gac_mitigated
+  - dba_topk_memory_remote_mitigated
+  - dba_topk_memory_stressed
+  - dba_topk_transport_gac_mitigated
+  - dba_topk_transport_remote_mitigated
+  - dba_topk_transport_stressed
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: combined_pressure
+  runtime_expected_effect: multiple
+  network_profile_id: multiple
+  cell_count: 16
+  instance_count: 44
+  instance_manifest: master-regimes/generated/corpus/dba-local-memory-v1/groups/dba-local-memory-panel-v1__raw-large-balanced-v1__runtime-bundle-multi-edge__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/dba-local-memory-v1/sweeps/dba-local-memory-panel-v1__raw-large-balanced-v1__runtime-bundle-multi-edge__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: dba-local-memory-panel-v1__raw-small-balanced-v1__runtime-bundle-multi-edge__analytics_clients
+  sweep_id: dba-local-memory-panel-v1__raw-small-balanced-v1__runtime-bundle-multi-edge__analytics_clients
+  dataset_profile_id: raw-small-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: multiple
+  runtime_config_ids:
+  - dba_topk_balanced_gac_mitigated
+  - dba_topk_balanced_remote_mitigated
+  - dba_topk_balanced_stressed
+  - dba_topk_memory_gac_mitigated
+  - dba_topk_memory_remote_mitigated
+  - dba_topk_memory_stressed
+  - dba_topk_transport_gac_mitigated
+  - dba_topk_transport_remote_mitigated
+  - dba_topk_transport_stressed
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: combined_pressure
+  runtime_expected_effect: multiple
+  network_profile_id: multiple
+  cell_count: 16
+  instance_count: 40
+  instance_manifest: master-regimes/generated/corpus/dba-local-memory-v1/groups/dba-local-memory-panel-v1__raw-small-balanced-v1__runtime-bundle-multi-edge__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/dba-local-memory-v1/sweeps/dba-local-memory-panel-v1__raw-small-balanced-v1__runtime-bundle-multi-edge__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false

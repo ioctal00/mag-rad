@@ -1,0 +1,223 @@
+program_id: pressure-raw-v1
+corpus_version: pressure-raw-corpus-v1
+collection_contract_version: pressure-raw-v1
+collection_contract: pressure_raw_collection_v1.yml
+dataset_sweep: pressure_raw_dataset_sweep_v1.yml
+execution_policy:
+  append_only: true
+  resume_unit: rendered_execution_group
+  successful_raw_artifacts_are_never_deleted: true
+  retry_creates_new_attempt_id: true
+  database_result_rows_stored: false
+  result_signature_stream_only: true
+  result_signature_scope: first_repetition_per_condition
+  full_program_auto_run_forbidden: true
+consolidation_policy:
+  attempt_resolution: latest_successful_program_attempt
+  training_eligible_roles: [primary]
+  role_by_batch_kind:
+    isolated: primary
+    collection_smoke: smoke
+    combined_holdout: holdout
+    topology_holdout: holdout
+    sentinel: sentinel
+  external_batch_roles:
+    batch-900-component-calibration: calibration
+  unknown_batch_policy: reject
+  duplicate_primary_slot_policy: reject
+  auto_refresh_after_completed_batch: true
+execution_topology_policy:
+  primary_analysis_unit: query_run_id
+  query_level_concurrency: 1
+  measured_queries_are_serial: true
+  setup_operations_may_run_in_parallel: true
+  topology_generalization:
+    notation:
+      region_count: N
+      workers_in_region: W_r
+    current_reference_deployment:
+      topology_id: eu_us_gac
+      region_count: 2
+      region_ids: [eu, us]
+      worker_count_by_region: {eu: 2, us: 2}
+      runtime_inventory_must_match: true
+    first_prepared_holdout:
+      topology_id: eu_us_apac_gac
+      region_count: 3
+      minimum_worker_count_per_region: 2
+      status: blocked_until_topology_preflight
+    invariants:
+      - one_query_run_id_per_global_sql_execution
+      - one_remote_edge_child_row_per_active_region
+      - one_region_child_row_per_active_region
+      - variable_worker_task_child_rows_are_allowed
+      - fixed_eu_us_model_columns_are_forbidden
+      - topology_snapshot_id_is_required
+      - execution_features_use_permutation_invariant_aggregations
+      - topology_holdout_never_merges_into_training_without_explicit_policy
+  lanes:
+    global_gac_serial:
+      batches:
+        - batch-100-gac
+        - batch-110-remote
+        - batch-120-skew
+        - batch-200-combined-holdout
+        - batch-400-sentinels
+      target_group: analytics_clients
+      execution_rule: >
+        Execute one query through GAC. The same query_run_id owns GAC, remote-edge,
+        regional coordinator and worker/task evidence. Do not replay the same
+        condition separately on EU and US.
+    gac_single_edge_serial:
+      batches:
+        - batch-130-repartition
+        - batch-140-regional
+      target_group: analytics_clients
+      selected_edge: eu_to_gac
+      execution_rule: >
+        Execute one GAC query whose FDW relation set references only the selected
+        region. The query_run_id owns the GAC plan, one remote edge, the regional
+        auto_explain plan and available worker/task evidence. Only templates that
+        pass the regional-pushdown equivalence gate may enter this lane.
+    topology_holdout_serial:
+      batches:
+        - batch-300-n3-holdout
+      target_group: analytics_clients
+      execution_rule: >
+        Execute one global query per condition only after the declared N-region
+        inventory, per-region worker map and edge contract pass preflight.
+  forbidden_optimizations:
+    - parallel_pair_members
+    - parallel_queries_sharing_gac
+    - duplicate_symmetric_region_replays
+    - replacing_one_global_gac_query_with_two_single_edge_fdw_queries
+    - mixing_direct_regional_elapsed_time_with_global_gac_targets
+  allowed_parallelism:
+    - independent_dataset_loads_on_eu_and_us
+    - independent_bootstrap_or_static_preflight_steps
+  single_edge_fdw_policy: >
+    GAC single-edge runs are the primary lane for isolated regional pressure only
+    after template-level pushdown equivalence is demonstrated. They preserve a
+    globally measured GAC target without duplicating a symmetric second region.
+    Multi-edge GAC remains mandatory for fan-in, imbalance and combined cases.
+    Direct regional runs are component-calibration evidence only.
+  target_definition_policy:
+    primary_target_scope: global_query
+    mitigation_gain_formula: log2(gac_elapsed_stressed / gac_elapsed_mitigated)
+    direct_region_target_scope: component_region
+    direct_region_targets_must_not_enter_primary_regressors: true
+  gac_single_edge_equivalence_gate:
+    decision: GO_WITH_CONSTRAINTS
+    report: analysis/reports/gac-single-edge-equivalence-probe-v1/README.md
+    approved_template_ids:
+      - gac_fdw_single_edge_colocated_user_join_pair
+      - gac_fdw_single_edge_repartition_user_join_pair
+      - gac_fdw_single_edge_regional_user_value_topk
+    direct_region_role: component_calibration_only
+    task_timing_behind_fdw: unavailable_in_embedded_task_plan
+    mapmerge_task_evidence: structurally_unavailable_in_both_scopes
+manual_execution_protocol:
+  freeze_before_first_production_batch:
+    - pressure_raw_collection_v1.yml
+    - source_manifests
+    - generated_checksums
+  stages:
+    - id: production_probe
+      action: run_one_small_segment_from_each_isolated_axis
+      gate: raw_index_and_new_telemetry_columns_valid
+    - id: isolated_batches
+      batch_order:
+        - batch-100-gac
+        - batch-110-remote
+        - batch-120-skew
+        - batch-130-repartition
+        - batch-140-regional
+      gate: completeness_correctness_and_pair_audit_pass
+    - id: combined_holdout
+      batch_order: [batch-200-combined-holdout]
+      gate: isolated_batches_frozen
+    - id: topology_holdout
+      batch_order: [batch-300-n3-holdout]
+      gate: three_region_preflight_pass
+  sentinel_policy:
+    source_batch: batch-400-sentinels
+    run_at:
+      - before_first_isolated_batch
+      - after_batch-110-remote
+      - after_batch-120-skew
+      - after_batch-140-regional
+      - after_combined_holdout
+    never_run_all_sentinels_as_one_terminal_block: true
+coverage_gate:
+  expected_isolated_configuration_count: 869
+  expected_isolated_execution_count: 2607
+  expected_repetitions_per_configuration: 3
+  expected_planned_pair_count: 418
+  planned_pairs_by_axis:
+    gac_finalization: 99
+    remote_path: 75
+    worker_data_skew: 70
+    repartition_join: 99
+    regional_finalization: 75
+  minimum_expected_valid_pairs_after_collection_by_axis: 60
+  minimum_negative_control_configurations_by_axis: 20
+  required_network_calibration_blocks:
+    - bandwidth_only
+    - delay_only
+    - fetch_only
+  minimum_network_calibration_sql_shapes: 4
+  minimum_network_calibration_datasets: 2
+  minimum_combined_base_cases: 20
+  minimum_fully_one_at_a_time_mitigated_base_cases: 10
+  require_negative_control_per_axis: true
+  require_stable_identity_columns:
+    - condition_id
+    - pair_id
+    - batch_id
+batches:
+  - batch_id: batch-000-collection-smoke
+    kind: smoke
+    source: batches/batch-000-collection-smoke.yml
+    status: ready_after_render
+  - batch_id: batch-100-gac
+    kind: isolated
+    pressure_axis: gac_finalization
+    source: ../../workloads/corpus/pressure-raw-v1/batch-100-gac.yml
+    backend: standard_corpus
+    status: ready
+  - batch_id: batch-110-remote
+    kind: isolated
+    pressure_axis: remote_path
+    source: ../../workloads/corpus/pressure-raw-v1/batch-110-remote.yml
+    backend: standard_corpus
+    status: ready
+  - batch_id: batch-120-skew
+    kind: isolated
+    pressure_axis: worker_data_skew
+    source: ../../workloads/corpus/pressure-raw-v1/batch-120-skew.yml
+    backend: placement_aware_worker
+    status: ready
+  - batch_id: batch-130-repartition
+    kind: isolated
+    pressure_axis: repartition_join
+    source: ../../workloads/corpus/pressure-raw-v1/batch-130-repartition.yml
+    backend: standard_corpus
+    status: ready
+  - batch_id: batch-140-regional
+    kind: isolated
+    pressure_axis: regional_finalization
+    source: ../../workloads/corpus/pressure-raw-v1/batch-140-regional.yml
+    backend: standard_corpus
+    status: ready
+  - batch_id: batch-200-combined-holdout
+    kind: combined_holdout
+    source: batches/batch-200-combined-holdout.yml
+    status: prepared_not_executed
+  - batch_id: batch-300-n3-holdout
+    kind: topology_holdout
+    source: batches/batch-300-n3-holdout.yml
+    status: blocked_until_three_region_inventory
+  - batch_id: batch-400-sentinels
+    kind: sentinel
+    source: batches/batch-400-sentinels.yml
+    status: prepared_not_executed

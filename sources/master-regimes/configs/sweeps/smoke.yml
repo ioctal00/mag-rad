@@ -1,0 +1,28 @@
+sweep_id: smoke
+purpose: smoke
+
+dataset_profile: datasets/profiles/smoke.yml
+
+workload:
+  registry_file: workloads/suites/single-region-core.yml
+  templates:
+    - q01_tenant_rollup
+    - q02_global_user_topk
+  seed: 42
+  max_instances: 5
+
+configuration:
+  work_mem: 4MB
+  fetch_size: 1000
+  wan_profile: local-dev
+
+repetitions:
+  warmup: 1
+  measurement: 1
+
+budgets:
+  max_wall_clock_hours: 1
+  max_query_executions: 10
+  max_timeouts: 2
+  max_estimated_cloud_cost_eur: 0
+  stop_on_budget_exceeded: true

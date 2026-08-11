@@ -1,0 +1,55 @@
+corpus_id: stats-ceb-semantic-v2b-holdout
+vocabulary: ../../docs/corpus-vocabulary.md
+query_groups: query-groups.yml
+runtime_catalog: runtime-configs.yml
+topology_id: eu_us_gac
+topology_scope: eu_us_gac
+description: >
+  Second, untouched external holdout for the corrected semantic-v2 feature
+  contract and corpus-conditioned FCM centers. The first holdout is treated as
+  a development audit after it exposed a pre-existing regional MapMerge
+  visibility mismatch.
+execution_budget:
+  hard_timeout_seconds: 300
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  repetitions_default: 1
+  cache_features_in_default_model: false
+  order_policy: manifest_order
+  shuffle_seed: 20260727
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+dataset_profiles:
+  stats-ceb-semantic-v2b-holdout:
+    profile: ../../datasets/profiles/stats-ceb-semantic-v2b-holdout.yml
+    load_method: custom_dump
+cells:
+  - corpus_cell_id: stats_ceb_semantic_v2b_holdout
+    logical_question_id: stats_ceb_count
+    execution_strategy: multiregion_union
+    template_id: stats_ceb_multiregion_count
+    dataset_profile_id: stats-ceb-semantic-v2b-holdout
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: final_check
+    intervention_axis: external_schema_portability
+    expected_regime_targets:
+      - remote_fetch_heavy
+      - join_movement
+      - well_reduced_localized
+    execution_class: pilot
+    parameters:
+      query_id: [4, 80, 15, 22, 121, 98, 113, 101, 47, 111, 78, 72]
+frozen_model_contract:
+  model_id: semantic-v2-transfer-oriented-fcm
+  feature_contract: ../../configs/features/feature_semantic_contract_v2.yml
+  model_freeze: ../../analysis/reports/semantic-v2-model-freeze/semantic_v2_model_manifest.yml
+  refit_allowed: false
+  feature_schema_change_allowed: false
+  post_observation_contract_changes_allowed: false
+  projection_role: confirmatory_external_holdout
+  ood_requires_absolute_distance: true

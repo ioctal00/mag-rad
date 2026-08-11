@@ -1,0 +1,14 @@
+select count(*) as result_count
+FROM {{ schema_name }}.tags AS t,
+  {{ schema_name }}.posts AS p,
+  {{ schema_name }}.users AS u,
+  {{ schema_name }}.votes AS v,
+  {{ schema_name }}.badges AS b
+WHERE u.Id = b.UserId
+  AND u.Id = p.OwnerUserId
+  AND u.Id = v.UserId
+  AND p.Id = t.ExcerptPostId
+  AND p.CommentCount >= 0
+  AND p.CommentCount <= 13
+  AND u.Reputation >= 1
+  AND b.Date <= CAST('2014-09-06 17:33:22' AS timestamp)

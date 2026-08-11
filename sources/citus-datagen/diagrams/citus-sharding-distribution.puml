@@ -1,0 +1,137 @@
+@startuml
+title citus-datagen Citus sharding, join locality, and regional execution shapes
+
+skinparam shadowing false
+skinparam linetype ortho
+skinparam rectangle {
+  BackgroundColor White
+  BorderColor #475467
+}
+skinparam database {
+  BackgroundColor #F8FAFC
+  BorderColor #475467
+}
+skinparam note {
+  BackgroundColor #FFFAEB
+  BorderColor #DC6803
+}
+
+actor "benchmark / loader\npsql, COPY, queries" as client
+
+node "Citus coordinator" as coord {
+  database "metadata catalogs\npg_dist_partition\npg_dist_node\npg_dist_shard" as catalogs
+  rectangle "query planner / router" as planner
+  rectangle "tenants\nreference copy" as tenants_coord
+  rectangle "global_users\nuser_id shards\nnon-colocated stress" as global_users_coord
+}
+
+node "Worker 1" as w1 {
+  rectangle "tenants\nreference copy" as tenants_w1
+  rectangle "events shards\nhash(tenant_id)" as events_w1
+  rectangle "users shards\nhash(tenant_id)\ncolocated with events" as users_w1
+  rectangle "global_users shards\nhash(user_id)\nnon-colocated stress" as global_users_w1
+}
+
+node "Worker 2" as w2 {
+  rectangle "tenants\nreference copy" as tenants_w2
+  rectangle "events shards\nhash(tenant_id)" as events_w2
+  rectangle "users shards\nhash(tenant_id)\ncolocated with events" as users_w2
+  rectangle "global_users shards\nhash(user_id)\nnon-colocated stress" as global_users_w2
+}
+
+client --> coord : connect to coordinator\nDDL, COPY, SELECT
+coord --> catalogs : stores distribution metadata
+coord --> planner : plans distributed execution
+
+planner --> events_w1 : route events rows/tasks\nby hash(tenant_id)
+planner --> events_w2 : route events rows/tasks\nby hash(tenant_id)
+planner --> users_w1 : route users rows/tasks\nby hash(tenant_id)
+planner --> users_w2 : route users rows/tasks\nby hash(tenant_id)
+planner -[#B42318,dashed]-> global_users_w1 : stress route\nby hash(user_id)
+planner -[#B42318,dashed]-> global_users_w2 : stress route\nby hash(user_id)
+
+tenants_coord <-[#0F766E,dashed]-> tenants_w1 : reference table replication
+tenants_coord <-[#0F766E,dashed]-> tenants_w2 : reference table replication
+
+events_w1 -[#0F766E,bold]- users_w1 : colocated tenant-owned join\nsame distribution key
+events_w2 -[#0F766E,bold]- users_w2 : colocated tenant-owned join\nsame distribution key
+events_w1 -[#B42318,dashed]-> global_users_w1 : non-colocated join stress\nuser_id distribution differs
+events_w2 -[#B42318,dashed]-> global_users_w2 : non-colocated join stress\nuser_id distribution differs
+
+note right of events_w1
+  events
+  Table type: distributed
+  Distribution method: hash
+  Distribution key: tenant_id
+
+  Consequence:
+  all rows for the same tenant_id map
+  to the same logical shard placement.
+end note
+
+note right of users_w1
+  users
+  Table type: distributed
+  Distribution method: hash
+  Distribution key: tenant_id
+  Colocation: with events
+
+  Consequence:
+  joins on tenant_id + user_id can run
+  worker-local before global aggregation.
+end note
+
+note right of tenants_w2
+  tenants
+  Table type: reference
+  Distribution key: none
+
+  Consequence:
+  table is copied to coordinator/workers,
+  so joins from distributed events to
+  tenant metadata can be local on workers.
+
+  Planned mutable columns:
+  tenant_tier, tenant_status, updated_at,
+  dimension_version.
+
+  Thesis use:
+  stale ETL / eventual consistency tests.
+end note
+
+note right of global_users_w2
+  global_users
+  Table type: distributed
+  Distribution key: user_id
+
+  Consequence:
+  not colocated with events.
+  Use as a bounded sentinel for
+  non-colocated join behavior.
+
+  Keep citus.enable_repartition_joins
+  off in the main benchmark.
+end note
+
+note bottom of coord
+  Current DDL:
+  create_reference_table('tenants')
+  create_distributed_table('events', 'tenant_id')
+  create_distributed_table('users', 'tenant_id', colocate_with => 'events')
+  create_distributed_table('global_users', 'user_id')
+
+  Current indexes:
+  idx_events_tenant_created_at on events (tenant_id, created_at)
+  idx_users_tenant_segment on users (tenant_id, user_segment)
+  idx_global_users_user_tenant on global_users (user_id, tenant_id)
+end note
+
+legend right
+  |= Table |= Citus role |= Key |
+  | tenants | reference table | none |
+  | events | distributed table | tenant_id |
+  | users | colocated distributed table | tenant_id |
+  | global_users | optional stress distributed table | user_id |
+endlegend
+
+@enduml

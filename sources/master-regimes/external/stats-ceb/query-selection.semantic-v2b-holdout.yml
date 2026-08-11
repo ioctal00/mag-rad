@@ -1,0 +1,242 @@
+selection_id: stats-ceb-semantic-v2b-holdout
+source_lock: source-lock.yml
+selection_frozen_before_plan_execution: true
+selection_rationale: Previously unexecuted scalar COUNT queries selected by a fixed
+  SHA-256 seed within table-count strata. Expected result values are attached only
+  after selection and are not ranking inputs.
+selection_method:
+  algorithm: sha256(seed:query_id), ascending within table_count
+  seed: stats-ceb-semantic-v2b-holdout
+  table_count_quotas:
+    2: 1
+    3: 3
+    4: 4
+    5: 2
+    6: 2
+  excluded_development_query_ids:
+  - 1
+  - 2
+  - 3
+  - 5
+  - 6
+  - 8
+  - 9
+  - 24
+  - 35
+  - 38
+  - 50
+  - 74
+  - 75
+  - 76
+  - 86
+  - 94
+  - 100
+  - 109
+  - 129
+  - 130
+  outcome_fields_used_for_selection: []
+regional_semantics:
+  dataset_snapshot: replicated_identical
+  comparison_rule: Q(D_eu) = Q(D_us) = Q(D_baseline)
+  aggregation_rule: never_sum_regional_counts
+physical_design:
+  design_id: stats-ceb-post-centric-v1
+  shard_count: 32
+  reference_tables:
+  - users
+  - badges
+  - tags
+  distributed_tables:
+    posts: id
+    comments: postid
+    votes: postid
+    posthistory: postid
+    postlinks: postid
+queries:
+- query_id: 4
+  expected_count: 1709781
+  source_sha256: 9ea1c6e0cdd3f6a2fb99473ded515318324767fcfde8cbb541eec8cc9810b32d
+  expected_citus_strategy: not_used_for_holdout_selection
+  tables:
+  - comments
+  - posthistory
+  table_count_stratum: 2
+  selection_hash: 1f6b6c4df7332938f75e7aca175bbc0ea4f6a5d31ad6a710209710b886e2f75b
+  reason: Deterministic hash-ranked holdout selected before execution; runtime, expected
+    count and model behavior were not selection inputs.
+- query_id: 80
+  expected_count: 1459345
+  source_sha256: cb29ecd83bd0b571a8589ac2102b83c15d7da795a11ed95f1216a10426bdf879
+  expected_citus_strategy: not_used_for_holdout_selection
+  tables:
+  - comments
+  - posts
+  - users
+  table_count_stratum: 3
+  selection_hash: 13c811dffd57473b3f646427649e1fba615161fbc06aa645a8cd59f95998a454
+  reason: Deterministic hash-ranked holdout selected before execution; runtime, expected
+    count and model behavior were not selection inputs.
+- query_id: 15
+  expected_count: 10223864
+  source_sha256: 6df1f96d5dfe7a7dd684a5eb18edfdf7b624b4d481395c4946ba0bb26b209c15
+  expected_citus_strategy: not_used_for_holdout_selection
+  tables:
+  - badges
+  - comments
+  - users
+  table_count_stratum: 3
+  selection_hash: 17d2e887aee110d61adf5855ad3ce7f9588f1ff6a36f31540ce603edcc41c908
+  reason: Deterministic hash-ranked holdout selected before execution; runtime, expected
+    count and model behavior were not selection inputs.
+- query_id: 22
+  expected_count: 2488080
+  source_sha256: da970a144289513b24fb63bb9a9f8785602021e5c555b0e49e884b2d77a6375e
+  expected_citus_strategy: not_used_for_holdout_selection
+  tables:
+  - posts
+  - users
+  - votes
+  table_count_stratum: 3
+  selection_hash: 1969080e04916bebc322d7e3bdf1055c2f81ff458fb48c5801cb8b145429db49
+  reason: Deterministic hash-ranked holdout selected before execution; runtime, expected
+    count and model behavior were not selection inputs.
+- query_id: 121
+  expected_count: 1116000
+  source_sha256: 6029dcaa19c249adffff52bc96e5b6027b1ab39f15515df9217075580e214153
+  expected_citus_strategy: not_used_for_holdout_selection
+  tables:
+  - badges
+  - posthistory
+  - posts
+  - users
+  table_count_stratum: 4
+  selection_hash: 0623e26a0b018fb35bdc672421ed75390a17e6c23c45d85999d641aeba5e7f0d
+  reason: Deterministic hash-ranked holdout selected before execution; runtime, expected
+    count and model behavior were not selection inputs.
+- query_id: 98
+  expected_count: 40855663
+  source_sha256: 8c1338386b665ba86c61d39cd5228add63991848b1075d8e9fc7f783c612ae2d
+  expected_citus_strategy: not_used_for_holdout_selection
+  tables:
+  - comments
+  - posts
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 0f4014b045661c3c4f2df868e5ba1c717456fdf1751710edb3d8278afd9d402a
+  reason: Deterministic hash-ranked holdout selected before execution; runtime, expected
+    count and model behavior were not selection inputs.
+- query_id: 113
+  expected_count: 18382871
+  source_sha256: a73b0dea1958b612c1f15ed8ac655536a2a6c602a435c051ab874c5dbe9c4e32
+  expected_citus_strategy: not_used_for_holdout_selection
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - users
+  table_count_stratum: 4
+  selection_hash: 0fda998a8fbb52098bc5f1d7af80908cadae9df4c7ab121c4fb90e867fe89734
+  reason: Deterministic hash-ranked holdout selected before execution; runtime, expected
+    count and model behavior were not selection inputs.
+- query_id: 101
+  expected_count: 408599
+  source_sha256: 196ceec16844d93af99e6dd3d56393967474b7c180b4899a183cce1e4d645718
+  expected_citus_strategy: not_used_for_holdout_selection
+  tables:
+  - comments
+  - posts
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 11f978aeb808135496ad33da4bfdf9e4983752cc34f183d27ddfa36002ae84b4
+  reason: Deterministic hash-ranked holdout selected before execution; runtime, expected
+    count and model behavior were not selection inputs.
+- query_id: 47
+  expected_count: 60601561
+  source_sha256: 31e7035f1a16e6f3520dcc3e1a91ab39d48f0dfe84b4fe8512d280c61f36e997
+  expected_citus_strategy: not_used_for_holdout_selection
+  tables:
+  - comments
+  - posthistory
+  - posts
+  - users
+  - votes
+  table_count_stratum: 5
+  selection_hash: 0136b71c1afc8dccaade380c4a8cd36f0f8260755cca70d346c6f6fe232906ef
+  reason: Deterministic hash-ranked holdout selected before execution; runtime, expected
+    count and model behavior were not selection inputs.
+- query_id: 111
+  expected_count: 1957551
+  source_sha256: 6829dd244bdcca93a7a9082d6825c5faa6a8b7f51e90fe49165072289ccc7ca0
+  expected_citus_strategy: not_used_for_holdout_selection
+  tables:
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - votes
+  table_count_stratum: 5
+  selection_hash: 0dd1a99a150816267c1b73cee7541b1b2004684a8fb6050d990bb750e1c09cd9
+  reason: Deterministic hash-ranked holdout selected before execution; runtime, expected
+    count and model behavior were not selection inputs.
+- query_id: 78
+  expected_count: 426751
+  source_sha256: 6c4fa1258d3852f53e664f5db90991fa0d2f397e2596307d12c4b878c28119fd
+  expected_citus_strategy: not_used_for_holdout_selection
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: 17643b284f7641221f768d27a5506a6bbf9715ff96f7286b96daccc366908b69
+  reason: Deterministic hash-ranked holdout selected before execution; runtime, expected
+    count and model behavior were not selection inputs.
+- query_id: 72
+  expected_count: 1582060
+  source_sha256: 05a379db4f7ae7982d6ced8e68771a95bce82b3a93f2b2864caa129e41553ba1
+  expected_citus_strategy: not_used_for_holdout_selection
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - votes
+  table_count_stratum: 6
+  selection_hash: 2887ffef116c0bdcfc059f9ff11bb8733f665755f913277128476ea662201a6c
+  reason: Deterministic hash-ranked holdout selected before execution; runtime, expected
+    count and model behavior were not selection inputs.
+execution_contract:
+  statement_timeout_seconds: 300
+  explain_without_analyze_first: true
+  keep_failed_queries: true
+  statuses:
+  - passed
+  - unsupported_sql
+  - result_mismatch
+  - timeout
+  - incomplete_topology_evidence
+  - feature_contract_failure
+  - infrastructure_failure
+result_contract:
+  persist_database_rows: false
+  persisted_fields:
+  - query_id
+  - baseline_result_hash
+  - eu_result_hash
+  - us_result_hash
+  - schema_hash
+  - comparison_status
+  - tolerance_policy
+  tolerance_policy: exact_integer
+model_contract:
+  model_id: semantic-v2-transfer-oriented-fcm
+  refit_allowed: false
+  feature_schema_change_allowed: false
+  projection_role: confirmatory_external_holdout
+  ood_rule: nearest_center_distance_above_frozen_baseline_p99
+  post_observation_contract_changes_allowed: false

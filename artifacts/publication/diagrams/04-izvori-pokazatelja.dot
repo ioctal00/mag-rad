@@ -1,0 +1,77 @@
+digraph G {
+  graph [
+    rankdir=TB,
+    bgcolor="white",
+    fontname="DejaVu Sans",
+    fontsize=14,
+    pad=0.14,
+    nodesep=0.28,
+    ranksep=0.38,
+    labelloc="t",
+    label="Od višeslojnih artefakata do zaključanog prostora pokazatelja"
+  ];
+
+  node [
+    shape=box,
+    style="filled",
+    fontname="DejaVu Sans",
+    fontsize=10.5,
+    color="#263238",
+    fillcolor="#f3f5f5",
+    margin="0.16,0.10"
+  ];
+
+  edge [
+    fontname="DejaVu Sans",
+    fontsize=9.2,
+    color="#4f585b",
+    arrowsize=0.72
+  ];
+
+  gac [label="GAC EXPLAIN ANALYZE\noperatori, redovi, širina,\nspill i finalizacija"];
+  region [label="Regionalni auto_explain\nremote SQL plan po regionu"];
+  worker [label="Planovi Citus poslova na radnim čvorovima\nscan, posao i shard raspodjela"];
+  status [label="Status i vrijeme\nizvršavanja", fillcolor="#f7f8f8"];
+  context [label="Skup podataka, SQL i\nizvršni kontekst", fillcolor="#f7f8f8"];
+
+  correlate [label="Korelacija jednog query_run_id\nGAC + region + poslovi na radnim čvorovima", fillcolor="#dfeceb"];
+  quality [label="Provjera primjenjivosti i kvaliteta\nnull nije isto što i nula", fillcolor="#dfeceb"];
+
+  flow [label="Udaljena putanja i tok\nremote/final, WAN/final,\nDRF proxy"];
+  spill [label="Normalizovani spill\ntemp/final, temp/WAN,\nbroj hash batch-eva"];
+  skew [label="Topologija i neravnomjernost\nISF regiona/poslova,\nudio aktivnih poslova"];
+  estimate [label="Greške procjene\nroot, foreign scan,\naggregate, remote root"];
+
+  matrix [label="Matrica modela F19\n1.964 izvršenja × 19 pokazatelja", fillcolor="#dfeceb", penwidth=1.4];
+  audit [label="Kontrolni i kontekstni sloj\nvrijeme, identiteti,\nkonfiguracije i volumeni", fillcolor="#f7f8f8"];
+
+  { rank=same; gac; region; worker; }
+  { rank=same; flow; spill; }
+  { rank=same; skew; estimate; }
+  { rank=same; status; context; }
+  { rank=same; matrix; audit; }
+
+  gac -> correlate;
+  region -> correlate;
+  worker -> correlate;
+  correlate -> quality;
+  quality -> flow;
+  quality -> spill;
+  quality -> skew;
+  quality -> estimate;
+  flow -> matrix;
+  spill -> matrix;
+  skew -> matrix;
+  estimate -> matrix;
+
+  status -> audit;
+  context -> audit;
+  correlate -> audit [style=dashed, constraint=false];
+
+  audit -> matrix [
+    style=dotted,
+    arrowhead=none,
+    label="nije ulaz modela",
+    constraint=false
+  ];
+}

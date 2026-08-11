@@ -1,0 +1,15 @@
+corpus_id,role,rendered_sql_root,result_root
+clean-run-v1,završna F19 karakterizacija i historijska F21-dev ablacija,artifacts/rendered-corpora/clean-run-v1,releases/rq-alignment-v2
+pressure-raw-v1,široki intervencijski corpus,artifacts/rendered-corpora/pressure-raw-v1,artifacts/results/pressure-actionability-v1
+dba-local-memory-v1,završni DBA panel,artifacts/rendered-corpora/dba-local-memory-v1,releases/consolidated-evaluation-v1
+n3-topology-memory-v1,kontrolisani N2/N3 panel,artifacts/rendered-corpora/n3-topology-memory-v1,releases/consolidated-evaluation-v1
+confirmatory-action-replication-v1,potvrdni panel q16-q30,artifacts/rendered-corpora/confirmatory-action-replication-v1,releases/confirmatory-action-replication-v1
+feedback-loop-v1,longitudinalne DBA putanje,artifacts/rendered-corpora/feedback-loop-v1,releases/feedback-loop-analysis-v1
+region-asymmetry-companion-v1,regionalna asimetrija,artifacts/rendered-corpora/region-asymmetry-companion-v1,artifacts/features/clean-run-v1-region-asymmetry
+wan-latency-companion-v1,mrežna osjetljivost,artifacts/rendered-corpora/wan-latency-companion-v1,artifacts/logical-indexes/clean-run-v1-wan-latency.tar.gz
+repeatability-v1,ponovljivost odabranih stanja,artifacts/rendered-corpora/repeatability-v1,artifacts/results/repeatability-v1
+validation-holdout-v1,validacijski holdout,artifacts/rendered-corpora/validation-holdout-v1,artifacts/features/clean-run-v1-validation-holdout
+confirmatory-skew-v1,potvrdni skew panel,artifacts/rendered-corpora/confirmatory-skew-v1,artifacts/features/confirmatory-skew-v1
+stats-ceb-semantic-v2b-holdout,vanjski semantic holdout,artifacts/rendered-corpora/stats-ceb-semantic-v2b-holdout,artifacts/features/stats-ceb-semantic-v2b-holdout
+stats-ceb-full-no-refit-v1,puni STATS-CEB audit,artifacts/rendered-corpora/stats-ceb-full-no-refit-v1,artifacts/features/stats-ceb-full-no-refit-v1
+pressure-raw-v1-n3-colocation-holdout,historijski N3 colocation holdout,artifacts/rendered-corpora/pressure-raw-v1-n3-colocation-holdout,artifacts/results/pressure-actionability-v1

@@ -1,0 +1,4 @@
+query_run_id,main_repartition_flag,remote_mapmerge_count,remote_locality_classes,v2_repartition_flag,status
+20260726T110643Z-stats-ceb-semantic-v2-holdout__stats--eae7216cd4dd--v2_holdout__stats_ceb_multiregion_count__query_id-8,False,2,repartition_mapmerge,1,PASS
+20260726T110714Z-stats-ceb-semantic-v2-holdout__stats--bef68ba905e9--2_holdout__stats_ceb_multiregion_count__query_id-38,False,2,repartition_mapmerge,1,PASS
+20260726T110819Z-stats-ceb-semantic-v2-holdout__stats--6436fbddd577--2_holdout__stats_ceb_multiregion_count__query_id-35,False,2,repartition_mapmerge,1,PASS

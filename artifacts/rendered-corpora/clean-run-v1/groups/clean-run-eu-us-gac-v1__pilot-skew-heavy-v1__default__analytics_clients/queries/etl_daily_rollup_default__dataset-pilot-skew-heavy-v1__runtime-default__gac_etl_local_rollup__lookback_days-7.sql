@@ -1,0 +1,11 @@
+select
+  tenant_tier,
+  event_day,
+  sum(events_count) as events_count,
+  count(*) as tenant_day_rows,
+  sum(total_value) as total_value,
+  avg(avg_value) as mean_tenant_avg_value
+from etl.daily_tenant_rollup
+where event_day >= current_date - 7::int
+group by tenant_tier, event_day
+order by event_day, total_value desc, tenant_tier;

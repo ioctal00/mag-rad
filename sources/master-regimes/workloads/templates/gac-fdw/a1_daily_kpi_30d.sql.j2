@@ -1,0 +1,12 @@
+with all_events as (
+  select * from fdw_eu.events
+  union all
+  select * from fdw_us.events
+)
+select date_trunc('day', created_at) as day,
+       sum(value) as total_value,
+       count(*) as events_count
+from all_events
+where created_at >= timestamptz '{{ from_ts_tz }}'
+group by day
+order by day;

@@ -1,0 +1,4 @@
+left_algorithm,right_algorithm,ari,nmi
+FCM,K-means,1.0,1.0
+FCM,Ward,0.9667872735259476,0.9601706190270092
+K-means,Ward,0.9667872735259476,0.9601706190270092

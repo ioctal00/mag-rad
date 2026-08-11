@@ -1,0 +1,531 @@
+corpus_id: clean-run-eu-us-gac-validation-holdout-v1
+source_manifest: master-regimes/workloads/corpus/corpus_manifest.validation-holdout-v1.yml
+rendered_corpus_manifest: master-regimes/generated/corpus/validation-holdout-v1/corpus_manifest.yml
+corpus_cells: master-regimes/generated/corpus/validation-holdout-v1/corpus_cells.csv
+region: eu
+max_instances_per_cell: null
+execution_budget:
+  hard_timeout_seconds: 300
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  repetitions_default: 1
+  cache_features_in_default_model: false
+  order_policy: deterministic_shuffle
+  shuffle_seed: 20260706
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  gac_etl_bootstrap_lookback_days: 1
+  gac_etl_bootstrap_timeout_seconds: 300
+execution_backend: master-regimes-infra.database_sweep
+included_execution_classes:
+- pilot
+source_cell_count: 11
+manifest_cell_count: 51
+excluded_cell_count: 0
+group_count: 27
+groups:
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__default__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__default__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: default
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - multiregion_union
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  network_profile_id: ''
+  cell_count: 6
+  instance_count: 40
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__default__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__default__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__default__coordinators
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__default__coordinators
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: default
+  target_group: coordinators
+  strategies:
+  - single_region_citus
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 2
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__default__coordinators/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__default__coordinators.yml
+  fdw_bootstrap_required: false
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__fetch_large__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__fetch_large__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: fetch_large
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: fetch_size
+  runtime_expected_effect: 'Should reduce fetch batching overhead for high remote-row-flow
+    queries compared with fetch_small.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 2
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__fetch_large__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__fetch_large__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__fetch_small__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__fetch_small__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: fetch_small
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: fetch_size
+  runtime_expected_effect: 'Should affect FDW remote-row-flow or WAN-sensitive queries
+    more than reduced/localized negative controls.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 2
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__fetch_small__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__fetch_small__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__wan_0ms__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__wan_0ms__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: wan_0ms
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Control segment for the WAN companion corpus. It records/reset
+    network state but should not introduce synthetic delay.
+
+    '
+  network_profile_id: wan_0ms
+  cell_count: 2
+  instance_count: 4
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__wan_0ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__wan_0ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__wan_100ms__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__wan_100ms__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: wan_100ms
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Strong synthetic WAN delay for FDW row-flow intervention
+    validation.
+
+    '
+  network_profile_id: wan_100ms
+  cell_count: 3
+  instance_count: 5
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__wan_100ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__wan_100ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__wan_40ms__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__wan_40ms__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: wan_40ms
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Optional intermediate latency level for response-curve
+    validation.
+
+    '
+  network_profile_id: wan_40ms
+  cell_count: 1
+  instance_count: 2
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__wan_40ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__wan_40ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__work_mem_high__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__work_mem_high__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: work_mem_high
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: work_mem
+  runtime_expected_effect: 'Should reduce spill/blocking pressure relative to work_mem_low
+    when the query is memory-sensitive.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 4
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__work_mem_high__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__work_mem_high__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__work_mem_low__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__work_mem_low__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: work_mem_low
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: work_mem
+  runtime_expected_effect: 'Should increase spill/blocking pressure for sort/hash/aggregate-heavy
+    plans more than simple localized controls.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 4
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__work_mem_low__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-balanced-v1__work_mem_low__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__default__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__default__analytics_clients
+  dataset_profile_id: pilot-region-imbalanced-v1
+  runtime_config_id: default
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - multiregion_union
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  network_profile_id: ''
+  cell_count: 6
+  instance_count: 40
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__default__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__default__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__default__coordinators
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__default__coordinators
+  dataset_profile_id: pilot-region-imbalanced-v1
+  runtime_config_id: default
+  target_group: coordinators
+  strategies:
+  - single_region_citus
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 2
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__default__coordinators/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__default__coordinators.yml
+  fdw_bootstrap_required: false
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__fetch_large__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__fetch_large__analytics_clients
+  dataset_profile_id: pilot-region-imbalanced-v1
+  runtime_config_id: fetch_large
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: fetch_size
+  runtime_expected_effect: 'Should reduce fetch batching overhead for high remote-row-flow
+    queries compared with fetch_small.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 2
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__fetch_large__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__fetch_large__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__fetch_small__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__fetch_small__analytics_clients
+  dataset_profile_id: pilot-region-imbalanced-v1
+  runtime_config_id: fetch_small
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: fetch_size
+  runtime_expected_effect: 'Should affect FDW remote-row-flow or WAN-sensitive queries
+    more than reduced/localized negative controls.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 2
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__fetch_small__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__fetch_small__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__wan_0ms__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__wan_0ms__analytics_clients
+  dataset_profile_id: pilot-region-imbalanced-v1
+  runtime_config_id: wan_0ms
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Control segment for the WAN companion corpus. It records/reset
+    network state but should not introduce synthetic delay.
+
+    '
+  network_profile_id: wan_0ms
+  cell_count: 2
+  instance_count: 4
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__wan_0ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__wan_0ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__wan_100ms__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__wan_100ms__analytics_clients
+  dataset_profile_id: pilot-region-imbalanced-v1
+  runtime_config_id: wan_100ms
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Strong synthetic WAN delay for FDW row-flow intervention
+    validation.
+
+    '
+  network_profile_id: wan_100ms
+  cell_count: 3
+  instance_count: 5
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__wan_100ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__wan_100ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__wan_40ms__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__wan_40ms__analytics_clients
+  dataset_profile_id: pilot-region-imbalanced-v1
+  runtime_config_id: wan_40ms
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Optional intermediate latency level for response-curve
+    validation.
+
+    '
+  network_profile_id: wan_40ms
+  cell_count: 1
+  instance_count: 2
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__wan_40ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__wan_40ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__work_mem_high__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__work_mem_high__analytics_clients
+  dataset_profile_id: pilot-region-imbalanced-v1
+  runtime_config_id: work_mem_high
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: work_mem
+  runtime_expected_effect: 'Should reduce spill/blocking pressure relative to work_mem_low
+    when the query is memory-sensitive.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 4
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__work_mem_high__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__work_mem_high__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__work_mem_low__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__work_mem_low__analytics_clients
+  dataset_profile_id: pilot-region-imbalanced-v1
+  runtime_config_id: work_mem_low
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: work_mem
+  runtime_expected_effect: 'Should increase spill/blocking pressure for sort/hash/aggregate-heavy
+    plans more than simple localized controls.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 4
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__work_mem_low__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-imbalanced-v1__work_mem_low__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients
+  dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+  runtime_config_id: default
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - multiregion_union
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  network_profile_id: ''
+  cell_count: 6
+  instance_count: 40
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__default__coordinators
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__default__coordinators
+  dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+  runtime_config_id: default
+  target_group: coordinators
+  strategies:
+  - single_region_citus
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 2
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__default__coordinators/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__default__coordinators.yml
+  fdw_bootstrap_required: false
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_large__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_large__analytics_clients
+  dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+  runtime_config_id: fetch_large
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: fetch_size
+  runtime_expected_effect: 'Should reduce fetch batching overhead for high remote-row-flow
+    queries compared with fetch_small.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 2
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_large__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_large__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_small__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_small__analytics_clients
+  dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+  runtime_config_id: fetch_small
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: fetch_size
+  runtime_expected_effect: 'Should affect FDW remote-row-flow or WAN-sensitive queries
+    more than reduced/localized negative controls.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 2
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_small__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_small__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_0ms__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_0ms__analytics_clients
+  dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+  runtime_config_id: wan_0ms
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Control segment for the WAN companion corpus. It records/reset
+    network state but should not introduce synthetic delay.
+
+    '
+  network_profile_id: wan_0ms
+  cell_count: 2
+  instance_count: 4
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_0ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_0ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_100ms__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_100ms__analytics_clients
+  dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+  runtime_config_id: wan_100ms
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Strong synthetic WAN delay for FDW row-flow intervention
+    validation.
+
+    '
+  network_profile_id: wan_100ms
+  cell_count: 3
+  instance_count: 5
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_100ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_100ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_40ms__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_40ms__analytics_clients
+  dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+  runtime_config_id: wan_40ms
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Optional intermediate latency level for response-curve
+    validation.
+
+    '
+  network_profile_id: wan_40ms
+  cell_count: 1
+  instance_count: 2
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_40ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_40ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_high__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_high__analytics_clients
+  dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+  runtime_config_id: work_mem_high
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: work_mem
+  runtime_expected_effect: 'Should reduce spill/blocking pressure relative to work_mem_low
+    when the query is memory-sensitive.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 4
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_high__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_high__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_low__analytics_clients
+  sweep_id: clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_low__analytics_clients
+  dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+  runtime_config_id: work_mem_low
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: work_mem
+  runtime_expected_effect: 'Should increase spill/blocking pressure for sort/hash/aggregate-heavy
+    plans more than simple localized controls.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 4
+  instance_manifest: master-regimes/generated/corpus/validation-holdout-v1/groups/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_low__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/validation-holdout-v1/sweeps/clean-run-eu-us-gac-validation-holdout-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_low__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false

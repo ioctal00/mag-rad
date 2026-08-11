@@ -1,0 +1,120 @@
+{% macro portal_locations() -%}
+    auth_basic "Master Regimes Demo";
+    auth_basic_user_file {{ cloudb_web_htpasswd_file }};
+
+    location = / {
+        root {{ cloudb_web_static_root }};
+        try_files /index.html =404;
+    }
+
+    location = /portal.css {
+        root {{ cloudb_web_static_root }};
+        try_files /portal.css =404;
+    }
+
+    location = /current-schema-erd.bs.svg {
+        root {{ cloudb_web_static_root }};
+        try_files /current-schema-erd.bs.svg =404;
+    }
+
+    location = /eu-us-gac-architecture.svg {
+        root {{ cloudb_web_static_root }};
+        try_files /eu-us-gac-architecture.svg =404;
+    }
+
+    location = /SKILL.md {
+        default_type text/markdown;
+        charset utf-8;
+        charset_types text/markdown;
+        root {{ cloudb_web_static_root }};
+        try_files /SKILL.md =404;
+    }
+
+    location /gac/ {
+        proxy_pass http://127.0.0.1:8081/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location /eu/ {
+        proxy_pass http://127.0.0.1:8082/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location /us/ {
+        proxy_pass http://127.0.0.1:8083/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location /viewer/ {
+        proxy_pass http://127.0.0.1:3000/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+
+    location /_next/ {
+        proxy_pass http://127.0.0.1:3000/_next/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:3000/api/;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+
+    location = /diagnosis-data.json {
+        proxy_pass http://127.0.0.1:3000/diagnosis-data.json;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+{%- endmacro %}
+
+server {
+    listen 80 default_server;
+    server_name {{ cloudb_web_server_name }};
+
+    location ^~ /.well-known/acme-challenge/ {
+        auth_basic off;
+        root {{ cloudb_web_tls_webroot }};
+        try_files $uri =404;
+    }
+
+{% if cloudb_web_tls_enabled | bool and cloudb_web_tls_cert_available | default(false) | bool and cloudb_web_tls_force_https | bool %}
+    location / {
+        return 301 https://$host$request_uri;
+    }
+{% else %}
+{{ portal_locations() }}
+{% endif %}
+}
+
+{% if cloudb_web_tls_enabled | bool and cloudb_web_tls_cert_available | default(false) | bool %}
+server {
+    listen 443 ssl http2;
+    server_name {{ cloudb_web_server_name }};
+
+    ssl_certificate {{ cloudb_web_tls_fullchain }};
+    ssl_certificate_key {{ cloudb_web_tls_privkey }};
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers off;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1d;
+
+{{ portal_locations() }}
+}
+{% endif %}

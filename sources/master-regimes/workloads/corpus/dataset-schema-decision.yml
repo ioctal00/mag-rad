@@ -1,0 +1,367 @@
+decision_id: dataset-schema-decision-v1
+depends_on:
+  regime_coverage: regime-coverage-v1
+  dataset_profiles:
+    - ../../datasets/profiles/geo-balanced.yml
+    - ../../datasets/profiles/geo-skew-heavy.yml
+    - ../../datasets/profiles/smoke.yml
+source_generator: citus-datagen
+source_schema: ../../citus-datagen/sql/minimal_schema.sql
+purpose: >
+  Plan B decision gate for deciding whether the current synthetic schema and
+  citus-datagen profiles are sufficient before expanding workload templates or
+  running a larger pre-clustering corpus.
+
+decision_summary:
+  overall_decision: strengthen_profiles_before_schema_change
+  schema_change_required_now: false
+  generator_change_required_now: true
+  rationale: >
+    The current schema already supports the core Citus/GAC joins: tenant
+    reference joins, colocated events/users joins, and non-colocated
+    events/global_users joins. It is sufficient for join_movement,
+    gac_finalization_heavy and well_reduced_localized. However, final claims for
+    remote_fetch_heavy-by-bytes and skew_imbalance require stronger dataset
+    capabilities than the current profile contracts prove. Start by improving
+    profiles/audits and only add schema columns if the next pilot still cannot
+    expose the missing signals.
+
+schema_inventory:
+  tables:
+    tenants:
+      distribution: reference_table
+      columns:
+        - tenant_id
+        - region
+        - tenant_tier
+        - tenant_status
+        - updated_at
+        - dimension_version
+      supports:
+        - supports_reference_join
+        - supports_tenant_tiers
+        - supports_region_partitioning
+    events:
+      distribution: distributed_by_tenant_id
+      columns:
+        - event_id
+        - tenant_id
+        - user_id
+        - value
+        - created_at
+      supports:
+        - supports_distribution_key_filter
+        - supports_selective_filters
+        - supports_large_scan
+      missing_for:
+        - supports_wide_payload
+    users:
+      distribution: distributed_by_tenant_id_colocated_with_events
+      columns:
+        - tenant_id
+        - user_id
+        - user_segment
+        - user_status
+        - signup_at
+        - updated_at
+      supports:
+        - supports_colocated_user_join
+    global_users:
+      distribution: distributed_by_user_id
+      columns:
+        - tenant_id
+        - user_id
+        - user_segment
+        - user_status
+        - home_region
+        - signup_at
+        - updated_at
+      supports:
+        - supports_global_users
+        - supports_global_user_dimension
+        - supports_non_colocated_join
+
+capability_decisions:
+  - capability: supports_reference_join
+    current_status: supported
+    evidence_source: schema
+    current_profiles:
+      - geo-balanced-v1
+      - geo-skew-heavy-v1
+      - smoke-v1
+    decision: keep
+
+  - capability: supports_colocated_user_join
+    current_status: supported
+    evidence_source: schema
+    current_profiles:
+      - geo-balanced-v1
+      - geo-skew-heavy-v1
+      - smoke-v1
+    decision: keep
+
+  - capability: supports_global_users
+    current_status: supported
+    evidence_source: schema
+    current_profiles:
+      - geo-balanced-v1
+      - geo-skew-heavy-v1
+      - smoke-v1
+    decision: keep
+
+  - capability: supports_global_user_dimension
+    current_status: supported
+    evidence_source: schema
+    current_profiles:
+      - geo-balanced-v1
+      - geo-skew-heavy-v1
+      - smoke-v1
+    decision: keep
+
+  - capability: supports_non_colocated_join
+    current_status: supported
+    evidence_source: schema
+    current_profiles:
+      - geo-balanced-v1
+      - geo-skew-heavy-v1
+      - smoke-v1
+    decision: keep
+
+  - capability: supports_cross_region_user_overlap
+    current_status: not_supported
+    evidence_source: profile_contract
+    current_profiles: []
+    decision: defer_until_us
+    reason: >
+      Current generator keeps region ranges separate. Cross-region overlap is
+      not needed before US and should not be added until multi-region questions
+      require it.
+
+  - capability: supports_high_group_cardinality
+    current_status: supported
+    evidence_source: scale_contract
+    current_profiles:
+      - geo-balanced-v1
+      - geo-skew-heavy-v1
+    decision: keep_and_audit
+    required_audit:
+      - table_counts.events
+      - approximate_distinct_groups
+
+  - capability: supports_hot_tenants
+    current_status: supported_by_skew_profiles
+    evidence_source: datagen_distribution
+    current_profiles:
+      - geo-skew-heavy-v1
+    decision: strengthen_profile
+    required_audit:
+      - hot_tenant_manifest.csv
+      - tenant_distribution.csv
+      - tenant_skew.top1_event_share
+
+  - capability: supports_hot_time_windows
+    current_status: not_supported
+    evidence_source: generator_code
+    current_profiles: []
+    decision: add_generator_profile_later_if_needed
+    reason: >
+      Events are generated across the lookback window, but there is no first-class
+      hot-window concentration. Do not change schema for this yet; add a
+      generator/profile option only if skew_imbalance remains weak after stronger
+      hot-tenant profiles.
+
+  - capability: supports_hot_tenant_skew
+    current_status: supported_by_skew_profiles
+    evidence_source: datagen_distribution
+    current_profiles:
+      - geo-skew-heavy-v1
+    decision: strengthen_profile
+    required_audit:
+      - tenant_skew.events_cv
+      - tenant_skew.max_to_mean_ratio
+      - tenant_skew.top5_event_share
+
+  - capability: supports_shard_skew
+    current_status: not_confirmed_by_current_profiles
+    evidence_source: audit_required
+    current_profiles: []
+    decision: strengthen_profile_if_needed
+    required_audit:
+      - shard_distribution.csv
+      - shard_distribution.cv
+      - worker_rows_cv
+    reason: >
+      Hot tenants can induce tenant-level skew, but current audit did not prove
+      enough shard-size skew to declare this capability. Citus shard
+      placement/hash mapping must confirm it before it is used as a final
+      skew_imbalance claim.
+
+  - capability: supports_wide_payload
+    current_status: not_supported
+    evidence_source: schema
+    current_profiles: []
+    decision: minimal_schema_extension_candidate
+    reason: >
+      events currently has only numeric/time fields. Row-count fan-in can be
+      measured, but bytes-heavy remote_fetch evidence needs an explicit payload
+      or width variation.
+    proposed_change_if_needed:
+      table: events
+      columns:
+        - payload_bytes integer
+        - payload text
+      note: >
+        Prefer a generated fixed/variable-width payload only if next pilot shows
+        row-count based remote_fetch evidence is insufficient.
+
+  - capability: supports_large_scan
+    current_status: supported_by_medium_profiles
+    evidence_source: scale_contract
+    current_profiles:
+      - geo-balanced-v1
+      - geo-skew-heavy-v1
+    decision: keep
+
+  - capability: supports_distribution_key_filter
+    current_status: supported
+    evidence_source: schema
+    current_profiles:
+      - geo-balanced-v1
+      - geo-skew-heavy-v1
+      - smoke-v1
+    decision: keep
+
+  - capability: supports_region_partitioning
+    current_status: profile_supported
+    evidence_source: profile_contract
+    current_profiles:
+      - geo-balanced-v1
+      - geo-skew-heavy-v1
+      - smoke-v1
+    decision: keep_for_us_later
+
+  - capability: supports_region_imbalance
+    current_status: supported_by_companion_profile
+    evidence_source: profile_contract
+    current_profiles:
+      - pilot-region-imbalanced-v1
+    decision: keep_as_companion_evidence
+    required_audit:
+      - remote_region_actual_rows_max_share
+      - remote_region_tuple_bytes_max_share
+      - region_fragments.csv
+    reason: >
+      Region imbalance is not part of the baseline balanced/skew-heavy pair.
+      It is handled as a targeted companion corpus/profile so the main regime
+      model can learn imbalance evidence without using dataset identity as a
+      clustering shortcut.
+
+  - capability: supports_region_local_skew_asymmetry
+    current_status: implemented_for_probe
+    evidence_source: regions_distribution_override
+    current_profiles:
+      - pilot-region-local-skew-asymmetric-v1
+    decision: targeted_companion_probe_first
+    required_audit:
+      - worker_task_within_region_scan_rows_cv_max
+      - worker_task_scan_actual_rows_max_share
+      - region_fragments.csv
+      - worker_task_fragments.csv
+    reason: >
+      Dataset profiles can now express per-region distribution overrides through
+      `regions.<region>.distribution`. The first probe profile sets EU to
+      heavy/hot_tenants and US to balanced/uniform. This remains a targeted
+      companion/probe capability, not a reason to rerun the full baseline.
+
+  - capability: supports_etl_rollups
+    current_status: supported_by_analytics_bootstrap
+    evidence_source: runtime_pipeline
+    current_profiles:
+      - geo-balanced-v1
+      - geo-skew-heavy-v1
+      - smoke-v1
+    decision: keep
+
+  - capability: supports_tenant_tiers
+    current_status: supported
+    evidence_source: schema
+    current_profiles:
+      - geo-balanced-v1
+      - geo-skew-heavy-v1
+      - smoke-v1
+    decision: keep
+
+  - capability: supports_selective_filters
+    current_status: supported
+    evidence_source: schema
+    current_profiles:
+      - geo-balanced-v1
+      - geo-skew-heavy-v1
+      - smoke-v1
+    decision: keep
+
+  - capability: supports_materialized_refresh
+    current_status: supported_by_pipeline
+    evidence_source: analytics_bootstrap
+    current_profiles:
+      - geo-balanced-v1
+      - geo-skew-heavy-v1
+      - smoke-v1
+    decision: keep
+
+profile_decisions:
+  - dataset_profile_id: geo-balanced-v1
+    role: balanced_control
+    decision: keep
+    must_audit:
+      - balanced tenant distribution
+      - table counts
+      - no hot tenant manifest expectation
+
+  - dataset_profile_id: geo-skew-heavy-v1
+    role: skew_positive_case
+    decision: keep_for_hot_tenant_skew_but_not_shard_skew
+    must_audit:
+      - tenant skew
+      - shard skew
+      - hot tenant parameter availability
+    proposed_adjustments:
+      - Increase hot_tenant_pct/hot_event_pct only if current audit still shows
+        weak `task_rows_cv` and `worker_rows_cv`.
+      - Add hot-window support only after confirming tenant-only skew is
+        insufficient.
+      - Do not declare `supports_shard_skew=true` until shard distribution or
+        worker/task evidence confirms it.
+
+  - dataset_profile_id: smoke-v1
+    role: parser_smoke_only
+    decision: keep_for_smoke_not_regime_evidence
+    reason: >
+      Smoke size is useful for parser/collector health, not for final regime
+      evidence or clustering.
+
+go_no_go:
+  current_gate_result: proceed_to_pre_us_dataset_audit_and_template_expansion
+  latest_audit_result:
+    geo_balanced_v1:
+      status: pass
+      audit_path: ../master-regimes-infra/generated/runs/dataset-loads/20260624T185355Z-geo-balanced-v1-eu-audit-only/capability_audit.json
+      summary: Balanced profile produced uniform tenant distribution as expected.
+    geo_skew_heavy_v1_sql:
+      status: fail
+      audit_path: ../master-regimes-infra/generated/runs/dataset-loads/20260624T185417Z-geo-skew-heavy-v1-eu/capability_audit.json
+      summary: SQL load path ignored hot_tenants distribution and produced uniform tenant rows.
+    geo_skew_heavy_v1_copy_pipe:
+      status: partial_pass
+      audit_path: ../master-regimes-infra/generated/runs/dataset-loads/20260624T185622Z-geo-skew-heavy-v1-eu/capability_audit.json
+      summary: copy_pipe produced strong tenant skew, but not enough shard-size skew to declare supports_shard_skew.
+  allowed_next_actions:
+    - Run capability audit for geo-balanced-v1 and geo-skew-heavy-v1 on active EU data.
+    - Add P1 templates that use already-supported capabilities.
+    - Use copy_pipe or fix SQL load path before relying on skew profiles.
+    - Add stronger skew profile only if current audit remains weak after copy_pipe/fixed SQL.
+  blocked_next_actions:
+    - Do not add US because of dataset uncertainty.
+    - Do not add wide payload schema before proving row-count fan-in is insufficient.
+    - Do not treat hot_tenant_skew as shard/worker skew without audit evidence.
+    - Do not run a large corpus with smoke-v1 as regime evidence.

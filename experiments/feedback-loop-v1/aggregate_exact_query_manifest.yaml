@@ -1,0 +1,32 @@
+contract_version: feedback-loop-aggregate-exact-query-v1
+automatic_sql_semantic_similarity: false
+trajectories:
+  - id: trajectory_aggregate_exact_full_flow
+    physical_shape: aggregate_full_flow
+    analytical_intent: >-
+      Prebrojati sve događaje iz aktivna dva regiona i vratiti tačne vremenske
+      granice, uz poređenje raw GAC fan-ina i regionalne parcijalne agregacije.
+    logical_question_id: event_exact_full_flow_summary
+    baseline_template_id: gac_fdw_multiregion_event_exact_raw_summary
+    reviewed_equivalent_template_ids:
+      - gac_fdw_multiregion_event_exact_regional_summary
+    suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+    parameter_bindings: {}
+    dataset_binding: inherit_current_locked_compatible_dataset
+    topology_binding: existing_eu_us_gac_no_change
+    result_contract_id: event_exact_full_flow_summary_v1
+    result_contract:
+      mode: ordered_sequence_hash
+      deterministic_order: single_exact_result_row
+      rewrite_acceptance: both multiset and ordered hashes must match
+    allowed_identity_modes:
+      - same_normalized_sql
+      - same_sql_declared_intervention
+      - manual_logical_question_link
+    allowed_actions:
+      - fdw_fetch_size_10000
+      - regional_pushdown_rewrite
+      - wan_delay_10ms_probe
+    required_dataset_capabilities:
+      - supports_region_partitioning
+      - supports_large_scan

@@ -1,0 +1,288 @@
+{% macro region_candidates(schema_name, region_name) -%}
+{% if query_shape == 'event_value_desc' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       e.user_id as key_2, null::timestamptz as bucket_at,
+       e.value::double precision as metric, e.event_id, e.created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+order by metric desc, key_1, key_2, event_id
+{% elif query_shape == 'event_value_asc' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       e.user_id as key_2, null::timestamptz as bucket_at,
+       e.value::double precision as metric, e.event_id, e.created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+order by metric asc, key_1, key_2, event_id
+{% elif query_shape == 'event_recent' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       e.user_id as key_2, null::timestamptz as bucket_at,
+       extract(epoch from e.created_at)::double precision as metric,
+       e.event_id, e.created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+order by metric desc, key_1, key_2, event_id
+{% elif query_shape == 'event_oldest' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       e.user_id as key_2, null::timestamptz as bucket_at,
+       extract(epoch from e.created_at)::double precision as metric,
+       e.event_id, e.created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+order by metric asc, key_1, key_2, event_id
+{% elif query_shape == 'event_deviation' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       e.user_id as key_2, null::timestamptz as bucket_at,
+       abs(e.value - 500.0)::double precision as metric,
+       e.event_id, e.created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+order by metric desc, key_1, key_2, event_id
+{% elif query_shape == 'event_value_squared' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       e.user_id as key_2, null::timestamptz as bucket_at,
+       round((e.value::double precision * e.value::double precision)::numeric, 6)::double precision
+         as metric,
+       e.event_id, e.created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+order by metric desc, key_1, key_2, event_id
+{% elif query_shape == 'event_log_value' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       e.user_id as key_2, null::timestamptz as bucket_at,
+       round(ln(1.0 + abs(e.value::double precision))::numeric, 6)::double precision
+         as metric,
+       e.event_id, e.created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+order by metric desc, key_1, key_2, event_id
+{% elif query_shape == 'event_recent_high_value' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       e.user_id as key_2, null::timestamptz as bucket_at,
+       extract(epoch from e.created_at)::double precision as metric,
+       e.event_id, e.created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}' and e.value >= 750.0
+order by metric desc, key_1, key_2, event_id
+{% elif query_shape == 'event_old_low_value' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       e.user_id as key_2, null::timestamptz as bucket_at,
+       extract(epoch from e.created_at)::double precision as metric,
+       e.event_id, e.created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}' and e.value <= 250.0
+order by metric asc, key_1, key_2, event_id
+{% elif query_shape == 'event_tenant_weighted' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       e.user_id as key_2, null::timestamptz as bucket_at,
+       round(
+         (e.value::double precision / (1 + (e.tenant_id % 17))::double precision)::numeric,
+         6
+       )::double precision as metric,
+       e.event_id, e.created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+order by metric desc, key_1, key_2, event_id
+{% elif query_shape == 'tenant_sum' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       null::bigint as key_2, null::timestamptz as bucket_at,
+       sum(e.value)::double precision as metric, null::bigint as event_id,
+       null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+group by e.tenant_id
+order by metric desc, key_1
+{% elif query_shape == 'tenant_count' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       null::bigint as key_2, null::timestamptz as bucket_at,
+       count(*)::double precision as metric, null::bigint as event_id,
+       null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+group by e.tenant_id
+order by metric desc, key_1
+{% elif query_shape == 'tenant_avg' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       null::bigint as key_2, null::timestamptz as bucket_at,
+       avg(e.value)::double precision as metric, null::bigint as event_id,
+       null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+group by e.tenant_id
+order by metric desc, key_1
+{% elif query_shape == 'tenant_max' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       null::bigint as key_2, null::timestamptz as bucket_at,
+       max(e.value)::double precision as metric, null::bigint as event_id,
+       null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+group by e.tenant_id
+order by metric desc, key_1
+{% elif query_shape == 'tenant_min' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       null::bigint as key_2, null::timestamptz as bucket_at,
+       min(e.value)::double precision as metric, null::bigint as event_id,
+       null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+group by e.tenant_id
+order by metric asc, key_1
+{% elif query_shape == 'tenant_high_count' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       null::bigint as key_2, null::timestamptz as bucket_at,
+       count(*)::double precision as metric, null::bigint as event_id,
+       null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}' and e.value >= 750.0
+group by e.tenant_id
+order by metric desc, key_1
+{% elif query_shape == 'tenant_user_sum' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       e.user_id as key_2, null::timestamptz as bucket_at,
+       sum(e.value)::double precision as metric, null::bigint as event_id,
+       null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+group by e.tenant_id, e.user_id
+order by metric desc, key_1, key_2
+{% elif query_shape == 'tenant_user_count' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       e.user_id as key_2, null::timestamptz as bucket_at,
+       count(*)::double precision as metric, null::bigint as event_id,
+       null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+group by e.tenant_id, e.user_id
+order by metric desc, key_1, key_2
+{% elif query_shape == 'tenant_day_sum' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       null::bigint as key_2, date_trunc('day', e.created_at) as bucket_at,
+       sum(e.value)::double precision as metric, null::bigint as event_id,
+       null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+group by e.tenant_id, date_trunc('day', e.created_at)
+order by metric desc, key_1, bucket_at
+{% elif query_shape == 'tenant_day_count' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       null::bigint as key_2, date_trunc('day', e.created_at) as bucket_at,
+       count(*)::double precision as metric, null::bigint as event_id,
+       null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+group by e.tenant_id, date_trunc('day', e.created_at)
+order by metric desc, key_1, bucket_at
+{% elif query_shape == 'tenant_value_range' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       null::bigint as key_2, null::timestamptz as bucket_at,
+       round((max(e.value) - min(e.value))::numeric, 6)::double precision as metric,
+       null::bigint as event_id, null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+group by e.tenant_id
+order by metric desc, key_1
+{% elif query_shape == 'tenant_distinct_users' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       null::bigint as key_2, null::timestamptz as bucket_at,
+       count(distinct e.user_id)::double precision as metric,
+       null::bigint as event_id, null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+group by e.tenant_id
+order by metric desc, key_1
+{% elif query_shape == 'tenant_even_user_count' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       null::bigint as key_2, null::timestamptz as bucket_at,
+       count(*)::double precision as metric, null::bigint as event_id,
+       null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}' and e.user_id % 2 = 0
+group by e.tenant_id
+order by metric desc, key_1
+{% elif query_shape == 'tenant_midband_sum' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       null::bigint as key_2, null::timestamptz as bucket_at,
+       round(sum(e.value)::numeric, 6)::double precision as metric, null::bigint as event_id,
+       null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+  and e.value between 250.0 and 750.0
+group by e.tenant_id
+order by metric desc, key_1
+{% elif query_shape == 'tenant_day_avg' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       null::bigint as key_2, date_trunc('day', e.created_at) as bucket_at,
+       round(avg(e.value)::numeric, 6)::double precision as metric, null::bigint as event_id,
+       null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+group by e.tenant_id, date_trunc('day', e.created_at)
+order by metric desc, key_1, bucket_at
+{% elif query_shape == 'tenant_hour_count' %}
+select '{{ region_name }}'::text as source_region, e.tenant_id as key_1,
+       null::bigint as key_2, date_trunc('hour', e.created_at) as bucket_at,
+       count(*)::double precision as metric, null::bigint as event_id,
+       null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+group by e.tenant_id, date_trunc('hour', e.created_at)
+order by metric desc, key_1, bucket_at
+{% elif query_shape == 'user_sum' %}
+select '{{ region_name }}'::text as source_region, e.user_id as key_1,
+       null::bigint as key_2, null::timestamptz as bucket_at,
+       round(sum(e.value)::numeric, 6)::double precision as metric, null::bigint as event_id,
+       null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+group by e.user_id
+order by metric desc, key_1
+{% elif query_shape == 'user_count' %}
+select '{{ region_name }}'::text as source_region, e.user_id as key_1,
+       null::bigint as key_2, null::timestamptz as bucket_at,
+       count(*)::double precision as metric, null::bigint as event_id,
+       null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+group by e.user_id
+order by metric desc, key_1
+{% elif query_shape == 'user_value_range' %}
+select '{{ region_name }}'::text as source_region, e.user_id as key_1,
+       null::bigint as key_2, null::timestamptz as bucket_at,
+       round((max(e.value) - min(e.value))::numeric, 6)::double precision as metric,
+       null::bigint as event_id, null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+group by e.user_id
+order by metric desc, key_1
+{% elif query_shape == 'user_day_sum' %}
+select '{{ region_name }}'::text as source_region, e.user_id as key_1,
+       null::bigint as key_2, date_trunc('day', e.created_at) as bucket_at,
+       round(sum(e.value)::numeric, 6)::double precision as metric, null::bigint as event_id,
+       null::timestamptz as created_at
+from {{ schema_name }}.events e
+where e.created_at >= timestamptz '{{ cutoff_ts }}'
+group by e.user_id, date_trunc('day', e.created_at)
+order by metric desc, key_1, bucket_at
+{% else %}
+select 1 / 0 as unsupported_query_shape
+{% endif %}
+limit {{ limit_k }}
+{%- endmacro %}
+
+with regional_candidates as (
+  ({{ region_candidates('fdw_eu', 'eu') }})
+  union all
+  ({{ region_candidates('fdw_us', 'us') }})
+{% if include_apac %}
+  union all
+  ({{ region_candidates('fdw_apac', 'apac') }})
+{% endif %}
+)
+select source_region, key_1, key_2, bucket_at, metric, event_id, created_at
+from regional_candidates
+{% if query_shape in ['event_value_asc', 'tenant_min', 'event_oldest', 'event_old_low_value'] %}
+order by metric asc, source_region, key_1, key_2, bucket_at, event_id
+{% else %}
+order by metric desc, source_region, key_1, key_2, bucket_at, event_id
+{% endif %}
+limit {{ limit_k }};

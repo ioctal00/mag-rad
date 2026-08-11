@@ -1,0 +1,80 @@
+sweep_id: pressure-raw-v1-n3-colocation-holdout__n3-medium-apac-dominant-wide-global-dim-v1__gac_force_remote_join__analytics_clients
+region: eu
+datasets:
+- id: n3-medium-apac-dominant-wide-global-dim-v1
+  profile: master-regimes/datasets/profiles/n3-medium-apac-dominant-wide-global-dim.yml
+  load_method: copy_pipe
+  adapter: citus_datagen
+  regions: &id001
+  - eu
+  - us
+  - apac
+runtime_configs:
+- id: gac_force_remote_join
+  pg_options:
+    enable_hashjoin: 'off'
+    enable_mergejoin: 'off'
+    enable_nestloop: 'off'
+  regional_pg_options: {}
+  psql_variables: {}
+  fdw_server_options: {}
+  network_profile: {}
+  intervention_axis: join_strategy
+  expected_effect: 'Each region receives one joined remote SQL statement, allowing
+    auto_explain to expose the regional collocated or MapMerge Citus plan.
+
+    '
+workload:
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1-n3-colocation-holdout/groups/pressure-raw-v1-n3-colocation-holdout__n3-medium-apac-dominant-wide-global-dim-v1__gac_force_remote_join__analytics_clients/instance_manifest.csv
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260802
+collection:
+  global_stats_scope: none
+  target_group: analytics_clients
+  citus_explain_all_tasks: true
+  hard_timeout_seconds: 1800
+  timeout_grace_seconds: 30
+  cache_policy: mixed_cache_first_observed
+  record_run_order: true
+  record_buffer_features: true
+  os_sampler: true
+  os_sampler_node_groups: &id002
+  - db_nodes
+  - analytics_clients
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: true
+  remote_edge_context: true
+  fdw_auto_explain: true
+  fdw_auto_explain_regions: &id003
+  - eu
+  - us
+  - apac
+  fdw_bootstrap:
+    enabled: true
+    regions: *id001
+    adapter: citus_datagen
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  measurement_lane: global_gac_serial
+  query_concurrency: 1
+  representative_region: ''
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  repetitions_default: 3
+  sentinel_repetitions: 3
+  cache_features_in_default_model: false
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260802
+  record_run_order: true
+  record_buffer_features: true
+  os_sampler: true
+  os_sampler_node_groups: *id002
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: true
+  remote_edge_context: true
+  remote_edge_context_requested: true
+  fdw_auto_explain: true
+  fdw_auto_explain_regions: *id003
+  fdw_auto_explain_requested: true

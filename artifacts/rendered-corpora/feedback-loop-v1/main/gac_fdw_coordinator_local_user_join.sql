@@ -1,0 +1,48 @@
+with events_all as materialized (
+  select
+    'eu'::text as source_region,
+    e.tenant_id,
+    e.user_id,
+    e.value
+  from fdw_eu.events e
+  where e.created_at >= timestamptz '2026-06-01 00:00:00+00'
+    and mod(e.tenant_id, 1::bigint) = 0
+  union all
+  select
+    'us'::text as source_region,
+    e.tenant_id,
+    e.user_id,
+    e.value
+  from fdw_us.events e
+  where e.created_at >= timestamptz '2026-06-01 00:00:00+00'
+    and mod(e.tenant_id, 1::bigint) = 0
+),
+users_all as materialized (
+  select
+    'eu'::text as source_region,
+    u.tenant_id,
+    u.user_id,
+    u.user_segment,
+    u.user_status
+  from fdw_eu.users u
+  union all
+  select
+    'us'::text as source_region,
+    u.tenant_id,
+    u.user_id,
+    u.user_segment,
+    u.user_status
+  from fdw_us.users u
+)
+select
+  u.user_segment,
+  u.user_status,
+  count(*) as events_count,
+  round(sum(e.value::numeric), 6) as total_value
+from events_all e
+join users_all u
+  on u.source_region = e.source_region
+ and u.tenant_id = e.tenant_id
+ and u.user_id = e.user_id
+group by u.user_segment, u.user_status
+order by total_value desc, u.user_segment, u.user_status;

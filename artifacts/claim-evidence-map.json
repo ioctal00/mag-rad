@@ -1,0 +1,107 @@
+{
+  "schema_version": 3,
+  "claims": [
+    {
+      "claim_id": "collector_contract_correctness",
+      "statement": "Viseslojni collector povezuje GAC, regionalne i worker/task dokaze u jedan trag uz eksplicitnu provjeru identiteta i porijekla.",
+      "scope": "Kontrolisana PostgreSQL/Citus/FDW topologija i objavljeni stratifikovani audit; nije populacijska stopa greske za svaku infrastrukturu.",
+      "evidence": [
+        "artifacts/results/collector-correctness-v2/collector_correctness_summary.json",
+        "artifacts/results/collector-correctness-v2/manual_audit_results.csv"
+      ]
+    },
+    {
+      "claim_id": "f19_regime_characterization",
+      "statement": "Autoritativni F19 pogled izdvaja cetiri opisna kompozitna prototipa i cuva sekundarnu pripadnost mjesovitih izvrsenja.",
+      "scope": "Odgovor na RQ1-RQ4 u karakterizacijskom korpusu; clanstvo nije vjerovatnoca uzroka niti procjena koristi intervencije.",
+      "evidence": [
+        "releases/rq-alignment-v2/model_summary.csv",
+        "releases/rq-alignment-v2/prototype_summary.csv",
+        "releases/rq-alignment-v2/mixed_case_memberships.csv",
+        "releases/rq-alignment-v2/mixed_case_feature_support.csv"
+      ]
+    },
+    {
+      "claim_id": "wide_intervention_contract",
+      "statement": "Siroki program sadrzi 2.607 izvrsenja, 869 kontrolisanih uslova i 418 prihvatljivih prije/poslije parova iz vise porodica intervencija.",
+      "scope": "Dokazuje formiranje i fizicki audit deklarisane intervencije; nije finalna evaluacija univerzalnog izbora akcije.",
+      "evidence": [
+        "artifacts/rendered-corpora/pressure-raw-v1/program_summary.json",
+        "artifacts/results/pressure-actionability-v1/corpus/consolidation_manifest.json",
+        "artifacts/results/pressure-actionability-v1/action_audit/mitigation_pair_audit.csv"
+      ]
+    },
+    {
+      "claim_id": "longitudinal_intervention_record",
+      "statement": "Deklarisana DBA promjena moze se pratiti kao provjerena tranzicija izmedju R6 profila, sirovih signala i end-to-end ishoda uz rollback.",
+      "scope": "Izvrsene agregacijske, join/pushdown, konfiguracijske i emulirane mrezne promjene u jednoj kontrolisanoj infrastrukturi.",
+      "evidence": [
+        "releases/feedback-loop-execution-v1/main/decision_log.jsonl",
+        "releases/feedback-loop-execution-v1/main/trajectory_transitions.csv",
+        "releases/feedback-loop-execution-v1/main/result_equivalence_audit.csv",
+        "releases/feedback-loop-execution-v1/main/rollback_audit.csv",
+        "releases/feedback-loop-analysis-v1/table_transition_summary.csv"
+      ]
+    },
+    {
+      "claim_id": "representation_ablation",
+      "statement": "Puna viseslojna reprezentacija daje najkorisniju kombinaciju pokrivenosti, Top-1 rezultata i regreta u kljucnim E1-E4 provjerama bez fitovanja na zavrsnim panelima.",
+      "scope": "Postojeci razvojni, zavrsni DBA i kontrolisani topology paneli; rezultat nije dokaz univerzalne prednosti na drugoj infrastrukturi.",
+      "evidence": [
+        "releases/representation-ablation-e1-e4-v1/representation_summary.csv",
+        "releases/representation-ablation-e1-e4-v1/leakage_audit.json",
+        "releases/representation-ablation-e1-e4-v1/coverage_thresholds.csv"
+      ]
+    },
+    {
+      "claim_id": "controlled_topology_shift",
+      "statement": "N2 u N3 pomak pomjera fizicku reprezentaciju izvan zamrznute N2 granice, ali u kontrolisanom panelu ne mijenja najbolju od tri poznate akcije; nakon lokalnog N3 iskustva cross-query pokrivenost se vraca.",
+      "scope": "Kontrolisani topology-memory panel; P99 je empirijska granica fizicke pokrivenosti, ne sigurnosna vjerovatnoca.",
+      "evidence": [
+        "releases/consolidated-evaluation-v1/dataset_provenance.csv",
+        "releases/consolidated-evaluation-v1/sql_identity_audit.csv",
+        "releases/consolidated-evaluation-v1/coverage_regret_curve.csv"
+      ]
+    },
+    {
+      "claim_id": "cross_query_transfer_boundary",
+      "statement": "Fizicka blizina pomaze organizovanju historije i detekciji nepokrivenosti, ali ne garantuje jednak odziv na intervenciju za novi SQL oblik.",
+      "scope": "Potvrdni panel novih SQL oblika i q08 failure analiza; lokalna direktna historija se ne predstavlja kao cross-query generalizacija.",
+      "evidence": [
+        "releases/confirmatory-action-replication-v1/evaluation_summary.csv",
+        "releases/confirmatory-action-replication-v1/per_scenario_predictions.csv",
+        "releases/retrieval-density-geometry-audit-v1/prior_panel_memory_comparison.csv",
+        "examples/Q08-NEIGHBORS/q08_failure_analysis.json"
+      ]
+    },
+    {
+      "claim_id": "action_selection_sample_size",
+      "statement": "Potvrdni panel koristi 300 fizickih izvrsenja za stabilizaciju ishoda 15 novih SQL odluka; prequential politika izdaje 14 preporuka i pogadja 8 pobjednika.",
+      "scope": "Offline audit nazivnika, intervala nesigurnosti i uparenog poredjenja; ne povecava broj nezavisnih SQL odluka i ne predstavlja novu infrastrukturnu evaluaciju.",
+      "evidence": [
+        "releases/action-selection-sample-size-audit-v1/experimental_units.csv",
+        "releases/action-selection-sample-size-audit-v1/confirmatory_top1_uncertainty.csv",
+        "releases/action-selection-sample-size-audit-v1/paired_comparison.json"
+      ]
+    },
+    {
+      "claim_id": "temporal_reproducibility_boundary",
+      "statement": "Glavni noviji paneli vezuju SQL cutoffs za zamrznuti dataset oslonac, dok je zajednicki stariji korpus modela F19 i F21-dev oznacen kao slabije temporalno ponovljiv.",
+      "scope": "Audit verzionisanih SQL i dataset artefakata; nije nezavisan row-level checksum novog database reloada.",
+      "evidence": [
+        "releases/temporal-validity-audit-v1/temporal_validity_audit.json",
+        "releases/temporal-validity-audit-v1/temporal_validity_summary.csv",
+        "reproducibility/dataset-catalog.csv"
+      ]
+    },
+    {
+      "claim_id": "legacy_colocation_analysis",
+      "statement": "Raniji Ridge model moze rangirati korist unaprijed definisane kolokacijske akcije unutar pokrivenog panela, ali nije primarni izlaz rada.",
+      "scope": "Historijska sekundarna analiza jedne poznate akcije; ne bira akciju, ne utvrdjuje uzrok i ne predstavlja univerzalni optimizer.",
+      "evidence": [
+        "artifacts/results/pressure-actionability-v1/ranking/ranking_summary.csv",
+        "artifacts/results/pressure-actionability-v1/eligibility/eligibility_manifest.json"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+instance_id,template_id,param_json,rendered_sql_path,expected_shape_tags
+a1_rolling_aggregate,a1_rolling_aggregate,"{""lookback_days"":30}",psql-benchmarks/sql/stage_a/a1_rolling_aggregate.sql,"regional_reduction,low_global_fanin"
+a4_user_top_k,a4_user_top_k,"{""lookback_days"":30,""limit_rows"":20}",psql-benchmarks/sql/stage_a/a4_user_top_k.sql,"top_k,global_sort"
+e7_non_colocated_global_user_join,e7_non_colocated_global_user_join,"{""lookback_days"":30}",psql-benchmarks/sql/stage_a/e7_non_colocated_global_user_join.sql,"non_colocated_join,repartition"

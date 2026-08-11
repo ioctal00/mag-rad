@@ -1,0 +1,180 @@
+contract_id: thesis-claim-evidence-v1
+thesis_claim_map: ../master-regimes-thesis/claims/claim-evidence-map.md
+
+claims:
+  - id: RQ1
+    kind: research_question
+    status: answered_in_tested_corpus
+    thesis_section: "RQ1 i H1: ablacija reprezentacije"
+    thesis_labels:
+      - tab:rq1-representation-ablation
+      - tab:final-feature-groups
+    evidence_files:
+      - path: analysis/reports/stats-ceb-representation-audit-v1/q100_feature_distance_audit.csv
+        required_columns:
+          - feature
+          - q100_raw_value
+          - squared_distance_share
+          - q100_semantic_value
+      - path: configs/features/feature_semantic_contract_v2.yml
+      - path: analysis/reports/stats-ceb-semantic-v2b-holdout/holdout_v1_v2_comparison.csv
+        required_columns:
+          - query_run_id
+          - v1_ood_above_frozen_p99
+          - v2_ood_above_frozen_p99
+    boundary: >
+      Odgovor vrijedi za testirani korpus; relativni pokazatelji nisu
+      univerzalno dovoljan opis svih distribuiranih baza.
+
+  - id: RQ2
+    kind: research_question
+    status: answered_with_macro_and_operational_resolution
+    thesis_section: "RQ2: broj i profil režima"
+    thesis_labels:
+      - tab:rq2-k-comparison
+      - tab:rq2-regime-profiles
+    evidence_files:
+      - path: analysis/reports/clean-run-v1-claim-stress-test/k_2_8_summary.csv
+        required_columns:
+          - k
+          - silhouette_hard_labels_mean
+          - modified_partition_coefficient_mean
+          - seed_ari_mean
+      - path: analysis/reports/clean-run-v1-claim-stress-test/k3_k4_contingency.csv
+        required_columns: [k4_cluster, "0", "1", "2"]
+    boundary: >
+      k=3 je grublja geometrijska makrostruktura, a k=4 finija operativna
+      rezolucija; nijedna nije univerzalna prirodna taksonomija.
+
+  - id: RQ3
+    kind: research_question
+    status: answered_with_internal_convergent_evidence
+    thesis_section: "RQ3 i H2: vrijednost neizrazite pripadnosti"
+    thesis_labels:
+      - tab:rq3-membership-quality
+      - tab:rq3-hard-comparison
+    evidence_files:
+      - path: analysis/reports/clean-run-v1-clustering-algorithm-comparison/fcm_membership_quality_summary.csv
+        required_columns:
+          - membership_quality_class
+          - rows
+          - share
+      - path: analysis/reports/clean-run-v1-clustering-algorithm-comparison/hard_fuzzy_uncertainty_convergence.csv
+        required_columns:
+          - algorithm
+          - nonclear_rows
+          - spearman_fcm_margin_vs_hard_margin
+    boundary: >
+      Fuzzy članstvo zadržava neodlučnost, ali nije procenat vremena, uzroka
+      niti fizičkog intenziteta režima.
+
+  - id: RQ4
+    kind: research_question
+    status: answered_by_profiles_and_topology_contrast
+    thesis_section: "RQ4: pokazatelji koji razlikuju prototipe"
+    thesis_labels:
+      - tab:rq2-regime-profiles
+      - tab:h4-skew-signals
+      - tab:case-studies
+    evidence_files:
+      - path: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy/cluster_top_feature_deviations.csv
+        required_columns: [k, cluster, feature]
+      - path: analysis/reports/clean-run-v1-claim-stress-test/observability_by_question_family.csv
+        required_columns:
+          - logical_question_id
+          - topology_minus_gac_delta_median
+    boundary: >
+      Rangirani pokazatelji objašnjavaju po čemu se prototipi razlikuju, ali
+      nisu automatski ni kauzalni root-cause dokaz.
+
+  - id: H1
+    kind: hypothesis
+    status: supported_in_tested_corpus
+    claim_map_status: "Podržana u testiranom korpusu"
+    thesis_section: "RQ1 i H1: ablacija reprezentacije"
+    thesis_labels:
+      - tab:rq1-representation-ablation
+      - tab:final-feature-groups
+    evidence_files:
+      - path: analysis/reports/stats-ceb-representation-audit-v1/q100_feature_distance_audit.csv
+        required_columns:
+          - feature
+          - q100_raw_value
+          - squared_distance_share
+          - q100_semantic_value
+      - path: configs/features/feature_semantic_contract_v2.yml
+      - path: analysis/reports/stats-ceb-semantic-v2b-holdout/holdout_v1_v2_comparison.csv
+        required_columns:
+          - query_run_id
+          - v1_ood_above_frozen_p99
+          - v2_ood_above_frozen_p99
+    boundary: >
+      Podrška spaja fizički definisanu semantiku, ograničavanje neograničenih
+      omjera, ablacijski q100 audit i potvrđujući skup bez refita;
+      interpretabilnost nije jedna univerzalna numerička metrika.
+
+  - id: H2
+    kind: hypothesis
+    status: partially_supported_by_weak_internal_convergent_evidence
+    claim_map_status: "Djelimično podržana slabim internim konvergentnim dokazom"
+    thesis_section: "RQ3 i H2: vrijednost neizrazite pripadnosti"
+    thesis_labels:
+      - tab:rq3-membership-quality
+      - tab:rq3-hard-comparison
+    evidence_files:
+      - path: analysis/reports/clean-run-v1-clustering-algorithm-comparison/hard_fuzzy_uncertainty_convergence.csv
+        required_columns:
+          - algorithm
+          - rank_biserial_clear_vs_nonclear
+      - path: analysis/reports/clean-run-v1-claim-stress-test/pressure_uncertainty_effects.csv
+        required_columns: [fuzzy_metric, spearman_rho]
+      - path: analysis/reports/clean-run-v1-claim-stress-test/configured_intervention_uncertainty_effects.csv
+        required_columns: [fuzzy_metric, spearman_rho]
+    boundary: >
+      Dokaz je interni i konvergentan jer FCM i evidence porodice dijele dio
+      ulaznih pokazatelja; nije nezavisna kauzalna potvrda.
+
+  - id: H3
+    kind: hypothesis
+    status: partially_supported
+    claim_map_status: "Djelimično podržana"
+    thesis_section: "H3: projekcija novih uslova"
+    thesis_labels:
+      - tab:h3-holdout-summary
+    evidence_files:
+      - path: analysis/reports/clean-run-v1-validation-holdout-projection/overall_projection_summary.csv
+        required_columns:
+          - row_count
+          - feature_count
+          - top_membership_mean
+          - ood_candidate_share
+      - path: analysis/reports/clean-run-v1-validation-holdout-projection/target_alignment_summary.csv
+        required_columns: [expected_regime_target, status, primary_evidence]
+      - path: analysis/reports/clean-run-v1-validation-holdout-projection/analysis_manifest.json
+    boundary: >
+      WAN, konfiguracijski i skew uslovi projektovani su bez refita; scale,
+      hardver i broj regiona nisu sistematski validirani.
+
+  - id: H4
+    kind: hypothesis
+    status: partially_supported
+    claim_map_status: "Djelimično podržana"
+    thesis_section: "H4: kompaktan izlaz i skriveni regionalni rad"
+    thesis_labels:
+      - tab:h4-skew-signals
+    evidence_files:
+      - path: analysis/reports/clean-run-v1-claim-stress-test/observability_ablation_summary.csv
+        required_columns:
+          - paired_instances
+          - topology_delta_greater_share
+          - logical_question_family_count
+      - path: analysis/reports/clean-run-v1-claim-stress-test/observability_family_bootstrap.csv
+        required_columns:
+          - family_count
+          - median_family_delta_ci_low
+          - median_family_delta_ci_high
+      - path: analysis/reports/clean-run-v1-region-asymmetry-companion-analysis/direct_signal_check_summary.csv
+        required_columns: [dataset_id, feature, median]
+    boundary: >
+      Skew i topology-only dio su podržani; nekolocirano/repartition spajanje
+      i poređenje sa svim mogućim DBA alatima nisu potpuno potvrđeni.

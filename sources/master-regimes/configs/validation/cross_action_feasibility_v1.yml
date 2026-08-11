@@ -1,0 +1,37 @@
+contract_version: cross-action-feasibility-v1
+program_id: pressure-raw-v1
+
+inputs:
+  required_gain_pair_status: strict_eligible
+
+scenario_identity:
+  exact_fields:
+    - logical_question_id
+    - dataset_profile_id
+    - dataset_size_class
+    - param_json
+    - topology_id
+    - execution_scope
+    - stressed_template_id
+    - stressed_config_json
+  semantic_fields:
+    - logical_question_id
+    - dataset_profile_id
+    - dataset_size_class
+    - param_json
+    - topology_id
+
+status_inference:
+  tested: measured strict counterfactual pair exists in the semantic scenario
+  applicable_untested: action was tested for the same logical question elsewhere
+  semantic_rewrite_unavailable: no implemented rewrite exists for this logical question
+  applicability_unresolved: existing metadata cannot prove applicability or non-applicability
+
+pilot_gate:
+  minimum_candidate_scenarios: 8
+  target_candidate_scenarios: 12
+  minimum_tested_actions_per_candidate: 2
+  target_actions_per_pilot_scenario: 3
+  repetitions: 3
+  minimum_logical_questions: 3
+  minimum_dataset_profiles: 2

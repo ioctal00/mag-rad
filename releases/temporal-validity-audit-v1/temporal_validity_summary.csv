@@ -1,0 +1,5 @@
+experimental_block,executions,temporal_contract,exact_rerun_strength,internal_result_status,allowed_claim
+shared legacy FCM corpus (F19 and F21),1964,shared moving wall-clock origin per sweep,weak,usable with bounded temporal limitation,descriptive FCM characterization in the archived corpus
+wide frozen or time-independent conditions,2481,frozen cutoff or time-independent SQL,strong under the versioned dataset contract,valid,"397 substantive pairs plus unpaired calibration conditions: collector, equivalence and intervention-response findings"
+wide temporal negative controls,126,current_date; empty result during the archived run,weak,valid only as no-work negative controls,"collector and result-equivalence behavior, not action gain"
+later panels and feedback loop,see per-panel manifest,"fixed literal, fixed anchor or no wall-clock dependency",strong under the versioned dataset contract,valid,"panel-specific temporal, topology and longitudinal results"

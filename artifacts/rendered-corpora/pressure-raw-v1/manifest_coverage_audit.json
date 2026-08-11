@@ -1,0 +1,301 @@
+{
+  "errors": [],
+  "execution_deduplication": {
+    "cross_batch_exact_duplicate_count": 0,
+    "physical_condition_key": [
+      "execution_strategy",
+      "dataset_profile_id",
+      "runtime_config_id",
+      "topology_id",
+      "template_id",
+      "param_json"
+    ],
+    "placement_state_pairs_are_intentional": true,
+    "repetitions_are_intentional": true,
+    "status": "ok"
+  },
+  "identity": {
+    "all_stable_identity_checks_pass": true,
+    "batch_id_count": 5,
+    "condition_id_unique_count": 869,
+    "execution_slot_id_unique_count": 2607,
+    "pair_id_count": 418
+  },
+  "isolated": {
+    "by_axis": {
+      "gac_finalization": {
+        "calibration_configuration_count": 0,
+        "configuration_count": 198,
+        "configurations_by_variant": {
+          "mitigated": 99,
+          "stressed": 99
+        },
+        "dataset_count": 3,
+        "datasets": [
+          "pilot-balanced-v1",
+          "raw-large-balanced-v1",
+          "raw-small-balanced-v1"
+        ],
+        "negative_control_configuration_count": 48,
+        "physical_execution_count": 594,
+        "planned_counterfactual_pair_count": 99,
+        "sql_shape_count": 53,
+        "template_count": 10,
+        "templates": [
+          "gac_fdw_coordinator_local_user_join",
+          "gac_fdw_coordinator_partial_user_topk",
+          "gac_fdw_coordinator_raw_distinct_users",
+          "gac_fdw_coordinator_raw_event_topk",
+          "gac_fdw_coordinator_raw_user_topk",
+          "gac_fdw_coordinator_regional_distinct_users",
+          "gac_fdw_coordinator_regional_event_topk",
+          "gac_fdw_coordinator_regional_user_join",
+          "gac_fdw_multiregion_event_filter_summary",
+          "gac_fdw_multiregion_tenant_point_raw_finalize"
+        ]
+      },
+      "regional_finalization": {
+        "calibration_configuration_count": 6,
+        "configuration_count": 159,
+        "configurations_by_variant": {
+          "intermediate": 9,
+          "mitigated": 75,
+          "stressed": 75
+        },
+        "dataset_count": 3,
+        "datasets": [
+          "pilot-balanced-v1",
+          "raw-large-balanced-v1",
+          "raw-small-balanced-v1"
+        ],
+        "negative_control_configuration_count": 45,
+        "physical_execution_count": 477,
+        "planned_counterfactual_pair_count": 75,
+        "sql_shape_count": 25,
+        "template_count": 2,
+        "templates": [
+          "gac_fdw_single_edge_regional_user_value_topk",
+          "gac_fdw_tenant_point_rollup"
+        ]
+      },
+      "remote_path": {
+        "calibration_configuration_count": 84,
+        "configuration_count": 174,
+        "configurations_by_variant": {
+          "intermediate": 24,
+          "mitigated": 75,
+          "stressed": 75
+        },
+        "dataset_count": 3,
+        "datasets": [
+          "pilot-balanced-v1",
+          "raw-large-balanced-v1",
+          "raw-small-balanced-v1"
+        ],
+        "negative_control_configuration_count": 42,
+        "physical_execution_count": 522,
+        "planned_counterfactual_pair_count": 75,
+        "sql_shape_count": 18,
+        "template_count": 6,
+        "templates": [
+          "gac_etl_top_tenants",
+          "gac_fdw_multiregion_event_filter_summary",
+          "gac_fdw_multiregion_event_raw_wide_sample",
+          "gac_fdw_multiregion_global_user_join",
+          "gac_fdw_multiregion_raw_region_rollup",
+          "gac_fdw_multiregion_top_tenants_raw_finalize"
+        ]
+      },
+      "repartition_join": {
+        "calibration_configuration_count": 0,
+        "configuration_count": 198,
+        "configurations_by_variant": {
+          "mitigated": 99,
+          "stressed": 99
+        },
+        "dataset_count": 6,
+        "datasets": [
+          "pilot-balanced-v1",
+          "pilot-balanced-wide-global-dim-v1",
+          "raw-large-balanced-v1",
+          "raw-large-balanced-wide-global-dim-v1",
+          "raw-small-balanced-v1",
+          "raw-small-balanced-wide-global-dim-v1"
+        ],
+        "negative_control_configuration_count": 48,
+        "physical_execution_count": 594,
+        "planned_counterfactual_pair_count": 99,
+        "sql_shape_count": 30,
+        "template_count": 10,
+        "templates": [
+          "gac_fdw_single_edge_colocated_join_summary_pair",
+          "gac_fdw_single_edge_colocated_joined_event_sample_pair",
+          "gac_fdw_single_edge_colocated_user_join_pair",
+          "gac_fdw_single_edge_colocated_user_value_topk_pair",
+          "gac_fdw_single_edge_repartition_join_summary_pair",
+          "gac_fdw_single_edge_repartition_joined_event_sample_pair",
+          "gac_fdw_single_edge_repartition_user_join_pair",
+          "gac_fdw_single_edge_repartition_user_value_topk_pair",
+          "gac_fdw_tenant_point_rollup",
+          "gac_fdw_tenant_tier_join"
+        ]
+      },
+      "worker_data_skew": {
+        "calibration_configuration_count": 0,
+        "configuration_count": 140,
+        "configurations_by_variant": {
+          "mitigated": 70,
+          "stressed": 70
+        },
+        "dataset_count": 7,
+        "datasets": [
+          "pilot-region-local-skew-asymmetric-medium-v1",
+          "pilot-skew-heavy-v1",
+          "raw-large-skew-heavy-v1",
+          "raw-large-skew-moderate-v1",
+          "raw-medium-skew-moderate-v1",
+          "raw-small-skew-heavy-v1",
+          "raw-small-skew-moderate-v1"
+        ],
+        "negative_control_configuration_count": 42,
+        "physical_execution_count": 420,
+        "planned_counterfactual_pair_count": 70,
+        "sql_shape_count": 20,
+        "template_count": 5,
+        "templates": [
+          "gac_fdw_multiregion_event_count_rollup",
+          "gac_fdw_multiregion_event_filter_summary",
+          "gac_fdw_multiregion_hot_worker_probe",
+          "gac_fdw_multiregion_tenant_point_rollup",
+          "gac_fdw_multiregion_top_tenants"
+        ]
+      }
+    },
+    "combined_configuration_count": 0,
+    "configuration_count": 869,
+    "distinct_dataset_count": 13,
+    "distinct_sql_shape_count": 143,
+    "expected_pressure_count_distribution": {
+      "0": 225,
+      "1": 644
+    },
+    "physical_execution_count": 2607,
+    "planned_counterfactual_pair_count": 418,
+    "repetitions_per_configuration": 3,
+    "result_equivalence_status": "pending_execution_and_result_signature_validation"
+  },
+  "manual_execution_protocol": {
+    "freeze_before_first_production_batch": [
+      "pressure_raw_collection_v1.yml",
+      "source_manifests",
+      "generated_checksums"
+    ],
+    "sentinel_policy": {
+      "never_run_all_sentinels_as_one_terminal_block": true,
+      "run_at": [
+        "before_first_isolated_batch",
+        "after_batch-110-remote",
+        "after_batch-120-skew",
+        "after_batch-140-regional",
+        "after_combined_holdout"
+      ],
+      "source_batch": "batch-400-sentinels"
+    },
+    "stages": [
+      {
+        "action": "run_one_small_segment_from_each_isolated_axis",
+        "gate": "raw_index_and_new_telemetry_columns_valid",
+        "id": "production_probe"
+      },
+      {
+        "batch_order": [
+          "batch-100-gac",
+          "batch-110-remote",
+          "batch-120-skew",
+          "batch-130-repartition",
+          "batch-140-regional"
+        ],
+        "gate": "completeness_correctness_and_pair_audit_pass",
+        "id": "isolated_batches"
+      },
+      {
+        "batch_order": [
+          "batch-200-combined-holdout"
+        ],
+        "gate": "isolated_batches_frozen",
+        "id": "combined_holdout"
+      },
+      {
+        "batch_order": [
+          "batch-300-n3-holdout"
+        ],
+        "gate": "three_region_preflight_pass",
+        "id": "topology_holdout"
+      }
+    ]
+  },
+  "network_calibration_blocks": {
+    "bandwidth_only": {
+      "configuration_count": 24,
+      "dataset_count": 2,
+      "pair_count": 8,
+      "sql_shape_count": 4
+    },
+    "delay_only": {
+      "configuration_count": 24,
+      "dataset_count": 2,
+      "pair_count": 8,
+      "sql_shape_count": 4
+    },
+    "fetch_only": {
+      "configuration_count": 24,
+      "dataset_count": 2,
+      "pair_count": 8,
+      "sql_shape_count": 4
+    }
+  },
+  "prepared_not_yet_materialized": {
+    "batch-200-combined-holdout": {
+      "base_case_count": 24,
+      "base_case_count_by_expected_pressure_count": {
+        "2": 18,
+        "3": 6
+      },
+      "base_case_group_count": 8,
+      "computed_configuration_count": 60,
+      "fully_one_at_a_time_mitigated_base_case_count": 12,
+      "one_target_axis_changes_per_pair": true,
+      "planned_configuration_count": 60,
+      "planned_execution_count": 180,
+      "repetitions": 3,
+      "source": "master-regimes/configs/collection/batches/batch-200-combined-holdout.yml",
+      "status": "prepared_not_executed"
+    },
+    "batch-300-n3-holdout": {
+      "minimum_worker_count_per_region": 2,
+      "planned_configuration_count": 32,
+      "planned_execution_count": 96,
+      "repetitions": 3,
+      "required_region_count": 3,
+      "required_worker_count_by_region": {
+        "apac": 2,
+        "eu": 2,
+        "us": 2
+      },
+      "source": "master-regimes/configs/collection/batches/batch-300-n3-holdout.yml",
+      "status": "blocked_until_three_region_inventory"
+    },
+    "batch-400-sentinels": {
+      "distributed_schedule_required": true,
+      "planned_configuration_count": 10,
+      "planned_execution_count": 30,
+      "repetitions": 3,
+      "sentinel_axis_count": 5,
+      "source": "master-regimes/configs/collection/batches/batch-400-sentinels.yml",
+      "status": "prepared_not_executed"
+    }
+  },
+  "scope_note": "The 869 configurations are rendered isolated conditions. Combined holdout, sentinels and N=3 remain separately prepared.",
+  "status": "ok",
+  "warnings": []
+}

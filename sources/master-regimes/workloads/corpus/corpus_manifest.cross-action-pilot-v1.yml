@@ -1,0 +1,367 @@
+corpus_id: cross-action-pilot-v1
+corpus_version: cross-action-pilot-v1
+batch_id: batch-cross-action-pilot-v1
+collection_contract_version: cross-action-pilot-v1
+description: >
+  Feasibility pilot with one shared stressed baseline and three independently
+  applied actions per scenario. Six scenario families over two dataset sizes
+  produce twelve cross-action scenarios and 144 physical executions.
+query_groups: query-groups.yml
+runtime_catalog: runtime-configs.yml
+
+dataset_profiles:
+  raw-small-balanced-v1:
+    profile: ../../datasets/profiles/raw-small-balanced.yml
+    load_method: copy_pipe
+  raw-large-balanced-v1:
+    profile: ../../datasets/profiles/raw-large-balanced.yml
+    load_method: copy_pipe
+
+execution_budget:
+  hard_timeout_seconds: 1800
+  timeout_grace_seconds: 30
+
+execution_policy:
+  cache_policy: mixed_cache_cross_action_pilot
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260802
+  repetitions_default: 3
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  fdw_auto_explain_regions: [active_regions]
+  os_sampler: true
+  os_sampler_node_groups: [active_regions]
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: true
+  remote_edge_context: true
+  group_runtime_configs_by_active_scope: true
+
+x-common: &common
+  dataset_profile_id: [raw-small-balanced-v1, raw-large-balanced-v1]
+  topology_id: eu_us_gac
+  intervention_role: calibration
+  intervention_axis: combined_pressure
+  pressure_axis: cross_action_response
+  target_scope: global_query
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: cross_action_pilot
+
+x-multi-edge: &multi_edge
+  <<: *common
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+
+x-single-edge: &single_edge
+  <<: *common
+  execution_strategy: fdw_raw
+  execution_scope: gac_single_edge
+
+cells:
+  # Six transport scenarios: three SQL shapes over two dataset sizes.
+  - <<: *multi_edge
+    corpus_cell_id: pilot_filter_baseline
+    component_match_id: pilot_remote_filter
+    logical_question_id: event_filter_summary
+    template_id: gac_fdw_multiregion_event_filter_summary
+    runtime_config_id: cross_action_stressed
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: pilot_remote_filter__baseline
+    physical_strategy_id: unchanged_sql
+    parameters: &filter_parameters {lookback_days: [30], min_value: [950]}
+  - <<: *multi_edge
+    corpus_cell_id: pilot_filter_fetch
+    component_match_id: pilot_remote_filter
+    logical_question_id: event_filter_summary
+    template_id: gac_fdw_multiregion_event_filter_summary
+    runtime_config_id: cross_action_fetch_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: pilot_remote_filter__fetch
+    physical_strategy_id: unchanged_sql
+    mitigation_action: increase_fetch_size
+    parameters: *filter_parameters
+  - <<: *multi_edge
+    corpus_cell_id: pilot_filter_delay
+    component_match_id: pilot_remote_filter
+    logical_question_id: event_filter_summary
+    template_id: gac_fdw_multiregion_event_filter_summary
+    runtime_config_id: cross_action_delay_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: pilot_remote_filter__delay
+    physical_strategy_id: unchanged_sql
+    mitigation_action: remove_added_delay
+    parameters: *filter_parameters
+  - <<: *multi_edge
+    corpus_cell_id: pilot_filter_bandwidth
+    component_match_id: pilot_remote_filter
+    logical_question_id: event_filter_summary
+    template_id: gac_fdw_multiregion_event_filter_summary
+    runtime_config_id: cross_action_bandwidth_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: pilot_remote_filter__bandwidth
+    physical_strategy_id: unchanged_sql
+    mitigation_action: remove_bandwidth_limit
+    parameters: *filter_parameters
+
+  - <<: *multi_edge
+    corpus_cell_id: pilot_rollup_baseline
+    component_match_id: pilot_remote_rollup
+    logical_question_id: event_full_scan_summary
+    template_id: gac_fdw_multiregion_raw_region_rollup
+    runtime_config_id: cross_action_stressed
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: pilot_remote_rollup__baseline
+    physical_strategy_id: unchanged_sql
+    parameters: &rollup_parameters {lookback_days: [30]}
+  - <<: *multi_edge
+    corpus_cell_id: pilot_rollup_fetch
+    component_match_id: pilot_remote_rollup
+    logical_question_id: event_full_scan_summary
+    template_id: gac_fdw_multiregion_raw_region_rollup
+    runtime_config_id: cross_action_fetch_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: pilot_remote_rollup__fetch
+    physical_strategy_id: unchanged_sql
+    mitigation_action: increase_fetch_size
+    parameters: *rollup_parameters
+  - <<: *multi_edge
+    corpus_cell_id: pilot_rollup_delay
+    component_match_id: pilot_remote_rollup
+    logical_question_id: event_full_scan_summary
+    template_id: gac_fdw_multiregion_raw_region_rollup
+    runtime_config_id: cross_action_delay_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: pilot_remote_rollup__delay
+    physical_strategy_id: unchanged_sql
+    mitigation_action: remove_added_delay
+    parameters: *rollup_parameters
+  - <<: *multi_edge
+    corpus_cell_id: pilot_rollup_bandwidth
+    component_match_id: pilot_remote_rollup
+    logical_question_id: event_full_scan_summary
+    template_id: gac_fdw_multiregion_raw_region_rollup
+    runtime_config_id: cross_action_bandwidth_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: pilot_remote_rollup__bandwidth
+    physical_strategy_id: unchanged_sql
+    mitigation_action: remove_bandwidth_limit
+    parameters: *rollup_parameters
+
+  - <<: *multi_edge
+    corpus_cell_id: pilot_wide_baseline
+    component_match_id: pilot_remote_wide
+    logical_question_id: event_raw_wide_sample
+    template_id: gac_fdw_multiregion_event_raw_wide_sample
+    runtime_config_id: cross_action_stressed
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: pilot_remote_wide__baseline
+    physical_strategy_id: unchanged_sql
+    parameters: &wide_parameters
+      lookback_days: [30]
+      min_value: [0]
+      limit_k: [10000]
+      payload_repeat: [8]
+      payload_width: [256]
+  - <<: *multi_edge
+    corpus_cell_id: pilot_wide_fetch
+    component_match_id: pilot_remote_wide
+    logical_question_id: event_raw_wide_sample
+    template_id: gac_fdw_multiregion_event_raw_wide_sample
+    runtime_config_id: cross_action_fetch_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: pilot_remote_wide__fetch
+    physical_strategy_id: unchanged_sql
+    mitigation_action: increase_fetch_size
+    parameters: *wide_parameters
+  - <<: *multi_edge
+    corpus_cell_id: pilot_wide_delay
+    component_match_id: pilot_remote_wide
+    logical_question_id: event_raw_wide_sample
+    template_id: gac_fdw_multiregion_event_raw_wide_sample
+    runtime_config_id: cross_action_delay_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: pilot_remote_wide__delay
+    physical_strategy_id: unchanged_sql
+    mitigation_action: remove_added_delay
+    parameters: *wide_parameters
+  - <<: *multi_edge
+    corpus_cell_id: pilot_wide_bandwidth
+    component_match_id: pilot_remote_wide
+    logical_question_id: event_raw_wide_sample
+    template_id: gac_fdw_multiregion_event_raw_wide_sample
+    runtime_config_id: cross_action_bandwidth_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: pilot_remote_wide__bandwidth
+    physical_strategy_id: unchanged_sql
+    mitigation_action: remove_bandwidth_limit
+    parameters: *wide_parameters
+
+  # Two GAC aggregate scenarios with memory, rewrite and transport actions.
+  - <<: *multi_edge
+    corpus_cell_id: pilot_gac_aggregate_baseline
+    component_match_id: pilot_gac_aggregate
+    logical_question_id: user_value_topk
+    template_id: gac_fdw_coordinator_raw_user_topk
+    runtime_config_id: cross_action_stressed
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: pilot_gac_aggregate__baseline
+    physical_strategy_id: gac_raw_aggregate
+    parameters: &gac_aggregate_parameters
+      cutoff_ts: ["2026-06-01 00:00:00+00"]
+      tenant_modulus: [1]
+      limit_k: [100]
+  - <<: *multi_edge
+    corpus_cell_id: pilot_gac_aggregate_memory
+    component_match_id: pilot_gac_aggregate
+    logical_question_id: user_value_topk
+    template_id: gac_fdw_coordinator_raw_user_topk
+    runtime_config_id: cross_action_gac_memory_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: pilot_gac_aggregate__gac_memory
+    physical_strategy_id: gac_raw_aggregate
+    mitigation_action: increase_gac_work_mem
+    parameters: *gac_aggregate_parameters
+  - <<: *multi_edge
+    corpus_cell_id: pilot_gac_aggregate_partial
+    component_match_id: pilot_gac_aggregate
+    logical_question_id: user_value_topk
+    template_id: gac_fdw_coordinator_partial_user_topk
+    runtime_config_id: cross_action_stressed
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: pilot_gac_aggregate__partial
+    physical_strategy_id: regional_partial_aggregate
+    mitigation_action: regional_partial_aggregation
+    parameters: *gac_aggregate_parameters
+  - <<: *multi_edge
+    corpus_cell_id: pilot_gac_aggregate_remote
+    component_match_id: pilot_gac_aggregate
+    logical_question_id: user_value_topk
+    template_id: gac_fdw_coordinator_raw_user_topk
+    runtime_config_id: cross_action_remote_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: pilot_gac_aggregate__remote
+    physical_strategy_id: gac_raw_aggregate
+    mitigation_action: mitigate_remote_path_bundle
+    parameters: *gac_aggregate_parameters
+
+  # Two repartition scenarios with colocation, transport and regional memory actions.
+  - <<: *single_edge
+    corpus_cell_id: pilot_join_baseline
+    component_match_id: pilot_repartition_join
+    logical_question_id: user_segment_topk
+    template_id: gac_fdw_single_edge_repartition_user_join_pair
+    runtime_config_id: cross_action_join_stressed
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: pilot_repartition_join__baseline
+    physical_strategy_id: repartition_mapmerge_join
+    parameters: &join_parameters
+      lookback_days: [30]
+      limit_k: [50]
+      tenant_id_filter: [0]
+      tenant_modulus: [1]
+      user_id_max: [2147483647]
+  - <<: *single_edge
+    corpus_cell_id: pilot_join_colocation
+    component_match_id: pilot_repartition_join
+    logical_question_id: user_segment_topk
+    template_id: gac_fdw_single_edge_colocated_user_join_pair
+    runtime_config_id: cross_action_join_stressed
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: pilot_repartition_join__colocation
+    physical_strategy_id: colocated_distributed_join
+    mitigation_action: use_colocated_distribution
+    parameters: *join_parameters
+  - <<: *single_edge
+    corpus_cell_id: pilot_join_remote
+    component_match_id: pilot_repartition_join
+    logical_question_id: user_segment_topk
+    template_id: gac_fdw_single_edge_repartition_user_join_pair
+    runtime_config_id: cross_action_join_remote_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: pilot_repartition_join__remote
+    physical_strategy_id: repartition_mapmerge_join
+    mitigation_action: mitigate_remote_path_bundle
+    parameters: *join_parameters
+  - <<: *single_edge
+    corpus_cell_id: pilot_join_regional_memory
+    component_match_id: pilot_repartition_join
+    logical_question_id: user_segment_topk
+    template_id: gac_fdw_single_edge_repartition_user_join_pair
+    runtime_config_id: cross_action_join_regional_memory_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: pilot_repartition_join__regional_memory
+    physical_strategy_id: repartition_mapmerge_join
+    mitigation_action: increase_regional_work_mem
+    parameters: *join_parameters
+
+  # Two GAC Top-K scenarios with rewrite, memory and transport actions.
+  - <<: *multi_edge
+    corpus_cell_id: pilot_topk_baseline
+    component_match_id: pilot_gac_topk
+    logical_question_id: event_raw_wide_sample
+    template_id: gac_fdw_coordinator_raw_event_topk
+    runtime_config_id: cross_action_stressed
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: pilot_gac_topk__baseline
+    physical_strategy_id: gac_raw_topk
+    parameters: &topk_parameters
+      cutoff_ts: ["2026-06-01 00:00:00+00"]
+      limit_k: [5000]
+  - <<: *multi_edge
+    corpus_cell_id: pilot_topk_regional
+    component_match_id: pilot_gac_topk
+    logical_question_id: event_raw_wide_sample
+    template_id: gac_fdw_coordinator_regional_event_topk
+    runtime_config_id: cross_action_stressed
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: pilot_gac_topk__regional
+    physical_strategy_id: regional_topk_candidates
+    mitigation_action: regional_topk_candidates
+    parameters: *topk_parameters
+  - <<: *multi_edge
+    corpus_cell_id: pilot_topk_memory
+    component_match_id: pilot_gac_topk
+    logical_question_id: event_raw_wide_sample
+    template_id: gac_fdw_coordinator_raw_event_topk
+    runtime_config_id: cross_action_gac_memory_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: pilot_gac_topk__gac_memory
+    physical_strategy_id: gac_raw_topk
+    mitigation_action: increase_gac_work_mem
+    parameters: *topk_parameters
+  - <<: *multi_edge
+    corpus_cell_id: pilot_topk_remote
+    component_match_id: pilot_gac_topk
+    logical_question_id: event_raw_wide_sample
+    template_id: gac_fdw_coordinator_raw_event_topk
+    runtime_config_id: cross_action_remote_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: pilot_gac_topk__remote
+    physical_strategy_id: gac_raw_topk
+    mitigation_action: mitigate_remote_path_bundle
+    parameters: *topk_parameters

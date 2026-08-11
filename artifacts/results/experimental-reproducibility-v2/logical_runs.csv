@@ -1,0 +1,8 @@
+logical_run_id,role,description,canonical_query_count,query_attempt_count,resolved_instance_count,completed_query_count,dataset_count,runtime_profile_count,corpus_manifest,environment_profile,run_time_commit,run_time_commit_provenance
+clean-run-v1,training_baseline,Main corpus used to fit the locked preprocessing and FCM model.,1964,1964,1964,1964,2,5,master-regimes/workloads/corpus/corpus_manifest.clean-run-v1.yml,baseline_20260626,not_recorded,not_recorded
+clean-run-v1-region-asymmetry,regional_asymmetry_companion,Regional volume and region-local skew contrast corpus.,150,150,150,150,3,1,master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml,companion_20260703,not_recorded,not_recorded
+clean-run-v1-region-asymmetry-skew-rerun,worker_skew_evidence_companion,Corrected worker/task skew evidence for asymmetric datasets.,294,294,294,294,3,1,master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml,companion_20260703,not_recorded,not_recorded
+clean-run-v1-validation-holdout,validation_holdout,Frozen-model projection on unseen parameter combinations.,195,197,195,195,3,8,master-regimes/workloads/corpus/corpus_manifest.validation-holdout-v1.yml,companion_20260703,not_recorded,not_recorded
+clean-run-v1-wan-latency,targeted_wan_companion,Targeted tc netem delay and FDW row-flow intervention corpus.,16,20,20,16,2,2,master-regimes/workloads/corpus/corpus_manifest.wan-latency-companion-v1.yml,baseline_20260626,not_recorded,not_recorded
+repeatability-v1,measurement_repeatability_audit,"Three repetitions for 96 conditions, with two additional repetitions for 20 sentinel conditions; not used as extra training observations.
+",328,328,328,328,4,8,not_recorded,repeatability_20260724,not_recorded,not_recorded

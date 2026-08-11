@@ -1,0 +1,15 @@
+rendered_corpus,manifest_rows,catalog_rows,packaged_sql_files,unresolved_manifest_rows,status
+clean-run-v1,1964,1964,1964,0,complete
+confirmatory-action-replication-v1,300,60,60,0,complete
+confirmatory-skew-v1,48,48,48,48,complete_from_raw_archive
+dba-local-memory-v1,180,60,60,0,complete
+feedback-loop-v1,0,9,9,0,complete
+n3-topology-memory-v1,180,180,180,0,complete
+pressure-raw-v1,2677,799,879,0,complete_with_uncatalogued_legacy_files
+pressure-raw-v1-n3-colocation-holdout,96,32,32,0,complete
+region-asymmetry-companion-v1,294,294,294,0,complete
+repeatability-v1,656,36,0,0,complete_reusing_packaged_sql
+stats-ceb-full-no-refit-v1,146,146,146,0,complete
+stats-ceb-semantic-v2b-holdout,12,12,12,0,complete
+validation-holdout-v1,195,159,195,0,complete_with_uncatalogued_legacy_files
+wan-latency-companion-v1,20,20,20,0,complete

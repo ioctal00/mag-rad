@@ -1,0 +1,4 @@
+comparison_id,source_state_id,target_state_id,action_id,elapsed_log2_gain,interval_low,interval_high,noise_status,direction,bootstrap_seed,bootstrap_samples,result_status
+replay-work-mem,replay_A_baseline,replay_B_work_mem,gac_work_mem_64mb,0.20427057154617584,0.020654117957941854,0.26434542354561297,resolved,improved,20260807,10000,equivalent
+replay-pushdown,replay_A_baseline,replay_C_pushdown,regional_pushdown_rewrite,1.7902243488036098,1.659988313570861,1.8582955331025575,resolved,improved,20260807,10000,equivalent
+replay-wan-delay,replay_C_pushdown,replay_D_wan_delay,wan_delay_10ms_probe,-0.9615105570276861,-1.0194586730703528,-0.9112819914719161,resolved,worsened,20260807,10000,equivalent

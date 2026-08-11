@@ -1,0 +1,17 @@
+{
+  "candidate_count": 225,
+  "contract_version": "colocation-review-eligibility-v1",
+  "controlled_validation": {
+    "gate": "GO",
+    "negative_candidate_count": 0,
+    "negative_execution_count": 225,
+    "pair_count": 75,
+    "positive_candidate_count": 225,
+    "positive_execution_count": 225
+  },
+  "execution_count": 2607,
+  "mitigation_action": "use_colocated_distribution",
+  "model_invocation_requires_candidate": true,
+  "program_id": "pressure-raw-v1",
+  "workload_wide_safety_proven": false
+}

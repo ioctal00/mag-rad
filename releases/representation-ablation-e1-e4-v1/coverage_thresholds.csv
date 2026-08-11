@@ -1,0 +1,4 @@
+representation,fit_state_count,output_dimensions,coverage_quantile,coverage_threshold
+R1_sql_structural,26,25,0.99,0.0
+R2_coordinator_physical,26,6,0.99,0.7712676406493916
+R3_full_multilayer,26,6,0.99,1.9533554892194176

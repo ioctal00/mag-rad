@@ -1,0 +1,57 @@
+schema_version: pressure_probe_preflight_sources_v1
+evidence_workspace_root: backup/20260730T152530Z-pre-pressure-raw-cleanup/snapshot
+sources:
+  - source_id: remote_edge
+    collection_family: remote_path
+    index_kind: logical_corpus
+    index_dir: master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/remote-edge-collection-probe-v1b/_index
+    selection_csv: master-regimes/analysis/reports/remote-edge-collection-probe-v1/query_edge_balance.csv
+    expected_selected_count: 23
+  - source_id: join_default
+    collection_family: distributed_join
+    index_kind: logical_corpus
+    index_dir: master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/join-pressure-intensity-probe-v1/_index
+    selection_csv: master-regimes/analysis/reports/join-pressure-intensity-probe-v1/join_scenario_rows.csv
+    expected_selected_count: 7
+  - source_id: join_direct
+    collection_family: distributed_join
+    index_kind: logical_corpus
+    index_dir: master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/join-pressure-intensity-probe-v1-direct-v2/_index
+    selection_csv: master-regimes/analysis/reports/join-pressure-intensity-probe-v1/join_scenario_rows.csv
+    expected_selected_count: 9
+  - source_id: join_forced_gac
+    collection_family: distributed_join
+    index_kind: logical_corpus
+    index_dir: master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/join-pressure-intensity-probe-v1-forced-gac-v2/_index
+    selection_csv: master-regimes/analysis/reports/join-pressure-intensity-probe-v1/join_scenario_rows.csv
+    expected_selected_count: 6
+  - source_id: coordinator_main
+    collection_family: coordinator_pressure
+    index_kind: logical_corpus
+    index_dir: master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/coordinator-pressure-intensity-probe-v1/_index
+    selection_csv: master-regimes/analysis/reports/coordinator-pressure-intensity-probe-v1/coordinator_scenario_rows.csv
+    expected_selected_count: 10
+  - source_id: coordinator_distinct
+    collection_family: coordinator_pressure
+    index_kind: logical_corpus
+    index_dir: master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/coordinator-distinct-pushdown-probe-v1/_index
+    selection_csv: master-regimes/analysis/reports/coordinator-pressure-intensity-probe-v1/coordinator_scenario_rows.csv
+    expected_selected_count: 2
+  - source_id: skew_data
+    collection_family: skew_taxonomy
+    index_kind: logical_corpus
+    index_dir: master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/skew-data-intensity-probe-v1/_index
+    selection_csv: master-regimes/analysis/reports/skew-taxonomy-probe-v1/skew_probe_observations.csv
+    expected_selected_count: 11
+  - source_id: skew_placement_b
+    collection_family: skew_taxonomy
+    index_kind: placement_query_sweep
+    index_dir: master-regimes-infra/generated/runs/confirmatory-skew-capability-smoke/20260730T014405Z-skew-placement-taxonomy-probe-v1-exact/query-sweeps/20260730T014518Z-confirmatory-skew-v1-capability-b/_index
+    selection_csv: master-regimes/analysis/reports/skew-taxonomy-probe-v1/skew_probe_observations.csv
+    expected_selected_count: 4
+  - source_id: skew_placement_c
+    collection_family: skew_taxonomy
+    index_kind: placement_query_sweep
+    index_dir: master-regimes-infra/generated/runs/confirmatory-skew-capability-smoke/20260730T014405Z-skew-placement-taxonomy-probe-v1-exact/query-sweeps/20260730T014716Z-confirmatory-skew-v1-capability-c/_index
+    selection_csv: master-regimes/analysis/reports/skew-taxonomy-probe-v1/skew_probe_observations.csv
+    expected_selected_count: 4

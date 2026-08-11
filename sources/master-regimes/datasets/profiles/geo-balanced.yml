@@ -1,0 +1,61 @@
+dataset_id: geo-balanced-v1
+generator: citus-datagen
+seed: 42
+budget_class: medium
+
+scale:
+  tenants_total: 20000
+  events_per_tenant_avg: 1000
+  users_per_tenant_avg: 500
+  lookback_days: 30
+
+regions:
+  eu:
+    tenant_id_range: [1, 10000]
+  us:
+    tenant_id_range: [10001, 20000]
+
+distribution:
+  distribution_key: tenant_id
+  shard_count: 32
+  skew_profile: balanced
+
+capabilities:
+  supports_reference_join: true
+  supports_colocated_user_join: true
+  supports_global_users: true
+  supports_global_user_dimension: true
+  supports_non_colocated_join: true
+  supports_cross_region_user_overlap: false
+  supports_high_group_cardinality: true
+  supports_hot_tenants: false
+  supports_hot_time_windows: false
+  supports_hot_tenant_skew: false
+  supports_region_imbalance: false
+  supports_region_local_skew_asymmetry: false
+  supports_shard_skew: false
+  supports_wide_payload: false
+  supports_large_scan: true
+  supports_distribution_key_filter: true
+  supports_region_partitioning: true
+  supports_etl_rollups: true
+  supports_tenant_tiers: true
+  supports_selective_filters: true
+  supports_materialized_refresh: true
+
+expected_audit_signals:
+  table_counts_min:
+    tenants: 10000
+    events: 8000000
+    users: 4000000
+    global_users: 4000000
+  tenant_skew:
+    events_cv_max: 0.25
+    max_to_mean_ratio_max: 1.5
+    top1_event_share_max: 0.001
+    hot_tenant_ids_available: false
+  parameter_sources:
+    tenant_ids:
+      source: tenant_distribution.csv
+      column: tenant_id
+      order_by: tenant_id

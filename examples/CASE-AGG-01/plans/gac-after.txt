@@ -1,0 +1,15 @@
+                                       QUERY PLAN
+----------------------------------------------------------------------------------------
+ Aggregate  (cost=1410.40..1410.41 rows=1 width=48)
+   Output: (count(*))::numeric, min(e.created_at), max(e.created_at)
+   ->  Append  (cost=100.00..1372.00 rows=5120 width=8)
+         ->  Foreign Scan on fdw_eu.events e  (cost=100.00..673.20 rows=2560 width=8)
+               Output: e.created_at
+               Remote SQL: SELECT created_at FROM public.events
+         ->  Foreign Scan on fdw_us.events e_1  (cost=100.00..673.20 rows=2560 width=8)
+               Output: e_1.created_at
+               Remote SQL: SELECT created_at FROM public.events
+ Query Identifier: -5615099814235643329
+ Planning:
+   Buffers: shared hit=57
+(12 rows)

@@ -1,0 +1,25 @@
+{
+  "action_count": 13,
+  "audit_contract": "mitigation-action-audit-v1",
+  "checksums": {
+    "README.md": "9a46b101a552cd9cbcf832897673afa6df298776e36a9ba4740d88363d2005e3",
+    "configuration_transition_summary.csv": "c110bfd94a88cec9258a31b60ac795b20310c0d201903adbc816456f54e94593",
+    "holdout_feasibility.csv": "eee5e69c0d692d11297666c6b2c7f0ccd51e8e0cc7e3980f3e3480ca0e9b13d6",
+    "learning_curve_checkpoints.csv": "0f172dcc997e3ef1b22f47bd4a975aacad9caf325b3f06cd4dd74ec31f72f873",
+    "mitigation_action_summary.csv": "06595db28967801064649e2618a5fb1472cae4630c2192c6dd500537f4a2add3",
+    "mitigation_gain_by_action.png": "55705bfe1834d97f4827c4c5c88570adb8f3ec344813d85b7c223d4aae965c1b",
+    "mitigation_pair_audit.csv": "d5bdfde4f2b402360f4a09eb92ac1ac6e660e2afec1ef0988d5b944c24c97ada",
+    "mitigation_policy_summary.csv": "d39ac9286a7354ed508ca3fe1cca39645bf903c8595b836468780d7932d77eab"
+  },
+  "correctness_recovery_applied_pair_count": 83,
+  "fatal_issues": [],
+  "gate": "GO",
+  "modeling_decision": "MIXED_ACTION_READINESS",
+  "next_gate": "fit_grouped_action_and_policy_gain_baselines",
+  "pair_count": 418,
+  "policy_count": 7,
+  "program_id": "pressure-raw-v1",
+  "review_pair_count": 0,
+  "strict_pair_count": 418,
+  "target_scope": "global_query"
+}

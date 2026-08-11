@@ -1,0 +1,499 @@
+suite_id: single-region-core
+scope: single_region
+description: Core SQL shapes for one regional Citus cluster.
+
+templates:
+  q01_tenant_rollup:
+    file: templates/single-region/q01_tenant_rollup.sql.j2
+    family: aggregation
+    logical_question_id: daily_tenant_rollup
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: low
+      wan_latency: none
+    description: Regionalno reducibilna agregacija po tenant-u.
+    expected_pressure_tags:
+      - regional_reduction
+      - low_global_fanin
+    parameters:
+      lookback_days: [1, 7, 30]
+      min_value: [0, 500]
+    required_dataset_capabilities:
+      - supports_reference_join
+
+  q02_global_user_topk:
+    file: templates/single-region/q02_global_user_topk.sql.j2
+    family: topk
+    logical_question_id: user_value_topk
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - gac_finalization_heavy
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: high
+      wan_latency: none
+    description: Globalni Top-K korisnika kroz jednu regionalnu bazu.
+    expected_pressure_tags:
+      - high_group_cardinality
+      - final_ordering
+      - topk
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [10, 100]
+    required_dataset_capabilities:
+      - supports_high_group_cardinality
+
+  q13_amplified_user_topk:
+    file: templates/single-region/q13_amplified_user_topk.sql.j2
+    family: amplified_topk
+    logical_question_id: user_value_topk
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - gac_finalization_heavy
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: high
+      wan_latency: none
+    description: >
+      Bounded regional capability probe that multiplies input rows before
+      final aggregation so low regional work_mem has measurable cost on the
+      pilot dataset.
+    expected_pressure_tags:
+      - high_group_cardinality
+      - final_ordering
+      - controlled_finalization_amplification
+    parameters:
+      lookback_days: [30]
+      limit_k: [100000]
+      amplification_factor: [16]
+      payload_repeat: [16]
+    required_dataset_capabilities:
+      - supports_high_group_cardinality
+
+  q03_event_filter_summary:
+    file: templates/single-region/q03_event_filter_summary.sql.j2
+    family: selective_filter
+    logical_question_id: event_filter_summary
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: none
+      wan_latency: none
+    description: Selective value/time filter over regional events.
+    expected_pressure_tags:
+      - selective_filter
+      - scan_pressure
+      - aggregate
+    parameters:
+      lookback_days: [1, 7, 30]
+      min_value: [0, 500, 900]
+
+  q04_tenant_point_rollup:
+    file: templates/single-region/q04_tenant_point_rollup.sql.j2
+    family: tenant_local_pushdown
+    logical_question_id: tenant_point_rollup
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: none
+      wan_latency: none
+    description: Tenant-local aggregate that should target a small shard subset.
+    expected_pressure_tags:
+      - tenant_filter
+      - shard_pruning_candidate
+      - local_aggregate
+    parameters:
+      tenant_id: [1, 5]
+      lookback_days: [7, 30]
+
+  q05_tenant_tier_daily_join:
+    file: templates/single-region/q05_tenant_tier_daily_join.sql.j2
+    family: reference_join
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: high
+      wan_latency: none
+    description: Distributed events joined to replicated tenant reference data.
+    expected_pressure_tags:
+      - reference_join
+      - daily_group_by
+      - distributed_aggregate
+    parameters:
+      lookback_days: [7, 30]
+
+  q06_user_segment_join:
+    file: templates/single-region/q06_user_segment_join.sql.j2
+    family: colocated_join
+    logical_question_id: user_segment_topk
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: high
+      wan_latency: none
+    description: Colocated events/users join over tenant distribution key.
+    expected_pressure_tags:
+      - colocated_join
+      - high_group_cardinality
+      - topk
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [10, 50]
+    required_dataset_capabilities:
+      - supports_colocated_user_join
+
+  q11_colocated_user_join_pair:
+    file: templates/single-region/q11_colocated_user_join_pair.sql.j2
+    family: colocated_join_control
+    logical_question_id: user_segment_topk
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: high
+      wan_latency: none
+    description: Semantically paired colocated control for join movement probes.
+    expected_pressure_tags:
+      - colocated_join
+      - paired_join_control
+    parameters:
+      lookback_days: [7]
+      limit_k: [50]
+    required_dataset_capabilities:
+      - supports_colocated_user_join
+
+  q07_global_user_segment_join:
+    file: templates/single-region/q07_global_user_segment_join.sql.j2
+    family: non_colocated_join
+    logical_question_id: global_user_topk
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - join_movement
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: high
+      wan_latency: none
+    description: Intentional non-colocated events/global_users join stress.
+    expected_pressure_tags:
+      - non_colocated_join
+      - repartition_candidate
+      - high_group_cardinality
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [10, 50]
+    required_dataset_capabilities:
+      - supports_global_users
+
+  q12_repartition_user_join_pair:
+    file: templates/single-region/q12_repartition_user_join_pair.sql.j2
+    family: repartition_join_probe
+    logical_question_id: user_segment_topk
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - join_movement
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: high
+      wan_latency: none
+    description: >
+      Semantically paired global_users join expected to require Citus
+      repartitioning because the two tables use different distribution keys.
+    expected_pressure_tags:
+      - non_colocated_join
+      - repartition_candidate
+      - paired_join_probe
+    parameters:
+      lookback_days: [7]
+      limit_k: [50]
+    required_dataset_capabilities:
+      - supports_global_users
+
+  q14_colocated_user_value_topk_pair:
+    file: templates/single-region/q14_colocated_user_value_topk_pair.sql.j2
+    family: colocated_join_control
+    logical_question_id: joined_user_value_topk
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: high
+      wan_latency: none
+    description: High-cardinality colocated join control for paired repartition probes.
+    expected_pressure_tags:
+      - colocated_join
+      - high_group_cardinality
+      - paired_join_control
+    parameters:
+      lookback_days: [7]
+      limit_k: [100]
+    required_dataset_capabilities:
+      - supports_colocated_user_join
+
+  q15_repartition_user_value_topk_pair:
+    file: templates/single-region/q15_repartition_user_value_topk_pair.sql.j2
+    family: repartition_join_probe
+    logical_question_id: joined_user_value_topk
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - join_movement
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: high
+      wan_latency: none
+    description: High-cardinality Top-K pair that joins tables with different distribution keys.
+    expected_pressure_tags:
+      - non_colocated_join
+      - repartition_candidate
+      - high_group_cardinality
+      - paired_join_probe
+    parameters:
+      lookback_days: [7]
+      limit_k: [100]
+    required_dataset_capabilities:
+      - supports_global_users
+
+  q16_colocated_joined_event_sample_pair:
+    file: templates/single-region/q16_colocated_joined_event_sample_pair.sql.j2
+    family: colocated_join_control
+    logical_question_id: joined_event_sample
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: medium
+      wan_latency: none
+    description: Ordered joined-row sample over colocated event and user shards.
+    expected_pressure_tags:
+      - colocated_join
+      - joined_row_output
+      - paired_join_control
+    parameters:
+      lookback_days: [7]
+      limit_k: [100]
+    required_dataset_capabilities:
+      - supports_colocated_user_join
+
+  q17_repartition_joined_event_sample_pair:
+    file: templates/single-region/q17_repartition_joined_event_sample_pair.sql.j2
+    family: repartition_join_probe
+    logical_question_id: joined_event_sample
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - join_movement
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: high
+      wan_latency: none
+    description: Ordered joined-row sample requiring a non-colocated distributed join.
+    expected_pressure_tags:
+      - non_colocated_join
+      - repartition_candidate
+      - joined_row_output
+      - paired_join_probe
+    parameters:
+      lookback_days: [7]
+      limit_k: [100]
+    required_dataset_capabilities:
+      - supports_global_users
+
+  q18_colocated_join_summary_pair:
+    file: templates/single-region/q18_colocated_join_summary_pair.sql.j2
+    family: colocated_join_control
+    logical_question_id: joined_event_summary
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: medium
+      wan_latency: none
+    description: Scalar summary over a colocated event/user join.
+    expected_pressure_tags:
+      - colocated_join
+      - scalar_output
+      - paired_join_control
+    parameters:
+      lookback_days: [7]
+    required_dataset_capabilities:
+      - supports_colocated_user_join
+
+  q19_repartition_join_summary_pair:
+    file: templates/single-region/q19_repartition_join_summary_pair.sql.j2
+    family: repartition_join_probe
+    logical_question_id: joined_event_summary
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - join_movement
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: high
+      wan_latency: none
+    description: Scalar summary over a join that requires Citus repartitioning.
+    expected_pressure_tags:
+      - non_colocated_join
+      - repartition_candidate
+      - scalar_output
+      - paired_join_probe
+    parameters:
+      lookback_days: [7]
+    required_dataset_capabilities:
+      - supports_global_users
+
+  q08_multi_dimension_rollup:
+    file: templates/single-region/q08_multi_dimension_rollup.sql.j2
+    family: multi_join
+    logical_question_id: multi_dimension_rollup
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - join_movement
+      - gac_finalization_heavy
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: high
+      wan_latency: none
+    description: Events joined with tenant and colocated user dimensions.
+    expected_pressure_tags:
+      - multi_join
+      - reference_join
+      - colocated_join
+      - daily_group_by
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [10, 50]
+
+  q09_event_full_scan_summary:
+    file: templates/single-region/q09_event_full_scan_summary.sql.j2
+    family: full_scan_summary
+    logical_question_id: event_full_scan_summary
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: low
+      wan_latency: none
+    description: Full regional event-table summary used as scan-pressure baseline.
+    expected_pressure_tags:
+      - full_scan
+      - aggregate
+      - scan_pressure
+    parameters: {}
+
+  q10_top_tenants:
+    file: templates/single-region/q10_top_tenants.sql.j2
+    family: topk
+    logical_question_id: top_tenants
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - well_reduced_localized
+      - gac_finalization_heavy
+      - skew_imbalance
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: high
+      wan_latency: none
+    description: Regional Top-K tenants baseline for paired FDW/ETL top_tenants corpus cells.
+    expected_pressure_tags:
+      - topk
+      - final_ordering
+      - high_group_cardinality
+      - worker_skew_probe
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [10, 50]
+    intervention_roles:
+      - baseline
+
+  q20_colocated_user_join_pushdown_pair:
+    file: templates/single-region/q20_colocated_user_join_pushdown_pair.sql.j2
+    family: colocated_join_pushdown_equivalence
+    logical_question_id: user_segment_topk
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: high
+      wan_latency: none
+      join_strategy: high
+    description: >
+      Pushdown-safe colocated join used as the direct regional counterpart of
+      the GAC single-edge equivalence probe.
+    expected_pressure_tags:
+      - colocated_join
+      - paired_join_control
+      - single_edge_equivalence
+    parameters:
+      cutoff_ts: ["2026-06-01 00:00:00+00"]
+      limit_k: [50]
+      tenant_id_filter: [0]
+      tenant_modulus: [1]
+      user_id_max: [2147483647]
+    required_dataset_capabilities:
+      - supports_colocated_user_join
+
+  q21_repartition_user_join_pushdown_pair:
+    file: templates/single-region/q21_repartition_user_join_pushdown_pair.sql.j2
+    family: repartition_join_pushdown_equivalence
+    logical_question_id: user_segment_topk
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - join_movement
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: high
+      wan_latency: none
+      join_strategy: high
+    description: >
+      Pushdown-safe repartition join used as the direct regional counterpart
+      of the GAC single-edge equivalence probe.
+    expected_pressure_tags:
+      - non_colocated_join
+      - repartition_candidate
+      - single_edge_equivalence
+    parameters:
+      cutoff_ts: ["2026-06-01 00:00:00+00"]
+      limit_k: [50]
+      tenant_id_filter: [0]
+      tenant_modulus: [1]
+      user_id_max: [2147483647]
+    required_dataset_capabilities:
+      - supports_global_users
+
+  q22_regional_user_value_topk_pushdown:
+    file: templates/single-region/q22_regional_user_value_topk_pushdown.sql.j2
+    family: regional_finalization_pushdown_equivalence
+    logical_question_id: user_value_topk
+    execution_strategy: single_region_citus
+    expected_regime_targets:
+      - gac_finalization_heavy
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: high
+      wan_latency: none
+    description: >
+      Pushdown-safe regional grouping, ordering and Top-K used to compare
+      direct Citus execution with the GAC single-edge path.
+    expected_pressure_tags:
+      - high_group_cardinality
+      - regional_sort
+      - regional_spill_candidate
+      - single_edge_equivalence
+    parameters:
+      cutoff_ts: ["2026-06-01 00:00:00+00"]
+      limit_k: [50000]

@@ -1,0 +1,143 @@
+corpus_id: n3-topology-memory-v1-phase_b_actions
+source_manifest: master-regimes/generated/corpus/n3-topology-memory-v1/source/phase_b_actions/corpus_manifest.yml
+rendered_corpus_manifest: master-regimes/generated/corpus/n3-topology-memory-v1/rendered/phase_b_actions/corpus_manifest.yml
+corpus_cells: master-regimes/generated/corpus/n3-topology-memory-v1/rendered/phase_b_actions/corpus_cells.csv
+region: eu
+max_instances_per_cell: null
+execution_budget:
+  hard_timeout_seconds: 1800
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: mixed_cache_n3_topology_memory
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 202608065
+  repetitions_default: 1
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  fdw_auto_explain_regions:
+  - active_regions
+  os_sampler: true
+  os_sampler_node_groups:
+  - active_regions
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: true
+  remote_edge_context: true
+  group_runtime_configs_by_active_scope: true
+execution_backend: master-regimes-infra.database_sweep
+included_execution_classes:
+- pilot
+source_cell_count: 45
+manifest_cell_count: 45
+excluded_cell_count: 0
+group_count: 4
+groups:
+- group_id: n3-topology-memory-v1-phase_b_actions__topology-isolation-large-n3-v1__runtime-bundle-multi-edge__analytics_clients
+  sweep_id: n3-topology-memory-v1-phase_b_actions__topology-isolation-large-n3-v1__runtime-bundle-multi-edge__analytics_clients
+  dataset_profile_id: topology-isolation-large-n3-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: multiple
+  runtime_config_ids:
+  - dba_topk_balanced_gac_mitigated
+  - dba_topk_balanced_remote_mitigated
+  - dba_topk_balanced_stressed
+  - dba_topk_memory_gac_mitigated
+  - dba_topk_memory_remote_mitigated
+  - dba_topk_memory_stressed
+  - dba_topk_transport_gac_mitigated
+  - dba_topk_transport_remote_mitigated
+  - dba_topk_transport_stressed
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: combined_pressure
+  runtime_expected_effect: multiple
+  network_profile_id: multiple
+  cell_count: 12
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/n3-topology-memory-v1/rendered/phase_b_actions/groups/n3-topology-memory-v1-phase_b_actions__topology-isolation-large-n3-v1__runtime-bundle-multi-edge__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/n3-topology-memory-v1/rendered/phase_b_actions/sweeps/n3-topology-memory-v1-phase_b_actions__topology-isolation-large-n3-v1__runtime-bundle-multi-edge__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: n3-topology-memory-v1-phase_b_actions__topology-isolation-medium-n3-v1__runtime-bundle-multi-edge__analytics_clients
+  sweep_id: n3-topology-memory-v1-phase_b_actions__topology-isolation-medium-n3-v1__runtime-bundle-multi-edge__analytics_clients
+  dataset_profile_id: topology-isolation-medium-n3-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: multiple
+  runtime_config_ids:
+  - dba_topk_balanced_gac_mitigated
+  - dba_topk_balanced_remote_mitigated
+  - dba_topk_balanced_stressed
+  - dba_topk_memory_gac_mitigated
+  - dba_topk_memory_remote_mitigated
+  - dba_topk_memory_stressed
+  - dba_topk_transport_gac_mitigated
+  - dba_topk_transport_remote_mitigated
+  - dba_topk_transport_stressed
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: combined_pressure
+  runtime_expected_effect: multiple
+  network_profile_id: multiple
+  cell_count: 12
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/n3-topology-memory-v1/rendered/phase_b_actions/groups/n3-topology-memory-v1-phase_b_actions__topology-isolation-medium-n3-v1__runtime-bundle-multi-edge__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/n3-topology-memory-v1/rendered/phase_b_actions/sweeps/n3-topology-memory-v1-phase_b_actions__topology-isolation-medium-n3-v1__runtime-bundle-multi-edge__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: n3-topology-memory-v1-phase_b_actions__topology-isolation-small-n3-v1__runtime-bundle-multi-edge__analytics_clients
+  sweep_id: n3-topology-memory-v1-phase_b_actions__topology-isolation-small-n3-v1__runtime-bundle-multi-edge__analytics_clients
+  dataset_profile_id: topology-isolation-small-n3-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: multiple
+  runtime_config_ids:
+  - dba_topk_balanced_gac_mitigated
+  - dba_topk_balanced_remote_mitigated
+  - dba_topk_balanced_stressed
+  - dba_topk_memory_gac_mitigated
+  - dba_topk_memory_remote_mitigated
+  - dba_topk_memory_stressed
+  - dba_topk_transport_gac_mitigated
+  - dba_topk_transport_remote_mitigated
+  - dba_topk_transport_stressed
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: combined_pressure
+  runtime_expected_effect: multiple
+  network_profile_id: multiple
+  cell_count: 12
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/n3-topology-memory-v1/rendered/phase_b_actions/groups/n3-topology-memory-v1-phase_b_actions__topology-isolation-small-n3-v1__runtime-bundle-multi-edge__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/n3-topology-memory-v1/rendered/phase_b_actions/sweeps/n3-topology-memory-v1-phase_b_actions__topology-isolation-small-n3-v1__runtime-bundle-multi-edge__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: n3-topology-memory-v1-phase_b_actions__topology-isolation-xlarge-n3-v1__runtime-bundle-multi-edge__analytics_clients
+  sweep_id: n3-topology-memory-v1-phase_b_actions__topology-isolation-xlarge-n3-v1__runtime-bundle-multi-edge__analytics_clients
+  dataset_profile_id: topology-isolation-xlarge-n3-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: multiple
+  runtime_config_ids:
+  - dba_topk_balanced_gac_mitigated
+  - dba_topk_balanced_remote_mitigated
+  - dba_topk_balanced_stressed
+  - dba_topk_memory_gac_mitigated
+  - dba_topk_memory_remote_mitigated
+  - dba_topk_memory_stressed
+  - dba_topk_transport_gac_mitigated
+  - dba_topk_transport_remote_mitigated
+  - dba_topk_transport_stressed
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: combined_pressure
+  runtime_expected_effect: multiple
+  network_profile_id: multiple
+  cell_count: 9
+  instance_count: 9
+  instance_manifest: master-regimes/generated/corpus/n3-topology-memory-v1/rendered/phase_b_actions/groups/n3-topology-memory-v1-phase_b_actions__topology-isolation-xlarge-n3-v1__runtime-bundle-multi-edge__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/n3-topology-memory-v1/rendered/phase_b_actions/sweeps/n3-topology-memory-v1-phase_b_actions__topology-isolation-xlarge-n3-v1__runtime-bundle-multi-edge__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false

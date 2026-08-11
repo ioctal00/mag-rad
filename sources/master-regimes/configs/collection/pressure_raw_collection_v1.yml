@@ -1,0 +1,379 @@
+collection_contract_version: pressure-raw-v1
+corpus_version: pressure-raw-corpus-v1
+schema_status: preregistered
+description: >
+  Append-only raw execution contract for counterfactually paired distributed
+  SQL pressure batches. The contract preserves source plans, measurements and
+  intervention provenance. It is model-agnostic and feature-set-agnostic, but
+  its experimental design intentionally preserves expected pressures,
+  interventions, controls and future holdout combinations. It does not define
+  a final feature set or model.
+
+design_scope:
+  model_agnostic: true
+  feature_set_agnostic: true
+  target_agnostic: false
+  supported_future_tasks:
+    - confirmed_physical_signature_multilabel
+    - paired_mitigation_benefit_regression
+  target_materialization_reserved_for_phase_2: true
+
+identity:
+  required:
+    - corpus_version
+    - batch_id
+    - collection_contract_version
+    - condition_id
+    - pair_id
+    - query_run_id
+    - execution_slot_id
+    - attempt_id
+    - repeat_id
+    - pressure_axis
+    - intervention_level
+    - variant
+    - coordinator_pressure_kind
+    - coordinator_shape_id
+    - query_template_id
+    - query_template_version
+    - rendered_sql_sha256
+    - dataset_snapshot_id
+    - topology_snapshot_id
+    - runtime_snapshot_id
+  stable_across_retry:
+    - corpus_version
+    - batch_id
+    - condition_id
+    - pair_id
+    - execution_slot_id
+    - repeat_id
+  changes_on_retry:
+    - query_run_id
+    - attempt_id
+
+pair_contract:
+  variants:
+    - mitigated
+    - intermediate
+    - stressed
+    - control
+  pair_id_inputs:
+    - corpus_version
+    - batch_id
+    - pressure_pair_key
+    - dataset_profile_id
+    - topology_id
+    - canonical_sql_parameter_json
+  excluded_from_pair_id:
+    - runtime_config_id
+    - intervention_level
+    - variant
+    - repeat_id
+    - attempt_id
+  correctness_requirement: canonical_result_hash_equal_within_pair
+  timing_summary_reserved_for_phase_2: median_elapsed_seconds_by_condition
+  target_formula_reserved_for_phase_2:
+    elapsed: log2(median(stressed_seconds) / median(mitigated_seconds))
+    fanin_rows: log2((median(stressed_fanin_rows) + 1) / (median(mitigated_fanin_rows) + 1))
+    fanin_bytes: log2((median(stressed_fanin_bytes) + 1) / (median(mitigated_fanin_bytes) + 1))
+    gac_rx_bytes: log2((median(stressed_gac_rx_bytes) + 1) / (median(mitigated_gac_rx_bytes) + 1))
+    temp_blocks: log2((median(stressed_temp_blocks) + 1) / (median(mitigated_temp_blocks) + 1))
+    coordinator_cpu: log2((median(stressed_cpu_seconds) + 1e-9) / (median(mitigated_cpu_seconds) + 1e-9))
+    note: >
+      These remain separate response dimensions. They are not collapsed into
+      one coordinator-pressure scalar before evidence analysis.
+
+artifacts:
+  sql_and_context:
+    required:
+      - input/query.sql
+      - input/query_bindings.json
+      - execution_manifest.json
+      - execution_status.json
+    fields:
+      - rendered_sql_sha256
+      - query_template_id
+      - query_template_version
+      - parameter_json
+      - dataset_base_time_unix
+      - query_as_of_unix
+      - effective_pg_options
+      - effective_fdw_server_options
+      - effective_fetch_size
+      - effective_gac_work_mem
+      - effective_regional_work_mem
+  postgres_citus:
+    required:
+      - gac_or_coordinator_explain_text
+      - gac_or_coordinator_explain_analyze_json
+      - query_timing
+    conditionally_required:
+      - regional_auto_explain_logs
+      - regional_plan_json
+      - worker_task_fragments
+      - remote_sql
+    preserve_raw_fields:
+      - plan_rows
+      - actual_rows
+      - actual_loops
+      - plan_width
+      - startup_time
+      - total_time
+      - buffers
+      - temp_blocks
+      - sort_space
+      - hash_batches
+      - task_id
+      - shard_id
+      - worker_host
+      - mapmerge_or_repartition_evidence
+      - mapmerge_job_count
+      - dependent_map_task_count
+      - dependent_merge_task_count
+      - tasks_shown_status
+      - intermediate_result_fetch_statements
+      - intermediate_result_fetch_duration_ms
+      - plan_fingerprint_by_layer
+      - coordinator_pressure_kind
+      - coordinator_shape_id
+      - coordinator_main_plan_total_time_ms
+      - coordinator_foreign_scan_time_ms_sum
+      - coordinator_non_foreign_time_ms_proxy
+      - coordinator_non_foreign_time_share_proxy
+      - coordinator_fanin_rows
+      - coordinator_fanin_bytes_estimated
+      - coordinator_final_rows
+      - coordinator_final_bytes_estimated
+      - coordinator_blocking_operator_count
+      - coordinator_blocking_input_rows_sum
+      - coordinator_blocking_input_rows_max
+      - coordinator_blocking_output_rows_sum
+      - coordinator_temp_read_blocks
+      - coordinator_temp_written_blocks
+      - coordinator_spill_present
+      - coordinator_disk_sort_count
+      - coordinator_sort_space_used_kb_max
+      - coordinator_hash_batches_max
+      - coordinator_hashagg_disk_usage_kb_max
+      - coordinator_peak_memory_usage_kb_max
+      - coordinator_sort_input_rows_sum
+      - coordinator_sort_output_rows_sum
+      - coordinator_aggregate_input_rows_sum
+      - coordinator_aggregate_output_rows_sum
+      - coordinator_join_input_rows_sum
+      - coordinator_join_output_rows_sum
+      - coordinator_unique_input_rows_sum
+      - coordinator_unique_output_rows_sum
+      - coordinator_window_input_rows_sum
+      - coordinator_window_output_rows_sum
+      - coordinator_limit_input_rows_sum
+      - coordinator_limit_output_rows_sum
+  network:
+    required_for_remote_batches:
+      - configured_delay_ms
+      - configured_jitter_ms
+      - configured_loss_percent
+      - configured_bandwidth_mbit
+      - tc_scope
+      - tc_source_host
+      - tc_target_ip
+      - tc_route
+      - tc_interface
+      - tc_qdisc_before
+      - tc_qdisc_after
+      - telemetry_window_started_at_unix
+      - telemetry_window_finished_at_unix
+      - query_window_started_at_unix
+      - query_window_finished_at_unix
+      - query_bracket_started_at_unix
+      - query_bracket_finished_at_unix
+      - query_window_pre_padding_seconds
+      - query_window_post_padding_seconds
+      - query_window_alignment_status
+      - node_clock_offset_seconds
+      - node_clock_uncertainty_seconds
+      - interface_counters_before
+      - interface_counters_after
+      - tcp_counters_before
+      - tcp_counters_after
+    required_once_per_network_profile:
+      - ping_before_profile
+      - ping_after_profile
+      - iperf3_client_json_by_region
+      - achieved_bits_per_second_by_region
+    preserve_for_later_derivation:
+      - regional_tx_bytes
+      - regional_tx_packets
+      - gac_rx_bytes
+      - gac_rx_packets
+      - tcp_retransmissions
+      - interface_drops
+      - qdisc_drops
+      - qdisc_overlimits
+      - qdisc_backlog
+  system:
+    required_when_os_sampler_enabled:
+      - cpu_counters_before
+      - cpu_counters_after
+      - memory_snapshot_before
+      - memory_snapshot_after
+      - swap_snapshot_before
+      - swap_snapshot_after
+      - disk_counters_before
+      - disk_counters_after
+      - network_interface_counters_before
+      - network_interface_counters_after
+      - sample_timestamps
+      - os_query_summary
+      - os_query_alignment_coverage
+      - os_query_alignment_status
+      - os_query_padding_seconds
+      - os_sampler_interval_seconds
+    preserve_for_later_derivation:
+      - worker_rx_bytes_by_node
+      - worker_tx_bytes_by_node
+      - worker_rx_bytes_sum
+      - worker_tx_bytes_sum
+      - worker_rx_bytes_cv
+      - worker_tx_bytes_cv
+      - worker_rx_bytes_max_share
+      - worker_tx_bytes_max_share
+  result:
+    required:
+      - execution_status
+      - elapsed_seconds
+      - timed_out
+      - canonical_result_hash
+      - canonical_result_row_count
+      - result_output_byte_count
+      - result_signature_status
+      - collector_completeness_status
+    policy:
+      database_result_rows_stored: false
+      signature_stream_only: true
+      unordered_results_canonicalized: true
+
+intervention_provenance:
+  model_input_policy: excluded_from_primary_telemetry_only_model
+  required:
+    - pressure_axis
+    - intervention_level
+    - variant
+    - mitigation_action
+    - configured_work_mem_by_layer
+    - configured_fetch_size
+    - configured_network_profile
+    - placement_state_id
+    - apply_status
+    - reset_status
+    - apply_artifact
+    - reset_artifact
+
+future_derived_value_provenance:
+  purpose: >
+    Prevent a confirmed label from being reconstructed directly from the same
+    field that defined it. Roles are assigned per target and model view, not
+    globally per raw field.
+  required_columns:
+    - derived_value_id
+    - target_id
+    - evidence_role
+    - source_artifact_paths
+    - source_fields
+    - derivation_id
+    - label_rule_id
+    - model_view_id
+  evidence_roles:
+    label_only:
+      meaning: >
+        Rich evidence used to confirm a target. It is forbidden from the
+        primary model view for that same target.
+    model_eligible:
+      meaning: >
+        Evidence eligible for a model input after an explicit leakage review
+        against the selected target.
+    shared_descriptive:
+      meaning: >
+        Evidence retained for reporting and case interpretation. It is not
+        automatically eligible for model training or target construction.
+  anti_circularity_rules:
+    - target_defining_evidence_is_excluded_from_same_target_model_view
+    - intervention_ids_and_variant_names_are_excluded_from_primary_model_view
+    - expected_labels_are_not_promoted_to_confirmed_without_observed_evidence
+    - mitigation_outcome_is_not_a_physical_signature_label
+    - every_model_column_requires_source_and_derivation_provenance
+  target_specific_contracts:
+    worker_data_skew:
+      targets:
+        dataset_data_skew_intensity:
+          label_only_sources:
+            - dataset_capability_audit
+            - tenant_distribution_snapshot
+          direct_fields_excluded_from_same_target_model_view:
+            - events_cv
+            - max_to_mean_ratio
+            - top1_event_share
+            - top5_event_share
+        task_activation_sparsity:
+          label_only_sources:
+            - full_worker_task_fragment_set
+          direct_fields_excluded_from_same_target_model_view:
+            - worker_task_nonzero_scan_count
+            - worker_task_nonzero_scan_share
+        active_task_scan_skew_intensity:
+          label_only_sources:
+            - full_worker_task_fragment_set
+          direct_fields_excluded_from_same_target_model_view:
+            - worker_task_active_scan_rows_isf_normalized
+            - worker_task_within_region_active_scan_rows_isf_normalized_max
+        task_output_byte_skew_intensity:
+          label_only_sources:
+            - full_worker_task_fragment_set
+          direct_fields_excluded_from_same_target_model_view:
+            - worker_task_tuple_bytes_isf_normalized
+            - worker_task_within_region_tuple_bytes_isf_normalized_max
+        worker_scan_skew_intensity:
+          label_only_sources:
+            - full_worker_task_fragment_set
+            - placement_intervention_manifest
+          direct_fields_excluded_from_same_target_model_view:
+            - worker_task_within_region_worker_scan_rows_isf_normalized_max
+            - worker_scan_rows_cv
+            - worker_scan_rows_isf
+      applicability_fields_are_targets_not_zero_imputation:
+        - worker_task_scan_skew_applicable
+        - worker_task_active_scan_skew_applicable
+        - worker_task_tuple_bytes_skew_applicable
+        - worker_scan_rows_skew_applicable
+  required_future_views:
+    - label_only_evidence
+    - model_eligible_evidence
+    - shared_descriptive_evidence
+
+append_only:
+  raw_artifacts_are_immutable: true
+  successful_attempts_are_never_deleted: true
+  retry_creates_new_attempt_id: true
+  batch_checksum_required: true
+  source_manifest_checksum_required: true
+  index_can_be_rebuilt: true
+  previous_index_rows_are_not_source_of_truth: true
+
+completeness:
+  statuses:
+    - complete
+    - complete_with_optional_gaps
+    - incomplete
+    - timeout
+    - failed
+  complete_requires:
+    - identity_contract_valid
+    - main_json_plan_present
+    - query_timing_present
+    - result_signature_present
+    - intervention_reset_ok
+    - required_node_telemetry_present
+  optional_gap_examples:
+    - tcp_counters_unavailable_on_kernel
+    - iperf3_profile_probe_not_applicable
+    - worker_fragment_not_emitted_by_plan

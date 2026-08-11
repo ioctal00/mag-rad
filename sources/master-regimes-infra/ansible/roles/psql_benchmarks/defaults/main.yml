@@ -1,0 +1,27 @@
+---
+psql_benchmarks_enabled: false
+psql_benchmarks_repo_dir: /opt/psql-benchmarks
+psql_benchmarks_run_dir: /var/lib/psql-benchmarks/runs
+psql_benchmarks_log_dir: /var/log/psql-benchmarks
+psql_benchmarks_git_clone_suffix: ""
+psql_benchmarks_git_branch: main
+psql_benchmarks_skip_git_update: false
+psql_benchmarks_region: ""
+psql_benchmarks_node_role: ""
+psql_benchmarks_sample_interval_seconds: 1
+psql_benchmarks_capture_duration_seconds: 30
+psql_benchmarks_warmup_iterations: 1
+psql_benchmarks_measurement_iterations: 3
+psql_benchmarks_application_name: psql-benchmarks
+psql_benchmarks_cluster_label: "{{ psql_benchmarks_region_effective | default('unknown') }}-citus-single-region"
+psql_benchmarks_dataset_label: citus-datagen-minimal
+psql_benchmarks_notes: ""
+psql_benchmarks_remote_postgres_host: 127.0.0.1
+psql_benchmarks_remote_postgres_port: 5432
+psql_benchmarks_remote_postgres_user: "{{ postgresql_admin_user | default('postgres') }}"
+psql_benchmarks_remote_postgres_password: "{{ postgresql_admin_password }}"
+psql_benchmarks_remote_postgres_db: "{{ postgresql_app_db }}"
+psql_benchmarks_remote_postgres_ssl_mode: disable
+psql_benchmarks_remote_postgres_ssl_root_cert: ""
+psql_benchmarks_uv_installer_url: https://astral.sh/uv/install.sh
+psql_benchmarks_uv_install_dir: /root/.local/bin

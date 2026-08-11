@@ -1,0 +1,710 @@
+corpus_id: repeatability-v1
+source_selection: master-regimes/generated/corpus/repeatability-v1/repeatability_selection.csv
+source_execution_plans:
+  clean-run-v1: master-regimes/generated/corpus/clean-run-v1/corpus_execution_plan.yml
+  validation-holdout-v1: master-regimes/generated/corpus/validation-holdout-v1/corpus_execution_plan.yml
+execution_backend: master-regimes-infra.database_sweep
+locally_rendered_without_infrastructure: true
+dry_run_only: false
+database_result_rows_stored: false
+condition_count: 96
+sentinel_condition_count: 20
+execution_count: 328
+execution_policy:
+  cache_policy: mixed_cache_repeatability_audit
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260724
+  repetitions_default: 3
+  sentinel_repetitions: 5
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  cache_features_in_default_model: false
+group_count: 29
+groups:
+- group_id: repeatability-v1__pilot-balanced-v1__default__analytics_clients
+  sweep_id: repeatability-v1__pilot-balanced-v1__default__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: default
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - fdw_raw
+  - multiregion_union
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  cell_count: 31
+  instance_count: 87
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-balanced-v1__default__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-balanced-v1__default__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+  source_plan_id: clean-run-v1
+  source_plan_ids:
+  - clean-run-v1
+  - validation-holdout-v1
+  condition_count: 23
+  sentinel_condition_count: 9
+- group_id: repeatability-v1__pilot-balanced-v1__default__coordinators
+  sweep_id: repeatability-v1__pilot-balanced-v1__default__coordinators
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: default
+  target_group: coordinators
+  strategies:
+  - single_region_citus
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  cell_count: 10
+  instance_count: 21
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-balanced-v1__default__coordinators/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-balanced-v1__default__coordinators.yml
+  fdw_bootstrap_required: false
+  gac_etl_bootstrap_required: false
+  source_plan_id: clean-run-v1
+  source_plan_ids:
+  - clean-run-v1
+  condition_count: 5
+  sentinel_condition_count: 3
+- group_id: repeatability-v1__pilot-balanced-v1__fetch_large__analytics_clients
+  sweep_id: repeatability-v1__pilot-balanced-v1__fetch_large__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: fetch_large
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: fetch_size
+  runtime_expected_effect: 'Should reduce fetch batching overhead for high remote-row-flow
+    queries compared with fetch_small.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 3
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-balanced-v1__fetch_large__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-balanced-v1__fetch_large__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 1
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-balanced-v1__fetch_small__analytics_clients
+  sweep_id: repeatability-v1__pilot-balanced-v1__fetch_small__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: fetch_small
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: fetch_size
+  runtime_expected_effect: 'Should affect FDW remote-row-flow or WAN-sensitive queries
+    more than reduced/localized negative controls.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 3
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-balanced-v1__fetch_small__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-balanced-v1__fetch_small__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 1
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-balanced-v1__wan_0ms__analytics_clients
+  sweep_id: repeatability-v1__pilot-balanced-v1__wan_0ms__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: wan_0ms
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Control segment for the WAN companion corpus. It records/reset
+    network state but should not introduce synthetic delay.
+
+    '
+  network_profile_id: wan_0ms
+  cell_count: 2
+  instance_count: 6
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-balanced-v1__wan_0ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-balanced-v1__wan_0ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 2
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-balanced-v1__wan_100ms__analytics_clients
+  sweep_id: repeatability-v1__pilot-balanced-v1__wan_100ms__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: wan_100ms
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Strong synthetic WAN delay for FDW row-flow intervention
+    validation.
+
+    '
+  network_profile_id: wan_100ms
+  cell_count: 3
+  instance_count: 9
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-balanced-v1__wan_100ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-balanced-v1__wan_100ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 3
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-balanced-v1__wan_40ms__analytics_clients
+  sweep_id: repeatability-v1__pilot-balanced-v1__wan_40ms__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: wan_40ms
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Optional intermediate latency level for response-curve
+    validation.
+
+    '
+  network_profile_id: wan_40ms
+  cell_count: 1
+  instance_count: 3
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-balanced-v1__wan_40ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-balanced-v1__wan_40ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 1
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-balanced-v1__work_mem_high__analytics_clients
+  sweep_id: repeatability-v1__pilot-balanced-v1__work_mem_high__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: work_mem_high
+  target_group: analytics_clients
+  strategies:
+  - fdw_raw
+  runtime_intervention_axis: work_mem
+  runtime_expected_effect: 'Should reduce spill/blocking pressure relative to work_mem_low
+    when the query is memory-sensitive.
+
+    '
+  cell_count: 3
+  instance_count: 6
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-balanced-v1__work_mem_high__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-balanced-v1__work_mem_high__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: clean-run-v1
+  source_plan_ids:
+  - clean-run-v1
+  - validation-holdout-v1
+  condition_count: 2
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-balanced-v1__work_mem_low__analytics_clients
+  sweep_id: repeatability-v1__pilot-balanced-v1__work_mem_low__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: work_mem_low
+  target_group: analytics_clients
+  strategies:
+  - fdw_raw
+  runtime_intervention_axis: work_mem
+  runtime_expected_effect: 'Should increase spill/blocking pressure for sort/hash/aggregate-heavy
+    plans more than simple localized controls.
+
+    '
+  cell_count: 3
+  instance_count: 6
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-balanced-v1__work_mem_low__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-balanced-v1__work_mem_low__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: clean-run-v1
+  source_plan_ids:
+  - clean-run-v1
+  - validation-holdout-v1
+  condition_count: 2
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-region-imbalanced-v1__default__analytics_clients
+  sweep_id: repeatability-v1__pilot-region-imbalanced-v1__default__analytics_clients
+  dataset_profile_id: pilot-region-imbalanced-v1
+  runtime_config_id: default
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - multiregion_union
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  network_profile_id: ''
+  cell_count: 6
+  instance_count: 3
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-region-imbalanced-v1__default__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-region-imbalanced-v1__default__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 1
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-region-imbalanced-v1__fetch_large__analytics_clients
+  sweep_id: repeatability-v1__pilot-region-imbalanced-v1__fetch_large__analytics_clients
+  dataset_profile_id: pilot-region-imbalanced-v1
+  runtime_config_id: fetch_large
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: fetch_size
+  runtime_expected_effect: 'Should reduce fetch batching overhead for high remote-row-flow
+    queries compared with fetch_small.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 3
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-region-imbalanced-v1__fetch_large__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-region-imbalanced-v1__fetch_large__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 1
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-region-imbalanced-v1__fetch_small__analytics_clients
+  sweep_id: repeatability-v1__pilot-region-imbalanced-v1__fetch_small__analytics_clients
+  dataset_profile_id: pilot-region-imbalanced-v1
+  runtime_config_id: fetch_small
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: fetch_size
+  runtime_expected_effect: 'Should affect FDW remote-row-flow or WAN-sensitive queries
+    more than reduced/localized negative controls.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 3
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-region-imbalanced-v1__fetch_small__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-region-imbalanced-v1__fetch_small__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 1
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-region-imbalanced-v1__wan_0ms__analytics_clients
+  sweep_id: repeatability-v1__pilot-region-imbalanced-v1__wan_0ms__analytics_clients
+  dataset_profile_id: pilot-region-imbalanced-v1
+  runtime_config_id: wan_0ms
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Control segment for the WAN companion corpus. It records/reset
+    network state but should not introduce synthetic delay.
+
+    '
+  network_profile_id: wan_0ms
+  cell_count: 2
+  instance_count: 6
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-region-imbalanced-v1__wan_0ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-region-imbalanced-v1__wan_0ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 2
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-region-imbalanced-v1__wan_100ms__analytics_clients
+  sweep_id: repeatability-v1__pilot-region-imbalanced-v1__wan_100ms__analytics_clients
+  dataset_profile_id: pilot-region-imbalanced-v1
+  runtime_config_id: wan_100ms
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Strong synthetic WAN delay for FDW row-flow intervention
+    validation.
+
+    '
+  network_profile_id: wan_100ms
+  cell_count: 3
+  instance_count: 6
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-region-imbalanced-v1__wan_100ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-region-imbalanced-v1__wan_100ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 2
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-region-imbalanced-v1__wan_40ms__analytics_clients
+  sweep_id: repeatability-v1__pilot-region-imbalanced-v1__wan_40ms__analytics_clients
+  dataset_profile_id: pilot-region-imbalanced-v1
+  runtime_config_id: wan_40ms
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Optional intermediate latency level for response-curve
+    validation.
+
+    '
+  network_profile_id: wan_40ms
+  cell_count: 1
+  instance_count: 6
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-region-imbalanced-v1__wan_40ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-region-imbalanced-v1__wan_40ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 2
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-region-imbalanced-v1__work_mem_high__analytics_clients
+  sweep_id: repeatability-v1__pilot-region-imbalanced-v1__work_mem_high__analytics_clients
+  dataset_profile_id: pilot-region-imbalanced-v1
+  runtime_config_id: work_mem_high
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: work_mem
+  runtime_expected_effect: 'Should reduce spill/blocking pressure relative to work_mem_low
+    when the query is memory-sensitive.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 6
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-region-imbalanced-v1__work_mem_high__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-region-imbalanced-v1__work_mem_high__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 2
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-region-imbalanced-v1__work_mem_low__analytics_clients
+  sweep_id: repeatability-v1__pilot-region-imbalanced-v1__work_mem_low__analytics_clients
+  dataset_profile_id: pilot-region-imbalanced-v1
+  runtime_config_id: work_mem_low
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: work_mem
+  runtime_expected_effect: 'Should increase spill/blocking pressure for sort/hash/aggregate-heavy
+    plans more than simple localized controls.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 3
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-region-imbalanced-v1__work_mem_low__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-region-imbalanced-v1__work_mem_low__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 1
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients
+  sweep_id: repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients
+  dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+  runtime_config_id: default
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - multiregion_union
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  network_profile_id: ''
+  cell_count: 6
+  instance_count: 11
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__default__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 3
+  sentinel_condition_count: 1
+- group_id: repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_large__analytics_clients
+  sweep_id: repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_large__analytics_clients
+  dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+  runtime_config_id: fetch_large
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: fetch_size
+  runtime_expected_effect: 'Should reduce fetch batching overhead for high remote-row-flow
+    queries compared with fetch_small.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 3
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_large__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_large__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 1
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_small__analytics_clients
+  sweep_id: repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_small__analytics_clients
+  dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+  runtime_config_id: fetch_small
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: fetch_size
+  runtime_expected_effect: 'Should affect FDW remote-row-flow or WAN-sensitive queries
+    more than reduced/localized negative controls.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 3
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_small__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__fetch_small__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 1
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_0ms__analytics_clients
+  sweep_id: repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_0ms__analytics_clients
+  dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+  runtime_config_id: wan_0ms
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Control segment for the WAN companion corpus. It records/reset
+    network state but should not introduce synthetic delay.
+
+    '
+  network_profile_id: wan_0ms
+  cell_count: 2
+  instance_count: 9
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_0ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_0ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 3
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_100ms__analytics_clients
+  sweep_id: repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_100ms__analytics_clients
+  dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+  runtime_config_id: wan_100ms
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Strong synthetic WAN delay for FDW row-flow intervention
+    validation.
+
+    '
+  network_profile_id: wan_100ms
+  cell_count: 3
+  instance_count: 6
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_100ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_100ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 2
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_40ms__analytics_clients
+  sweep_id: repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_40ms__analytics_clients
+  dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+  runtime_config_id: wan_40ms
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Optional intermediate latency level for response-curve
+    validation.
+
+    '
+  network_profile_id: wan_40ms
+  cell_count: 1
+  instance_count: 3
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_40ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_40ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 1
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_high__analytics_clients
+  sweep_id: repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_high__analytics_clients
+  dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+  runtime_config_id: work_mem_high
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: work_mem
+  runtime_expected_effect: 'Should reduce spill/blocking pressure relative to work_mem_low
+    when the query is memory-sensitive.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 3
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_high__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_high__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 1
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_low__analytics_clients
+  sweep_id: repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_low__analytics_clients
+  dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+  runtime_config_id: work_mem_low
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: work_mem
+  runtime_expected_effect: 'Should increase spill/blocking pressure for sort/hash/aggregate-heavy
+    plans more than simple localized controls.
+
+    '
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 3
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_low__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__work_mem_low__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: validation-holdout-v1
+  source_plan_ids:
+  - validation-holdout-v1
+  condition_count: 1
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-skew-heavy-v1__default__analytics_clients
+  sweep_id: repeatability-v1__pilot-skew-heavy-v1__default__analytics_clients
+  dataset_profile_id: pilot-skew-heavy-v1
+  runtime_config_id: default
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - fdw_raw
+  - multiregion_union
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  cell_count: 31
+  instance_count: 80
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-skew-heavy-v1__default__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-skew-heavy-v1__default__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+  source_plan_id: clean-run-v1
+  source_plan_ids:
+  - clean-run-v1
+  condition_count: 22
+  sentinel_condition_count: 7
+- group_id: repeatability-v1__pilot-skew-heavy-v1__default__coordinators
+  sweep_id: repeatability-v1__pilot-skew-heavy-v1__default__coordinators
+  dataset_profile_id: pilot-skew-heavy-v1
+  runtime_config_id: default
+  target_group: coordinators
+  strategies:
+  - single_region_citus
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  cell_count: 10
+  instance_count: 9
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-skew-heavy-v1__default__coordinators/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-skew-heavy-v1__default__coordinators.yml
+  fdw_bootstrap_required: false
+  gac_etl_bootstrap_required: false
+  source_plan_id: clean-run-v1
+  source_plan_ids:
+  - clean-run-v1
+  condition_count: 3
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-skew-heavy-v1__fetch_large__analytics_clients
+  sweep_id: repeatability-v1__pilot-skew-heavy-v1__fetch_large__analytics_clients
+  dataset_profile_id: pilot-skew-heavy-v1
+  runtime_config_id: fetch_large
+  target_group: analytics_clients
+  strategies:
+  - fdw_raw
+  - multiregion_union
+  runtime_intervention_axis: fetch_size
+  runtime_expected_effect: 'Should reduce fetch batching overhead for high remote-row-flow
+    queries compared with fetch_small.
+
+    '
+  cell_count: 4
+  instance_count: 9
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-skew-heavy-v1__fetch_large__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-skew-heavy-v1__fetch_large__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: clean-run-v1
+  source_plan_ids:
+  - clean-run-v1
+  condition_count: 3
+  sentinel_condition_count: 0
+- group_id: repeatability-v1__pilot-skew-heavy-v1__fetch_small__analytics_clients
+  sweep_id: repeatability-v1__pilot-skew-heavy-v1__fetch_small__analytics_clients
+  dataset_profile_id: pilot-skew-heavy-v1
+  runtime_config_id: fetch_small
+  target_group: analytics_clients
+  strategies:
+  - fdw_raw
+  - multiregion_union
+  runtime_intervention_axis: fetch_size
+  runtime_expected_effect: 'Should affect FDW remote-row-flow or WAN-sensitive queries
+    more than reduced/localized negative controls.
+
+    '
+  cell_count: 4
+  instance_count: 9
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-skew-heavy-v1__fetch_small__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/repeatability-v1/sweeps/repeatability-v1__pilot-skew-heavy-v1__fetch_small__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  source_plan_id: clean-run-v1
+  source_plan_ids:
+  - clean-run-v1
+  condition_count: 3
+  sentinel_condition_count: 0

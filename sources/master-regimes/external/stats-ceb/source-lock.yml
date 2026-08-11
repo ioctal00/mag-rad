@@ -1,0 +1,40 @@
+source_id: stats-ceb-zenodo-19131189
+title: STATS Cardinality Estimation Benchmark
+record_url: https://zenodo.org/records/19131189
+doi: 10.5281/zenodo.19131189
+license: CC-BY-SA-4.0
+data_provenance: real-derived Stack Exchange data
+compatibility:
+  dump_created_with: PostgreSQL 16
+  target_postgresql: "18"
+  target_citus: "14"
+resources:
+  queries:
+    url: https://zenodo.org/records/19131189/files/queries.zip?download=1
+    filename: queries.zip
+    md5: fb0e187cea2e73daf1836f15e6881c08
+    sha256: 964fe79cdd312827755307953c360b7f0e9e8b7aa7bd7616dcd3a6a0fb04c660
+  schema:
+    url: https://zenodo.org/records/19131189/files/schema-postgres.sql?download=1
+    filename: schema-postgres.sql
+    md5: b86c5684942dfa46af2445c3b0679e5f
+    sha256: ac3fb41be18ecc3893473d042af6afcf0defba9d1d912e908b2c678c09a00b82
+  dump:
+    url: https://zenodo.org/records/19131189/files/stats_dump.pg?download=1
+    filename: stats_dump.pg
+    size_bytes: 129800000
+    md5: 4b2dc8788a82a820feb1b46abca41396
+  expected_results:
+    repository: https://github.com/Nathaniel-Han/End-to-End-CardEst-Benchmark
+    commit: 670cb8d4bf4cbfa32f94fdf17f33973d3fd67d1b
+    path: workloads/stats_CEB/stats_CEB.sql
+    url: https://raw.githubusercontent.com/Nathaniel-Han/End-to-End-CardEst-Benchmark/670cb8d4bf4cbfa32f94fdf17f33973d3fd67d1b/workloads/stats_CEB/stats_CEB.sql
+    filename: stats_CEB.sql
+    sha256: 8c4f9dca3e4aef8f7d86a3662739e3c2bfa3caec01b23f30b143325a306f86a3
+contracts:
+  archive_query_count: 146
+  query_archive_prefix: stats/
+  query_filename_pattern: q-{query_id}.sql
+  result_semantics: scalar_count
+  original_system_required: false
+

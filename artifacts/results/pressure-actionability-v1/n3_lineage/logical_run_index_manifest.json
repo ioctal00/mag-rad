@@ -1,0 +1,11 @@
+{
+  "attempt_count": 2,
+  "corpus_run_root": "master-regimes-infra/generated/runs/corpus-sweeps",
+  "group_attempt_count": 5,
+  "index_dir": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/pressure-raw-v1-n3-colocation-holdout",
+  "logical_index_dir": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/pressure-raw-v1-n3-colocation-holdout/_index",
+  "logical_run_id": "pressure-raw-v1-n3-colocation-holdout",
+  "needs_rerun_count": 0,
+  "query_attempt_count": 97,
+  "resolved_query_count": 96
+}

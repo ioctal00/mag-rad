@@ -1,0 +1,4 @@
+class,row_count,share,average_max_membership,average_top2_margin,interpretation
+clear_prototype,1172,0.597,0.799,0.682,"one descriptive prototype dominates"
+mixed_boundary,264,0.134,0.500,0.243,"secondary membership is materially retained"
+weak_coverage_or_ood_proxy,528,0.269,0.371,0.065,"no prototype is sufficiently dominant; not a calibrated OOD probability"

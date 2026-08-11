@@ -1,0 +1,39 @@
+sweep_id: clean-run-eu-us-gac-region-asymmetry-v1__pilot-region-imbalanced-v1__default__coordinators
+region: eu
+datasets:
+- id: pilot-region-imbalanced-v1
+  profile: master-regimes/datasets/profiles/pilot-region-imbalanced.yml
+  load_method: copy_pipe
+runtime_configs:
+- id: default
+  pg_options: {}
+  psql_variables: {}
+  fdw_server_options: {}
+  network_profile: {}
+  intervention_axis: none
+  expected_effect: baseline
+workload:
+  instance_manifest: master-regimes/generated/corpus/region-asymmetry-companion-v1/groups/clean-run-eu-us-gac-region-asymmetry-v1__pilot-region-imbalanced-v1__default__coordinators/instance_manifest.csv
+  order_policy: deterministic_shuffle
+  shuffle_seed: 20260702
+collection:
+  global_stats_scope: none
+  target_group: coordinators
+  citus_explain_all_tasks: true
+  hard_timeout_seconds: 300
+  timeout_grace_seconds: 30
+  cache_policy: mixed_cache_first_observed
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  repetitions_default: 1
+  cache_features_in_default_model: false
+  order_policy: deterministic_shuffle
+  shuffle_seed: 20260702
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true

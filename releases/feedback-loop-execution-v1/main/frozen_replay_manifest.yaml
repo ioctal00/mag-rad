@@ -1,0 +1,72 @@
+contract_version: pressure-feedback-loop-frozen-replay-v1
+frozen_at_utc: "2026-08-07T13:31:00Z"
+source_protocol: contracts/FEEDBACK_LOOP_PROTOCOL.md
+trajectory_id: trajectory_sort_order_topk
+logical_question_id: user_value_topk
+topology_id: eu_us_gac_n2_active
+dataset_profile_id: locked_current_dataset_snapshot
+repetitions_per_state: 5
+decision_feedback_allowed: false
+adaptive_tuning_allowed: false
+
+state_definitions:
+  A_baseline:
+    role: initial
+    source_state_id: trajectory_sort_order_topk_s00
+    template_id: gac_fdw_coordinator_raw_user_topk
+    pg_options: {}
+    network_profile: null
+  B_work_mem:
+    role: clearly_improved
+    source_state_id: trajectory_sort_order_topk_s01
+    template_id: gac_fdw_coordinator_raw_user_topk
+    pg_options:
+      work_mem: 64MB
+    network_profile: null
+  C_pushdown:
+    role: mixed_physical_response
+    source_state_id: trajectory_sort_order_topk_s02
+    template_id: gac_fdw_coordinator_partial_user_topk
+    pg_options:
+      work_mem: 64MB
+    network_profile: null
+  D_wan_delay:
+    role: negative_rejected_state
+    source_state_id: trajectory_sort_order_topk_s03
+    template_id: gac_fdw_coordinator_partial_user_topk
+    pg_options:
+      work_mem: 64MB
+    network_profile:
+      id: feedback-loop-eu-delay-10ms
+      scope: region_egress_to_analytics
+      target_region_ids: [eu]
+      configured_delay_ms: 10
+      configured_jitter_ms: 0
+      configured_loss_percent: 0
+      configured_bandwidth_mbit: 0
+
+order_contract:
+  design: four-treatment Williams square plus one predeclared repeated row
+  rationale: >-
+    Prva četiri bloka daju svaki tretman jednom u svakoj poziciji i
+    uravnotezuju usmjerene carry-over parove. Peti blok unaprijed ponavlja
+    prvi red da bi svako stanje imalo tacno pet ponavljanja.
+  blocks:
+    - [A_baseline, B_work_mem, D_wan_delay, C_pushdown]
+    - [B_work_mem, C_pushdown, A_baseline, D_wan_delay]
+    - [C_pushdown, D_wan_delay, B_work_mem, A_baseline]
+    - [D_wan_delay, A_baseline, C_pushdown, B_work_mem]
+    - [A_baseline, B_work_mem, D_wan_delay, C_pushdown]
+
+evaluation_contract:
+  result_equivalence: exact ordered and multiset hashes
+  profile_contract: contracts/pressure_domain_manifest.yaml
+  compare_to:
+    - matching exploratory source state
+    - A_baseline replay state
+  elapsed_effect: log2(median_before_seconds / median_after_seconds)
+  noise_rule: frozen bootstrap seed 20260807, 10000 draws, 95 percent interval
+  conclusion_stability_rule: >-
+    Smjer end-to-end ishoda i glavne fizicke tranzicije moraju ostati isti;
+    konfliktni signali se ne smiju preimenovati nakon replaya.
+  extra_repetitions_allowed: false

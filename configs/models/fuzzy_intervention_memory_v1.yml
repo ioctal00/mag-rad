@@ -1,0 +1,169 @@
+contract_version: fuzzy-intervention-memory-v1
+description: >
+  Local action-response memory over pre-action post-execution evidence. FCM is
+  used only as a soft neighborhood index. It does not name physical causes and
+  it does not assign effects to actions that have no local support.
+
+sources:
+  - id: cross-action-pilot-v1
+    index_dir: ../master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/cross-action-pilot-v1/_index
+    required: true
+  - id: fuzzy-memory-topk-panel-v1
+    index_dir: ../master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/fuzzy-memory-topk-panel-v1/_index
+    required: true
+
+repetitions_per_condition: 3
+primary_panel: gac_topk
+
+panels:
+  remote_transport:
+    component_match_ids:
+      - pilot_remote_filter
+      - pilot_remote_rollup
+      - pilot_remote_wide
+    actions:
+      - increase_fetch_size
+      - remove_added_delay
+      - remove_bandwidth_limit
+  gac_aggregate:
+    component_match_ids: [pilot_gac_aggregate]
+    actions:
+      - increase_gac_work_mem
+      - regional_partial_aggregation
+      - mitigate_remote_path_bundle
+  gac_topk:
+    component_match_ids:
+      - pilot_gac_topk
+      - fuzzy_topk_transport_severe
+      - fuzzy_topk_memory_severe
+      - fuzzy_topk_balanced
+    actions:
+      - increase_gac_work_mem
+      - regional_topk_candidates
+      - mitigate_remote_path_bundle
+  repartition_join:
+    component_match_ids: [pilot_repartition_join]
+    actions:
+      - increase_regional_work_mem
+      - use_colocated_distribution
+      - mitigate_remote_path_bundle
+
+state_representation:
+  pca_components: 6
+  minimum_active_features: 8
+  features:
+    elapsed_seconds: {family: execution, transform: log1p}
+    result_row_count: {family: execution, transform: log1p}
+    result_output_byte_count: {family: execution, transform: log1p}
+    shared_blks_hit_sum: {family: execution, transform: log1p}
+    shared_blks_read_sum: {family: execution, transform: log1p}
+    temp_blks_written_sum: {family: execution, transform: log1p}
+    estimated_result_bytes: {family: flow, transform: log1p}
+    estimated_remote_output_bytes: {family: flow, transform: log1p}
+    estimated_fanin_bytes: {family: flow, transform: log1p}
+    coordinator_main_plan_total_time_ms: {family: gac, transform: log1p}
+    coordinator_foreign_scan_time_ms_sum: {family: gac, transform: log1p}
+    coordinator_non_foreign_time_share_proxy: {family: gac, transform: identity}
+    coordinator_fanin_rows: {family: gac, transform: log1p}
+    coordinator_fanin_bytes_estimated: {family: gac, transform: log1p}
+    coordinator_final_rows: {family: gac, transform: log1p}
+    coordinator_final_bytes_estimated: {family: gac, transform: log1p}
+    coordinator_blocking_input_rows_sum: {family: gac, transform: log1p}
+    coordinator_temp_written_blocks: {family: gac, transform: log1p}
+    coordinator_hash_batches_max: {family: gac, transform: log1p}
+    coordinator_sort_input_rows_sum: {family: gac, transform: log1p}
+    coordinator_sort_time_ms_max: {family: gac, transform: log1p}
+    coordinator_aggregate_input_rows_sum: {family: gac, transform: log1p}
+    coordinator_aggregate_time_ms_max: {family: gac, transform: log1p}
+    coordinator_join_input_rows_sum: {family: gac, transform: log1p}
+    coordinator_join_time_ms_max: {family: gac, transform: log1p}
+    task_count: {family: region, transform: log1p}
+    task_time_mean_ms: {family: region, transform: log1p}
+    task_time_cv: {family: region, transform: identity}
+    task_rows_mean: {family: region, transform: log1p}
+    task_rows_cv: {family: region, transform: identity}
+    remote_region_actual_rows_sum: {family: region, transform: log1p}
+    remote_region_actual_rows_cv: {family: region, transform: identity}
+    remote_region_actual_rows_max_share: {family: region, transform: identity}
+    remote_region_actual_time_sum: {family: region, transform: log1p}
+    remote_region_actual_time_cv: {family: region, transform: identity}
+    remote_region_actual_time_max_share: {family: region, transform: identity}
+    remote_region_tuple_bytes_sum: {family: region, transform: log1p}
+    remote_region_tuple_bytes_cv: {family: region, transform: identity}
+    remote_region_tuple_bytes_max_share: {family: region, transform: identity}
+    regional_temp_written_blocks_sum: {family: region, transform: log1p}
+    regional_spill_present: {family: region, transform: identity}
+    remote_citus_map_merge_job_count_sum: {family: citus, transform: log1p}
+    remote_citus_dependent_map_task_count_sum: {family: citus, transform: log1p}
+    remote_citus_repartition_fanout_ratio_max: {family: citus, transform: log1p}
+    citus_repartition_observed_v2: {family: citus, transform: identity}
+    worker_task_actual_rows_sum: {family: worker, transform: log1p}
+    worker_task_actual_rows_cv: {family: worker, transform: identity}
+    worker_task_actual_rows_max_share: {family: worker, transform: identity}
+    worker_task_scan_actual_rows_sum: {family: worker, transform: log1p}
+    worker_task_scan_actual_rows_cv: {family: worker, transform: identity}
+    worker_task_scan_actual_rows_max_share: {family: worker, transform: identity}
+    worker_task_actual_time_sum: {family: worker, transform: log1p}
+    worker_task_actual_time_cv: {family: worker, transform: identity}
+    worker_task_actual_time_max_share: {family: worker, transform: identity}
+    worker_task_seq_scan_share: {family: worker, transform: identity}
+    worker_task_index_scan_share: {family: worker, transform: identity}
+    worker_task_join_node_count: {family: worker, transform: log1p}
+    worker_task_aggregate_node_count: {family: worker, transform: log1p}
+    worker_task_sort_node_count: {family: worker, transform: log1p}
+    worker_task_spill_count: {family: worker, transform: log1p}
+    worker_task_temp_written_sum: {family: worker, transform: log1p}
+    worker_task_within_region_worker_scan_rows_cv_max: {family: worker, transform: identity}
+    worker_task_within_region_worker_scan_rows_max_share_max: {family: worker, transform: identity}
+    regional_coordinator_tx_bytes_sum: {family: telemetry, transform: log1p}
+    analytics_rx_bytes_sum: {family: telemetry, transform: log1p}
+    worker_tx_bytes_sum: {family: telemetry, transform: log1p}
+    os_cpu_busy_pct_mean: {family: telemetry, transform: identity}
+    os_cpu_busy_pct_max: {family: telemetry, transform: identity}
+    os_mem_used_peak_bytes_max: {family: telemetry, transform: log1p}
+    os_disk_read_bytes_sum: {family: telemetry, transform: log1p}
+    os_disk_written_bytes_sum: {family: telemetry, transform: log1p}
+    os_net_rx_bytes_sum: {family: telemetry, transform: log1p}
+    os_net_tx_bytes_sum: {family: telemetry, transform: log1p}
+    os_tcp_retrans_segs_sum: {family: telemetry, transform: log1p}
+    os_tcp_timeouts_sum: {family: telemetry, transform: log1p}
+    edge_count: {family: edge, transform: log1p}
+    edge_remote_rows_sum: {family: edge, transform: log1p}
+    edge_remote_rows_max_share: {family: edge, transform: identity}
+    edge_remote_bytes_sum: {family: edge, transform: log1p}
+    edge_remote_bytes_max_share: {family: edge, transform: identity}
+    edge_foreign_scan_time_ms_sum: {family: edge, transform: log1p}
+    edge_regional_plan_time_ms_sum: {family: edge, transform: log1p}
+    edge_boundary_wait_ms_sum: {family: edge, transform: log1p}
+    edge_estimated_fetch_cycles_sum: {family: edge, transform: log1p}
+    edge_rtt_context_median_ms_mean: {family: edge, transform: log1p}
+    edge_rtt_context_median_ms_max: {family: edge, transform: log1p}
+    edge_source_tx_bytes_sum: {family: edge, transform: log1p}
+    edge_source_tx_bps_mean: {family: edge, transform: log1p}
+    edge_source_tx_bps_min: {family: edge, transform: log1p}
+    edge_qdisc_drops_sum: {family: edge, transform: log1p}
+    edge_qdisc_overlimits_sum: {family: edge, transform: log1p}
+    edge_tcp_retrans_sum: {family: edge, transform: log1p}
+    edge_available_share: {family: edge, transform: identity}
+
+memory:
+  fuzzifier: 1.7
+  primary_k: 4
+  minimum_scenarios_per_context: 3
+  seeds: [11, 29, 47, 71, 101]
+  minimum_observed_support: 4
+  minimum_effective_support: 2.5
+  knn_neighbors: 5
+  distance_epsilon: 0.000001
+
+gate:
+  minimum_primary_scenarios: 24
+  minimum_distinct_rankings: 3
+  minimum_pairwise_rank_reversals: 2
+  minimum_fcm_pairwise_improvement_over_action_median: 0.03
+  require_lower_fcm_regret_than_action_median: true
+  require_fcm_not_worse_than_knn: true
+  require_bootstrap_superiority: true
+  bootstrap_samples: 10000
+  random_seed: 42
+  response_null_scale_floor: 0.01

@@ -1,0 +1,118 @@
+model_id: semantic-v2-transfer-oriented-fcm
+status: corrective_refreeze_before_second_external_holdout
+training_scope: corpus_conditioned_clean_run_v1
+normalization_scope: corpus_independent_semantic_contract
+row_count: 1964
+feature_count: 19
+features:
+- foreign_scan_time_to_root_ratio
+- remote_to_final_rows_ratio
+- regional_input_to_wan_rows_ratio
+- global_group_merge_ratio
+- spill_present
+- spill_bytes_to_wan_bytes_ratio
+- temp_blocks_per_final_row
+- hash_batch_excess
+- remote_region_rows_isf_normalized
+- worker_task_scan_rows_isf_normalized
+- worker_scan_rows_cv_normalized
+- task_count_to_shard_count_ratio
+- active_task_share
+- citus_repartition_observed_v2
+- worker_task_seq_scan_share
+- root_rows_estimate_error_log
+- foreign_scan_rows_estimate_error_log
+- aggregate_rows_estimate_error_log
+- remote_root_rows_estimate_error_log
+feature_contract: configs/features/feature_semantic_contract_v2.yml
+feature_contract_sha256: 762df5a8bcc488bd5ca50d297957a8b2a5f062ecaf575b3dd13cf74caee34446
+weighted_matrix: analysis/reports/feature-semantic-contract-v2/semantic_v2_weighted.csv
+weighted_matrix_sha256: cbd517194fe90a06577989b48fbe12940916c91be22669ffea471ed1e5ea35c0
+family_weighting: inverse_sqrt_feature_count
+missing_policy: semantic_neutral_with_explicit_applicability_audit
+fuzzifier: 1.7
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
+- 5
+- 6
+- 7
+- 8
+- 9
+k_candidates:
+- 3
+- 4
+primary_resolution: 4
+primary_resolution_rationale: locked operational four-prototype resolution retained
+  for direct comparison with v1; k=3 remains a macro-resolution sensitivity model
+coverage_reference:
+  interpretation: empirical_training_coverage_not_formal_ood_detector
+  distance: euclidean_distance_to_nearest_fcm_center
+  threshold_scope: one_global_threshold_per_representation
+  quantile: 0.99
+  quantile_method: linear
+  reference_rows: 1964
+  reference_scope: clean_run_v1_training_corpus
+  frozen_before_external_projection: true
+models:
+  k3:
+    representative_seed: 1
+    objective: 191.32420139232335
+    center_file: cluster_centers_k3.csv
+    membership_file: baseline_memberships_k3.csv
+    ood_rule: nearest_center_distance_above_baseline_p99
+    coverage_rule: nearest_center_distance_above_training_p99
+    ood_p99_threshold: 0.9794666794909843
+    metrics:
+      silhouette_hard_labels: 0.6069302536880878
+      partition_coefficient: 0.8758978087204629
+      modified_partition_coefficient: 0.8138467130806941
+      partition_entropy: 0.2461703784012635
+      normalized_partition_entropy: 0.22407393485440197
+      xie_beni_index: 0.12964706640026166
+      avg_max_membership: 0.9219248600968613
+      avg_top2_margin: 0.8687890919808892
+      cluster_min_share: 0.1425661914460285
+      cluster_max_share: 0.4959266802443992
+      seed_ari_mean: 1.0
+      seed_ari_min: 1.0
+      seed_ari_max: 1.0
+  k4:
+    representative_seed: 5
+    objective: 142.89008418336866
+    center_file: cluster_centers_k4.csv
+    membership_file: baseline_memberships_k4.csv
+    ood_rule: nearest_center_distance_above_baseline_p99
+    coverage_rule: nearest_center_distance_above_training_p99
+    ood_p99_threshold: 0.992091252236214
+    metrics:
+      silhouette_hard_labels: 0.6095309433985778
+      partition_coefficient: 0.8337922200664419
+      modified_partition_coefficient: 0.7783896267552559
+      partition_entropy: 0.3483120047714823
+      normalized_partition_entropy: 0.25125400098295525
+      xie_beni_index: 0.2883195167878032
+      avg_max_membership: 0.8952554066316044
+      avg_top2_margin: 0.8337009251565252
+      cluster_min_share: 0.12067209775967414
+      cluster_max_share: 0.4959266802443992
+      seed_ari_mean: 0.8925959119131807
+      seed_ari_min: 0.559441844413962
+      seed_ari_max: 1.0
+confirmatory_holdout:
+  logical_run_id: stats-ceb-semantic-v2b-holdout
+  may_change_contract_after_observation: false
+  acceptance:
+    result_correctness_share_min: 1.0
+    projected_completed_rows_share_min: 1.0
+    finite_projection_share_min: 1.0
+    within_frozen_p99_share_min: 0.75
+  interpretation: 'Passing these gates supports transfer-oriented feature geometry
+    only for this external holdout and fixed topology. It does not establish a workload-independent
+    taxonomy or permit refitting after observation.
+
+    '
+post_holdout_changes_allowed: false

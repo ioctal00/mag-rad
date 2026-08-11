@@ -1,0 +1,48 @@
+{
+  "checks": {
+    "all_executions_completed": true,
+    "edge_rows_complete": true,
+    "fdw_plans_complete": true,
+    "logical_resolver_selected_all": true,
+    "network_profiles_applied_and_reset": true,
+    "no_collector_errors": true,
+    "node_artifact_rows_complete": true,
+    "one_signature_per_condition": true,
+    "os_sampler_alignment_high": true,
+    "os_sampler_node_counts_match": true,
+    "regional_rows_complete": true,
+    "required_os_telemetry_complete": true,
+    "single_hardware_snapshot": true,
+    "topology_execution_counts_match": true,
+    "worker_task_evidence_complete": true
+  },
+  "counts": {
+    "conditions_with_correctness_signature": 60,
+    "executions": 180,
+    "hardware_snapshot_ids": 1,
+    "node_artifacts": 1548,
+    "regional_fragments": 456,
+    "remote_edges": 456,
+    "unique_hardware_nodes": 10,
+    "worker_task_fragments": 20736
+  },
+  "expected_execution_count_by_topology": {
+    "eu_us_apac_gac": 96,
+    "eu_us_gac": 84
+  },
+  "expected_os_sampled_node_count_by_topology": {
+    "eu_us_apac_gac": 10,
+    "eu_us_gac": 7
+  },
+  "fdw_plan_status": {
+    "ok": 456
+  },
+  "result_signature_status": {
+    "completed": 60,
+    "disabled": 120
+  },
+  "status": "PASS",
+  "worker_task_parse_status": {
+    "partial": 20736
+  }
+}

@@ -1,0 +1,24 @@
+[databases]
+{{ postgresql_app_db }} = host=127.0.0.1 port=5432 dbname={{ postgresql_app_db }}
+
+[pgbouncer]
+listen_addr = 0.0.0.0
+listen_port = {{ pgbouncer_listen_port }}
+auth_type = {{ pgbouncer_auth_type }}
+auth_file = /etc/pgbouncer/userlist.txt
+pool_mode = {{ pgbouncer_pool_mode }}
+default_pool_size = {{ pgbouncer_default_pool_size }}
+max_client_conn = {{ pgbouncer_max_client_conn }}
+admin_users = postgres,{{ postgresql_app_user }}
+stats_users = postgres,{{ postgresql_app_user }}
+server_reset_query = DISCARD ALL
+ignore_startup_parameters = extra_float_digits,options
+pidfile = /var/run/postgresql/pgbouncer.pid
+logfile = /var/log/postgresql/pgbouncer.log
+{% if pgbouncer_client_tls_enabled %}
+client_tls_sslmode = {{ pgbouncer_client_tls_sslmode }}
+client_tls_key_file = {{ postgresql_tls_remote_cert_dir }}/{{ postgresql_tls_server_key_filename }}
+client_tls_cert_file = {{ postgresql_tls_remote_cert_dir }}/{{ postgresql_tls_server_cert_filename }}
+client_tls_ca_file = {{ postgresql_tls_remote_cert_dir }}/{{ postgresql_tls_ca_cert_filename }}
+client_tls_protocols = {{ pgbouncer_client_tls_protocols }}
+{% endif %}

@@ -1,0 +1,28 @@
+sweep_id: gac-parser-smoke
+region: eu
+
+datasets:
+  - id: smoke
+    profile: ../master-regimes/datasets/profiles/smoke.yml
+    load_method: sql
+
+runtime_configs:
+  - id: default
+    pg_options: {}
+    psql_variables: {}
+
+workload:
+  instance_manifest: ../master-regimes/generated/workloads/gac-parser-smoke/current/instance_manifest.csv
+  max_instances: 3
+
+collection:
+  global_stats_scope: none
+  target_group: analytics_clients
+  citus_explain_all_tasks: false
+  fdw_bootstrap:
+    enabled: true
+    region: eu
+  gac_etl_bootstrap:
+    enabled: true
+    region: eu
+    lookback_days: 30

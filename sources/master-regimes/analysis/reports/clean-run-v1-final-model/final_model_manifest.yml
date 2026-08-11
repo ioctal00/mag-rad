@@ -1,0 +1,636 @@
+phase: 22
+name: final_model_freeze_package
+model_id: clean-run-v1-m0_flow_ratio_v3_reduced-fcm-k4
+status: frozen_for_thesis_writing
+created_from_existing_artifacts: true
+corpus:
+  logical_run_id: clean-run-v1
+  corpus_manifest: workloads/corpus/corpus_manifest.clean-run-v1.yml
+  observation_unit: query_run_id
+  row_count: 1964
+  no_database_result_rows_collected: true
+  regional_worker_evidence_policy: child_evidence_aggregated_to_query_run_row
+feature_matrix:
+  matrix_id: m0_flow_ratio_v3_reduced
+  scaled_matrix: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_m0_flow_ratio_v3_reduced_scaled.csv
+  raw_matrix: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_m0_flow_ratio_v3_reduced_raw.csv
+  context: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_context.csv
+  severity: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/execution_severity.csv
+  dataset_diagnosis: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/dataset_diagnosis.csv
+  preprocessing_report: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_preprocessing_report.csv
+  feature_quality: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_feature_quality.csv
+  allowlist_resolved: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_allowlist_resolved.csv
+  phase_summary: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/phase1_compact_summary.yml
+  row_count: 1964
+  feature_count: 21
+  features:
+  - remote_path_share
+  - remote_to_final_rows_ratio
+  - wan_output_to_final_rows_ratio
+  - drf_bytes_proxy
+  - global_group_merge_ratio
+  - temp_bytes_to_wan_bytes_ratio
+  - temp_blocks_per_wan_row
+  - temp_blocks_per_final_row
+  - spill_per_wan_mb
+  - hash_batches_max
+  - remote_region_rows_isf
+  - worker_task_scan_rows_isf
+  - worker_task_scan_actual_rows_max_share
+  - task_count_to_shard_count_ratio
+  - active_task_share
+  - citus_repartition_query
+  - worker_task_seq_scan_share
+  - root_rows_estimate_error_log
+  - foreign_scan_rows_estimate_error_log
+  - aggregate_rows_estimate_error_log
+  - remote_root_rows_estimate_error_log
+  excluded_identifier_fields:
+  - query_run_id
+  - template_id
+  - instance_id
+  - dataset_id
+  - runtime_config_id
+  - target_node
+  - logical_question_id
+  audit_context_fields_not_in_model:
+  - network_profile_id
+  - configured_latency_ms
+  - configured_jitter_ms
+  - configured_loss_percent
+  - cache_policy
+  - run_order
+  - repetition_index
+primary_model:
+  algorithm: fuzzy_c_means
+  k: 4
+  fuzzifier: 1.7
+  candidate_config: configs/features/phase1_flow_ratio_candidate.yml
+  membership_file: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy/memberships_representative_by_k.csv
+  center_file: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy/cluster_centers_representative_by_k.csv
+  seed_scores_file: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy/fuzzy_seed_scores.csv
+  k_summary_file: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy/k_summary.csv
+  seed_stability_file: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy/seed_stability.csv
+  representative_run:
+    seed: 0
+    iterations: 46
+    converged: true
+    silhouette_hard_labels: 0.21396007280321483
+    partition_coefficient: 0.5302241007080288
+    partition_entropy: 0.8855262744245401
+    avg_max_membership: 0.6435974557784608
+    median_max_membership: 0.6772608582287709
+    cluster_min_share: 0.14511201629327902
+    cluster_max_share: 0.3319755600814664
+  k4_summary:
+    ari_mean_across_seeds: 1.0
+    ari_min_across_seeds: 1.0
+    ari_max_across_seeds: 1.0
+  semantic_cluster_mapping:
+    0:
+      regime_id: R1
+      regime_name: Veliki FDW/WAN prenos sa globalnom finalizacijom i spill-om
+      macro_family: fdw_wan_transfer
+    1:
+      regime_id: R2
+      regime_name: Regionalna agregacija i FDW/WAN prenos prema GAC-u
+      macro_family: fdw_wan_transfer
+    2:
+      regime_id: R0
+      regime_name: Selektivni FDW dohvat sa niskim finalnim izlazom
+      macro_family: low_final_cardinality
+    3:
+      regime_id: R3
+      regime_name: Lokalni/ETL ili nizak FDW/WAN prenos
+      macro_family: low_fdw_wan_transfer
+artifact_groups:
+  fuzzy_clustering:
+    dir: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy
+    manifest: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy/fuzzy_clustering_manifest.yml
+    readme: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy/README.md
+  interpretation:
+    dir: analysis/reports/clean-run-v1-regime-interpretation
+    manifest: analysis/reports/clean-run-v1-regime-interpretation/post_clustering_manifest.yml
+    readme: analysis/reports/clean-run-v1-regime-interpretation/README.md
+    status: historical_pre_flow_ratio_v3_package_not_authoritative_for_cluster_ids
+  attribution:
+    dir: analysis/reports/clean-run-v1-regime-attribution
+    manifest: analysis/reports/clean-run-v1-regime-attribution/regime_attribution_manifest.yml
+    readme: analysis/reports/clean-run-v1-regime-attribution/README.md
+    status: historical_pre_flow_ratio_v3_package_not_authoritative
+  algorithm_comparison:
+    dir: analysis/reports/clean-run-v1-clustering-algorithm-comparison
+    manifest: analysis/reports/clean-run-v1-clustering-algorithm-comparison/algorithm_comparison_manifest.yml
+    readme: analysis/reports/clean-run-v1-clustering-algorithm-comparison/README.md
+  claim_stress_test:
+    dir: analysis/reports/clean-run-v1-claim-stress-test
+    manifest: analysis/reports/clean-run-v1-claim-stress-test/claim_stress_test_manifest.yml
+    readme: analysis/reports/clean-run-v1-claim-stress-test/README.md
+    verification_decision: analysis/reports/clean-run-v1-claim-stress-test/verification_corpus_decision.yml
+  query_inference_rehearsal:
+    dir: analysis/reports/clean-run-v1-query-inference/a6bca26d355f--d53d2c27948--ultiregion_top_tenants__lookback_days-1__limit_k-50
+    manifest: analysis/reports/clean-run-v1-query-inference/a6bca26d355f--d53d2c27948--ultiregion_top_tenants__lookback_days-1__limit_k-50/inference_manifest.yml
+    top_regime: R2
+    top_membership: 0.7308520254479204
+    max_membership_delta_vs_stored: 1.1102230246251565e-16
+supporting_manifests:
+  phase1_compact_summary:
+    rows: 1964
+    dropped_preprocessed_features: 1
+    high_corr_pairs_ge_0_90: 35
+    high_corr_feature_pairs_ge_0_90: 35
+    high_corr_missingness_pairs_ge_0_90: 0
+    missing_indicators_enabled: false
+    passthrough_audit_files:
+    - execution_severity.csv
+    - dataset_diagnosis.csv
+    - pressure_evidence.csv
+    - pressure_evidence_wide.csv
+    missing_context_columns: []
+    all_null_context_columns:
+    - network_profile_id
+    - configured_latency_ms
+    - configured_jitter_ms
+    - configured_loss_percent
+    matrices:
+      m0_compact:
+        selected_raw_features: 24
+        scaled_columns_without_id: 24
+        based_on: ''
+        dropped_from_base: []
+      m1_compact:
+        selected_raw_features: 48
+        scaled_columns_without_id: 48
+        based_on: ''
+        dropped_from_base: []
+      m0_reduced:
+        selected_raw_features: 21
+        scaled_columns_without_id: 21
+        based_on: m0_compact
+        dropped_from_base:
+        - join_rows_estimate_error_log
+        - spill_flag
+        - remote_region_actual_rows_sum
+      m1_reduced:
+        selected_raw_features: 42
+        scaled_columns_without_id: 42
+        based_on: m1_compact
+        dropped_from_base:
+        - join_rows_estimate_error_log
+        - join_min_depth
+        - spill_flag
+        - remote_region_actual_rows_sum
+        - fdw_remote_sql_count
+        - blocking_operator_below_remote_count
+      m0_flow_no_runtime_v2:
+        selected_raw_features: 34
+        scaled_columns_without_id: 33
+        based_on: ''
+        dropped_from_base: []
+      m0_flow_no_runtime_v2_reduced:
+        selected_raw_features: 26
+        scaled_columns_without_id: 26
+        based_on: ''
+        dropped_from_base: []
+      m0_flow_ratio_v3:
+        selected_raw_features: 27
+        scaled_columns_without_id: 27
+        based_on: ''
+        dropped_from_base: []
+      m0_flow_ratio_v3_reduced:
+        selected_raw_features: 21
+        scaled_columns_without_id: 21
+        based_on: ''
+        dropped_from_base: []
+  fuzzy_clustering_manifest:
+    contract: phase1_m0_reduced_fuzzy_clustering_v1
+    candidate: configs/features/phase1_flow_ratio_candidate.yml
+    matrix: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_m0_flow_ratio_v3_reduced_scaled.csv
+    context: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_context.csv
+    output_dir: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy
+    row_count: 1964
+    feature_count: 21
+    features:
+    - remote_path_share
+    - remote_to_final_rows_ratio
+    - wan_output_to_final_rows_ratio
+    - drf_bytes_proxy
+    - global_group_merge_ratio
+    - temp_bytes_to_wan_bytes_ratio
+    - temp_blocks_per_wan_row
+    - temp_blocks_per_final_row
+    - spill_per_wan_mb
+    - hash_batches_max
+    - remote_region_rows_isf
+    - worker_task_scan_rows_isf
+    - worker_task_scan_actual_rows_max_share
+    - task_count_to_shard_count_ratio
+    - active_task_share
+    - citus_repartition_query
+    - worker_task_seq_scan_share
+    - root_rows_estimate_error_log
+    - foreign_scan_rows_estimate_error_log
+    - aggregate_rows_estimate_error_log
+    - remote_root_rows_estimate_error_log
+    k_values:
+    - 4
+    - 5
+    seeds:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    fuzzifier: 1.7
+    max_iter: 600
+    tolerance: 0.0001
+    elapsed_seconds: 27.50763750076294
+    representative_runs_by_k:
+    - k: 4
+      seed: 0
+      iterations: 46
+      converged: true
+      objective: 14421.48234402669
+      silhouette_hard_labels: 0.21396007280321483
+      partition_coefficient: 0.5302241007080288
+      partition_entropy: 0.8855262744245401
+      avg_max_membership: 0.6435974557784608
+      median_max_membership: 0.6772608582287709
+      avg_top2_margin: 0.45699517179687776
+      cluster_min_size: 285
+      cluster_max_size: 652
+      cluster_min_share: 0.14511201629327902
+      cluster_max_share: 0.3319755600814664
+      elapsed_seconds: 0.7631573677062988
+    - k: 5
+      seed: 5
+      iterations: 58
+      converged: true
+      objective: 12110.380167300304
+      silhouette_hard_labels: 0.208634163540593
+      partition_coefficient: 0.49428500870620923
+      partition_entropy: 1.0141356826835743
+      avg_max_membership: 0.606139709504504
+      median_max_membership: 0.6036422903060874
+      avg_top2_margin: 0.4383370224028101
+      cluster_min_size: 228
+      cluster_max_size: 645
+      cluster_min_share: 0.11608961303462322
+      cluster_max_share: 0.3284114052953157
+      elapsed_seconds: 0.27001261711120605
+    outputs:
+      scores: fuzzy_seed_scores.csv
+      summary: k_summary.csv
+      stability: seed_stability.csv
+      association: posthoc_context_association.csv
+      memberships: memberships_representative_by_k.csv
+      centers: cluster_centers_representative_by_k.csv
+      profiles: cluster_feature_profiles.csv
+      top_profiles: cluster_top_feature_deviations.csv
+      context_values: cluster_context_top_values.csv
+      prototypes: prototype_and_ambiguous_runs.csv
+      progress_log: progress.jsonl
+  post_clustering_manifest:
+    fuzzy_dir: analysis/reports/clean-run-v1-m0-reduced-fuzzy-final
+    feature_dir: analysis/features/clean-run-v1/phase1_compact
+    m1_readiness_dir: analysis/reports/clean-run-v1-m1-reduced-readiness
+    primary_model: M0 reduced fuzzy c-means k=4
+    ablation_model: M0 reduced fuzzy c-means k=5
+    structural_explanation: M1 reduced grouped by M0 k=4 regimes
+    row_count: 1964
+    prototype_count_per_regime: 5
+    cluster_to_regime:
+      0:
+        regime_id: R0
+        regime_name: Selective remote lookup / low-output multi-region
+      1:
+        regime_id: R2
+        regime_name: Skew-amplified remote/fan-in pressure
+      2:
+        regime_id: R1
+        regime_name: GAC/FDW finalization and spill pressure
+      3:
+        regime_id: R3
+        regime_name: Local/materialized low-pressure
+  regime_attribution_manifest:
+    phase: 19
+    name: regime_attribution
+    model: M0 reduced fuzzy c-means k=4
+    feature_dir: analysis/features/clean-run-v1/phase1_compact
+    fuzzy_dir: analysis/reports/clean-run-v1-m0-reduced-fuzzy-final
+    interpretation_dir: analysis/reports/clean-run-v1-regime-interpretation
+    out_dir: analysis/reports/clean-run-v1-regime-attribution
+    query_count: 1964
+    feature_count: 21
+    example_query_count: 40
+    warning: Geometric attribution only; do not interpret as causal feature importance.
+  algorithm_comparison_manifest:
+    phase: 20
+    name: final_space_hard_clustering_comparison
+    contract: final_m0_flow_ratio_v3_reduced_hard_comparison_v3
+    input_matrix: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_m0_flow_ratio_v3_reduced_scaled.csv
+    input_matrix_sha256: 252abb5d02a8bd4b00fde3dedc1b3bd9ee26c2e9cd72b35290761e85c60c4ceb
+    context: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_context.csv
+    fuzzy_dir: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy
+    fuzzy_memberships_sha256: e09ef02b2c42ac93179978c6c69b35753efef3b64925feefd292e58cf65289f9
+    out_dir: analysis/reports/clean-run-v1-clustering-algorithm-comparison
+    row_count: 1964
+    feature_count: 21
+    features:
+    - remote_path_share
+    - remote_to_final_rows_ratio
+    - wan_output_to_final_rows_ratio
+    - drf_bytes_proxy
+    - global_group_merge_ratio
+    - temp_bytes_to_wan_bytes_ratio
+    - temp_blocks_per_wan_row
+    - temp_blocks_per_final_row
+    - spill_per_wan_mb
+    - hash_batches_max
+    - remote_region_rows_isf
+    - worker_task_scan_rows_isf
+    - worker_task_scan_actual_rows_max_share
+    - task_count_to_shard_count_ratio
+    - active_task_share
+    - citus_repartition_query
+    - worker_task_seq_scan_share
+    - root_rows_estimate_error_log
+    - foreign_scan_rows_estimate_error_log
+    - aggregate_rows_estimate_error_log
+    - remote_root_rows_estimate_error_log
+    k: 4
+    fcm_representative_seed: 0
+    kmeans_representative_seed: 0
+    kmeans_representative_inertia: 23473.0848985491
+    seeds:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    algorithms:
+    - FCM
+    - KMeans
+    - Ward
+    membership_thresholds:
+      max_membership_min: 0.5
+      top2_margin_min: 0.15
+      entropy_max_exclusive: 1.05
+      hard_centroid_margin_low_below: 0.15
+    uncertainty_convergence_test:
+      bootstrap_iterations: 2000
+      bootstrap_seed: 20260710
+      clear_vs_nonclear_alternative: clear_hard_margin_greater
+    label_mappings_to_fcm:
+      KMeans:
+        3: 0
+        0: 1
+        2: 2
+        1: 3
+      Ward:
+        3: 0
+        0: 1
+        1: 2
+        2: 3
+    interpretation_boundary: H2 concerns preservation of mixed-membership evidence,
+      not universal superiority on hard-clustering geometry metrics.
+    outputs:
+      representative_scores: representative_algorithm_scores.csv
+      all_scores: algorithm_scores.csv
+      stability: algorithm_stability.csv
+      representative_agreement: representative_agreement_with_fcm.csv
+      all_agreement: algorithm_agreement_with_fcm.csv
+      representative_context: representative_context_association.csv
+      all_context: algorithm_context_association.csv
+      fcm_quality: fcm_membership_quality_summary.csv
+      hard_by_fcm_quality: hard_assignment_by_fcm_quality.csv
+      uncertainty_convergence: hard_fuzzy_uncertainty_convergence.csv
+      row_level: row_level_hard_vs_fuzzy.csv
+      composition: hard_cluster_fcm_composition.csv
+      mixed_examples: mixed_case_examples.csv
+      cluster_sizes: algorithm_cluster_sizes.csv
+  claim_stress_test_manifest:
+    contract: clean_run_v1_claim_stress_test_v1
+    input_matrix: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_m0_flow_ratio_v3_reduced_scaled.csv
+    input_matrix_sha256: 252abb5d02a8bd4b00fde3dedc1b3bd9ee26c2e9cd72b35290761e85c60c4ceb
+    raw_matrix: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_m0_flow_ratio_v3_reduced_raw.csv
+    context: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_context.csv
+    memberships: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy/memberships_representative_by_k.csv
+    corpus_manifest: workloads/corpus/corpus_manifest.clean-run-v1.yml
+    preprocessing_contract: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_preprocessing_report.csv
+    prior_k_summary_for_reconciliation: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy/k_summary.csv
+    row_count: 1964
+    feature_count: 21
+    k_values:
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    fuzzifier: 1.7
+    k_seed_count: 10
+    holdout_seed_count: 3
+    representative_solution_selection: minimum_fcm_objective_Jm
+    reported_seed_aggregation: mean_and_population_std_across_all_seeds
+    grouped_holdout_preprocessing:
+      feature_selection: locked_21_feature_contract
+      transform_selection: locked_log1p_or_identity_contract
+      imputation: training_fold_median_after_locked_transform
+      scaling: training_fold_mean_and_population_std
+      nested_feature_selection: false
+    cluster_bootstrap:
+      resampling_unit: logical_question_id
+      repetitions: 2000
+      seed: 20260711
+    outputs:
+    - README.md
+    - verification_corpus_decision.yml
+    - k_seed_scores.csv
+    - k_2_8_summary.csv
+    - k_metric_reconciliation.csv
+    - k3_k4_contingency.csv
+    - k4_center_pca.csv
+    - k4_center_distances.csv
+    - grouped_holdout_folds.csv
+    - grouped_holdout_summary.csv
+    - grouped_holdout_center_drift.csv
+    - observability_feature_contract.csv
+    - observability_paired_contrasts.csv
+    - observability_ablation_summary.csv
+    - observability_top_hidden_contrasts.csv
+    - observability_by_question_family.csv
+    - observability_family_bootstrap.csv
+    - pressure_family_contract.csv
+    - pressure_uncertainty_rows.csv
+    - pressure_uncertainty_by_count.csv
+    - pressure_uncertainty_tests.csv
+    - pressure_uncertainty_by_question_family.csv
+    - pressure_uncertainty_effects.csv
+    - configured_intervention_uncertainty_effects.csv
+    - configured_intervention_uncertainty_by_count.csv
+    - threshold_sensitivity_grid.csv
+    - threshold_sensitivity_summary.csv
+    - threshold_policy_examples.csv
+    - case_studies.csv
+    - r0_question_family_support.csv
+    - r0_support_summary.csv
+    semantic_cluster_mapping:
+      0:
+        regime_id: R1
+        regime_name: FDW/WAN prenos sa globalnom finalizacijom i spill-om
+      1:
+        regime_id: R2
+        regime_name: Regionalna agregacija i FDW/WAN prenos prema GAC-u
+      2:
+        regime_id: R0
+        regime_name: Selektivni FDW dohvat sa niskim finalnim izlazom
+      3:
+        regime_id: R3
+        regime_name: Lokalni/ETL ili nizak FDW/WAN prenos
+    interpretation_boundaries:
+    - Grouped holdout refits median imputation and z-score scaling inside each training
+      fold while keeping feature and transform selection locked; it is not a fully
+      nested feature-selection benchmark.
+    - Pressure-count association is convergent evidence because pressure scores and
+      FCM share measured input signals.
+    - Balanced/skew paired contrasts compare selected GAC-visible and topology-only
+      summaries; they demonstrate added evidence-layer sensitivity, not inability
+      of every possible GAC/observability signal or causal root-cause identification.
+  query_inference_manifest:
+    phase: 21
+    name: query_run_inference_rehearsal
+    query_run_id: 20260626T113723Z-clean-run-eu-us-gac-v1__pilot-balanc--ed53d2c27948--ultiregion_top_tenants__lookback_days-1__limit_k-50
+    feature_dir: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact
+    fuzzy_dir: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy
+    out_dir: analysis/reports/clean-run-v1-query-inference/a6bca26d355f--d53d2c27948--ultiregion_top_tenants__lookback_days-1__limit_k-50
+    model: m0_flow_ratio_v3_reduced FCM k=4
+    matrix_name: m0_flow_ratio_v3_reduced
+    fuzzifier: 1.7
+    feature_count: 21
+    top_regime: R2
+    top_regime_name: Skew-amplified remote/fan-in pressure
+    top_membership: 0.7308520254479204
+    competitor_regime: R1
+    competitor_membership: 0.1251067006123911
+    severity_score: 1.0
+    severity_band: critical
+    capacity_relative_severity_score: 1.0
+    confidence_score: 0.8582831555811029
+    confidence_band: high
+    max_scaled_delta_vs_stored: 6.938893903907228e-16
+    max_membership_delta_vs_stored: 1.1102230246251565e-16
+    note: Existing query_run_id is used as an offline rehearsal. For a truly new input,
+      the same raw feature schema and preprocessing metadata must be applied before
+      membership/attribution.
+algorithm_comparison_snapshot:
+- algorithm: FCM
+  run_id: representative_k4_seed_0
+  cluster_count: 4
+  silhouette: 0.2139600728
+  davies_bouldin: 1.6370260853
+  calinski_harabasz: 394.8639801973
+  cluster_min_share: 0.1451120163
+  cluster_max_share: 0.3319755601
+  ari_to_fcm: 1.0
+  nmi_to_fcm: 1.0
+- algorithm: KMeans
+  run_id: seed_0
+  cluster_count: 4
+  silhouette: 0.2728577864
+  davies_bouldin: 1.280292039
+  calinski_harabasz: 494.623150293
+  cluster_min_share: 0.0264765784
+  cluster_max_share: 0.465885947
+  ari_to_fcm: 0.5691400640589245
+  nmi_to_fcm: 0.6710164977224814
+- algorithm: Ward
+  run_id: ward_k4
+  cluster_count: 4
+  silhouette: 0.2632220432
+  davies_bouldin: 1.2632733783
+  calinski_harabasz: 443.2765103443
+  cluster_min_share: 0.0264765784
+  cluster_max_share: 0.5656822811
+  ari_to_fcm: 0.5562268686997006
+  nmi_to_fcm: 0.6849792127256658
+model_use_rules:
+- Use M0 flow-ratio-v3 reduced features as the primary clustering input.
+- Use execution_severity.csv only as post-hoc intensity/severity, not as clustering
+  input.
+- Use M1/plan-structure features as post-hoc explanation or ablation, not the locked
+  primary matrix.
+- Use fuzzy memberships as diagnostic degrees of belonging, not hard supervised labels.
+- Use context fields only for leakage checks, stratification and interpretation.
+- Keep one model row per query_run_id; do not split regional or worker evidence into
+  separate clustering rows.
+claims_supported:
+- The clean-run-v1 corpus can be represented with an interpretable 21-feature flow-ratio-v3
+  behavioral matrix.
+- Fuzzy c-means with k=4 provides a stable corpus-conditioned operational four-prototype
+  description with fuzzy membership evidence; k=3 is a defensible coarser macro view.
+- k=5, K-means and Ward are useful ablations but not the primary diagnostic output.
+- On the same final matrix, FCM uncertainty converges with lower hard-centroid margins
+  for mixed and weakly covered executions.
+- Feature/family attribution can explain why a query is closer to one fuzzy regime
+  than to its nearest competitor.
+- An existing query execution can be passed through a locked inference-style preprocessing
+  and membership computation path.
+- Regional and worker child evidence exposes paired balanced/skew contrasts that are
+  weaker in the GAC-visible feature subset.
+claims_not_supported:
+- This is not a universal production model for arbitrary Citus deployments.
+- This is not a pre-execution latency predictor.
+- This is not a neural/tree plan encoder.
+- The learned prototypes are not independent of SQL logical-question families.
+- This does not prove causal feature importance; attribution is geometric in the scaled
+  feature space.
+- The locked M0 model does not treat WAN jitter/loss as learned clustering features.
+- Severity is not learned by clustering; it is computed separately from raw/corpus-relative
+  audit signals.
+manual_reproduction:
+- uv run python analysis/scripts/agent/15_phase1_compact_features.py
+- uv run python analysis/scripts/agent/16_m0_reduced_clustering_readiness.py
+- uv run python analysis/scripts/agent/17_m0_reduced_fuzzy_clustering.py
+- uv run python analysis/scripts/agent/20_clustering_algorithm_comparison.py
+- uv run python analysis/scripts/agent/21_query_run_inference_rehearsal.py
+- uv run python analysis/scripts/agent/37_claim_stress_test.py
+- uv run python analysis/scripts/agent/22_freeze_final_model_package.py
+artifact_existence_check:
+- path: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_m0_flow_ratio_v3_reduced_scaled.csv
+  exists: true
+- path: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_m0_flow_ratio_v3_reduced_raw.csv
+  exists: true
+- path: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_context.csv
+  exists: true
+- path: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/execution_severity.csv
+  exists: true
+- path: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/dataset_diagnosis.csv
+  exists: true
+- path: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy/memberships_representative_by_k.csv
+  exists: true
+- path: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy/cluster_centers_representative_by_k.csv
+  exists: true
+- path: analysis/reports/clean-run-v1-regime-interpretation/README.md
+  exists: true
+- path: analysis/reports/clean-run-v1-regime-attribution/README.md
+  exists: true
+- path: analysis/reports/clean-run-v1-clustering-algorithm-comparison/README.md
+  exists: true
+- path: analysis/reports/clean-run-v1-claim-stress-test/README.md
+  exists: true
+- path: analysis/reports/clean-run-v1-claim-stress-test/claim_stress_test_manifest.yml
+  exists: true
+- path: analysis/reports/clean-run-v1-query-inference/a6bca26d355f--d53d2c27948--ultiregion_top_tenants__lookback_days-1__limit_k-50/inference_manifest.yml
+  exists: true

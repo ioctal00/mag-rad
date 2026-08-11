@@ -1,0 +1,46 @@
+---
+- name: Ensure admin user exists when not using root
+  ansible.builtin.user:
+    name: "{{ ssh_access_user }}"
+    shell: /bin/bash
+    groups: sudo
+    append: true
+    create_home: true
+  when: ssh_access_user != "root"
+
+- name: Allow passwordless sudo for admin user
+  ansible.builtin.copy:
+    dest: "/etc/sudoers.d/90-{{ ssh_access_user }}"
+    content: "{{ ssh_access_user }} ALL=(ALL) NOPASSWD:ALL\n"
+    mode: "0440"
+    validate: "/usr/sbin/visudo -cf %s"
+  when: ssh_access_user != "root"
+
+- name: Install authorized SSH keys
+  ansible.posix.authorized_key:
+    user: "{{ ssh_access_user }}"
+    key: "{{ item }}"
+    state: present
+  loop: "{{ ssh_authorized_keys }}"
+
+- name: Disable SSH password authentication
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#?PasswordAuthentication\\s+"
+    line: "PasswordAuthentication no"
+  notify: Restart ssh
+
+- name: Enforce public key authentication
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#?PubkeyAuthentication\\s+"
+    line: "PubkeyAuthentication yes"
+  notify: Restart ssh
+
+- name: Configure root SSH login policy
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^#?PermitRootLogin\\s+"
+    line: "{{ 'PermitRootLogin prohibit-password' if ssh_access_user == 'root' else 'PermitRootLogin no' }}"
+  notify: Restart ssh
+

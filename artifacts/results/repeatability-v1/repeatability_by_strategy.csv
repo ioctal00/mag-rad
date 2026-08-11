@@ -1,0 +1,5 @@
+execution_strategy,condition_count,repetition_count,plan_stable_condition_count,minimum_dominant_cluster_agreement,median_top_membership,median_top2_margin,median_mean_membership_l1,maximum_membership_l1,clear_prototype_condition_count,mixed_boundary_condition_count,weak_prototype_coverage_condition_count
+etl_materialized,6,20,6,1.0,0.8775807483888874,0.7971507896303869,6.245004513516506e-17,1.1102230246251565e-16,6,0,0
+fdw_raw,22,78,22,1.0,0.39860204254625237,0.05504617943108353,8.325250521154347e-05,0.003824614788633676,5,9,8
+multiregion_union,60,200,60,1.0,0.4917834257544772,0.1834948763147886,0.00010318017924485409,0.0017584565413109599,25,23,12
+single_region_citus,8,30,8,1.0,0.7154623375087019,0.5569088339649633,2.0294182017473417e-06,0.05897142250493623,6,2,0

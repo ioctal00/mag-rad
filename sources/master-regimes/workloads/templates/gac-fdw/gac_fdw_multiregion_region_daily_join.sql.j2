@@ -1,0 +1,33 @@
+with regional_daily_join as (
+  select
+    'eu'::text as source_region,
+    t.region as tenant_region,
+    date_trunc('day', e.created_at) as event_day,
+    count(*) as events_count,
+    sum(e.value) as total_value
+  from fdw_eu.events e
+  join fdw_eu.tenants t
+    on t.tenant_id = e.tenant_id
+  where e.created_at >= now() - make_interval(days => {{ lookback_days }}::int)
+  group by t.region, date_trunc('day', e.created_at)
+  union all
+  select
+    'us'::text as source_region,
+    t.region as tenant_region,
+    date_trunc('day', e.created_at) as event_day,
+    count(*) as events_count,
+    sum(e.value) as total_value
+  from fdw_us.events e
+  join fdw_us.tenants t
+    on t.tenant_id = e.tenant_id
+  where e.created_at >= now() - make_interval(days => {{ lookback_days }}::int)
+  group by t.region, date_trunc('day', e.created_at)
+)
+select
+  source_region,
+  tenant_region,
+  event_day,
+  events_count,
+  total_value
+from regional_daily_join
+order by event_day desc, source_region, tenant_region;

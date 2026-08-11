@@ -1,0 +1,57 @@
+{
+  "development_fit_state_count": 26,
+  "experiment_id": "representation-value-ablation-v1",
+  "final_panel_used_for_fit": false,
+  "inputs": {
+    "development_episodes": {
+      "path": "master-regimes/analysis/reports/fuzzy-intervention-memory-v1/episodes.csv",
+      "sha256": "b8ffc1545b4742443180882d33f1d628abc5676241cac3974201a991b33ce71e",
+      "size_bytes": 225162
+    },
+    "development_execution_features__cross-action-pilot-v1": {
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/cross-action-pilot-v1/_index/execution_features.csv",
+      "sha256": "a0d93d6f7f19fb1ef7fc19149103ecc7df71bb7b96bd3b29b39627ef280899bb",
+      "size_bytes": 7924454
+    },
+    "development_execution_features__fuzzy-memory-topk-panel-v1": {
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/fuzzy-memory-topk-panel-v1/_index/execution_features.csv",
+      "sha256": "113e4af2c00d88cd3766205da2be3df8906d11b31794ee9415eee5997eb34ddb",
+      "size_bytes": 16994329
+    },
+    "development_state_contract": {
+      "path": "master-regimes/configs/models/fuzzy_intervention_memory_v1.yml",
+      "sha256": "6b25d56f475cfb297644f5794e024a87ef40239ab64055b3f2ea39e9cf1640b5",
+      "size_bytes": 8583
+    },
+    "experiment_contract": {
+      "path": "master-regimes/configs/validation/representation_value_ablation_v1.yml",
+      "sha256": "211e261be8221c2aa2ce8b07fb8dce2d6eaca1bfbc62625a287ae777eec50419",
+      "size_bytes": 5085
+    },
+    "final_action_outcomes": {
+      "path": "master-regimes/analysis/reports/dba-local-memory-panel-v1/observed_action_outcomes.csv",
+      "sha256": "9fd8d6279fd7c61e5ddf7f4d16de27f264a76863d2e9c63cbde5692578138207",
+      "size_bytes": 131866
+    },
+    "final_episode_states": {
+      "path": "master-regimes/analysis/reports/dba-local-memory-panel-v1/observed_episode_states.csv",
+      "sha256": "c5055630c688c35bc10276956b6b027a80708b577df2999f86fedd63e4152c38",
+      "size_bytes": 73441
+    },
+    "final_execution_features": {
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/dba-local-memory-panel-v1/_index/execution_features.csv",
+      "sha256": "8db0096728ed04247676b7f7f130a10937e8b5d1e65d7f5eb88054805d38cd1e",
+      "size_bytes": 13298340
+    },
+    "final_existing_timeline": {
+      "path": "master-regimes/analysis/reports/dba-local-memory-panel-v1/dba_episode_timeline.csv",
+      "sha256": "12b3eee86f9e55b731e009f6d2d2ed8925bb0a587d9818c18be7cb92455703e5",
+      "size_bytes": 775988
+    },
+    "final_panel_contract": {
+      "path": "master-regimes/configs/validation/dba_local_memory_panel_v1.yml",
+      "sha256": "e5789aec79c66158d3b18339ab474788779ee8b6448d15acb7ef40e74e80f18a",
+      "size_bytes": 5472
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "pass": true,
+  "state_count": 20,
+  "query_run_count": 84,
+  "region_fragment_count": 184,
+  "repartition_false_query_run_count": 84,
+  "mapmerge_zero_query_run_count": 84,
+  "parse_ok_high_fragment_count": 184,
+  "dependent_graph_value_count": 0,
+  "locality_class_counts": {
+    "colocated_join_candidate": 6,
+    "distributed_task_plan": 78
+  },
+  "interpretation": "No MapMerge/repartition work was observed. Two numeric components support a neutral R6 coordinate; dependent graph counters remain unavailable and the locality class remains categorical context."
+}

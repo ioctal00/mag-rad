@@ -1,0 +1,11 @@
+{
+  "accepted_pair_count": 83,
+  "contract_version": "mitigation-correctness-recovery-v1",
+  "gate": "GO",
+  "pair_count": 83,
+  "status_counts": {
+    "exact_snapshot": 5,
+    "tolerance_equivalent": 78
+  },
+  "unresolved_pair_count": 0
+}

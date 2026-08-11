@@ -1,0 +1,8 @@
+localhost:{{ postgresql_port }}:*:postgres:{{ postgresql_admin_password }}
+127.0.0.1:{{ postgresql_port }}:*:postgres:{{ postgresql_admin_password }}
+{% for host in groups.get('db_nodes', []) | sort %}
+{% set address = hostvars[host].private_ip | default('') %}
+{% if address %}
+{{ address }}:{{ postgresql_port }}:*:postgres:{{ postgresql_admin_password }}
+{% endif %}
+{% endfor %}

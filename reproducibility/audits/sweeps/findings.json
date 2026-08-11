@@ -1,0 +1,976 @@
+{
+  "audit": {
+    "id": "sweep-construction-reproducibility-audit-v1",
+    "live_sql_executed": false,
+    "mode": "offline_read_only",
+    "package_root": ".",
+    "status": "PASS_WITH_LIMITATIONS",
+    "upstream_repositories_modified": false
+  },
+  "checks": [
+    {
+      "evidence": {
+        "catalog_rows": 3819,
+        "examples": [],
+        "missing_count": 0
+      },
+      "id": "catalog.sql_files_exist",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "checked": 3819,
+        "examples": [],
+        "mismatch_count": 0
+      },
+      "id": "catalog.sql_hashes_match",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 1964,
+      "id": "clean.execution_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 1964,
+      "id": "clean.distinct_rendered_sql",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "0": 1964
+      },
+      "id": "clean.single_execution_per_condition",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "deterministic_shuffle": 1964
+      },
+      "id": "clean.order_policy",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "20260626": 1964
+      },
+      "id": "clean.shuffle_seed",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 1964,
+      "id": "clean.catalog_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "query_runs": 1964
+      },
+      "id": "clean.logical_index_single_table",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "attempt_count": 1,
+        "group_attempt_count": 8,
+        "needs_rerun_count": 0,
+        "query_attempt_count": 1964,
+        "resolved_query_count": 1964
+      },
+      "id": "clean.logical_index_resolution",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 1964,
+      "id": "clean.temporal_audit_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "dynamic_current_date": 240,
+        "dynamic_now": 1718,
+        "no_wall_clock": 6
+      },
+      "id": "clean.legacy_moving_time_detected",
+      "note": "The archived F19 and F21 analyses are internally auditable, but rerunning their SQL today is not temporally equivalent.",
+      "status": "PASS"
+    },
+    {
+      "evidence": 2607,
+      "id": "pressure.execution_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 869,
+      "id": "pressure.condition_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "condition_count": 869
+      },
+      "id": "pressure.three_repetitions",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 2607,
+      "id": "pressure.execution_slot_unique",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 799,
+      "id": "pressure.rendered_sql_file_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 799,
+      "id": "pressure.catalog_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 418,
+      "id": "pressure.pair_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "('2', '6')": 385,
+        "('3', '9')": 33
+      },
+      "id": "pressure.pair_contract",
+      "note": "All 418 groups contain the stressed/mitigated contrast; 33 additionally retain an intermediate condition.",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "expected": 2607,
+        "matching_rows": 2607
+      },
+      "id": "pressure.fixed_as_of_parameter",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "lane_count": 48
+      },
+      "id": "pressure.standard_lane_order",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "lane_count": 14,
+        "sizes": [
+          [
+            30,
+            14
+          ]
+        ]
+      },
+      "id": "pressure.placement_lane_order",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "distinct_configuration_count": 869,
+        "distinct_sql_shape_count": 143,
+        "physical_execution_count": 2607,
+        "planned_counterfactual_pair_count": 418
+      },
+      "id": "pressure.program_summary",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "avoided_redundant_signature_queries": 1738,
+        "instrumented_execution_count": 2607,
+        "query_level_concurrency": 1,
+        "result_signature_scope": "first_repetition_per_condition",
+        "stream_only_result_signature_query_count": 869
+      },
+      "id": "pressure.signature_scope",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "attempt_candidate_count": 3027,
+        "duplicate_issue_count": 0,
+        "excluded_execution_count": 420,
+        "gate": "GO",
+        "identity_alias_count": 420,
+        "missing_primary_slot_count": 0,
+        "resolved_primary_slot_count": 2607
+      },
+      "id": "pressure.canonical_attempt_resolution",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "dynamic_empty_controls": 21,
+        "substantive": 397
+      },
+      "id": "pressure.temporal_pair_split",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 180,
+      "id": "dba.execution_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 60,
+      "id": "dba.condition_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 60,
+      "id": "dba.rendered_sql_file_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 60,
+      "id": "dba.catalog_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "1": 4,
+        "10": 4,
+        "11": 4,
+        "12": 4,
+        "13": 4,
+        "14": 4,
+        "15": 4,
+        "2": 4,
+        "3": 4,
+        "4": 4,
+        "5": 4,
+        "6": 4,
+        "7": 4,
+        "8": 4,
+        "9": 4
+      },
+      "id": "dba.query_shapes",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "appearance_pattern": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          1,
+          2,
+          3,
+          4,
+          5,
+          1,
+          2,
+          3,
+          4,
+          5
+        ]
+      },
+      "id": "dba.temporal_appearance_contract",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "n3-large-balanced-wide-global-dim-v1": 48,
+        "n3-medium-balanced-wide-global-dim-v1": 48,
+        "raw-large-balanced-v1": 44,
+        "raw-small-balanced-v1": 40
+      },
+      "id": "dba.group_order",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "matching_rows": 1
+      },
+      "id": "dba.provenance_present",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "expected": 60,
+        "observed": 60
+      },
+      "id": "n3.n2_control.count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "0": 60
+      },
+      "id": "n3.n2_control.single_execution",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "topology-isolation-large-n2-v1": 16,
+        "topology-isolation-medium-n2-v1": 16,
+        "topology-isolation-small-n2-v1": 16,
+        "topology-isolation-xlarge-n2-v1": 12
+      },
+      "id": "n3.n2_control.group_order",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "expected": 15,
+        "observed": 15
+      },
+      "id": "n3.phase_a_baseline.count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "0": 15
+      },
+      "id": "n3.phase_a_baseline.single_execution",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "topology-isolation-large-n3-v1": 4,
+        "topology-isolation-medium-n3-v1": 4,
+        "topology-isolation-small-n3-v1": 4,
+        "topology-isolation-xlarge-n3-v1": 3
+      },
+      "id": "n3.phase_a_baseline.group_order",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "expected": 45,
+        "observed": 45
+      },
+      "id": "n3.phase_a_actions.count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "0": 45
+      },
+      "id": "n3.phase_a_actions.single_execution",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "topology-isolation-large-n3-v1": 12,
+        "topology-isolation-medium-n3-v1": 12,
+        "topology-isolation-small-n3-v1": 12,
+        "topology-isolation-xlarge-n3-v1": 9
+      },
+      "id": "n3.phase_a_actions.group_order",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "expected": 15,
+        "observed": 15
+      },
+      "id": "n3.phase_b_baseline.count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "0": 15
+      },
+      "id": "n3.phase_b_baseline.single_execution",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "topology-isolation-large-n3-v1": 4,
+        "topology-isolation-medium-n3-v1": 4,
+        "topology-isolation-small-n3-v1": 4,
+        "topology-isolation-xlarge-n3-v1": 3
+      },
+      "id": "n3.phase_b_baseline.group_order",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "expected": 45,
+        "observed": 45
+      },
+      "id": "n3.phase_b_actions.count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "0": 45
+      },
+      "id": "n3.phase_b_actions.single_execution",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "topology-isolation-large-n3-v1": 12,
+        "topology-isolation-medium-n3-v1": 12,
+        "topology-isolation-small-n3-v1": 12,
+        "topology-isolation-xlarge-n3-v1": 9
+      },
+      "id": "n3.phase_b_actions.group_order",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "manifest_total": 180,
+        "observed": {
+          "n2_control": 60,
+          "phase_a_actions": 45,
+          "phase_a_baseline": 15,
+          "phase_b_actions": 45,
+          "phase_b_baseline": 15
+        }
+      },
+      "id": "n3.total_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 180,
+      "id": "n3.catalog_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 300,
+      "id": "confirmatory.execution_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 60,
+      "id": "confirmatory.condition_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "condition_count": 60
+      },
+      "id": "confirmatory.five_repetitions",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 60,
+      "id": "confirmatory.rendered_sql_file_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 60,
+      "id": "confirmatory.catalog_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "max": 300,
+        "min": 1
+      },
+      "id": "confirmatory.total_order",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "checks": {
+          "all_n3": true,
+          "condition_count_60": true,
+          "execution_count_300": true,
+          "explicit_schedule_exact": true,
+          "five_repetitions_per_condition": true,
+          "new_shape_names_do_not_overlap_old_panel": true,
+          "no_result_or_action_outcome_in_schedule": true,
+          "positions_near_balanced": true,
+          "single_rendered_group": true,
+          "three_actions": true,
+          "total_order_present": true
+        },
+        "counts": {
+          "conditions": 60,
+          "executions": 300,
+          "groups": 1,
+          "scenarios": 15
+        },
+        "status": "PASS",
+        "treatment_position_counts": {
+          "baseline::p1": 19,
+          "baseline::p2": 18,
+          "baseline::p3": 19,
+          "baseline::p4": 19,
+          "increase_gac_work_mem::p1": 19,
+          "increase_gac_work_mem::p2": 19,
+          "increase_gac_work_mem::p3": 19,
+          "increase_gac_work_mem::p4": 18,
+          "mitigate_remote_path_bundle::p1": 18,
+          "mitigate_remote_path_bundle::p2": 19,
+          "mitigate_remote_path_bundle::p3": 19,
+          "mitigate_remote_path_bundle::p4": 19,
+          "regional_topk_candidates::p1": 19,
+          "regional_topk_candidates::p2": 19,
+          "regional_topk_candidates::p3": 18,
+          "regional_topk_candidates::p4": 19
+        }
+      },
+      "id": "confirmatory.design_validation",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "counts": {
+          "edges": 900,
+          "executions": 300,
+          "hardware_snapshots": 2,
+          "node_artifacts": 3000,
+          "regions": 900,
+          "signatures": 60,
+          "worker_task_fragments": 57600
+        },
+        "failed_checks": [],
+        "status": "PASS"
+      },
+      "id": "confirmatory.collection_validation",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "baseline::p1": 19,
+        "baseline::p2": 18,
+        "baseline::p3": 19,
+        "baseline::p4": 19,
+        "increase_gac_work_mem::p1": 19,
+        "increase_gac_work_mem::p2": 19,
+        "increase_gac_work_mem::p3": 19,
+        "increase_gac_work_mem::p4": 18,
+        "mitigate_remote_path_bundle::p1": 18,
+        "mitigate_remote_path_bundle::p2": 19,
+        "mitigate_remote_path_bundle::p3": 19,
+        "mitigate_remote_path_bundle::p4": 19,
+        "regional_topk_candidates::p1": 19,
+        "regional_topk_candidates::p2": 19,
+        "regional_topk_candidates::p3": 18,
+        "regional_topk_candidates::p4": 19
+      },
+      "id": "confirmatory.williams_balance",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 85,
+      "id": "feedback.main_total",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "A_smoke": 1,
+        "B_correctness_only": 5,
+        "B_origin": 15,
+        "C_adaptive": 15,
+        "D_rollback": 9,
+        "E_frozen_replay": 40
+      },
+      "id": "feedback.main_phase_counts",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "completed": 65,
+        "superseded_invalid_configuration": 20
+      },
+      "id": "feedback.main_status_counts",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "completed_at_utc": "2026-08-07T14:29:07.413585Z",
+        "contract_version": "pressure-feedback-loop-live-v1",
+        "execution_counts": {
+          "correctness_only_execution_count": 5,
+          "instrumented_execution_count": 60,
+          "superseded_instrumented_execution_count": 20,
+          "total_execution_count": 85
+        },
+        "infrastructure_status": "PASS",
+        "required_outputs": [
+          "decision_log.jsonl",
+          "execution_manifest.csv",
+          "trajectory_states.csv",
+          "trajectory_transitions.csv",
+          "raw_signal_deltas.csv",
+          "domain_profile_deltas.csv",
+          "result_equivalence_audit.csv",
+          "rollback_audit.csv",
+          "exploratory_report.md",
+          "frozen_replay_manifest.yaml",
+          "confirmatory_replay_report.md",
+          "provenance.json",
+          "infrastructure_final_audit.json",
+          "final_validation.json"
+        ],
+        "validation_status": "PASS"
+      },
+      "id": "feedback.completion_manifest",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "checks": {
+          "aggregate_safety_stop": {
+            "status": "PASS"
+          },
+          "decision_log_leakage": {
+            "decision_start_count": 5,
+            "status": "PASS",
+            "validation_errors": []
+          },
+          "execution_statuses": {
+            "status": "PASS"
+          },
+          "frozen_action_catalog": {
+            "status": "PASS"
+          },
+          "frozen_replay": {
+            "expected": 20,
+            "observed": 20,
+            "status": "PASS"
+          },
+          "infrastructure_restored": {
+            "status": "PASS"
+          },
+          "instrumented_executions": {
+            "expected": 60,
+            "observed": 60,
+            "status": "PASS"
+          },
+          "pre_outcome_decisions": {
+            "decision_count": 5,
+            "outcome_count": 5,
+            "status": "PASS"
+          },
+          "valid_transition_results": {
+            "status": "PASS"
+          }
+        },
+        "status": "PASS",
+        "validated_at_utc": "2026-08-07T14:29:07.413004Z"
+      },
+      "id": "feedback.final_validation",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "decisions": 5,
+        "outcomes": 5
+      },
+      "id": "feedback.main.decision_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "matched_decisions": 5
+      },
+      "id": "feedback.main.pre_outcome_order",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "completed": 20,
+        "superseded_invalid_configuration": 20
+      },
+      "id": "feedback.replay_split",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "rows": 25,
+        "states": {
+          "A_raw_baseline": 5,
+          "B_fetch_size": 5,
+          "C_regional_aggregate": 5,
+          "D_wan_delay": 5,
+          "R0_prime_rollback": 5
+        }
+      },
+      "id": "feedback.aggregate_plan_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "A_raw_baseline": "5",
+        "B_fetch_size": "5",
+        "C_regional_aggregate": "5",
+        "D_wan_delay": "5",
+        "R0_prime_rollback": "5"
+      },
+      "id": "feedback.aggregate_state_repetitions",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "decisions": 3,
+        "outcomes": 3
+      },
+      "id": "feedback.aggregate.decision_count",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "matched_decisions": 3
+      },
+      "id": "feedback.aggregate.pre_outcome_order",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": 9,
+      "id": "feedback.catalog_sql_states",
+      "note": "",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "absolute_paths": 0,
+        "examples": [],
+        "manifest_path_references": 9375
+      },
+      "id": "package.rendered_paths_portable",
+      "note": "SQL files are present and cataloged by package-relative paths, but original manifests need path rewriting before a live rerun.",
+      "status": "PASS"
+    }
+  ],
+  "corpora": {
+    "clean_fcm": {
+      "dataset_split": {
+        "pilot-balanced-v1": 955,
+        "pilot-skew-heavy-v1": 1009
+      },
+      "logical_index_rows": 1964,
+      "max_sweep_lag_hours": 3.6860938869582283,
+      "order": "deterministic_shuffle(seed=20260626)",
+      "rendered_executions": 1964,
+      "rendered_sql_files": 1964,
+      "repetitions_per_condition": 1,
+      "temporal_contract": "legacy moving wall clock; eight sweeps regenerated their datasets immediately before collection"
+    },
+    "confirmatory_300": {
+      "collection_validation_counts": {
+        "edges": 900,
+        "executions": 300,
+        "hardware_snapshots": 2,
+        "node_artifacts": 3000,
+        "regions": 900,
+        "signatures": 60,
+        "worker_task_fragments": 57600
+      },
+      "conditions": 60,
+      "order": "locked explicit Williams schedule",
+      "physical_executions": 300,
+      "position_count_range": [
+        18,
+        19
+      ],
+      "query_shapes": 15,
+      "rendered_sql_files": 60,
+      "repetitions_per_condition": 5
+    },
+    "controlled_n2_n3_180": {
+      "action_count": 3,
+      "block_counts": {
+        "n2_control": 60,
+        "phase_a_actions": 45,
+        "phase_a_baseline": 15,
+        "phase_b_actions": 45,
+        "phase_b_baseline": 15
+      },
+      "interpretation": "each 60-execution round is 15 scenarios x baseline/three actions, not repeated measurements",
+      "physical_executions": 180,
+      "repetitions_per_condition": 1,
+      "scenario_count": 15,
+      "shuffle_seeds": {
+        "n2_control": [
+          "202608061"
+        ],
+        "phase_a_actions": [
+          "202608063"
+        ],
+        "phase_a_baseline": [
+          "202608062"
+        ],
+        "phase_b_actions": [
+          "202608065"
+        ],
+        "phase_b_baseline": [
+          "202608064"
+        ]
+      }
+    },
+    "dba_180": {
+      "conditions": 60,
+      "decision_points": 45,
+      "order": "deterministic_interleaved_shuffle(seed=20260805) within four dataset groups",
+      "physical_executions": 180,
+      "query_shapes": 15,
+      "rendered_sql_files": 60,
+      "sql_reuse": "one rendered SQL file per condition is referenced by every temporal repetition; runtime/network treatments are applied outside SQL"
+    },
+    "feedback_loop": {
+      "aggregate_exact_executions": 25,
+      "canonical_instrumented_executions": 60,
+      "canonical_sql_state_files": 9,
+      "correctness_only_executions": 5,
+      "decision_logs": {
+        "aggregate_exact": 3,
+        "main": 5
+      },
+      "main_frozen_replay": {
+        "canonical": 20,
+        "superseded": 20
+      },
+      "main_manifest_rows": 85,
+      "superseded_replay_executions": 20,
+      "temporal_contract": {
+        "sql_file_count": 85,
+        "temporal_modes": {
+          "fixed_literal": 71,
+          "no_wall_clock": 14
+        }
+      }
+    },
+    "pressure_869x3": {
+      "attempt_candidates": 3027,
+      "attempt_policy": "latest_successful_program_attempt",
+      "axis_counts": {
+        "gac_finalization": 594,
+        "regional_finalization": 477,
+        "remote_path": 522,
+        "repartition_join": 594,
+        "worker_data_skew": 420
+      },
+      "backend_counts": {
+        "placement_aware_worker": 420,
+        "standard_corpus": 2187
+      },
+      "conditions": 869,
+      "counterfactual_pairs": 418,
+      "dataset_profile_count": 13,
+      "order": "deterministic interleaving for standard lanes; explicit 30-slot placement-state lanes for skew interventions",
+      "physical_executions": 2607,
+      "rendered_sql_files": 799,
+      "temporal_contract": "397 frozen/time-independent substantive pairs; 21 current_date empty-result negative controls"
+    }
+  },
+  "limitations": [
+    {
+      "id": "L1_path_rewrite",
+      "statement": "Public manifests have no local home prefix, but some historical path fields retain their source-repository-relative generated layout. The query catalog is portable; a live rerun should regenerate manifests from the packaged corpus contract instead of treating archived path fields as executable inputs."
+    },
+    {
+      "id": "L2_no_database_snapshot",
+      "statement": "The package contains dataset profiles, generator inputs, seeds and temporal anchors, but no database dump and no full row-level checksum after reload. Dataset identity is reproducible by construction rather than independently proven byte-for-byte after a fresh load."
+    },
+    {
+      "id": "L3_partial_raw_indexes",
+      "statement": "The shared clean/F19-F21 corpus includes raw and logical index archives. Pressure, DBA, N2/N3, confirmatory and feedback-loop releases mainly contain rendered designs and consolidated validations; their complete raw query-run indexes or collection directories are not all packaged."
+    },
+    {
+      "id": "L4_historical_source_state",
+      "statement": "Curated source snapshots are current package copies. Several run provenance records refer to older commits or dirty worktrees, so the exact historical executable source state is not embedded for every run."
+    },
+    {
+      "id": "L5_clean_temporal",
+      "statement": "The shared legacy F19/F21 corpus used now()/current_date and cannot be rerun today as an identical temporal experiment. Its archived descriptive analyses remain internally usable under the documented short sweep-lag and no-time-cluster-association audits for both hard-label models."
+    },
+    {
+      "id": "L6_pressure_dynamic_controls",
+      "statement": "Twenty-one pressure pairs use current_date and produced empty no-work controls. They validate collection and equivalence only, not intervention effectiveness; 397 substantive pairs use frozen or time-independent contracts."
+    },
+    {
+      "id": "L7_feedback_dataset_profile",
+      "statement": "The aggregate exact feedback-loop addendum records base_time and audited counts, but not the exact locked dataset profile name, preventing guaranteed regeneration of that snapshot from the release alone."
+    },
+    {
+      "id": "L8_live_environment",
+      "statement": "No credentials, Terraform state, provider account, generated Ansible inventory or live VPS snapshot is included. This audit proves offline design consistency, not current infrastructure deployability."
+    },
+    {
+      "id": "L9_timing_equivalence",
+      "statement": "Even with identical SQL and generated data, exact plans and runtimes depend on PostgreSQL/Citus versions, statistics, cache state, VPS scheduling and emulated network state. The package supports design replay, not a guarantee of identical latency values."
+    }
+  ],
+  "summary": {
+    "catalog_sql_rows": 3819,
+    "check_count": 75,
+    "failure_count": 0,
+    "pass_count": 75,
+    "warning_count": 0
+  }
+}

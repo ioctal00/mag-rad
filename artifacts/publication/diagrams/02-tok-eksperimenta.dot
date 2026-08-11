@@ -1,0 +1,63 @@
+digraph G {
+  graph [
+    rankdir=TB,
+    bgcolor="white",
+    fontname="DejaVu Sans",
+    fontsize=13,
+    pad=0.20,
+    nodesep=0.32,
+    ranksep=0.56,
+    labelloc="t",
+    label="Tok kontrolisanog corpus eksperimenta"
+  ];
+
+  node [
+    shape=box,
+    style="filled",
+    fontname="DejaVu Sans",
+    fontsize=9.0,
+    color="#263238",
+    fillcolor="#f3f5f5",
+    margin="0.14,0.09",
+    width=2.15
+  ];
+
+  edge [
+    fontname="DejaVu Sans",
+    fontsize=8.0,
+    color="#4f585b",
+    arrowsize=0.72
+  ];
+
+  manifest [label="Zaključani corpus manifest\npodaci, runtime, SQL instance,\nredoslijed i budžet", fillcolor="#dfeceb", color="#176b61"];
+  validate [label="Validacija ugovora\ni segmentisani plan"];
+  prepare [label="Priprema segmenta\nosvježavanje baze i\njedno učitavanje profila"];
+  execute [label="Izvršavanje SQL instanci\nGAC, region i worker/task\ndokazi"];
+
+  progress [label="Status i progress\nsiguran prekid i nastavak"];
+  logical [label="Logical run\nrazrješavanje attempta", shape=folder, fillcolor="#dfeceb", color="#176b61"];
+  normalize [label="Normalizacija\nplanovi, regioni i taskovi"];
+  features [label="Jedan red pokazatelja\npo query_run_id"];
+  quality [label="Kvalitet i zaključana\nvanmrežna analiza"];
+
+  { rank=same; manifest; validate; prepare; }
+  { rank=same; logical; progress; execute; }
+  { rank=same; normalize; features; quality; }
+
+  manifest -> validate -> prepare;
+  prepare -> execute;
+  execute -> progress [constraint=false];
+  progress -> prepare [label="naredni segment", constraint=false, style=dashed];
+  progress -> logical [label="svi segmenti završeni", constraint=false];
+  logical -> normalize -> features -> quality;
+  logical -> progress -> execute [style=invis, weight=25];
+
+  no_rows [
+    shape=note,
+    label="Rezultatski redovi iz baze\nne preuzimaju se niti čuvaju.",
+    fillcolor="#f7f8f8",
+    color="#899194",
+    width=2.4
+  ];
+  execute -> no_rows [style=dotted, arrowhead=none, constraint=false];
+}

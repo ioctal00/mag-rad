@@ -1,0 +1,52 @@
+batch_id: batch-300-n3-holdout
+corpus_version: pressure-raw-corpus-v1
+collection_contract_version: pressure-raw-v1
+status: blocked_until_three_region_inventory
+description: >
+  Frozen N=3 no-refit colocation holdout. It must not run until the three-region
+  inventory and frozen-model preflight both pass.
+corpus_manifest: ../../../workloads/corpus/pressure-raw-v1/batch-300-n3-colocation-holdout.yml
+required_topology:
+  topology_id: eu_us_apac_gac
+  region_count: 3
+  fdw_regions: [eu, us, apac]
+  worker_count_by_region: {eu: 2, us: 2, apac: 2}
+  minimum_worker_count_per_region: 2
+  require_independent_regional_coordinators: true
+design:
+  sql_template_count: 4
+  dataset_scale_count: 2
+  placement_profile_count: 2
+  pair_member_count: 2
+  placement_profiles: [balanced_three_regions, apac_dominant_three_regions]
+  model_refit_allowed: false
+  expected_pair_count: 16
+planned_conditions: 32
+repetitions: 3
+planned_execution_count: 96
+frozen_inputs:
+  ranking_contract: ../../models/colocation_ranking_v1.yml
+  ranking_report: ../../../analysis/reports/pressure-raw-v1-colocation-ranking-robustness
+  primary_estimator: ridge
+  selected_feature_view: extended
+  coverage_quantile: 0.99
+  primary_ranking_metrics: [spearman, kendall, ndcg_at_5, top3_recall, top5_recall]
+  ranking_support_rule:
+    minimum_spearman: 0.50
+    minimum_kendall: 0.35
+    minimum_ndcg_at_5: 0.80
+    minimum_top5_recall: 0.60
+    calibration_metrics_are_secondary: true
+    coverage_is_warning_only: true
+preflight:
+  require_inventory_region_count: 3
+  require_worker_inventory_by_region: true
+  require_worker_count_match: true
+  require_fdw_bootstrap_for_all_regions: true
+  require_network_route_probe_for_all_regions: true
+  require_edge_count_match_region_count: true
+  require_region_child_count_match_region_count: true
+  require_topology_snapshot_id: true
+  require_frozen_model_manifest: true
+  require_no_refit_flag: true
+  refuse_execution_on_failed_preflight: true

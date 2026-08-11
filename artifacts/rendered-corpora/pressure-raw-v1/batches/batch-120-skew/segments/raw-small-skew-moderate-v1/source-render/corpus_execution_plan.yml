@@ -1,0 +1,45 @@
+corpus_id: batch-120-skew-raw-small-skew-moderate-v1-source
+source_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-moderate-v1/source_manifest.yml
+rendered_corpus_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-moderate-v1/source-render/corpus_manifest.yml
+corpus_cells: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-moderate-v1/source-render/corpus_cells.csv
+region: eu
+max_instances_per_cell: null
+execution_budget:
+  hard_timeout_seconds: 1800
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: mixed_cache_worker_skew_raw
+  order_policy: deterministic_shuffle
+  shuffle_seed: 20260730
+  repetitions_default: 1
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  os_sampler: true
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+execution_backend: master-regimes-infra.database_sweep
+included_execution_classes:
+- pilot
+source_cell_count: 10
+manifest_cell_count: 10
+excluded_cell_count: 0
+group_count: 1
+groups:
+- group_id: batch-120-skew-raw-small-skew-moderate-v1-source__raw-small-skew-moderate-v1__default__analytics_clients
+  sweep_id: batch-120-skew-raw-small-skew-moderate-v1-source__raw-small-skew-moderate-v1__default__analytics_clients
+  dataset_profile_id: raw-small-skew-moderate-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: default
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  network_profile_id: ''
+  cell_count: 10
+  instance_count: 10
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-moderate-v1/source-render/groups/batch-120-skew-raw-small-skew-moderate-v1-source__raw-small-skew-moderate-v1__default__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-moderate-v1/source-render/sweeps/batch-120-skew-raw-small-skew-moderate-v1-source__raw-small-skew-moderate-v1__default__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false

@@ -1,0 +1,2 @@
+Aggregate (rows=11.0, loops=1, disk-kB=0, hash-batches=1)
+  Custom Scan [Citus Adaptive] (rows=704.0, loops=1)

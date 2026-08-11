@@ -1,0 +1,14 @@
+---
+postgresql_local_socket_dir: "/var/run/postgresql"
+postgresql_tls_remote_cert_dir: "/etc/thesis/tls"
+postgresql_tls_ca_cert_filename: "ca.crt"
+postgresql_tls_server_cert_filename: "server.crt"
+postgresql_tls_server_key_filename: "server.key"
+pgbouncer_listen_port: 6432
+pgbouncer_auth_type: "scram-sha-256"
+pgbouncer_pool_mode: "transaction"
+pgbouncer_default_pool_size: 100
+pgbouncer_max_client_conn: 1000
+pgbouncer_client_tls_enabled: true
+pgbouncer_client_tls_sslmode: "allow"
+pgbouncer_client_tls_protocols: "secure"

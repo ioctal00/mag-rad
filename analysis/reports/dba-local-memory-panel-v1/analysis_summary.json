@@ -1,0 +1,217 @@
+{
+  "action_applicability_policy": "explicit_panel_contract_and_result_equivalence",
+  "action_outcome_count": 135,
+  "active_feature_count": 64,
+  "all_results_equivalent": true,
+  "collection_validation_status": "PASS",
+  "episode_count": 45,
+  "exact_context_fields": [
+    "topology_id",
+    "region_count",
+    "dataset_profile_id",
+    "profile"
+  ],
+  "first_occurrence_comparison": [
+    {
+      "coverage": 1.0,
+      "episode_count": 15,
+      "evaluation_scope": "first_occurrence_per_query",
+      "fixed_action": "mitigate_remote_path_bundle",
+      "mean_regret_log2": 0.3886521153553714,
+      "method": "static_action_median",
+      "recommendation_count": 15,
+      "top1_accuracy": 0.6
+    },
+    {
+      "coverage": 0.7333333333333333,
+      "episode_count": 15,
+      "evaluation_scope": "first_occurrence_per_query",
+      "fixed_action": "",
+      "mean_regret_log2": 0.05632554625324886,
+      "method": "knn_cold_start",
+      "recommendation_count": 11,
+      "top1_accuracy": 0.8181818181818182
+    },
+    {
+      "coverage": 0.7333333333333333,
+      "episode_count": 15,
+      "evaluation_scope": "first_occurrence_per_query",
+      "fixed_action": "",
+      "mean_regret_log2": 0.05632554625324886,
+      "method": "knn_cold_start_excluding_same_query",
+      "recommendation_count": 11,
+      "top1_accuracy": 0.8181818181818182
+    },
+    {
+      "coverage": 0.0,
+      "episode_count": 15,
+      "evaluation_scope": "first_occurrence_per_query",
+      "fixed_action": "",
+      "mean_regret_log2": NaN,
+      "method": "exact_query_memory",
+      "recommendation_count": 0,
+      "top1_accuracy": NaN
+    },
+    {
+      "coverage": 0.7333333333333333,
+      "episode_count": 15,
+      "evaluation_scope": "first_occurrence_per_query",
+      "fixed_action": "",
+      "mean_regret_log2": 0.05632554625324886,
+      "method": "hierarchical_cold_start",
+      "recommendation_count": 11,
+      "top1_accuracy": 0.8181818181818182
+    },
+    {
+      "coverage": 0.9333333333333333,
+      "episode_count": 15,
+      "evaluation_scope": "first_occurrence_per_query",
+      "fixed_action": "",
+      "mean_regret_log2": 0.04425578634183839,
+      "method": "hierarchical_warm_start",
+      "recommendation_count": 14,
+      "top1_accuracy": 0.8571428571428571
+    },
+    {
+      "coverage": 0.9333333333333333,
+      "episode_count": 15,
+      "evaluation_scope": "first_occurrence_per_query",
+      "fixed_action": "",
+      "mean_regret_log2": 0.04425578634183839,
+      "method": "knn_warm_start",
+      "recommendation_count": 14,
+      "top1_accuracy": 0.8571428571428571
+    },
+    {
+      "coverage": 0.9333333333333333,
+      "episode_count": 15,
+      "evaluation_scope": "first_occurrence_per_query",
+      "fixed_action": "",
+      "mean_regret_log2": 0.04425578634183839,
+      "method": "knn_warm_start_excluding_same_query",
+      "recommendation_count": 14,
+      "top1_accuracy": 0.8571428571428571
+    }
+  ],
+  "first_occurrence_matched_comparison": [
+    {
+      "episode_count": 14,
+      "evaluation_scope": "matched_warm_first_occurrences",
+      "fixed_action": "mitigate_remote_path_bundle",
+      "mean_regret_log2": 0.41641298073789795,
+      "method": "static_action_median",
+      "top1_accuracy": 0.5714285714285714,
+      "top1_correct_count": 8
+    },
+    {
+      "episode_count": 14,
+      "evaluation_scope": "matched_warm_first_occurrences",
+      "fixed_action": "",
+      "mean_regret_log2": 0.04425578634183839,
+      "method": "knn_warm_start_excluding_same_query",
+      "top1_accuracy": 0.8571428571428571,
+      "top1_correct_count": 12
+    }
+  ],
+  "first_occurrence_matched_details": {
+    "both_correct_count": 8,
+    "both_incorrect_count": 2,
+    "episode_count": 14,
+    "evaluation_scope": "matched_warm_first_occurrences",
+    "interpretation": "Descriptive paired comparison on the purposively selected panel; not a population confidence statement.",
+    "knn_only_correct_count": 4,
+    "mean_regret_improvement_log2": 0.37215719439605965,
+    "static_only_correct_count": 0
+  },
+  "method_comparison": [
+    {
+      "coverage": 1.0,
+      "episode_count": 45,
+      "fixed_action": "mitigate_remote_path_bundle",
+      "mean_regret_log2": 0.34948006627942385,
+      "method": "static_action_median",
+      "recommendation_count": 45,
+      "top1_accuracy": 0.6888888888888889
+    },
+    {
+      "coverage": 0.9111111111111111,
+      "episode_count": 45,
+      "fixed_action": "",
+      "mean_regret_log2": 0.041257487314634016,
+      "method": "knn_cold_start",
+      "recommendation_count": 41,
+      "top1_accuracy": 0.8780487804878049
+    },
+    {
+      "coverage": 0.7111111111111111,
+      "episode_count": 45,
+      "fixed_action": "",
+      "mean_regret_log2": 0.027412774520026585,
+      "method": "knn_cold_start_excluding_same_query",
+      "recommendation_count": 32,
+      "top1_accuracy": 0.90625
+    },
+    {
+      "coverage": 0.6666666666666666,
+      "episode_count": 45,
+      "fixed_action": "",
+      "mean_regret_log2": 0.0,
+      "method": "exact_query_memory",
+      "recommendation_count": 30,
+      "top1_accuracy": 1.0
+    },
+    {
+      "coverage": 0.9111111111111111,
+      "episode_count": 45,
+      "fixed_action": "",
+      "mean_regret_log2": 0.01511173192160335,
+      "method": "hierarchical_cold_start",
+      "recommendation_count": 41,
+      "top1_accuracy": 0.9512195121951219
+    },
+    {
+      "coverage": 0.9777777777777777,
+      "episode_count": 45,
+      "fixed_action": "",
+      "mean_regret_log2": 0.014081386563312214,
+      "method": "hierarchical_warm_start",
+      "recommendation_count": 44,
+      "top1_accuracy": 0.9545454545454546
+    },
+    {
+      "coverage": 0.9777777777777777,
+      "episode_count": 45,
+      "fixed_action": "",
+      "mean_regret_log2": 0.019936563287292063,
+      "method": "knn_warm_start",
+      "recommendation_count": 44,
+      "top1_accuracy": 0.9318181818181818
+    },
+    {
+      "coverage": 0.9111111111111111,
+      "episode_count": 45,
+      "fixed_action": "",
+      "mean_regret_log2": 0.021395336210752458,
+      "method": "knn_warm_start_excluding_same_query",
+      "recommendation_count": 41,
+      "top1_accuracy": 0.926829268292683
+    }
+  ],
+  "n2_episode_count": 21,
+  "n3_episode_count": 24,
+  "pca_component_count": 6,
+  "query_count": 15,
+  "reference_coverage_threshold": 1.9533554892194174,
+  "reference_episode_count": 26,
+  "retrieval_timing": {
+    "case_base_state_count": 70,
+    "exact_lookup_median_us": 0.29,
+    "exact_lookup_p95_us": 0.37,
+    "interpretation": "Implementation timing at the current small case-base size; not a scalability claim.",
+    "knn_retrieval_median_us": 33829.2915,
+    "knn_retrieval_p95_us": 43625.56464999999,
+    "scope": "single_process_offline_microbenchmark",
+    "timing_repetitions": 500
+  },
+  "status": "PASS"
+}

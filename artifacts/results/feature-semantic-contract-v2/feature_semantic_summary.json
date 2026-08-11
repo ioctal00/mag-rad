@@ -1,0 +1,11 @@
+{
+  "contract": "master_regimes_feature_semantics_v2",
+  "contract_sha256": "762df5a8bcc488bd5ca50d297957a8b2a5f062ecaf575b3dd13cf74caee34446",
+  "decision": "GO",
+  "holdout_logical_run_id": "stats-ceb-semantic-v2b-holdout",
+  "legacy_feature_count": 21,
+  "raw_reference_check_count": 23756,
+  "raw_reference_failure_count": 0,
+  "row_count": 1964,
+  "v2_feature_count": 19
+}

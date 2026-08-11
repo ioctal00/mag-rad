@@ -1,0 +1,59 @@
+{
+  "action_id": "restore_origin",
+  "case_id": "CASE-AGG-01",
+  "dataset_time_contract": {
+    "allowed_cutoff_offsets_days": [
+      1,
+      2,
+      7,
+      14,
+      30
+    ],
+    "base_time_unix": 1782864000,
+    "base_time_utc": "2026-07-01T00:00:00Z",
+    "generated_lookback_days": 30,
+    "query_cutoff_offsets_days": [],
+    "wall_clock_functions_allowed_in_measured_sql": false
+  },
+  "logical_question_id": "trajectory_aggregate_exact_full_flow",
+  "result_contract": "Isti ure\u0111eni i multiskupovni hash u svih deset ponavljanja.",
+  "result_hashes": {
+    "multiset_sha256": "344beab54bb460cb4c512ff2d4231e3a95d7e998d29d827449468a272343985d",
+    "ordered_sha256": "621301875ea27a60105eb3e412cd7fc3a032f42751b4b89233feb9e5f1ec02c7"
+  },
+  "schema_version": 1,
+  "source_artifacts": [
+    {
+      "path": "generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/rendered_sql/gac_fdw_multiregion_event_exact_raw_summary.sql",
+      "sha256": "fc5cdf1c46054baced94d20d9baf53cd6c4ba55ff4cc152771681326e77e7188"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/states/A_raw_baseline/raw_signals.csv",
+      "sha256": "3dd5807eb75ae023214959ef12b325d5dd10a130c1f61d2e82c5ed12455328fd"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/sweeps/20260807T152414Z-aggregate-exact-01-a_raw_baseline/query-collections/20260807T152414Z-aggregate-exact-01-a_raw_baseline__aggregate-exact-01-a_raw_baseline-r01/nodes/eu-analytics-1/20260807T152426Z-query-capture-20260807T152414Z-79b27ed8855bcbb0/plans/master-regimes-query-20260807T152414Z-79b27ed8855bcbb0.explain.txt",
+      "sha256": "e5587ebedec465c1ce71c055c6064cd51d63f9f08d725021cc18a130818744ea"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/sweeps/20260807T152414Z-aggregate-exact-01-a_raw_baseline/query-collections/20260807T152414Z-aggregate-exact-01-a_raw_baseline__aggregate-exact-01-a_raw_baseline-r01/nodes/eu-analytics-1/20260807T152426Z-query-capture-20260807T152414Z-79b27ed8855bcbb0/plans/master-regimes-query-20260807T152414Z-79b27ed8855bcbb0.explain.json",
+      "sha256": "a39e6758212754537204630718946de99b7500e99c6aee179eb302d1c8b90294"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/states/R0_prime_rollback/raw_signals.csv",
+      "sha256": "b83ff84fbe54418bcd17f6c9ec7ccc82f55b6df5249a562861629abfea6c498b"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/sweeps/20260807T154045Z-aggregate-exact-21-r0_prime_rollback/query-collections/20260807T154045Z-aggregate-exact-21-r0_prime_rollback__aggregate-exact-21-r0_prime_rollback-r01/nodes/eu-analytics-1/20260807T154055Z-query-capture-20260807T154045Z-3240c2ed6966f6a5/plans/master-regimes-query-20260807T154045Z-3240c2ed6966f6a5.explain.txt",
+      "sha256": "e5587ebedec465c1ce71c055c6064cd51d63f9f08d725021cc18a130818744ea"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/sweeps/20260807T154045Z-aggregate-exact-21-r0_prime_rollback/query-collections/20260807T154045Z-aggregate-exact-21-r0_prime_rollback__aggregate-exact-21-r0_prime_rollback-r01/nodes/eu-analytics-1/20260807T154055Z-query-capture-20260807T154045Z-3240c2ed6966f6a5/plans/master-regimes-query-20260807T154045Z-3240c2ed6966f6a5.explain.json",
+      "sha256": "eac47be83b19a470d37f4aa9f3faf5868355fba73aa676f450fce95882a1531c"
+    }
+  ],
+  "source_repository_commit": "1892a85c0576017f898df9162c4c1b5ac21f1d03",
+  "source_run": "generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1",
+  "title": "Ponovljeni agregacijski upit i provjera povrata",
+  "user_scenario": "Ponavljanje istog SQL-a u kompatibilnom kontekstu"
+}

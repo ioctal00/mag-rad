@@ -1,0 +1,81 @@
+digraph G {
+  graph [
+    rankdir=TB,
+    bgcolor="white",
+    fontname="DejaVu Sans",
+    fontsize=13,
+    pad=0.12,
+    nodesep=0.38,
+    ranksep=0.42,
+    splines=polyline,
+    newrank=true,
+    labelloc="t",
+    label="Granica kompresije u opisnom modelu F19"
+  ];
+
+  node [
+    shape=box,
+    style="filled",
+    fontname="DejaVu Sans",
+    fontsize=9.4,
+    color="#263238",
+    fillcolor="#f3f5f5",
+    margin="0.16,0.11",
+    width=4.2
+  ];
+
+  edge [
+    fontname="DejaVu Sans",
+    fontsize=8.5,
+    color="#4f585b",
+    arrowsize=0.72
+  ];
+
+  evidence [
+    label="E: dokazni artefakti\nGAC + regioni + poslovi na radnim čvorovima",
+    fillcolor="#eef1f2"
+  ];
+
+  derived [
+    label="Z: puni izvedeni pokazatelji\nworker_rows_cv je prisutan\nB–C delta = 0,5482",
+    fillcolor="#dfeceb",
+    penwidth=1.5
+  ];
+
+  selected [
+    label="x_F19(19): semantički ulaz modela\nworker CV je normalizovan\nB–C udaljenost = 0,1827",
+    fillcolor="#f4eee2",
+    penwidth=1.5
+  ];
+
+  membership [
+    label="u_F19(4): fuzzy članstva\nmedijana B–C L1 = 0,0430\nvodeći prototip ostaje isti",
+    fillcolor="#eef1f2"
+  ];
+
+  note [
+    shape=note,
+    label="Signal ostaje u x_F19, ali je\nčlanstvo grublji sažetak.\nPromjena intenziteta ne mora\npromijeniti vodeći prototip.",
+    fillcolor="#fafafa",
+    color="#7b8588",
+    fontsize=8.5,
+    width=2.6
+  ];
+
+  evidence -> derived [label="korelacija i izvođenje g"];
+  derived -> selected [label="semantička transformacija F19"];
+  selected -> membership [label="zamrznuti F19"];
+
+  subgraph selection_row {
+    rank=same;
+    selected;
+    note;
+  }
+
+  selected -> note [
+    style=dashed,
+    arrowhead=none,
+    color="#7b8588",
+    constraint=false
+  ];
+}

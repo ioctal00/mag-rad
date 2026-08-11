@@ -1,0 +1,15 @@
+{
+  "all_core_gates_pass": true,
+  "decision": "PROMOTE_V2_WITH_LIMITED_FUZZY_CLAIM",
+  "external_coverage_uniformly_improved": false,
+  "feature_contract_sha256": "762df5a8bcc488bd5ca50d297957a8b2a5f062ecaf575b3dd13cf74caee34446",
+  "feature_count": 19,
+  "h2_direction_consistent": true,
+  "model_manifest_sha256": "a7f441ff6e937a9615b3128c220752739d9380382e971d7f56eebd05d879941d",
+  "model_refit_after_v2b": false,
+  "row_count": 1964,
+  "v2b_mcnemar_exact_two_sided": 0.0625,
+  "validation_v1_ood_count": 1,
+  "validation_v2_ood_count": 5,
+  "validation_v2_ood_semantically_attributed_count": 5
+}

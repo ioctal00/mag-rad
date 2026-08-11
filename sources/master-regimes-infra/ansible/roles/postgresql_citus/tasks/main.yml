@@ -1,0 +1,615 @@
+---
+- name: Build same-region DB node CIDRs
+  ansible.builtin.set_fact:
+    postgresql_same_region_db_node_cidrs: "{{ groups.get('db_nodes', []) | select('in', ansible_play_hosts) | map('extract', hostvars) | selectattr('logical_region', 'equalto', hostvars[inventory_hostname].logical_region | default(hostvars[inventory_hostname].region_name)) | map(attribute='private_ip') | reject('equalto', None) | map('regex_replace', '$', '/32') | list | unique }}"
+
+- name: Build analytics client PostgreSQL CIDRs
+  ansible.builtin.set_fact:
+    postgresql_analytics_client_public_cidrs: "{{ groups.get('analytics_clients', []) | map('extract', hostvars) | map(attribute='ansible_host') | reject('equalto', None) | map('regex_replace', '$', '/32') | list | unique }}"
+
+- name: Build effective PostgreSQL network policy CIDRs
+  ansible.builtin.set_fact:
+    postgresql_loopback_allowed_cidrs: "{{ ['127.0.0.1/32', '::1/128'] }}"
+    postgresql_private_trust_cidrs: "{{ (postgresql_private_allowed_cidrs_extra + postgresql_same_region_db_node_cidrs + ([hostvars[inventory_hostname].vpc_cidr] if hostvars[inventory_hostname].vpc_cidr is defined and hostvars[inventory_hostname].vpc_cidr else [])) | unique }}"
+    postgresql_tls_required_cidrs: "{{ ((postgresql_allowed_cidrs + postgresql_analytics_client_public_cidrs) | reject('equalto', '127.0.0.1/32') | reject('equalto', '::1/128') | list | unique) }}"
+
+- name: Build effective PostgreSQL UFW CIDRs
+  ansible.builtin.set_fact:
+    postgresql_ufw_allowed_cidrs: "{{ ((postgresql_private_allowed_cidrs_extra + postgresql_same_region_db_node_cidrs + ([hostvars[inventory_hostname].vpc_cidr] if hostvars[inventory_hostname].vpc_cidr is defined and hostvars[inventory_hostname].vpc_cidr else []) + postgresql_tls_required_cidrs) | reject('equalto', '127.0.0.1/32') | reject('equalto', '::1/128') | unique) }}"
+
+- name: Ensure PGDG keyring directory exists
+  ansible.builtin.file:
+    path: /usr/share/postgresql-common/pgdg
+    state: directory
+    mode: "0755"
+
+- name: Install PGDG signing key
+  ansible.builtin.get_url:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    dest: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+    mode: "0644"
+
+- name: Configure PGDG apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt {{ ansible_facts['distribution_release'] }}-pgdg main"
+    filename: pgdg
+    state: present
+
+- name: Download official Citus repository setup script
+  ansible.builtin.get_url:
+    url: https://install.citusdata.com/community/deb.sh
+    dest: /usr/local/bin/install-citus-repo.sh
+    mode: "0755"
+
+- name: Check whether Citus repository marker exists
+  ansible.builtin.stat:
+    path: /usr/local/share/citus-repo-installed
+  register: citus_repo_marker
+
+- name: Configure official Citus apt repository
+  ansible.builtin.command:
+    cmd: /usr/local/bin/install-citus-repo.sh
+  when: not citus_repo_marker.stat.exists
+
+- name: Write Citus repository marker
+  ansible.builtin.file:
+    path: /usr/local/share/citus-repo-installed
+    state: touch
+    mode: "0644"
+  when: not citus_repo_marker.stat.exists
+
+- name: Refresh apt cache after adding Citus repository
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Ensure postgresql-common config directory exists
+  ansible.builtin.file:
+    path: /etc/postgresql-common
+    state: directory
+    mode: "0755"
+
+- name: Disable automatic PostgreSQL cluster creation
+  ansible.builtin.lineinfile:
+    path: /etc/postgresql-common/createcluster.conf
+    regexp: "^#?create_main_cluster\\s*="
+    line: "create_main_cluster = false"
+    create: true
+    mode: "0644"
+
+- name: Install PostgreSQL and Citus packages
+  ansible.builtin.apt:
+    name:
+      - "postgresql-{{ postgresql_version }}"
+      - "postgresql-client-{{ postgresql_version }}"
+      - "{{ citus_package }}"
+      - python3-psycopg2
+    state: present
+
+- name: Hold PostgreSQL and Citus package versions
+  ansible.builtin.command:
+    argv:
+      - apt-mark
+      - hold
+      - "postgresql-{{ postgresql_version }}"
+      - "postgresql-client-{{ postgresql_version }}"
+      - "{{ citus_package }}"
+  register: postgresql_citus_package_hold
+  changed_when: "'set on hold' in postgresql_citus_package_hold.stdout and 'was already set on hold' not in postgresql_citus_package_hold.stdout"
+  when: postgresql_package_hold | bool
+
+- name: Check whether PostgreSQL cluster config exists
+  ansible.builtin.stat:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+  register: postgresql_cluster_config
+
+- name: Create PostgreSQL cluster with explicit checksum setting
+  ansible.builtin.command:
+    cmd: "pg_createcluster {{ postgresql_version }} main{{ ' -- --data-checksums' if postgresql_data_checksums else '' }}"
+  when: not postgresql_cluster_config.stat.exists
+
+- name: Read PostgreSQL control data
+  ansible.builtin.command:
+    cmd: "/usr/lib/postgresql/{{ postgresql_version }}/bin/pg_controldata /var/lib/postgresql/{{ postgresql_version }}/main"
+  register: postgresql_controldata
+  changed_when: false
+
+- name: Derive PostgreSQL checksum state from control data
+  ansible.builtin.set_fact:
+    postgresql_current_data_checksums: "{{ (postgresql_controldata.stdout | regex_search('Data page checksum version:\\s*([0-9]+)', '\\1') | first | int) > 0 }}"
+
+- name: Fail when existing cluster checksum setting differs from requested value
+  ansible.builtin.fail:
+    msg: "Existing PostgreSQL cluster checksums are {{ 'on' if postgresql_current_data_checksums else 'off' }}, but postgresql_data_checksums is {{ 'on' if postgresql_data_checksums else 'off' }}. Recreate the cluster or align the variable before continuing."
+  when: postgresql_current_data_checksums != postgresql_data_checksums
+
+- name: Ensure PostgreSQL service is enabled
+  ansible.builtin.service:
+    name: postgresql
+    enabled: true
+    state: started
+
+- name: Check whether UFW is active
+  ansible.builtin.command:
+    cmd: ufw status
+  register: postgresql_ufw_status
+  changed_when: false
+  failed_when: false
+
+- name: Read current UFW rules
+  ansible.builtin.command:
+    cmd: ufw status numbered
+  register: postgresql_ufw_status_numbered
+  changed_when: false
+  failed_when: false
+  when: "'Status: active' in postgresql_ufw_status.stdout"
+
+- name: Allow PostgreSQL port through UFW for approved remote CIDRs
+  ansible.builtin.command:
+    cmd: "ufw allow proto tcp from {{ item }} to any port 5432"
+  loop: "{{ postgresql_ufw_allowed_cidrs }}"
+  when:
+    - "'Status: active' in postgresql_ufw_status.stdout"
+    - postgresql_ufw_status_numbered.stdout is not search('5432/tcp.*' ~ (item | regex_escape))
+
+- name: Allow PgBouncer port through UFW for approved remote CIDRs
+  ansible.builtin.command:
+    cmd: "ufw allow proto tcp from {{ item }} to any port {{ pgbouncer_listen_port }}"
+  loop: "{{ postgresql_ufw_allowed_cidrs }}"
+  when:
+    - "'Status: active' in postgresql_ufw_status.stdout"
+    - postgresql_ufw_status_numbered.stdout is not search((pgbouncer_listen_port | string) ~ '/tcp.*' ~ (item | regex_escape))
+
+- name: Ensure controller-side TLS directories exist
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0700"
+  loop:
+    - "{{ postgresql_tls_controller_dir }}"
+    - "{{ postgresql_tls_controller_dir }}/issued"
+  delegate_to: localhost
+  connection: local
+  become: false
+  vars:
+    ansible_become: false
+  run_once: true
+  when: postgresql_tls_enabled | bool
+
+- name: Ensure controller-side TLS CA private key exists
+  ansible.builtin.command:
+    argv:
+      - openssl
+      - genrsa
+      - -out
+      - "{{ postgresql_tls_controller_dir }}/{{ postgresql_tls_ca_key_filename }}"
+      - "4096"
+  args:
+    creates: "{{ postgresql_tls_controller_dir }}/{{ postgresql_tls_ca_key_filename }}"
+  delegate_to: localhost
+  connection: local
+  become: false
+  vars:
+    ansible_become: false
+  run_once: true
+  when: postgresql_tls_enabled | bool
+  no_log: true
+
+- name: Ensure controller-side TLS CA certificate exists
+  ansible.builtin.command:
+    argv:
+      - openssl
+      - req
+      - -x509
+      - -new
+      - -nodes
+      - -key
+      - "{{ postgresql_tls_controller_dir }}/{{ postgresql_tls_ca_key_filename }}"
+      - -sha256
+      - -days
+      - "{{ postgresql_tls_ca_days | string }}"
+      - -out
+      - "{{ postgresql_tls_controller_dir }}/{{ postgresql_tls_ca_cert_filename }}"
+      - -subj
+      - "/CN={{ postgresql_tls_ca_common_name }}"
+  args:
+    creates: "{{ postgresql_tls_controller_dir }}/{{ postgresql_tls_ca_cert_filename }}"
+  delegate_to: localhost
+  connection: local
+  become: false
+  vars:
+    ansible_become: false
+  run_once: true
+  when: postgresql_tls_enabled | bool
+
+- name: Render controller-side server certificate request config
+  ansible.builtin.template:
+    src: server-cert.cnf.j2
+    dest: "{{ postgresql_tls_controller_dir }}/issued/{{ inventory_hostname }}.cnf"
+    mode: "0600"
+  register: postgresql_tls_server_config
+  delegate_to: localhost
+  connection: local
+  become: false
+  vars:
+    ansible_become: false
+  when: postgresql_tls_enabled | bool
+
+- name: Ensure controller-side server private key exists
+  ansible.builtin.command:
+    argv:
+      - openssl
+      - genrsa
+      - -out
+      - "{{ postgresql_tls_controller_dir }}/issued/{{ inventory_hostname }}.key"
+      - "{{ postgresql_tls_server_key_size | string }}"
+  args:
+    creates: "{{ postgresql_tls_controller_dir }}/issued/{{ inventory_hostname }}.key"
+  delegate_to: localhost
+  connection: local
+  become: false
+  vars:
+    ansible_become: false
+  when: postgresql_tls_enabled | bool
+  no_log: true
+
+- name: Check whether controller-side server certificate exists
+  ansible.builtin.stat:
+    path: "{{ postgresql_tls_controller_dir }}/issued/{{ inventory_hostname }}.crt"
+  register: postgresql_tls_server_cert
+  delegate_to: localhost
+  connection: local
+  become: false
+  vars:
+    ansible_become: false
+  when: postgresql_tls_enabled | bool
+
+- name: Generate controller-side server certificate signing request
+  ansible.builtin.command:
+    argv:
+      - openssl
+      - req
+      - -new
+      - -key
+      - "{{ postgresql_tls_controller_dir }}/issued/{{ inventory_hostname }}.key"
+      - -out
+      - "{{ postgresql_tls_controller_dir }}/issued/{{ inventory_hostname }}.csr"
+      - -config
+      - "{{ postgresql_tls_controller_dir }}/issued/{{ inventory_hostname }}.cnf"
+  delegate_to: localhost
+  connection: local
+  become: false
+  vars:
+    ansible_become: false
+  when:
+    - postgresql_tls_enabled
+    - postgresql_tls_server_config.changed or not postgresql_tls_server_cert.stat.exists
+
+- name: Sign controller-side server certificate with local CA
+  ansible.builtin.command:
+    argv:
+      - openssl
+      - x509
+      - -req
+      - -in
+      - "{{ postgresql_tls_controller_dir }}/issued/{{ inventory_hostname }}.csr"
+      - -CA
+      - "{{ postgresql_tls_controller_dir }}/{{ postgresql_tls_ca_cert_filename }}"
+      - -CAkey
+      - "{{ postgresql_tls_controller_dir }}/{{ postgresql_tls_ca_key_filename }}"
+      - -CAcreateserial
+      - -out
+      - "{{ postgresql_tls_controller_dir }}/issued/{{ inventory_hostname }}.crt"
+      - -days
+      - "{{ postgresql_tls_server_days | string }}"
+      - -sha256
+      - -extensions
+      - v3_req
+      - -extfile
+      - "{{ postgresql_tls_controller_dir }}/issued/{{ inventory_hostname }}.cnf"
+  delegate_to: localhost
+  connection: local
+  become: false
+  vars:
+    ansible_become: false
+  when:
+    - postgresql_tls_enabled
+    - postgresql_tls_server_config.changed or not postgresql_tls_server_cert.stat.exists
+
+- name: Ensure remote TLS certificate directory exists
+  ansible.builtin.file:
+    path: "{{ postgresql_tls_remote_cert_dir }}"
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: "0700"
+  when: postgresql_tls_enabled | bool
+
+- name: Deploy CA certificate to PostgreSQL node
+  ansible.builtin.copy:
+    src: "{{ postgresql_tls_controller_dir }}/{{ postgresql_tls_ca_cert_filename }}"
+    dest: "{{ postgresql_tls_remote_cert_dir }}/{{ postgresql_tls_ca_cert_filename }}"
+    owner: postgres
+    group: postgres
+    mode: "0644"
+  when: postgresql_tls_enabled | bool
+  notify: Restart postgresql
+
+- name: Deploy server certificate to PostgreSQL node
+  ansible.builtin.copy:
+    src: "{{ postgresql_tls_controller_dir }}/issued/{{ inventory_hostname }}.crt"
+    dest: "{{ postgresql_tls_remote_cert_dir }}/{{ postgresql_tls_server_cert_filename }}"
+    owner: postgres
+    group: postgres
+    mode: "0644"
+  when: postgresql_tls_enabled | bool
+  notify: Restart postgresql
+
+- name: Deploy server private key to PostgreSQL node
+  ansible.builtin.copy:
+    src: "{{ postgresql_tls_controller_dir }}/issued/{{ inventory_hostname }}.key"
+    dest: "{{ postgresql_tls_remote_cert_dir }}/{{ postgresql_tls_server_key_filename }}"
+    owner: postgres
+    group: postgres
+    mode: "0600"
+  when: postgresql_tls_enabled | bool
+  notify: Restart postgresql
+
+- name: Configure PostgreSQL listen addresses
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?listen_addresses\\s*="
+    line: "listen_addresses = '{{ postgresql_listen_addresses }}'"
+  notify: Restart postgresql
+
+- name: Configure PostgreSQL max_connections
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?max_connections\\s*="
+    line: "max_connections = {{ postgresql_max_connections }}"
+  notify: Restart postgresql
+
+- name: Configure PostgreSQL shared_preload_libraries
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?shared_preload_libraries\\s*="
+    line: "shared_preload_libraries = '{{ postgresql_shared_preload_libraries }}'"
+  notify: Restart postgresql
+
+- name: Configure pg_stat_statements max entries
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?pg_stat_statements\\.max\\s*="
+    line: "pg_stat_statements.max = {{ postgresql_pg_stat_statements_max }}"
+  notify: Restart postgresql
+
+- name: Configure pg_stat_statements tracking
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?pg_stat_statements\\.track\\s*="
+    line: "pg_stat_statements.track = {{ postgresql_pg_stat_statements_track }}"
+  notify: Restart postgresql
+
+- name: Configure Citus default shard count for new distributed tables
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?citus\\.shard_count\\s*="
+    line: "citus.shard_count = {{ citus_shard_count }}"
+  notify: Restart postgresql
+
+- name: Configure Citus stat counters
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?citus\\.enable_stat_counters\\s*="
+    line: "citus.enable_stat_counters = {{ 'on' if citus_enable_stat_counters else 'off' }}"
+  notify: Restart postgresql
+
+- name: Configure Citus stat statements tracking
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?citus\\.stat_statements_track\\s*="
+    line: "citus.stat_statements_track = '{{ citus_stat_statements_track }}'"
+  notify: Restart postgresql
+
+- name: Configure Citus tenant statistics tracking
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?citus\\.stat_tenants_track\\s*="
+    line: "citus.stat_tenants_track = '{{ citus_stat_tenants_track }}'"
+  notify: Restart postgresql
+
+- name: Configure Citus repartition join support
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?citus\\.enable_repartition_joins\\s*="
+    line: "citus.enable_repartition_joins = {{ 'on' if citus_enable_repartition_joins else 'off' }}"
+  notify: Restart postgresql
+
+- name: Configure PostgreSQL password encryption
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?password_encryption\\s*="
+    line: "password_encryption = {{ postgresql_password_encryption }}"
+  notify: Restart postgresql
+
+- name: Configure PostgreSQL TLS enablement
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?ssl\\s*="
+    line: "ssl = {{ 'on' if postgresql_tls_enabled else 'off' }}"
+  notify: Restart postgresql
+
+- name: Configure PostgreSQL TLS certificate path
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?ssl_cert_file\\s*="
+    line: "ssl_cert_file = '{{ postgresql_tls_remote_cert_dir }}/{{ postgresql_tls_server_cert_filename }}'"
+  when: postgresql_tls_enabled | bool
+  notify: Restart postgresql
+
+- name: Configure PostgreSQL TLS private key path
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?ssl_key_file\\s*="
+    line: "ssl_key_file = '{{ postgresql_tls_remote_cert_dir }}/{{ postgresql_tls_server_key_filename }}'"
+  when: postgresql_tls_enabled | bool
+  notify: Restart postgresql
+
+- name: Configure PostgreSQL TLS CA certificate path
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?ssl_ca_file\\s*="
+    line: "ssl_ca_file = '{{ postgresql_tls_remote_cert_dir }}/{{ postgresql_tls_ca_cert_filename }}'"
+  when: postgresql_tls_enabled | bool
+  notify: Restart postgresql
+
+- name: Configure PostgreSQL minimum TLS protocol
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?ssl_min_protocol_version\\s*="
+    line: "ssl_min_protocol_version = '{{ postgresql_tls_min_protocol_version }}'"
+  when: postgresql_tls_enabled | bool
+  notify: Restart postgresql
+
+- name: Manage pg_hba.conf access block
+  ansible.builtin.blockinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf"
+    marker: "# {mark} ANSIBLE MANAGED THESIS ACCESS"
+    block: |
+      {% for cidr in postgresql_loopback_allowed_cidrs %}
+      host    all             all             {{ cidr }}                 scram-sha-256
+      {% endfor %}
+      {% for cidr in postgresql_private_trust_cidrs %}
+      host    all             all             {{ cidr }}                 trust
+      {% endfor %}
+      {% for cidr in postgresql_tls_required_cidrs %}
+      hostssl all             all             {{ cidr }}                 scram-sha-256
+      hostnossl all           all             {{ cidr }}                 reject
+      {% endfor %}
+  notify: Reload postgresql
+
+- name: Flush PostgreSQL handlers before SQL bootstrap
+  ansible.builtin.meta: flush_handlers
+
+- name: Set postgres superuser password
+  ansible.builtin.command:
+    cmd: sudo -u postgres psql -v ON_ERROR_STOP=1
+    stdin: "ALTER USER postgres WITH PASSWORD '{{ postgresql_admin_password | replace(\"'\", \"''\") }}';"
+
+- name: Install postgres libpq password file for Citus administrative connections
+  ansible.builtin.template:
+    src: pgpass.j2
+    dest: /var/lib/postgresql/.pgpass
+    owner: postgres
+    group: postgres
+    mode: "0600"
+  when: postgresql_citus_superuser_pgpass_enabled | bool
+  no_log: true
+
+- name: Ensure application database exists
+  ansible.builtin.command:
+    cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -tAc \"SELECT 1 FROM pg_database WHERE datname='{{ postgresql_app_db }}'\""
+  register: postgres_db_exists
+  changed_when: false
+
+- name: Create application database
+  ansible.builtin.command:
+    cmd: "sudo -u postgres createdb {{ postgresql_app_db }}"
+  when: postgres_db_exists.stdout != "1"
+
+- name: Ensure application role exists
+  ansible.builtin.command:
+    cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -tAc \"SELECT 1 FROM pg_roles WHERE rolname='{{ postgresql_app_user }}'\""
+  register: postgres_role_exists
+  changed_when: false
+
+- name: Create application role
+  ansible.builtin.command:
+    cmd: sudo -u postgres psql -v ON_ERROR_STOP=1
+    stdin: "CREATE ROLE {{ postgresql_app_user }} WITH LOGIN PASSWORD '{{ postgresql_app_password | replace(\"'\", \"''\") }}';"
+  when: postgres_role_exists.stdout != "1"
+
+- name: Ensure application role password is current
+  ansible.builtin.command:
+    cmd: sudo -u postgres psql -v ON_ERROR_STOP=1
+    stdin: "ALTER ROLE {{ postgresql_app_user }} WITH PASSWORD '{{ postgresql_app_password | replace(\"'\", \"''\") }}';"
+
+- name: Ensure application database owner
+  ansible.builtin.command:
+    cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -c \"ALTER DATABASE {{ postgresql_app_db }} OWNER TO {{ postgresql_app_user }};\""
+
+- name: Grant application role read access to public schema
+  ansible.builtin.command:
+    cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -d {{ postgresql_app_db }} -c \"GRANT USAGE ON SCHEMA public TO {{ postgresql_app_user }}; GRANT SELECT ON ALL TABLES IN SCHEMA public TO {{ postgresql_app_user }}; ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO {{ postgresql_app_user }};\""
+  when: inventory_hostname in groups.get('coordinators', [])
+
+- name: Enable Citus extension in application database
+  ansible.builtin.command:
+    cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -d {{ postgresql_app_db }} -c \"CREATE EXTENSION IF NOT EXISTS citus;\""
+
+- name: Check whether pg_stat_statements extension exists in application database
+  ansible.builtin.command:
+    cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -d {{ postgresql_app_db }} -tAc \"SELECT 1 FROM pg_extension WHERE extname='pg_stat_statements';\""
+  register: pg_stat_statements_extension_exists
+  changed_when: false
+
+- name: Enable pg_stat_statements extension in application database
+  ansible.builtin.command:
+    cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -d {{ postgresql_app_db }} -c \"CREATE EXTENSION IF NOT EXISTS pg_stat_statements;\""
+  when: pg_stat_statements_extension_exists.stdout != "1"
+
+- name: Set coordinator host metadata
+  ansible.builtin.command:
+    cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -d {{ postgresql_app_db }} -c \"SELECT citus_set_coordinator_host('{{ citus_coordinator_hostname | default(hostvars[inventory_hostname].private_ip | default(ansible_host | default(inventory_hostname))) }}', 5432);\""
+  when: inventory_hostname in groups.get('coordinators', [])
+
+- name: Build same-region worker host list
+  ansible.builtin.set_fact:
+    citus_same_region_worker_hosts: "{{ groups.get(hostvars[inventory_hostname].logical_region | default(hostvars[inventory_hostname].region_name), []) | select('in', groups.get('workers', [])) | list }}"
+  when: inventory_hostname in groups.get('coordinators', [])
+
+- name: Build same-region worker IP list
+  ansible.builtin.set_fact:
+    citus_same_region_worker_private_ips: "{{ citus_same_region_worker_hosts | default([]) | map('extract', hostvars) | map(attribute='private_ip') | reject('equalto', None) | list }}"
+  when: inventory_hostname in groups.get('coordinators', [])
+
+- name: Build other-region worker IP list
+  ansible.builtin.set_fact:
+    citus_other_region_worker_private_ips: "{{ groups.get('workers', []) | difference(citus_same_region_worker_hosts | default([])) | map('extract', hostvars) | map(attribute='private_ip') | reject('equalto', None) | list }}"
+  when: inventory_hostname in groups.get('coordinators', [])
+
+- name: Check whether other-region worker nodes are registered
+  ansible.builtin.command:
+    cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -d {{ postgresql_app_db }} -tAc \"SELECT 1 FROM pg_dist_node WHERE nodename='{{ item }}' AND nodeport=5432 AND groupid <> 0;\""
+  loop: "{{ citus_other_region_worker_private_ips | default([]) }}"
+  register: citus_cross_region_worker_registration
+  changed_when: false
+  when: inventory_hostname in groups.get('coordinators', [])
+
+- name: Remove other-region Citus worker nodes from coordinator
+  ansible.builtin.command:
+    cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -d {{ postgresql_app_db }} -c \"SELECT citus_remove_node('{{ item.item }}', 5432);\""
+  loop: "{{ citus_cross_region_worker_registration.results | default([]) }}"
+  when:
+    - inventory_hostname in groups.get('coordinators', [])
+    - item.stdout == "1"
+
+- name: Show same-region Citus worker targets
+  ansible.builtin.debug:
+    var: citus_same_region_worker_private_ips
+  when: inventory_hostname in groups.get('coordinators', [])
+
+- name: Check if worker node is already registered
+  ansible.builtin.command:
+    cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -d {{ postgresql_app_db }} -tAc \"SELECT 1 FROM pg_dist_node WHERE nodename='{{ item }}' AND nodeport=5432;\""
+  loop: "{{ citus_same_region_worker_private_ips | default([]) }}"
+  register: citus_worker_registration
+  changed_when: false
+  when: inventory_hostname in groups.get('coordinators', [])
+
+- name: Register Citus worker nodes on coordinator
+  ansible.builtin.command:
+    cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -d {{ postgresql_app_db }} -c \"SELECT * FROM citus_add_node('{{ item.item }}', 5432);\""
+  loop: "{{ citus_worker_registration.results | default([]) }}"
+  when:
+    - inventory_hostname in groups.get('coordinators', [])
+    - item.stdout != "1"

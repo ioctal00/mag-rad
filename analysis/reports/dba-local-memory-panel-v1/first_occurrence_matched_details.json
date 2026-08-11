@@ -1,0 +1,10 @@
+{
+  "both_correct_count": 8,
+  "both_incorrect_count": 2,
+  "episode_count": 14,
+  "evaluation_scope": "matched_warm_first_occurrences",
+  "interpretation": "Descriptive paired comparison on the purposively selected panel; not a population confidence statement.",
+  "knn_only_correct_count": 4,
+  "mean_regret_improvement_log2": 0.37215719439605965,
+  "static_only_correct_count": 0
+}

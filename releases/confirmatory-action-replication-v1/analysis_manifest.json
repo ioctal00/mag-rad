@@ -1,0 +1,19 @@
+{
+  "action_outcome_count": 45,
+  "active_feature_count": 64,
+  "collection_validation": "PASS",
+  "confirmatory_outcomes_used_for_threshold": false,
+  "confirmatory_outcomes_used_for_transform": false,
+  "confirmatory_scenario_count": 15,
+  "contract_sha256": "4361b018d4f811271d8e7550f78ea27cee2322167c616818969f6b0a51c82d71",
+  "coverage_threshold": 1.9533554892194174,
+  "frozen_transfer_adds_confirmatory_history": false,
+  "h1_absolute_relative_contribution_isolated": false,
+  "leakage_audit": "PASS",
+  "paired_repetition_outcome_count": 225,
+  "pca_component_count": 6,
+  "reference_state_count": 26,
+  "refit_on_confirmatory_data": false,
+  "status": "PASS",
+  "warmup_contract": "zero explicit warm-up executions for every condition"
+}

@@ -1,0 +1,32 @@
+{
+  "audit_id": "semantic-v2-fuzzifier-sensitivity-v1",
+  "external_rows_used_for_refit": 0,
+  "external_weighted": "analysis/reports/stats-ceb-full-no-refit-v1/full_workload_semantic_weighted.csv",
+  "external_weighted_sha256": "0c16aba7664c20d4b7ca98030b09970cdfb3bebb100aab27f22c9d976b3bec5e",
+  "feature_count": 19,
+  "final_fuzzifier": 1.7,
+  "final_model_changed": false,
+  "frozen_manifest_sha256": "a7f441ff6e937a9615b3128c220752739d9380382e971d7f56eebd05d879941d",
+  "fuzzifiers": [
+    1.5,
+    1.7,
+    2.0
+  ],
+  "model_refit_for_sensitivity_only": true,
+  "primary_resolution": 4,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "training_rows": 1964,
+  "weighted_matrix": "analysis/reports/feature-semantic-contract-v2/semantic_v2_weighted.csv",
+  "weighted_matrix_sha256": "cbd517194fe90a06577989b48fbe12940916c91be22669ffea471ed1e5ea35c0"
+}

@@ -1,0 +1,90 @@
+{
+  "core_experiment_designs": {
+    "confirmatory_action_panel": {
+      "conditions_per_shape": 4,
+      "measured_executions": 300,
+      "rendered_corpus": "confirmatory-action-replication-v1",
+      "rendered_sql_conditions": 60,
+      "repetition_rule": "five balanced repetitions per condition",
+      "result_release": "releases/confirmatory-action-replication-v1",
+      "sql_shapes": 15
+    },
+    "controlled_topology_memory_panel": {
+      "measured_executions": 180,
+      "rendered_corpus": "n3-topology-memory-v1",
+      "rendered_sql_conditions": 180,
+      "repetition_rule": "N2 control, N3 phase A and N3 phase B",
+      "result_release": "releases/consolidated-evaluation-v1",
+      "sql_shapes_per_round": 15
+    },
+    "final_dba_panel": {
+      "decision_points": 45,
+      "measured_executions": 180,
+      "rendered_corpus": "dba-local-memory-v1",
+      "rendered_sql_conditions": 60,
+      "repetition_rule": "three temporal appearances per SQL shape",
+      "result_release": "releases/consolidated-evaluation-v1",
+      "sql_shapes": 15
+    },
+    "longitudinal_feedback_loop": {
+      "aggregate_exact_replay_executions": 25,
+      "canonical_sql_states": 9,
+      "main_execution_manifest_rows": 85,
+      "rendered_corpus": "feedback-loop-v1",
+      "repetition_rule": "adaptive states followed by frozen replay",
+      "result_release": "releases/feedback-loop-execution-v1"
+    },
+    "wide_intervention_corpus": {
+      "controlled_pairs": 418,
+      "execution_conditions": 869,
+      "measured_executions": 2607,
+      "rendered_corpus": "pressure-raw-v1",
+      "repetition_rule": "three repetitions per condition",
+      "result_release": "artifacts/results/pressure-actionability-v1",
+      "unique_rendered_sql_files": 799
+    }
+  },
+  "dataset_catalog_rows": 29,
+  "dataset_materialization": {
+    "dataset_profiles_included": true,
+    "deterministic_generator_included": true,
+    "materialized_database_dump_included": false,
+    "reason": "Synthetic datasets are regenerated from frozen profiles; database dumps and query result rows are not distributed.",
+    "row_level_snapshot_checksum_available": false
+  },
+  "query_catalog_rows": 3819,
+  "rendered_sql_rows_by_corpus": {
+    "clean-run-v1": 1964,
+    "confirmatory-action-replication-v1": 60,
+    "confirmatory-skew-v1": 48,
+    "dba-local-memory-v1": 60,
+    "feedback-loop-v1": 9,
+    "n3-topology-memory-v1": 180,
+    "pressure-raw-v1": 799,
+    "pressure-raw-v1-n3-colocation-holdout": 32,
+    "region-asymmetry-companion-v1": 294,
+    "repeatability-v1": 36,
+    "stats-ceb-full-no-refit-v1": 146,
+    "stats-ceb-semantic-v2b-holdout": 12,
+    "validation-holdout-v1": 159,
+    "wan-latency-companion-v1": 20
+  },
+  "schema_and_loader_paths": [
+    "sources/citus-datagen/sql",
+    "sources/citus-datagen/src",
+    "sources/citus-datagen/tools/cpp",
+    "sources/master-regimes/datasets/profiles",
+    "sources/master-regimes-infra/common-scripts/apply_dataset_profile.py"
+  ],
+  "schema_version": 1,
+  "source_commits": {
+    "citus-datagen": "cacbfdd7f7ac3f38d8e4f1e4469accae24aa6f53",
+    "master-regimes": "1892a85c0576017f898df9162c4c1b5ac21f1d03",
+    "master-regimes-infra": "1138de50262b36d86af17259c9fc87fb1fe3dede",
+    "master-regimes-thesis": "6f54029edb36dc51d49f28b9dc1e7205d9804855",
+    "psql-benchmarks": "98fa47e708c13de4257e3a804c10a395f069b93a"
+  },
+  "unresolved_manifest_rows_by_corpus": {
+    "confirmatory-skew-v1": 48
+  }
+}

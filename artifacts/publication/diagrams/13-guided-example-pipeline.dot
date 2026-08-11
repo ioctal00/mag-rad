@@ -1,0 +1,127 @@
+digraph G {
+  graph [
+    rankdir=TB,
+    bgcolor="white",
+    fontname="DejaVu Sans",
+    fontsize=12,
+    pad=0.14,
+    nodesep=0.30,
+    ranksep=0.42,
+    splines=polyline,
+    newrank=true,
+    labelloc="t",
+    label="Vođeni primjer: od višeslojnih planova do fuzzy članstva"
+  ];
+
+  node [
+    shape=box,
+    style="filled",
+    fontname="DejaVu Sans",
+    fontsize=8.8,
+    color="#263238",
+    fillcolor="#f3f5f5",
+    margin="0.14,0.09"
+  ];
+
+  edge [
+    fontname="DejaVu Sans",
+    fontsize=8.0,
+    color="#4f585b",
+    arrowsize=0.68
+  ];
+
+  query [
+    label="SQL instanca C\nTop-K tenanti iz EU i US\nlookback = 7 dana, LIMIT = 50",
+    fillcolor="#eef1f2",
+    penwidth=1.4
+  ];
+
+  gac [
+    label="GAC JSON plan\nLimit: 50 redova\nAggregate <- Append\n2 x Foreign Scan"
+  ];
+
+  regions [
+    label="Regionalni auto_explain planovi\nEU: 200.000 redova, 32 taska\nUS: 200.000 redova, 32 taska"
+  ];
+
+  tasks [
+    label="64 worker/task fragmenta\nEU workeri: 154.950 | 45.050\nUS workeri: 168.787 | 31.213"
+  ];
+
+  evidence [
+    label="E_i: korelirani dokazni skup\n1 GAC + 2 regionalna plana\n+ 64 task fragmenta",
+    fillcolor="#dfeceb",
+    penwidth=1.4
+  ];
+
+  derived [
+    label="Z_i: puni izvedeni pokazatelji\nregion rows ISF = 1,0000\ntask scan rows ISF = 3,6686\nworker_rows_cv = 0,6225\nremote/final rows = 8.000",
+    fillcolor="#dfeceb",
+    penwidth=1.4
+  ];
+
+  contrast [
+    shape=note,
+    label="Kontrolisani B-C kontrast\nworker_rows_cv: 0,0743 -> 0,6225\ndelta = 0,5482\nostala tri prikazana omjera: bez promjene",
+    fillcolor="#f7f8f8",
+    color="#176b61",
+    fontsize=8.3
+  ];
+
+  selected [
+    label="x_i^(19): semantički modelski ulaz\n19 pokazatelja\nworker CV je topološki normalizovan",
+    fillcolor="#f4eee2",
+    penwidth=1.4
+  ];
+
+  membership [
+    label="u_i^(4): fuzzy članstva\n[0,0101; 0,9671; 0,0199; 0,0029]\ndominantni prototip: P1",
+    fillcolor="#eef1f2",
+    penwidth=1.4
+  ];
+
+  boundary [
+    shape=note,
+    label="B-C L1 pomak članstva = 0,0445\nSignal je sačuvan u x_i^(19), ali\nostaje unutar istog makroprototipa.\nPrototipi nisu ground-truth klase.",
+    fillcolor="#fafafa",
+    color="#7b8588",
+    fontsize=8.3
+  ];
+
+  query -> gac [label="glavni EXPLAIN ANALYZE"];
+  query -> regions [label="2 FDW udaljene sesije"];
+  regions -> tasks [label="Citus task planovi"];
+
+  gac -> evidence;
+  regions -> evidence;
+  tasks -> evidence;
+  evidence -> derived [label="korelacija i izvođenje g"];
+  derived -> selected [label="semantička transformacija S"];
+  selected -> membership [label="zamrznuti FCM h"];
+
+  subgraph z_row {
+    rank=same;
+    derived;
+    contrast;
+  }
+
+  derived -> contrast [
+    style=dashed,
+    arrowhead=none,
+    color="#176b61",
+    constraint=false
+  ];
+
+  subgraph u_row {
+    rank=same;
+    membership;
+    boundary;
+  }
+
+  membership -> boundary [
+    style=dashed,
+    arrowhead=none,
+    color="#7b8588",
+    constraint=false
+  ];
+}

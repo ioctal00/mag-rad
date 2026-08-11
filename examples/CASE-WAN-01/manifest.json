@@ -1,0 +1,59 @@
+{
+  "action_id": "wan_delay_10ms_probe",
+  "case_id": "CASE-WAN-01",
+  "dataset_time_contract": {
+    "allowed_cutoff_offsets_days": [
+      1,
+      2,
+      7,
+      14,
+      30
+    ],
+    "base_time_unix": 1782864000,
+    "base_time_utc": "2026-07-01T00:00:00Z",
+    "generated_lookback_days": 30,
+    "query_cutoff_offsets_days": [],
+    "wall_clock_functions_allowed_in_measured_sql": false
+  },
+  "logical_question_id": "trajectory_aggregate_exact_full_flow",
+  "result_contract": "Isti ure\u0111eni i multiskupovni hash u svih deset ponavljanja.",
+  "result_hashes": {
+    "multiset_sha256": "344beab54bb460cb4c512ff2d4231e3a95d7e998d29d827449468a272343985d",
+    "ordered_sha256": "621301875ea27a60105eb3e412cd7fc3a032f42751b4b89233feb9e5f1ec02c7"
+  },
+  "schema_version": 1,
+  "source_artifacts": [
+    {
+      "path": "generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/rendered_sql/gac_fdw_multiregion_event_exact_regional_summary.sql",
+      "sha256": "d68f2d92981c756e803ecbfde7559db8b05ff99b1a94ceb7b374dd2555c70350"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/states/C_regional_aggregate/raw_signals.csv",
+      "sha256": "122d84fc55e5081fbec9cd92f138a73131a67a0c3485723a2c5b8446736edd42"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/sweeps/20260807T152657Z-aggregate-exact-04-c_regional_aggregate/query-collections/20260807T152657Z-aggregate-exact-04-c_regional_aggregate__aggregate-exact-04-c_regional_aggregate-r01/nodes/eu-analytics-1/20260807T152707Z-query-capture-20260807T152657Z-e70669afe9298bb8/plans/master-regimes-query-20260807T152657Z-e70669afe9298bb8.explain.txt",
+      "sha256": "2fa53e207734741e9aa8cb11492f37c1eb8173427d2e9da72c5c69d3b09a2791"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/sweeps/20260807T152657Z-aggregate-exact-04-c_regional_aggregate/query-collections/20260807T152657Z-aggregate-exact-04-c_regional_aggregate__aggregate-exact-04-c_regional_aggregate-r01/nodes/eu-analytics-1/20260807T152707Z-query-capture-20260807T152657Z-e70669afe9298bb8/plans/master-regimes-query-20260807T152657Z-e70669afe9298bb8.explain.json",
+      "sha256": "443aff6fbd9ca78565a11b12e65321afebc34187bb11dd18b81805692820bfe5"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/states/D_wan_delay/raw_signals.csv",
+      "sha256": "5be6d6af9c9269e498b02036eb6f3481d44b685fcf1bbd8441f1598d9bf514c5"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/sweeps/20260807T152612Z-aggregate-exact-03-d_wan_delay/query-collections/20260807T152612Z-aggregate-exact-03-d_wan_delay__aggregate-exact-03-d_wan_delay-r01/nodes/eu-analytics-1/20260807T152622Z-query-capture-20260807T152612Z-87b24b813eaa165e/plans/master-regimes-query-20260807T152612Z-87b24b813eaa165e.explain.txt",
+      "sha256": "2fa53e207734741e9aa8cb11492f37c1eb8173427d2e9da72c5c69d3b09a2791"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/sweeps/20260807T152612Z-aggregate-exact-03-d_wan_delay/query-collections/20260807T152612Z-aggregate-exact-03-d_wan_delay__aggregate-exact-03-d_wan_delay-r01/nodes/eu-analytics-1/20260807T152622Z-query-capture-20260807T152612Z-87b24b813eaa165e/plans/master-regimes-query-20260807T152612Z-87b24b813eaa165e.explain.json",
+      "sha256": "ce617ff6a593f98d625fa661292f2020e5f1d447a9be3a39d731e7fe6fd1ecec"
+    }
+  ],
+  "source_repository_commit": "1892a85c0576017f898df9162c4c1b5ac21f1d03",
+  "source_run": "generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1",
+  "title": "Isti SQL nakon WAN intervencije",
+  "user_scenario": "Isti SQL nakon deklarisane konfiguracijske intervencije"
+}

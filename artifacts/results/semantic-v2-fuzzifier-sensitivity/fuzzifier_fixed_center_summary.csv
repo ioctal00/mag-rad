@@ -1,0 +1,4 @@
+scope,fuzzifier,row_count,hard_label_agreement_with_m1_7,ari_with_m1_7,nmi_with_m1_7,uncertainty_rank_spearman_with_m1_7,top2_margin_rank_spearman_with_m1_7,avg_max_membership,median_max_membership,avg_top2_margin,median_top2_margin
+training_baseline_fixed_centers,1.5,1964,1.0,1.0,1.0,0.999797700898646,0.9998237594920263,0.9420839959823205,0.98695320995589,0.9047506866471463,0.9779512033187228
+training_baseline_fixed_centers,1.7,1964,1.0,1.0,1.0,1.0,1.0,0.8952554066316044,0.9464866849521287,0.8337009251565252,0.9120345741739744
+training_baseline_fixed_centers,2.0,1964,1.0,1.0,1.0,0.9997281046335025,0.99997007389118,0.8137473467797978,0.8502498627552326,0.7159056575311243,0.7663281004720951

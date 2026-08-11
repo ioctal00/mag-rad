@@ -1,0 +1,5 @@
+"postgres" "{{ analytics_node_postgresql_admin_password | replace('\\', '\\\\') | replace('"', '\\"') }}"
+"{{ analytics_node_postgresql_app_user }}" "{{ analytics_node_postgresql_app_password | replace('\\', '\\\\') | replace('"', '\\"') }}"
+{% if web_portal_enabled | default(false) and web_portal_db_readonly_user | default('') | length > 0 and web_portal_db_readonly_password | default('') | length > 0 %}
+"{{ web_portal_db_readonly_user }}" "{{ web_portal_db_readonly_password | replace('\\', '\\\\') | replace('"', '\\"') }}"
+{% endif %}

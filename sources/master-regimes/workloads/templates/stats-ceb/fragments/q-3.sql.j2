@@ -1,0 +1,5 @@
+select count(*) as result_count
+FROM {{ schema_name }}.comments AS c, {{ schema_name }}.postHistory AS ph
+WHERE c.UserId = ph.UserId
+  AND c.Score = 0
+  AND ph.PostHistoryTypeId = 1

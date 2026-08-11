@@ -1,0 +1,4 @@
+decision_id,trajectory_id,action_id,rollback_status,recorded_at_utc
+aggregate-exact-fetch-size,trajectory_aggregate_exact_full_flow,fdw_fetch_size_10000,not_applicable,2026-08-07T15:45:31.413407Z
+aggregate-exact-pushdown,trajectory_aggregate_exact_full_flow,regional_pushdown_rewrite,not_applicable,2026-08-07T15:45:31.457951Z
+aggregate-exact-wan-delay,trajectory_aggregate_exact_full_flow,wan_delay_10ms_probe,not_applicable,2026-08-07T15:45:31.502730Z

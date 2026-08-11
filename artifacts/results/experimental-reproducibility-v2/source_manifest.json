@@ -1,0 +1,327 @@
+{
+  "analysis_repository_state": {
+    "commit": "d89d2d7c21039fb9a599f68c77c72e263bee8f49",
+    "dirty": true,
+    "provenance": "analysis_time_repository_state",
+    "repository": "master-regimes"
+  },
+  "infrastructure_repository_state": {
+    "commit": "dd1de7d1ea04688dfe7a6c714e1c7c221e99308d",
+    "dirty": false,
+    "provenance": "analysis_time_repository_state",
+    "repository": "master-regimes-infra"
+  },
+  "logical_run_ids": [
+    "clean-run-v1",
+    "clean-run-v1-region-asymmetry",
+    "clean-run-v1-region-asymmetry-skew-rerun",
+    "clean-run-v1-validation-holdout",
+    "clean-run-v1-wan-latency",
+    "repeatability-v1"
+  ],
+  "manifest_payload_sha256": "017b05b51fa6cbfde4e74993c68352fbc53259bb7507eab5da1e8fa166f9569e",
+  "output_rows": {
+    "collection_protocol": 114,
+    "datasets": 34,
+    "infrastructure": 42,
+    "logical_runs": 6,
+    "runtime_interventions": 25
+  },
+  "outputs": [
+    {
+      "bytes": 17807,
+      "path": "master-regimes/analysis/reports/experimental-reproducibility-v2/collection_protocol.csv",
+      "provenance": "derived_output",
+      "role": "output:collection_protocol.csv",
+      "sha256": "6e01cf15cbb692cc100baa783d4354bce1451d99b82e0f4a64bf4afc47e6b27f"
+    },
+    {
+      "bytes": 9686,
+      "path": "master-regimes/analysis/reports/experimental-reproducibility-v2/datasets.csv",
+      "provenance": "derived_output",
+      "role": "output:datasets.csv",
+      "sha256": "55643b7575ed37e635da54d816e6b6a90d33bff531cbf69b32c492b39620d332"
+    },
+    {
+      "bytes": 19060,
+      "path": "master-regimes/analysis/reports/experimental-reproducibility-v2/infrastructure.csv",
+      "provenance": "derived_output",
+      "role": "output:infrastructure.csv",
+      "sha256": "03a9accfe58a44e8de04c135799e88b04f4696778b4034a76534aeed1a312e01"
+    },
+    {
+      "bytes": 1771,
+      "path": "master-regimes/analysis/reports/experimental-reproducibility-v2/logical_runs.csv",
+      "provenance": "derived_output",
+      "role": "output:logical_runs.csv",
+      "sha256": "2052c6550d4665f5cf63a3a07d57ee4c7b04a5e6e379cf3b1ff19787b321c82b"
+    },
+    {
+      "bytes": 5876,
+      "path": "master-regimes/analysis/reports/experimental-reproducibility-v2/runtime_interventions.csv",
+      "provenance": "derived_output",
+      "role": "output:runtime_interventions.csv",
+      "sha256": "befc1cbe4ae1e7b33f7464579bc034ba33cb01e239df52d79d41e7959848b28d"
+    }
+  ],
+  "package_id": "experimental-reproducibility-v2",
+  "provenance_classes": [
+    "recorded_at_run_time",
+    "reconstructed_from_versioned_config",
+    "not_recorded"
+  ],
+  "run_time_commit_policy": "not_recorded unless a run manifest explicitly persisted it",
+  "sources": [
+    {
+      "bytes": 13016,
+      "path": "master-regimes-infra/common-scripts/manage_network_latency.py",
+      "provenance": "reconstructed_from_versioned_config",
+      "role": "network_intervention_implementation",
+      "sha256": "d3e165dafa520d4650ef7902d83d101841594fdc41d423d7f37dc835106e9fa0"
+    },
+    {
+      "bytes": 41042,
+      "path": "master-regimes-infra/common-scripts/run_query_collection.py",
+      "provenance": "reconstructed_from_versioned_config",
+      "role": "collector_implementation",
+      "sha256": "3f37c3aa8cf5038c715bc9c7944b5c057be809c900dc89412e8b42636c2378eb"
+    },
+    {
+      "bytes": 13321,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-region-asymmetry-skew-rerun/_index/dataset_capability_audits.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1-region-asymmetry-skew-rerun:dataset_capability_audits.csv",
+      "sha256": "3d461a1fd6b1ecdb7bba7688208ee9479ba1f2985e92ff4067d6ba7f2304327e"
+    },
+    {
+      "bytes": 37807,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-region-asymmetry-skew-rerun/_index/hardware_nodes.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1-region-asymmetry-skew-rerun:hardware_nodes.csv",
+      "sha256": "506eed70c8dcefb3711281171d9d1da57af8a5f414a2a4919b9c449ead9f2e58"
+    },
+    {
+      "bytes": 1347568,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-region-asymmetry-skew-rerun/_index/query_runs.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1-region-asymmetry-skew-rerun:query_runs.csv",
+      "sha256": "7d502a09b56aa0b07e74bb1e90f5082eca65680a18d39f552f15d7ce33ce9c9f"
+    },
+    {
+      "bytes": 3868,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-region-asymmetry-skew-rerun/_index/runtime_sweeps.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1-region-asymmetry-skew-rerun:runtime_sweeps.csv",
+      "sha256": "6d8199c178e83676fbb648c9b1ceeb8cf0bc6f801f1c13e4d18125f72e78a085"
+    },
+    {
+      "bytes": 13325,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-region-asymmetry/_index/dataset_capability_audits.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1-region-asymmetry:dataset_capability_audits.csv",
+      "sha256": "57d15bfb85611c0328e75d569a95d33dbcb04f4fb322bacb1f3582da61acd76e"
+    },
+    {
+      "bytes": 37807,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-region-asymmetry/_index/hardware_nodes.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1-region-asymmetry:hardware_nodes.csv",
+      "sha256": "aa29bb2aead6f5024621270b3af300366a421401acc903a03e6f3da09fbd4b55"
+    },
+    {
+      "bytes": 682120,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-region-asymmetry/_index/query_runs.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1-region-asymmetry:query_runs.csv",
+      "sha256": "432714ab961d9c83e4d0b539e0e74358e366f9c2bb0ddaf85c9b5ed96c2e204e"
+    },
+    {
+      "bytes": 3868,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-region-asymmetry/_index/runtime_sweeps.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1-region-asymmetry:runtime_sweeps.csv",
+      "sha256": "f4ffbf7d36bbbb20c279e4dc841d878c2db1b5f00b7aece993e36cc58a116d8f"
+    },
+    {
+      "bytes": 58528,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-validation-holdout/_index/dataset_capability_audits.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1-validation-holdout:dataset_capability_audits.csv",
+      "sha256": "ec23b4f5b9f034bf76d37aa861595293e94514d185bc83e0a445680c27e0342a"
+    },
+    {
+      "bytes": 173677,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-validation-holdout/_index/hardware_nodes.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1-validation-holdout:hardware_nodes.csv",
+      "sha256": "cfd04ef4f2a97c91472c509a989934a542be876eb307b6d0def5990db7e6630a"
+    },
+    {
+      "bytes": 925243,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-validation-holdout/_index/query_runs.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1-validation-holdout:query_runs.csv",
+      "sha256": "7117978d1132dddf3458231f311dd7225b720c146959f8cec063953bdd825689"
+    },
+    {
+      "bytes": 24265,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-validation-holdout/_index/runtime_sweeps.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1-validation-holdout:runtime_sweeps.csv",
+      "sha256": "b40605eca3fc772a868d5dc1f2b311c6185c8df4adbbf6f097ba88703d87fc70"
+    },
+    {
+      "bytes": 8432,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-wan-latency/_index/dataset_capability_audits.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1-wan-latency:dataset_capability_audits.csv",
+      "sha256": "f2604f1bfd96a6ee58986eb9750714175f6eeae0fd1eecc305bec43d9842a68a"
+    },
+    {
+      "bytes": 23591,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-wan-latency/_index/hardware_nodes.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1-wan-latency:hardware_nodes.csv",
+      "sha256": "310126b891f4e4a047cecbe4278f310f52f65216dfbf4d6eacea5a26eb35eec9"
+    },
+    {
+      "bytes": 78862,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-wan-latency/_index/query_runs.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1-wan-latency:query_runs.csv",
+      "sha256": "16e4932281fc9c61c791d2927e028fe8a1d02d3b0ae8fbb7df7a621813c8baad"
+    },
+    {
+      "bytes": 5231,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-wan-latency/_index/runtime_sweeps.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1-wan-latency:runtime_sweeps.csv",
+      "sha256": "02b6e156c7c073515dbe185d43ae7d8a36155b809d49022c998585492095804a"
+    },
+    {
+      "bytes": 16315,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1/_index/dataset_capability_audits.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1:dataset_capability_audits.csv",
+      "sha256": "c6a931e16a6227d3342801eb678e9baf9b5ceb21ecc4dcd5abaa4ec991a8868c"
+    },
+    {
+      "bytes": 44155,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1/_index/hardware_nodes.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1:hardware_nodes.csv",
+      "sha256": "b65768af39465112e7bd5e3123b6aed291c3b49defeb83f75fd62425275c1a63"
+    },
+    {
+      "bytes": 7835084,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1/_index/query_runs.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1:query_runs.csv",
+      "sha256": "af3cf5a6aa3ac57e0da491ff54ad0a704eb68e32c454fdc6d7c0bf27f6dcd539"
+    },
+    {
+      "bytes": 4747,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1/_index/runtime_sweeps.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "clean-run-v1:runtime_sweeps.csv",
+      "sha256": "1d8e1946b1b11eb06db3db8699ae9bf58f4c8deb7de8afe40aafab09b01df8e6"
+    },
+    {
+      "bytes": 61877,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/repeatability-v1/_index/dataset_capability_audits.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "repeatability-v1:dataset_capability_audits.csv",
+      "sha256": "f533158bdc00e6a52aee796d09b2fe3b360d6a355206e3e1f9b6092270811047"
+    },
+    {
+      "bytes": 166641,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/repeatability-v1/_index/hardware_nodes.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "repeatability-v1:hardware_nodes.csv",
+      "sha256": "a278f1b3d9f63c11b54e4e0cb831a6dfb532f082a81624fb936d13ebe9e5549c"
+    },
+    {
+      "bytes": 1357609,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/repeatability-v1/_index/query_runs.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "repeatability-v1:query_runs.csv",
+      "sha256": "325c777dfeefca64f057a5a998ab222957d41d2a5df90d3545937dd74ed9d972"
+    },
+    {
+      "bytes": 22819,
+      "path": "master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/repeatability-v1/_index/runtime_sweeps.csv",
+      "provenance": "recorded_at_run_time",
+      "role": "repeatability-v1:runtime_sweeps.csv",
+      "sha256": "47f0f589c2abab2d75b2192225ebe1399e497014343867dd546d0ef91bede727"
+    },
+    {
+      "bytes": 25900,
+      "path": "master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml",
+      "provenance": "reconstructed_from_versioned_config",
+      "role": "frozen_model_manifest",
+      "sha256": "f3bd1230d55040b12f3b6f1b645179c7972c9594e77eae3cb74b7ff6d6a0be79"
+    },
+    {
+      "bytes": 4250,
+      "path": "master-regimes/configs/experiments/reproducibility_runs.yml",
+      "provenance": "reconstructed_from_versioned_config",
+      "role": "run_catalog",
+      "sha256": "f2e9e0b70331afcb7e6ff0417d1d2a4ffd95e3ee717d2501ca275fdfa05ef8e1"
+    },
+    {
+      "bytes": 4270,
+      "path": "master-regimes/docs/experiments/repeatability_protocol.md",
+      "provenance": "reconstructed_from_versioned_config",
+      "role": "repeatability-v1:protocol",
+      "sha256": "53194f5b81c9cd45a3a64caa0e330f25a5353b6e1f0ce52af1e2633f5693dfa7"
+    },
+    {
+      "bytes": 26331,
+      "path": "master-regimes/workloads/corpus/corpus_manifest.clean-run-v1.yml",
+      "provenance": "reconstructed_from_versioned_config",
+      "role": "clean-run-v1:corpus_manifest",
+      "sha256": "670b41312d2f8ca393933ffa23b9a1d5490218e720c62b6e4bcfe5d06a7473fb"
+    },
+    {
+      "bytes": 9662,
+      "path": "master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml",
+      "provenance": "reconstructed_from_versioned_config",
+      "role": "clean-run-v1-region-asymmetry-skew-rerun:corpus_manifest",
+      "sha256": "1a7c5a3dfbb5e26d20186cf141b61d80386de56f2142c05f587aa90b2621f850"
+    },
+    {
+      "bytes": 8467,
+      "path": "master-regimes/workloads/corpus/corpus_manifest.validation-holdout-v1.yml",
+      "provenance": "reconstructed_from_versioned_config",
+      "role": "clean-run-v1-validation-holdout:corpus_manifest",
+      "sha256": "0398bad314c9a3e6bdcc4a9c3a268503962012c1c1bd4d30ae4d9be4365b2961"
+    },
+    {
+      "bytes": 3815,
+      "path": "master-regimes/workloads/corpus/corpus_manifest.wan-latency-companion-v1.yml",
+      "provenance": "reconstructed_from_versioned_config",
+      "role": "clean-run-v1-wan-latency:corpus_manifest",
+      "sha256": "c2ac9b557730878e17c6e7835b1b0aa43cf6da27304a6bd6c3ed19c2a9875338"
+    },
+    {
+      "bytes": 115291,
+      "path": "master-regimes/workloads/corpus/repeatability_selection.csv",
+      "provenance": "reconstructed_from_versioned_config",
+      "role": "repeatability-v1:selection",
+      "sha256": "d89a2cf0665d833888415ebf4a2a70d402e8dc6b4c2c798d17516fa2da5ce32f"
+    },
+    {
+      "bytes": 5441,
+      "path": "master-regimes/workloads/corpus/runtime-configs.yml",
+      "provenance": "reconstructed_from_versioned_config",
+      "role": "runtime_catalog",
+      "sha256": "9568713b7b86f1bb0edd6ff50eec7711d521c93c454bfc103d88b0f277f30bb6"
+    }
+  ],
+  "thesis_repository_state": {
+    "commit": "fe81fd4b905d35f5da340b1dfd055489253f2850",
+    "dirty": true,
+    "provenance": "analysis_time_repository_state",
+    "repository": "master-regimes-thesis"
+  }
+}

@@ -1,0 +1,83 @@
+analysis_id: pressure-worker-skew-smoke-v1
+protocol_version: 1
+source_manifest: workloads/corpus/corpus_manifest.pressure-worker-skew-smoke-v1.yml
+source_render_dir: generated/corpus/pressure-worker-skew-smoke-v1-source
+output_dir: generated/corpus/pressure-worker-skew-smoke-v1
+selection: workloads/corpus/pressure_worker_skew_smoke_v1_selection.csv
+
+design:
+  topology_id: eu_us_gac
+  runtime_config_id: default
+  repetitions: 3
+  state_order: [B, C]
+  order_policy: deterministic_shuffle_within_state
+  shuffle_seed: 20260730
+  cache_policy: mixed_cache_worker_skew_target
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  database_result_rows_stored: false
+
+states:
+  B:
+    state_name: skew_dispersed
+    dataset_profile_id: pilot-skew-heavy-v1
+    placement_state_id: hot_shards_dispersed
+    logical_data_contract_id: pilot-skew-heavy-v1-seed-42
+    placement_action: disperse_hot_shards
+  C:
+    state_name: skew_concentrated
+    dataset_profile_id: pilot-skew-heavy-v1
+    placement_state_id: hot_shards_concentrated
+    logical_data_contract_id: pilot-skew-heavy-v1-seed-42
+    placement_action: concentrate_hot_shards
+
+query_conditions:
+  - condition_id: hot_worker_probe
+    corpus_cell_id: pressure_worker_hot_scan
+    logical_question_id: top_tenants
+    physical_strategy_id: hot_worker_cpu_probe
+    template_id: gac_fdw_multiregion_hot_worker_probe
+    parameters:
+      eu_hot_tenant_min: 1
+      eu_hot_tenant_max: 10
+      us_hot_tenant_min: 10001
+      us_hot_tenant_max: 10010
+      cpu_terms: 64
+
+capability_smoke:
+  condition_ids: [hot_worker_probe]
+  repetition_indices: [0, 1, 2]
+  require_checkpoint: false
+
+hot_tenant_contract:
+  source_profile: datasets/profiles/pilot-skew-heavy.yml
+  eu_hot_tenant_ids: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  us_hot_tenant_ids:
+    [10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010]
+
+placement:
+  metadata_source: citus_shards
+  move_function: citus_move_shard_placement
+  shard_transfer_mode: block_writes
+  dispersed:
+    dominant_hot_event_share_max: 0.65
+  concentrated:
+    dominant_hot_event_share_min: 0.80
+  rollback:
+    primary: replay_inverse_moves_from_placement_intervention_manifest
+    fallback: clean_reload_same_dataset_profile_and_seed
+
+frozen_model:
+  model_id: clean-run-v1-m0_flow_ratio_v3_reduced-fcm-k4
+  retrain: false
+  training_rows_include_confirmatory: false
+  feature_count: 21
+  manifest: analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+  scaled_matrix: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_m0_flow_ratio_v3_reduced_scaled.csv
+  raw_matrix: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_m0_flow_ratio_v3_reduced_raw.csv
+  candidate_config: configs/features/phase1_flow_ratio_candidate.yml
+  centers: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy/cluster_centers_representative_by_k.csv
+
+artifact_contract:
+  required_query_scopes: [main, regional_coordinator, worker_task]
+  database_result_rows_stored: false

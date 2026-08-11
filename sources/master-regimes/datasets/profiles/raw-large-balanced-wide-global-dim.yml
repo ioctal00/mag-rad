@@ -1,0 +1,62 @@
+dataset_id: raw-large-balanced-wide-global-dim-v1
+generator: citus-datagen
+seed: 73
+base_time_unix: 1782864000
+budget_class: raw_collection_large
+
+scale:
+  tenants_total: 4000
+  events_per_tenant_avg: 1000
+  users_per_tenant_avg: 200
+  global_users_per_tenant_avg: 800
+  lookback_days: 30
+
+regions:
+  eu:
+    tenant_id_range: [1, 2000]
+  us:
+    tenant_id_range: [10001, 12000]
+
+distribution:
+  distribution_key: tenant_id
+  shard_count: 64
+  skew_profile: balanced
+
+capabilities:
+  supports_reference_join: true
+  supports_colocated_user_join: true
+  supports_global_users: true
+  supports_global_user_dimension: true
+  supports_non_colocated_join: true
+  supports_cross_region_user_overlap: false
+  supports_high_group_cardinality: true
+  supports_hot_tenants: false
+  supports_hot_time_windows: false
+  supports_hot_tenant_skew: false
+  supports_region_imbalance: false
+  supports_region_local_skew_asymmetry: false
+  supports_shard_skew: false
+  supports_wide_payload: false
+  supports_large_scan: true
+  supports_distribution_key_filter: true
+  supports_region_partitioning: true
+  supports_etl_rollups: true
+  supports_tenant_tiers: true
+  supports_selective_filters: true
+  supports_materialized_refresh: true
+
+expected_audit_signals:
+  table_counts_min:
+    tenants: 1800
+    events: 1600000
+    users: 300000
+    global_users: 1400000
+  tenant_skew:
+    events_cv_max: 0.35
+    max_to_mean_ratio_max: 2.0
+    hot_tenant_ids_available: false
+  parameter_sources:
+    tenant_ids:
+      source: tenant_distribution.csv
+      column: tenant_id
+      order_by: tenant_id

@@ -1,0 +1,98 @@
+{
+  "action_outcome_count": 135,
+  "decision_policy": {
+    "actions": [
+      "increase_gac_work_mem",
+      "regional_topk_candidates",
+      "mitigate_remote_path_bundle"
+    ],
+    "coverage_quantile": 0.99,
+    "distance_epsilon": 1e-06,
+    "distance_metric": "euclidean",
+    "exclude_same_normalized_sql": true,
+    "exclude_same_query_id": true,
+    "memory_mode": "warm_start",
+    "minimum_history_for_available": 2,
+    "neighbors": 5
+  },
+  "episode_count": 45,
+  "leakage_status": "PASS",
+  "occurrences_per_query_distribution": {
+    "1": 3,
+    "2": 3,
+    "3": 3,
+    "4": 3,
+    "5": 3
+  },
+  "query_count": 15,
+  "representation_summary": [
+    {
+      "abstention_count": 1,
+      "correct_decision_count": 11,
+      "coverage": 0.9333333333333333,
+      "episode_count": 15,
+      "evaluation": "first_occurrence",
+      "mean_regret_log2": 0.30865958406169286,
+      "recommendation_count": 14,
+      "representation": "coordinator_physical",
+      "top1_accuracy": 0.7857142857142857
+    },
+    {
+      "abstention_count": 4,
+      "correct_decision_count": 27,
+      "coverage": 0.9111111111111111,
+      "episode_count": 45,
+      "evaluation": "same_query_excluded",
+      "mean_regret_log2": 0.4429701449510557,
+      "recommendation_count": 41,
+      "representation": "coordinator_physical",
+      "top1_accuracy": 0.6585365853658537
+    },
+    {
+      "abstention_count": 1,
+      "correct_decision_count": 12,
+      "coverage": 0.9333333333333333,
+      "episode_count": 15,
+      "evaluation": "first_occurrence",
+      "mean_regret_log2": 0.044255786341838355,
+      "recommendation_count": 14,
+      "representation": "full_multilayer",
+      "top1_accuracy": 0.8571428571428571
+    },
+    {
+      "abstention_count": 4,
+      "correct_decision_count": 38,
+      "coverage": 0.9111111111111111,
+      "episode_count": 45,
+      "evaluation": "same_query_excluded",
+      "mean_regret_log2": 0.021395336210752444,
+      "recommendation_count": 41,
+      "representation": "full_multilayer",
+      "top1_accuracy": 0.926829268292683
+    },
+    {
+      "abstention_count": 6,
+      "correct_decision_count": 7,
+      "coverage": 0.6,
+      "episode_count": 15,
+      "evaluation": "first_occurrence",
+      "mean_regret_log2": 0.15994150256932194,
+      "recommendation_count": 9,
+      "representation": "sql_structural",
+      "top1_accuracy": 0.7777777777777778
+    },
+    {
+      "abstention_count": 12,
+      "correct_decision_count": 25,
+      "coverage": 0.7333333333333333,
+      "episode_count": 45,
+      "evaluation": "same_query_excluded",
+      "mean_regret_log2": 0.15427807146639552,
+      "recommendation_count": 33,
+      "representation": "sql_structural",
+      "top1_accuracy": 0.7575757575757576
+    }
+  ],
+  "research_question": "Da li vi\u0161eslojno post-execution fizi\u010dko stanje daje bolji cross-query intervencijski transfer od jednostavne strukturne sli\u010dnosti SQL-a i jednostavnijih lokalnih pokazatelja?\n",
+  "status": "PASS"
+}

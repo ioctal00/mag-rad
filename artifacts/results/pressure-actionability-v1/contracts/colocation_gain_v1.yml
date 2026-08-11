@@ -1,0 +1,97 @@
+contract_version: colocation-gain-model-v1
+program_id: pressure-raw-v1
+mitigation_action: use_colocated_distribution
+intervention_role: positive_case
+target:
+  field: target_log2_gain_median
+  meaning: log2(median_stressed_elapsed_seconds / median_mitigated_elapsed_seconds)
+  scope: global_query
+  negative_values_allowed: true
+repetitions_per_pair: 3
+estimator:
+  kind: ridge
+  alpha: 1.0
+  fit_intercept: true
+holdouts:
+  - name: leave_stressed_template_out
+    group_field: stressed_template_id
+  - name: leave_dataset_out
+    group_field: dataset_profile_id
+  - name: leave_scenario_level_out
+    group_field: scenario_level
+  - name: leave_size_class_out
+    group_field: dataset_size_class
+features:
+  - name: coordinator_fanin_rows
+    family: gac_fanin
+    transform: log1p
+  - name: coordinator_fanin_bytes_estimated
+    family: gac_fanin
+    transform: log1p
+  - name: coordinator_final_rows
+    family: gac_fanin
+    transform: log1p
+  - name: coordinator_non_foreign_time_share_proxy
+    family: gac_finalization
+    transform: identity
+  - name: coordinator_join_operator_count
+    family: gac_finalization
+    transform: log1p
+  - name: remote_region_actual_rows_sum
+    family: regional_flow
+    transform: log1p
+  - name: remote_region_tuple_bytes_sum
+    family: regional_flow
+    transform: log1p
+  - name: remote_region_task_count_sum
+    family: regional_flow
+    transform: log1p
+  - name: remote_citus_dependent_map_task_count_sum
+    family: repartition
+    transform: log1p
+  - name: remote_citus_repartition_fanout_ratio_max
+    family: repartition
+    transform: log1p
+  - name: worker_task_actual_rows_sum
+    family: worker_task
+    transform: log1p
+  - name: worker_task_scan_actual_rows_sum
+    family: worker_task
+    transform: log1p
+  - name: regional_coordinator_tx_bytes_sum
+    family: network_flow
+    transform: log1p
+  - name: analytics_rx_bytes_sum
+    family: network_flow
+    transform: log1p
+  - name: worker_tx_bytes_sum
+    family: network_flow
+    transform: log1p
+  - name: os_cpu_busy_pct_mean
+    family: resource_response
+    transform: identity
+  - name: os_mem_used_peak_bytes_max
+    family: resource_response
+    transform: log1p
+  - name: os_disk_read_bytes_sum
+    family: resource_response
+    transform: log1p
+  - name: os_disk_written_bytes_sum
+    family: resource_response
+    transform: log1p
+forbidden_input_patterns:
+  - pair_id
+  - template_id
+  - dataset_profile_id
+  - condition_id
+  - runtime_config_id
+  - physical_strategy_id
+  - mitigation_action
+  - variant
+  - elapsed_seconds
+  - target_
+  - configured_
+  - fetch_size
+acceptance:
+  require_lower_mae_than_median_baseline_in_all_holdouts: true
+  minimum_spearman: 0.0

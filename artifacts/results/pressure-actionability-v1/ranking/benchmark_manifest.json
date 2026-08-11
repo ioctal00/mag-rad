@@ -1,0 +1,72 @@
+{
+  "action_selector_included": false,
+  "benchmark_estimators": [
+    "median_baseline",
+    "ridge",
+    "elastic_net",
+    "shallow_gradient_boosting"
+  ],
+  "benchmark_policy": {
+    "fixed_before_n3_holdout": true,
+    "model_selection_from_intensity_holdout": false,
+    "purpose": "robustness_check_only"
+  },
+  "contract_version": "colocation-ranking-robustness-v1",
+  "coverage_reference": {
+    "maximum": 2.0530134626272765,
+    "median": 0.4101047228723562,
+    "metric": "euclidean_in_fold_standardized_feature_space",
+    "minimum": 0.11619965486447442,
+    "quantile": 0.99,
+    "threshold": 1.8694068247510753,
+    "training_pair_count": 75
+  },
+  "frozen_before_n3_holdout": true,
+  "holdouts": [
+    {
+      "group_field": "stressed_template_id",
+      "name": "leave_stressed_template_out"
+    },
+    {
+      "group_field": "dataset_profile_id",
+      "name": "leave_dataset_out"
+    },
+    {
+      "group_field": "scenario_level",
+      "name": "leave_scenario_level_out"
+    },
+    {
+      "group_field": "dataset_size_class",
+      "name": "leave_size_class_out"
+    }
+  ],
+  "input_scope": "stressed_post_execution_pair_median",
+  "mitigation_action": "use_colocated_distribution",
+  "pair_count": 75,
+  "primary_estimator": "ridge",
+  "program_id": "pressure-raw-v1",
+  "raw_sql_in_model": false,
+  "selected_feature_count": 19,
+  "selected_feature_names": [
+    "coordinator_fanin_rows",
+    "coordinator_fanin_bytes_estimated",
+    "coordinator_final_rows",
+    "coordinator_non_foreign_time_share_proxy",
+    "coordinator_join_operator_count",
+    "remote_region_actual_rows_sum",
+    "remote_region_tuple_bytes_sum",
+    "remote_region_task_count_sum",
+    "remote_citus_dependent_map_task_count_sum",
+    "remote_citus_repartition_fanout_ratio_max",
+    "worker_task_actual_rows_sum",
+    "worker_task_scan_actual_rows_sum",
+    "regional_coordinator_tx_bytes_sum",
+    "analytics_rx_bytes_sum",
+    "worker_tx_bytes_sum",
+    "os_cpu_busy_pct_mean",
+    "os_mem_used_peak_bytes_max",
+    "os_disk_read_bytes_sum",
+    "os_disk_written_bytes_sum"
+  ],
+  "selected_feature_view": "extended"
+}

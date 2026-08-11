@@ -1,0 +1,265 @@
+corpus_id: clean-run-eu-us-gac-region-asymmetry-v1
+vocabulary: ../../docs/corpus-vocabulary.md
+query_groups: query-groups.yml
+runtime_catalog: runtime-configs.yml
+topology_id: eu_us_gac
+topology_scope: eu_us_gac
+description: >
+  Targeted external-validation companion for region-volume imbalance and
+  region-local skew asymmetry. This corpus intentionally keeps runtime fixed to
+  default and uses approximately 150 query executions so that remote_region_*,
+  worker_task_* and pushdown-fidelity evidence can be checked without repeating
+  the full clean-run-v1 baseline.
+execution_budget:
+  hard_timeout_seconds: 300
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  repetitions_default: 1
+  cache_features_in_default_model: false
+  order_policy: deterministic_shuffle
+  shuffle_seed: 20260702
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  gac_etl_bootstrap_lookback_days: 1
+  gac_etl_bootstrap_timeout_seconds: 300
+
+dataset_profiles:
+  pilot-balanced-v1:
+    profile: ../../datasets/profiles/pilot-balanced.yml
+    load_method: copy_pipe
+  pilot-region-imbalanced-v1:
+    profile: ../../datasets/profiles/pilot-region-imbalanced.yml
+    load_method: copy_pipe
+  pilot-region-local-skew-asymmetric-medium-v1:
+    profile: ../../datasets/profiles/pilot-region-local-skew-asymmetric-medium.yml
+    load_method: copy_pipe
+
+cells:
+  - corpus_cell_id: asymmetry_mr_top_tenants
+    logical_question_id: top_tenants
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_top_tenants
+    dataset_profile_id:
+      - pilot-balanced-v1
+      - pilot-region-imbalanced-v1
+      - pilot-region-local-skew-asymmetric-medium-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    intervention_axis: dataset_region_asymmetry
+    expected_regime_targets: [remote_fetch_heavy, gac_finalization_heavy, skew_imbalance]
+    parameters:
+      lookback_days: [1, 7, 30]
+      limit_k: [25, 50]
+
+  - corpus_cell_id: asymmetry_mr_daily_tenant_rollup
+    logical_question_id: daily_tenant_rollup
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_daily_tenant_rollup
+    dataset_profile_id:
+      - pilot-balanced-v1
+      - pilot-region-imbalanced-v1
+      - pilot-region-local-skew-asymmetric-medium-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    intervention_axis: dataset_region_asymmetry
+    expected_regime_targets: [gac_finalization_heavy, skew_imbalance]
+    parameters:
+      lookback_days: [1, 7, 14, 30]
+      min_value: [0, 500]
+      limit_k: [50]
+
+  - corpus_cell_id: asymmetry_mr_event_filter_summary
+    logical_question_id: event_filter_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_filter_summary
+    dataset_profile_id:
+      - pilot-balanced-v1
+      - pilot-region-imbalanced-v1
+      - pilot-region-local-skew-asymmetric-medium-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    intervention_axis: dataset_region_asymmetry
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      lookback_days: [1, 7, 30]
+      min_value: [0, 500, 900]
+
+  - corpus_cell_id: asymmetry_mr_event_full_scan_summary
+    logical_question_id: event_full_scan_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_full_scan_summary
+    dataset_profile_id:
+      - pilot-balanced-v1
+      - pilot-region-imbalanced-v1
+      - pilot-region-local-skew-asymmetric-medium-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    intervention_axis: dataset_region_asymmetry
+    expected_regime_targets: [well_reduced_localized, remote_fetch_heavy]
+
+  - corpus_cell_id: asymmetry_mr_raw_region_rollup
+    logical_question_id: event_full_scan_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_raw_region_rollup
+    dataset_profile_id:
+      - pilot-balanced-v1
+      - pilot-region-imbalanced-v1
+      - pilot-region-local-skew-asymmetric-medium-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    intervention_axis: dataset_region_asymmetry
+    expected_regime_targets: [remote_fetch_heavy, skew_imbalance]
+    parameters:
+      lookback_days: [1, 7, 30]
+
+  - corpus_cell_id: asymmetry_mr_raw_wide_sample
+    logical_question_id: event_raw_wide_sample
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_raw_wide_sample
+    dataset_profile_id:
+      - pilot-balanced-v1
+      - pilot-region-imbalanced-v1
+      - pilot-region-local-skew-asymmetric-medium-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    intervention_axis: dataset_region_asymmetry
+    expected_regime_targets: [remote_fetch_heavy]
+    parameters:
+      lookback_days: [1, 7]
+      min_value: [500]
+      limit_k: [100, 250]
+      payload_repeat: [16]
+      payload_width: [512]
+
+  - corpus_cell_id: asymmetry_mr_multi_dimension_rollup
+    logical_question_id: multi_dimension_rollup
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_multi_dimension_rollup
+    dataset_profile_id:
+      - pilot-balanced-v1
+      - pilot-region-imbalanced-v1
+      - pilot-region-local-skew-asymmetric-medium-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    intervention_axis: dataset_region_asymmetry
+    expected_regime_targets: [join_movement, gac_finalization_heavy, skew_imbalance]
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [50, 100]
+
+  - corpus_cell_id: asymmetry_mr_user_segment_join
+    logical_question_id: user_segment_topk
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_user_segment_join
+    dataset_profile_id:
+      - pilot-balanced-v1
+      - pilot-region-imbalanced-v1
+      - pilot-region-local-skew-asymmetric-medium-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    intervention_axis: dataset_region_asymmetry
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [25, 50]
+
+  - corpus_cell_id: asymmetry_mr_global_user_join
+    logical_question_id: global_user_topk
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_global_user_join
+    dataset_profile_id:
+      - pilot-balanced-v1
+      - pilot-region-imbalanced-v1
+      - pilot-region-local-skew-asymmetric-medium-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    intervention_axis: dataset_region_asymmetry
+    expected_regime_targets: [join_movement, gac_finalization_heavy, skew_imbalance]
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [25, 50]
+
+  - corpus_cell_id: asymmetry_mr_tenant_point_control
+    logical_question_id: tenant_point_rollup
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_tenant_point_rollup
+    dataset_profile_id:
+      - pilot-balanced-v1
+      - pilot-region-imbalanced-v1
+      - pilot-region-local-skew-asymmetric-medium-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: dataset_region_asymmetry
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      # EU values include hot tenants for the region-local-skew profile
+      # (1, 5, 20) plus cold controls (100, 800). US values are balanced
+      # controls in the valid US tenant range.
+      eu_tenant_id: [1, 5, 20, 100, 800]
+      us_tenant_id: [10001, 10005, 10020, 10100, 10800]
+      lookback_days: [7, 30]
+
+  - corpus_cell_id: asymmetry_mr_tenant_tier_join
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_tenant_tier_join
+    dataset_profile_id:
+      - pilot-balanced-v1
+      - pilot-region-imbalanced-v1
+      - pilot-region-local-skew-asymmetric-medium-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    intervention_axis: dataset_region_asymmetry
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [7]
+      limit_k: [50]
+
+  - corpus_cell_id: asymmetry_etl_top_tenants_control
+    logical_question_id: top_tenants
+    execution_strategy: etl_materialized
+    template_id: gac_etl_top_tenants
+    dataset_profile_id:
+      - pilot-balanced-v1
+      - pilot-region-imbalanced-v1
+      - pilot-region-local-skew-asymmetric-medium-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: dataset_region_asymmetry
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [25]
+
+  - corpus_cell_id: asymmetry_single_region_top_tenants_control
+    logical_question_id: top_tenants
+    execution_strategy: single_region_citus
+    template_id: q10_top_tenants
+    dataset_profile_id:
+      - pilot-balanced-v1
+      - pilot-region-imbalanced-v1
+      - pilot-region-local-skew-asymmetric-medium-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: dataset_region_asymmetry
+    expected_regime_targets: [well_reduced_localized, gac_finalization_heavy]
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [25]

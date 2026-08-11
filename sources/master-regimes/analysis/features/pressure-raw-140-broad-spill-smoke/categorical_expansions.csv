@@ -1,0 +1,4 @@
+source_feature,expanded_feature,category
+first_blocking_operator_type,first_blocking_operator_type__sort,Sort
+dominant_time_node_type,dominant_time_node_type__limit,Limit
+dominant_rows_node_type,dominant_rows_node_type__limit,Limit

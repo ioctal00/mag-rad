@@ -1,0 +1,10 @@
+{
+  "action_audit_gate": "GO",
+  "decision_contract": "mitigation-modeling-decision-v1",
+  "decision_count": 7,
+  "fcm_role": "unsupervised_comparative_regime_summary",
+  "primary_model_gate": "MIXED_MODEL_EVIDENCE",
+  "research_scope": "bounded_action_specific_gain_evaluation",
+  "review_pair_count": 0,
+  "strict_pair_count": 418
+}

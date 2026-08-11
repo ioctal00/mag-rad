@@ -1,0 +1,98 @@
+selection_id: stats-ceb-portability-v1
+source_lock: source-lock.yml
+selection_frozen_before_plan_execution: true
+selection_rationale: >
+  Eight scalar COUNT queries are selected by expected physical Citus strategy,
+  not by observed runtime or clustering outcome. The set includes reference,
+  colocated, repartition-candidate, selective mixed and wide mixed joins.
+regional_semantics:
+  dataset_snapshot: replicated_identical
+  comparison_rule: Q(D_eu) = Q(D_us) = Q(D_baseline)
+  aggregation_rule: never_sum_regional_counts
+physical_design:
+  design_id: stats-ceb-post-centric-v1
+  shard_count: 32
+  reference_tables: [users, badges, tags]
+  distributed_tables:
+    posts: id
+    comments: postid
+    votes: postid
+    posthistory: postid
+    postlinks: postid
+queries:
+  - query_id: 1
+    expected_count: 79851
+    source_sha256: db42df6d8a92ed745d491de94c1c3fb342e5f2acf13c63acd229c8991917bc9c
+    expected_citus_strategy: reference_only
+    tables: [badges, users]
+    reason: Reference-table control without distributed fact tables.
+  - query_id: 3
+    expected_count: 1458075
+    source_sha256: ddaef65e337878408645d333c5e2511bf1d5ac8dbd4c2d8f1e15c7150c8f1f79
+    expected_citus_strategy: repartition_candidate
+    tables: [comments, posthistory]
+    reason: User-key join across postid-distributed fact tables.
+  - query_id: 5
+    expected_count: 7491903
+    source_sha256: 4b456341b38251a6def5ad47e194a25011c7736d0b337088d028f55b796c88f9
+    expected_citus_strategy: repartition_candidate
+    tables: [comments, votes]
+    reason: Large user-key join across postid-distributed fact tables.
+  - query_id: 9
+    expected_count: 698213
+    source_sha256: 2c082c5a71a5a8d6db07b2ac80de79409318fb4496b4f5676984b96b9e72ca92
+    expected_citus_strategy: colocated_post_join
+    tables: [comments, posts, posthistory]
+    reason: Post-key colocated three-table control.
+  - query_id: 50
+    expected_count: 9812
+    source_sha256: 078bc031dbf92a90572eb1cf545dac71163f89972f854b3d46046ea99baadb19
+    expected_citus_strategy: selective_mixed
+    tables: [badges, comments, posts, users, votes]
+    reason: Selective mixed join with a small expected scalar result.
+  - query_id: 75
+    expected_count: 3812589
+    source_sha256: a1fc53b0f53c5b789c2434f88b067bde95bb0e7eaf8a44ecde9d14bc4dc8a120
+    expected_citus_strategy: wide_colocated_reference
+    tables: [badges, comments, posthistory, posts, users, votes]
+    reason: Six-table post-centric and reference-table stress case.
+  - query_id: 100
+    expected_count: 303210
+    source_sha256: b8674ccc5a4d8e56470a0657e043a4422610aac9ab78a0e20964a992f0b54a1a
+    expected_citus_strategy: colocated_with_reference
+    tables: [comments, posts, users, votes]
+    reason: Colocated fact joins with a replicated user dimension.
+  - query_id: 130
+    expected_count: 35205
+    source_sha256: fd152c6f4cd149ff75ca6f7b84b82e83d407867d203e1535c6600bfde6be8597
+    expected_citus_strategy: mixed_related_post_edge
+    tables: [comments, posthistory, postlinks, posts, users]
+    reason: Mixed post edge where RelatedPostId differs from the distribution key.
+execution_contract:
+  statement_timeout_seconds: 300
+  explain_without_analyze_first: true
+  keep_failed_queries: true
+  statuses:
+    - passed
+    - unsupported_sql
+    - result_mismatch
+    - timeout
+    - incomplete_topology_evidence
+    - feature_contract_failure
+    - infrastructure_failure
+result_contract:
+  persist_database_rows: false
+  persisted_fields:
+    - query_id
+    - baseline_result_hash
+    - eu_result_hash
+    - us_result_hash
+    - schema_hash
+    - comparison_status
+    - tolerance_policy
+  tolerance_policy: exact_integer
+model_contract:
+  refit_allowed: false
+  feature_schema_change_allowed: false
+  projection_role: descriptive_only
+  ood_rule: absolute_distance_to_frozen_centers_required

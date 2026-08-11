@@ -1,0 +1,38 @@
+.env
+.env.*
+!.env.example
+.venv/
+.uv-cache/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Terraform local state and private variables.
+**/.terraform/
+# Provider lock files are public reproducibility inputs and belong in releases.
+!**/.terraform.lock.hcl
+**/terraform.tfstate
+**/terraform.tfstate.*
+**/*.tfvars
+!**/*.tfvars.example
+crash.log
+crash.*.log
+
+# Rendered files from configs/systems/*.yml.
+generated/*
+!generated/README.md
+
+# PKI/private material.
+pki/cloudflare/
+pki/dev-ca/
+pki/**/*.key
+pki/**/*.pem
+pki/**/*.crt
+certs/
+
+# Local Ansible material.
+.ansible/
+ansible/group_vars/all.yml
+ansible/inventory/generated.json
+ansible/inventory/hosts.yml

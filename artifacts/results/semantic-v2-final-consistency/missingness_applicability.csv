@@ -1,0 +1,134 @@
+dataset,row_count,feature,family,applicability,null_semantics,semantic_neutral,raw_missing_count,raw_missing_share,neutral_mapping_count,transformed_nonfinite_count,weighted_nonfinite_count
+baseline_1964,1964,foreign_scan_time_to_root_ratio,remote_fanin_fetch,main root timing is positive,not_applicable_or_timing_unavailable,0.0,0,0.0,0,0,0
+baseline_1964,1964,remote_to_final_rows_ratio,remote_fanin_fetch,remote root rows and main final rows are available,not_applicable_without_remote_plan,0.0,280,0.1425661914460285,280,0,0
+baseline_1964,1964,regional_input_to_wan_rows_ratio,remote_fanin_fetch,worker scan rows and WAN output rows are positive,not_applicable_or_worker_evidence_unavailable,0.0,280,0.1425661914460285,280,0,0
+baseline_1964,1964,global_group_merge_ratio,regional_reduction,WAN output and final rows are available,not_applicable_without_remote_output,0.0,280,0.1425661914460285,280,0,0
+baseline_1964,1964,spill_present,normalized_spill_pressure,parsed main or remote plan,zero_only_after_plan_parse,0.0,0,0.0,0,0,0
+baseline_1964,1964,spill_bytes_to_wan_bytes_ratio,normalized_spill_pressure,WAN output bytes proxy is positive,not_applicable_without_wan_output,0.0,280,0.1425661914460285,280,0,0
+baseline_1964,1964,temp_blocks_per_final_row,normalized_spill_pressure,parsed plan and final cardinality,missing_means_temp_io_unavailable,0.0,0,0.0,0,0,0
+baseline_1964,1964,hash_batch_excess,normalized_spill_pressure,parsed hash plan or neutral absence,zero_means_no_extra_hash_batch,0.0,0,0.0,0,0,0
+baseline_1964,1964,remote_region_rows_isf_normalized,skew_imbalance,complete row evidence for at least one observed region,not_applicable_without_region_row_distribution,0.0,592,0.3014256619144603,592,0,0
+baseline_1964,1964,worker_task_scan_rows_isf_normalized,skew_imbalance,complete worker task scan rows,not_applicable_without_worker_task_scan_rows,0.0,592,0.3014256619144603,592,0,0
+baseline_1964,1964,worker_scan_rows_cv_normalized,skew_imbalance,complete task-to-worker mapping and scan rows,not_applicable_without_complete_worker_scan_mapping,0.0,592,0.3014256619144603,592,0,0
+baseline_1964,1964,task_count_to_shard_count_ratio,citus_topology_normalized,task count and shard count available,not_applicable_without_citus_task_evidence,0.0,240,0.12219959266802444,240,0,0
+baseline_1964,1964,active_task_share,citus_topology_normalized,"task, shard and region counts available",not_applicable_without_citus_task_evidence,0.0,240,0.12219959266802444,240,0,0
+baseline_1964,1964,citus_repartition_observed_v2,citus_topology_normalized,main or regional Citus plan text available,zero_only_after_main_and_regional_plan_evidence_aggregation,0.0,0,0.0,0,0,0
+baseline_1964,1964,worker_task_seq_scan_share,citus_topology_normalized,worker scan type histogram available,not_applicable_without_worker_scan_types,0.0,592,0.3014256619144603,592,0,0
+baseline_1964,1964,root_rows_estimate_error_log,estimate_error,actual and estimated root rows available,not_applicable_without_analyze_or_estimate,0.5,0,0.0,0,0,0
+baseline_1964,1964,foreign_scan_rows_estimate_error_log,estimate_error,Foreign Scan actual and estimated rows available,not_applicable_without_foreign_scan,0.5,592,0.3014256619144603,592,0,0
+baseline_1964,1964,aggregate_rows_estimate_error_log,estimate_error,aggregate actual and estimated rows available,not_applicable_without_aggregate,0.5,310,0.15784114052953158,310,0,0
+baseline_1964,1964,remote_root_rows_estimate_error_log,estimate_error,regional remote root actual and estimated rows available,not_applicable_without_remote_root_plan,0.5,280,0.1425661914460285,280,0,0
+validation_195,195,foreign_scan_time_to_root_ratio,remote_fanin_fetch,main root timing is positive,not_applicable_or_timing_unavailable,0.0,0,0.0,0,0,0
+validation_195,195,remote_to_final_rows_ratio,remote_fanin_fetch,remote root rows and main final rows are available,not_applicable_without_remote_plan,0.0,6,0.03076923076923077,6,0,0
+validation_195,195,regional_input_to_wan_rows_ratio,remote_fanin_fetch,worker scan rows and WAN output rows are positive,not_applicable_or_worker_evidence_unavailable,0.0,6,0.03076923076923077,6,0,0
+validation_195,195,global_group_merge_ratio,regional_reduction,WAN output and final rows are available,not_applicable_without_remote_output,0.0,6,0.03076923076923077,6,0,0
+validation_195,195,spill_present,normalized_spill_pressure,parsed main or remote plan,zero_only_after_plan_parse,0.0,0,0.0,0,0,0
+validation_195,195,spill_bytes_to_wan_bytes_ratio,normalized_spill_pressure,WAN output bytes proxy is positive,not_applicable_without_wan_output,0.0,6,0.03076923076923077,6,0,0
+validation_195,195,temp_blocks_per_final_row,normalized_spill_pressure,parsed plan and final cardinality,missing_means_temp_io_unavailable,0.0,0,0.0,0,0,0
+validation_195,195,hash_batch_excess,normalized_spill_pressure,parsed hash plan or neutral absence,zero_means_no_extra_hash_batch,0.0,0,0.0,0,0,0
+validation_195,195,remote_region_rows_isf_normalized,skew_imbalance,complete row evidence for at least one observed region,not_applicable_without_region_row_distribution,0.0,12,0.06153846153846154,12,0,0
+validation_195,195,worker_task_scan_rows_isf_normalized,skew_imbalance,complete worker task scan rows,not_applicable_without_worker_task_scan_rows,0.0,12,0.06153846153846154,12,0,0
+validation_195,195,worker_scan_rows_cv_normalized,skew_imbalance,complete task-to-worker mapping and scan rows,not_applicable_without_complete_worker_scan_mapping,0.0,12,0.06153846153846154,12,0,0
+validation_195,195,task_count_to_shard_count_ratio,citus_topology_normalized,task count and shard count available,not_applicable_without_citus_task_evidence,0.0,6,0.03076923076923077,6,0,0
+validation_195,195,active_task_share,citus_topology_normalized,"task, shard and region counts available",not_applicable_without_citus_task_evidence,0.0,6,0.03076923076923077,6,0,0
+validation_195,195,citus_repartition_observed_v2,citus_topology_normalized,main or regional Citus plan text available,zero_only_after_main_and_regional_plan_evidence_aggregation,0.0,0,0.0,0,0,0
+validation_195,195,worker_task_seq_scan_share,citus_topology_normalized,worker scan type histogram available,not_applicable_without_worker_scan_types,0.0,12,0.06153846153846154,12,0,0
+validation_195,195,root_rows_estimate_error_log,estimate_error,actual and estimated root rows available,not_applicable_without_analyze_or_estimate,0.5,0,0.0,0,0,0
+validation_195,195,foreign_scan_rows_estimate_error_log,estimate_error,Foreign Scan actual and estimated rows available,not_applicable_without_foreign_scan,0.5,12,0.06153846153846154,12,0,0
+validation_195,195,aggregate_rows_estimate_error_log,estimate_error,aggregate actual and estimated rows available,not_applicable_without_aggregate,0.5,36,0.18461538461538463,36,0,0
+validation_195,195,remote_root_rows_estimate_error_log,estimate_error,regional remote root actual and estimated rows available,not_applicable_without_remote_root_plan,0.5,6,0.03076923076923077,6,0,0
+repeatability_328,328,foreign_scan_time_to_root_ratio,remote_fanin_fetch,main root timing is positive,not_applicable_or_timing_unavailable,0.0,0,0.0,0,0,0
+repeatability_328,328,remote_to_final_rows_ratio,remote_fanin_fetch,remote root rows and main final rows are available,not_applicable_without_remote_plan,0.0,20,0.06097560975609756,20,0,0
+repeatability_328,328,regional_input_to_wan_rows_ratio,remote_fanin_fetch,worker scan rows and WAN output rows are positive,not_applicable_or_worker_evidence_unavailable,0.0,20,0.06097560975609756,20,0,0
+repeatability_328,328,global_group_merge_ratio,regional_reduction,WAN output and final rows are available,not_applicable_without_remote_output,0.0,20,0.06097560975609756,20,0,0
+repeatability_328,328,spill_present,normalized_spill_pressure,parsed main or remote plan,zero_only_after_plan_parse,0.0,0,0.0,0,0,0
+repeatability_328,328,spill_bytes_to_wan_bytes_ratio,normalized_spill_pressure,WAN output bytes proxy is positive,not_applicable_without_wan_output,0.0,20,0.06097560975609756,20,0,0
+repeatability_328,328,temp_blocks_per_final_row,normalized_spill_pressure,parsed plan and final cardinality,missing_means_temp_io_unavailable,0.0,0,0.0,0,0,0
+repeatability_328,328,hash_batch_excess,normalized_spill_pressure,parsed hash plan or neutral absence,zero_means_no_extra_hash_batch,0.0,0,0.0,0,0,0
+repeatability_328,328,remote_region_rows_isf_normalized,skew_imbalance,complete row evidence for at least one observed region,not_applicable_without_region_row_distribution,0.0,50,0.1524390243902439,50,0,0
+repeatability_328,328,worker_task_scan_rows_isf_normalized,skew_imbalance,complete worker task scan rows,not_applicable_without_worker_task_scan_rows,0.0,50,0.1524390243902439,50,0,0
+repeatability_328,328,worker_scan_rows_cv_normalized,skew_imbalance,complete task-to-worker mapping and scan rows,not_applicable_without_complete_worker_scan_mapping,0.0,50,0.1524390243902439,50,0,0
+repeatability_328,328,task_count_to_shard_count_ratio,citus_topology_normalized,task count and shard count available,not_applicable_without_citus_task_evidence,0.0,20,0.06097560975609756,20,0,0
+repeatability_328,328,active_task_share,citus_topology_normalized,"task, shard and region counts available",not_applicable_without_citus_task_evidence,0.0,20,0.06097560975609756,20,0,0
+repeatability_328,328,citus_repartition_observed_v2,citus_topology_normalized,main or regional Citus plan text available,zero_only_after_main_and_regional_plan_evidence_aggregation,0.0,0,0.0,0,0,0
+repeatability_328,328,worker_task_seq_scan_share,citus_topology_normalized,worker scan type histogram available,not_applicable_without_worker_scan_types,0.0,50,0.1524390243902439,50,0,0
+repeatability_328,328,root_rows_estimate_error_log,estimate_error,actual and estimated root rows available,not_applicable_without_analyze_or_estimate,0.5,0,0.0,0,0,0
+repeatability_328,328,foreign_scan_rows_estimate_error_log,estimate_error,Foreign Scan actual and estimated rows available,not_applicable_without_foreign_scan,0.5,50,0.1524390243902439,50,0,0
+repeatability_328,328,aggregate_rows_estimate_error_log,estimate_error,aggregate actual and estimated rows available,not_applicable_without_aggregate,0.5,103,0.31402439024390244,103,0,0
+repeatability_328,328,remote_root_rows_estimate_error_log,estimate_error,regional remote root actual and estimated rows available,not_applicable_without_remote_root_plan,0.5,20,0.06097560975609756,20,0,0
+confirmatory_abcd_48,48,foreign_scan_time_to_root_ratio,remote_fanin_fetch,main root timing is positive,not_applicable_or_timing_unavailable,0.0,0,0.0,0,0,0
+confirmatory_abcd_48,48,remote_to_final_rows_ratio,remote_fanin_fetch,remote root rows and main final rows are available,not_applicable_without_remote_plan,0.0,0,0.0,0,0,0
+confirmatory_abcd_48,48,regional_input_to_wan_rows_ratio,remote_fanin_fetch,worker scan rows and WAN output rows are positive,not_applicable_or_worker_evidence_unavailable,0.0,0,0.0,0,0,0
+confirmatory_abcd_48,48,global_group_merge_ratio,regional_reduction,WAN output and final rows are available,not_applicable_without_remote_output,0.0,0,0.0,0,0,0
+confirmatory_abcd_48,48,spill_present,normalized_spill_pressure,parsed main or remote plan,zero_only_after_plan_parse,0.0,0,0.0,0,0,0
+confirmatory_abcd_48,48,spill_bytes_to_wan_bytes_ratio,normalized_spill_pressure,WAN output bytes proxy is positive,not_applicable_without_wan_output,0.0,0,0.0,0,0,0
+confirmatory_abcd_48,48,temp_blocks_per_final_row,normalized_spill_pressure,parsed plan and final cardinality,missing_means_temp_io_unavailable,0.0,0,0.0,0,0,0
+confirmatory_abcd_48,48,hash_batch_excess,normalized_spill_pressure,parsed hash plan or neutral absence,zero_means_no_extra_hash_batch,0.0,0,0.0,0,0,0
+confirmatory_abcd_48,48,remote_region_rows_isf_normalized,skew_imbalance,complete row evidence for at least one observed region,not_applicable_without_region_row_distribution,0.0,0,0.0,0,0,0
+confirmatory_abcd_48,48,worker_task_scan_rows_isf_normalized,skew_imbalance,complete worker task scan rows,not_applicable_without_worker_task_scan_rows,0.0,0,0.0,0,0,0
+confirmatory_abcd_48,48,worker_scan_rows_cv_normalized,skew_imbalance,complete task-to-worker mapping and scan rows,not_applicable_without_complete_worker_scan_mapping,0.0,0,0.0,0,0,0
+confirmatory_abcd_48,48,task_count_to_shard_count_ratio,citus_topology_normalized,task count and shard count available,not_applicable_without_citus_task_evidence,0.0,0,0.0,0,0,0
+confirmatory_abcd_48,48,active_task_share,citus_topology_normalized,"task, shard and region counts available",not_applicable_without_citus_task_evidence,0.0,0,0.0,0,0,0
+confirmatory_abcd_48,48,citus_repartition_observed_v2,citus_topology_normalized,main or regional Citus plan text available,zero_only_after_main_and_regional_plan_evidence_aggregation,0.0,0,0.0,0,0,0
+confirmatory_abcd_48,48,worker_task_seq_scan_share,citus_topology_normalized,worker scan type histogram available,not_applicable_without_worker_scan_types,0.0,0,0.0,0,0,0
+confirmatory_abcd_48,48,root_rows_estimate_error_log,estimate_error,actual and estimated root rows available,not_applicable_without_analyze_or_estimate,0.5,0,0.0,0,0,0
+confirmatory_abcd_48,48,foreign_scan_rows_estimate_error_log,estimate_error,Foreign Scan actual and estimated rows available,not_applicable_without_foreign_scan,0.5,0,0.0,0,0,0
+confirmatory_abcd_48,48,aggregate_rows_estimate_error_log,estimate_error,aggregate actual and estimated rows available,not_applicable_without_aggregate,0.5,0,0.0,0,0,0
+confirmatory_abcd_48,48,remote_root_rows_estimate_error_log,estimate_error,regional remote root actual and estimated rows available,not_applicable_without_remote_root_plan,0.5,0,0.0,0,0,0
+stats_pilot_8,8,foreign_scan_time_to_root_ratio,remote_fanin_fetch,main root timing is positive,not_applicable_or_timing_unavailable,0.0,0,0.0,0,0,0
+stats_pilot_8,8,remote_to_final_rows_ratio,remote_fanin_fetch,remote root rows and main final rows are available,not_applicable_without_remote_plan,0.0,0,0.0,0,0,0
+stats_pilot_8,8,regional_input_to_wan_rows_ratio,remote_fanin_fetch,worker scan rows and WAN output rows are positive,not_applicable_or_worker_evidence_unavailable,0.0,0,0.0,0,0,0
+stats_pilot_8,8,global_group_merge_ratio,regional_reduction,WAN output and final rows are available,not_applicable_without_remote_output,0.0,0,0.0,0,0,0
+stats_pilot_8,8,spill_present,normalized_spill_pressure,parsed main or remote plan,zero_only_after_plan_parse,0.0,0,0.0,0,0,0
+stats_pilot_8,8,spill_bytes_to_wan_bytes_ratio,normalized_spill_pressure,WAN output bytes proxy is positive,not_applicable_without_wan_output,0.0,0,0.0,0,0,0
+stats_pilot_8,8,temp_blocks_per_final_row,normalized_spill_pressure,parsed plan and final cardinality,missing_means_temp_io_unavailable,0.0,0,0.0,0,0,0
+stats_pilot_8,8,hash_batch_excess,normalized_spill_pressure,parsed hash plan or neutral absence,zero_means_no_extra_hash_batch,0.0,0,0.0,0,0,0
+stats_pilot_8,8,remote_region_rows_isf_normalized,skew_imbalance,complete row evidence for at least one observed region,not_applicable_without_region_row_distribution,0.0,0,0.0,0,0,0
+stats_pilot_8,8,worker_task_scan_rows_isf_normalized,skew_imbalance,complete worker task scan rows,not_applicable_without_worker_task_scan_rows,0.0,4,0.5,4,0,0
+stats_pilot_8,8,worker_scan_rows_cv_normalized,skew_imbalance,complete task-to-worker mapping and scan rows,not_applicable_without_complete_worker_scan_mapping,0.0,4,0.5,4,0,0
+stats_pilot_8,8,task_count_to_shard_count_ratio,citus_topology_normalized,task count and shard count available,not_applicable_without_citus_task_evidence,0.0,0,0.0,0,0,0
+stats_pilot_8,8,active_task_share,citus_topology_normalized,"task, shard and region counts available",not_applicable_without_citus_task_evidence,0.0,0,0.0,0,0,0
+stats_pilot_8,8,citus_repartition_observed_v2,citus_topology_normalized,main or regional Citus plan text available,zero_only_after_main_and_regional_plan_evidence_aggregation,0.0,0,0.0,0,0,0
+stats_pilot_8,8,worker_task_seq_scan_share,citus_topology_normalized,worker scan type histogram available,not_applicable_without_worker_scan_types,0.0,4,0.5,4,0,0
+stats_pilot_8,8,root_rows_estimate_error_log,estimate_error,actual and estimated root rows available,not_applicable_without_analyze_or_estimate,0.5,0,0.0,0,0,0
+stats_pilot_8,8,foreign_scan_rows_estimate_error_log,estimate_error,Foreign Scan actual and estimated rows available,not_applicable_without_foreign_scan,0.5,0,0.0,0,0,0
+stats_pilot_8,8,aggregate_rows_estimate_error_log,estimate_error,aggregate actual and estimated rows available,not_applicable_without_aggregate,0.5,5,0.625,5,0,0
+stats_pilot_8,8,remote_root_rows_estimate_error_log,estimate_error,regional remote root actual and estimated rows available,not_applicable_without_remote_root_plan,0.5,0,0.0,0,0,0
+stats_v2_dev_12,12,foreign_scan_time_to_root_ratio,remote_fanin_fetch,main root timing is positive,not_applicable_or_timing_unavailable,0.0,0,0.0,0,0,0
+stats_v2_dev_12,12,remote_to_final_rows_ratio,remote_fanin_fetch,remote root rows and main final rows are available,not_applicable_without_remote_plan,0.0,0,0.0,0,0,0
+stats_v2_dev_12,12,regional_input_to_wan_rows_ratio,remote_fanin_fetch,worker scan rows and WAN output rows are positive,not_applicable_or_worker_evidence_unavailable,0.0,0,0.0,0,0,0
+stats_v2_dev_12,12,global_group_merge_ratio,regional_reduction,WAN output and final rows are available,not_applicable_without_remote_output,0.0,0,0.0,0,0,0
+stats_v2_dev_12,12,spill_present,normalized_spill_pressure,parsed main or remote plan,zero_only_after_plan_parse,0.0,0,0.0,0,0,0
+stats_v2_dev_12,12,spill_bytes_to_wan_bytes_ratio,normalized_spill_pressure,WAN output bytes proxy is positive,not_applicable_without_wan_output,0.0,0,0.0,0,0,0
+stats_v2_dev_12,12,temp_blocks_per_final_row,normalized_spill_pressure,parsed plan and final cardinality,missing_means_temp_io_unavailable,0.0,0,0.0,0,0,0
+stats_v2_dev_12,12,hash_batch_excess,normalized_spill_pressure,parsed hash plan or neutral absence,zero_means_no_extra_hash_batch,0.0,0,0.0,0,0,0
+stats_v2_dev_12,12,remote_region_rows_isf_normalized,skew_imbalance,complete row evidence for at least one observed region,not_applicable_without_region_row_distribution,0.0,0,0.0,0,0,0
+stats_v2_dev_12,12,worker_task_scan_rows_isf_normalized,skew_imbalance,complete worker task scan rows,not_applicable_without_worker_task_scan_rows,0.0,3,0.25,3,0,0
+stats_v2_dev_12,12,worker_scan_rows_cv_normalized,skew_imbalance,complete task-to-worker mapping and scan rows,not_applicable_without_complete_worker_scan_mapping,0.0,3,0.25,3,0,0
+stats_v2_dev_12,12,task_count_to_shard_count_ratio,citus_topology_normalized,task count and shard count available,not_applicable_without_citus_task_evidence,0.0,0,0.0,0,0,0
+stats_v2_dev_12,12,active_task_share,citus_topology_normalized,"task, shard and region counts available",not_applicable_without_citus_task_evidence,0.0,0,0.0,0,0,0
+stats_v2_dev_12,12,citus_repartition_observed_v2,citus_topology_normalized,main or regional Citus plan text available,zero_only_after_main_and_regional_plan_evidence_aggregation,0.0,0,0.0,0,0,0
+stats_v2_dev_12,12,worker_task_seq_scan_share,citus_topology_normalized,worker scan type histogram available,not_applicable_without_worker_scan_types,0.0,3,0.25,3,0,0
+stats_v2_dev_12,12,root_rows_estimate_error_log,estimate_error,actual and estimated root rows available,not_applicable_without_analyze_or_estimate,0.5,0,0.0,0,0,0
+stats_v2_dev_12,12,foreign_scan_rows_estimate_error_log,estimate_error,Foreign Scan actual and estimated rows available,not_applicable_without_foreign_scan,0.5,0,0.0,0,0,0
+stats_v2_dev_12,12,aggregate_rows_estimate_error_log,estimate_error,aggregate actual and estimated rows available,not_applicable_without_aggregate,0.5,9,0.75,9,0,0
+stats_v2_dev_12,12,remote_root_rows_estimate_error_log,estimate_error,regional remote root actual and estimated rows available,not_applicable_without_remote_root_plan,0.5,0,0.0,0,0,0
+stats_v2b_12,12,foreign_scan_time_to_root_ratio,remote_fanin_fetch,main root timing is positive,not_applicable_or_timing_unavailable,0.0,0,0.0,0,0,0
+stats_v2b_12,12,remote_to_final_rows_ratio,remote_fanin_fetch,remote root rows and main final rows are available,not_applicable_without_remote_plan,0.0,0,0.0,0,0,0
+stats_v2b_12,12,regional_input_to_wan_rows_ratio,remote_fanin_fetch,worker scan rows and WAN output rows are positive,not_applicable_or_worker_evidence_unavailable,0.0,0,0.0,0,0,0
+stats_v2b_12,12,global_group_merge_ratio,regional_reduction,WAN output and final rows are available,not_applicable_without_remote_output,0.0,0,0.0,0,0,0
+stats_v2b_12,12,spill_present,normalized_spill_pressure,parsed main or remote plan,zero_only_after_plan_parse,0.0,0,0.0,0,0,0
+stats_v2b_12,12,spill_bytes_to_wan_bytes_ratio,normalized_spill_pressure,WAN output bytes proxy is positive,not_applicable_without_wan_output,0.0,0,0.0,0,0,0
+stats_v2b_12,12,temp_blocks_per_final_row,normalized_spill_pressure,parsed plan and final cardinality,missing_means_temp_io_unavailable,0.0,0,0.0,0,0,0
+stats_v2b_12,12,hash_batch_excess,normalized_spill_pressure,parsed hash plan or neutral absence,zero_means_no_extra_hash_batch,0.0,0,0.0,0,0,0
+stats_v2b_12,12,remote_region_rows_isf_normalized,skew_imbalance,complete row evidence for at least one observed region,not_applicable_without_region_row_distribution,0.0,0,0.0,0,0,0
+stats_v2b_12,12,worker_task_scan_rows_isf_normalized,skew_imbalance,complete worker task scan rows,not_applicable_without_worker_task_scan_rows,0.0,5,0.4166666666666667,5,0,0
+stats_v2b_12,12,worker_scan_rows_cv_normalized,skew_imbalance,complete task-to-worker mapping and scan rows,not_applicable_without_complete_worker_scan_mapping,0.0,5,0.4166666666666667,5,0,0
+stats_v2b_12,12,task_count_to_shard_count_ratio,citus_topology_normalized,task count and shard count available,not_applicable_without_citus_task_evidence,0.0,0,0.0,0,0,0
+stats_v2b_12,12,active_task_share,citus_topology_normalized,"task, shard and region counts available",not_applicable_without_citus_task_evidence,0.0,0,0.0,0,0,0
+stats_v2b_12,12,citus_repartition_observed_v2,citus_topology_normalized,main or regional Citus plan text available,zero_only_after_main_and_regional_plan_evidence_aggregation,0.0,0,0.0,0,0,0
+stats_v2b_12,12,worker_task_seq_scan_share,citus_topology_normalized,worker scan type histogram available,not_applicable_without_worker_scan_types,0.0,5,0.4166666666666667,5,0,0
+stats_v2b_12,12,root_rows_estimate_error_log,estimate_error,actual and estimated root rows available,not_applicable_without_analyze_or_estimate,0.5,0,0.0,0,0,0
+stats_v2b_12,12,foreign_scan_rows_estimate_error_log,estimate_error,Foreign Scan actual and estimated rows available,not_applicable_without_foreign_scan,0.5,0,0.0,0,0,0
+stats_v2b_12,12,aggregate_rows_estimate_error_log,estimate_error,aggregate actual and estimated rows available,not_applicable_without_aggregate,0.5,7,0.5833333333333334,7,0,0
+stats_v2b_12,12,remote_root_rows_estimate_error_log,estimate_error,regional remote root actual and estimated rows available,not_applicable_without_remote_root_plan,0.5,0,0.0,0,0,0

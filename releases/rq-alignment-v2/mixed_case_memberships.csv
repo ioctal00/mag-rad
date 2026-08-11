@@ -1,0 +1,5 @@
+query_run_id,logical_question_id,dataset_id,runtime_config_id,prototype,distance,membership,case_category,membership_entropy
+20260626T213739Z-clean-run-eu-us-gac-v1__pilot-skew-h--de5330b210fd--__limit_k-100__payload_repeat-16__payload_width-512,event_raw_wide_sample,pilot-skew-heavy-v1,fetch_small,P0,1.1536853971103904,0.1680048368826884,mixed,1.2941489906164279
+20260626T213739Z-clean-run-eu-us-gac-v1__pilot-skew-h--de5330b210fd--__limit_k-100__payload_repeat-16__payload_width-512,event_raw_wide_sample,pilot-skew-heavy-v1,fetch_small,P1,0.8300200023833613,0.43041747095861793,mixed,1.2941489906164279
+20260626T213739Z-clean-run-eu-us-gac-v1__pilot-skew-h--de5330b210fd--__limit_k-100__payload_repeat-16__payload_width-512,event_raw_wide_sample,pilot-skew-heavy-v1,fetch_small,P2,1.0013258476330482,0.25180843103701955,mixed,1.2941489906164279
+20260626T213739Z-clean-run-eu-us-gac-v1__pilot-skew-h--de5330b210fd--__limit_k-100__payload_repeat-16__payload_width-512,event_raw_wide_sample,pilot-skew-heavy-v1,fetch_small,P3,1.201025089292594,0.14976926112167407,mixed,1.2941489906164279

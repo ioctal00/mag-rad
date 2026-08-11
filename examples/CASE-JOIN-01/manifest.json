@@ -1,0 +1,73 @@
+{
+  "action_id": "regional_pushdown_rewrite",
+  "case_id": "CASE-JOIN-01",
+  "dataset_time_contract": {
+    "allowed_cutoff_offsets_days": [
+      1,
+      2,
+      7,
+      14,
+      30
+    ],
+    "base_time_unix": 1782864000,
+    "base_time_utc": "2026-07-01T00:00:00Z",
+    "generated_lookback_days": 30,
+    "query_cutoff_offsets_days": [
+      30
+    ],
+    "wall_clock_functions_allowed_in_measured_sql": false
+  },
+  "logical_question_id": "trajectory_join_pushdown",
+  "result_contract": "Ure\u0111eni i multiskupovni hash jednaki su prije i poslije preoblikovanja.",
+  "result_hashes": {
+    "multiset_sha256": "2c9c24cb85b35fb0f33ffd9b5818ea53de345a7c0586f6dc03307ab27561fa98",
+    "ordered_sha256": "2cefb09f4eff7a72c8726f00472eeffd6dc63f2cc0b38a7e6aff2362992352f3"
+  },
+  "schema_version": 1,
+  "source_artifacts": [
+    {
+      "path": "generated/feedback-loop-runs/20260807T123708Z-pressure-feedback-loop-v1/rendered_sql/gac_fdw_coordinator_local_user_join.sql",
+      "sha256": "c2635f25d737ee0db916d49dc6c9654fb32d29fb5aad1e1789a2b8fabfdc06a7"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T123708Z-pressure-feedback-loop-v1/rendered_sql/gac_fdw_coordinator_regional_user_join.sql",
+      "sha256": "50367ffbf2cc296691616a3663ee72957742703d67ae079df441edb04bd57c60"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T123708Z-pressure-feedback-loop-v1/states/trajectory_join_pushdown_s00/raw_signals.csv",
+      "sha256": "959f25ec066068e01972e1538ab4648c8424129939c326612bae84a395ae16a3"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T123708Z-pressure-feedback-loop-v1/sweeps/20260807T124618Z-feedback-loop-b-join-s00/query-collections/20260807T124619Z-feedback-loop-b-join-s00__trajectory_join_pushdown_s00-r01/nodes/eu-analytics-1/20260807T124628Z-query-capture-20260807T124619Z-65d528b656855e60/plans/master-regimes-query-20260807T124619Z-65d528b656855e60.explain.txt",
+      "sha256": "8f6fdf712083b93ae68c2d54ea7235aab19e08cee40abfb6e19ce94ee2e8664b"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T123708Z-pressure-feedback-loop-v1/sweeps/20260807T124618Z-feedback-loop-b-join-s00/query-collections/20260807T124619Z-feedback-loop-b-join-s00__trajectory_join_pushdown_s00-r01/nodes/eu-analytics-1/20260807T124628Z-query-capture-20260807T124619Z-65d528b656855e60/plans/master-regimes-query-20260807T124619Z-65d528b656855e60.explain.json",
+      "sha256": "b7a6055f269951072e076a891ac0a61cc597792cc81d012c2d8cbeaa7c47d731"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T123708Z-pressure-feedback-loop-v1/states/trajectory_join_pushdown_s01/raw_signals.csv",
+      "sha256": "5c08512c2bfe753325c01c34c4e8e5e6ebb0c9d71a20f4601c73301aceb59c94"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T123708Z-pressure-feedback-loop-v1/sweeps/20260807T125847Z-feedback-loop-c-join-s01/query-collections/20260807T125847Z-feedback-loop-c-join-s01__trajectory_join_pushdown_s01-r01/nodes/eu-analytics-1/20260807T125857Z-query-capture-20260807T125847Z-9daab36cc5017067/plans/master-regimes-query-20260807T125847Z-9daab36cc5017067.explain.txt",
+      "sha256": "43091ed553a3ec2b1ad803cdb2e2a1786b734b737e2d37792eda1202fda8abfd"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T123708Z-pressure-feedback-loop-v1/sweeps/20260807T125847Z-feedback-loop-c-join-s01/query-collections/20260807T125847Z-feedback-loop-c-join-s01__trajectory_join_pushdown_s01-r01/nodes/eu-analytics-1/20260807T125857Z-query-capture-20260807T125847Z-9daab36cc5017067/plans/master-regimes-query-20260807T125847Z-9daab36cc5017067.explain.json",
+      "sha256": "684d2f52f73ffb8b8375c37f397074844386bf87573bfb80c0020a9fd3b7942b"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T123708Z-pressure-feedback-loop-v1/sweeps/20260807T124618Z-feedback-loop-b-join-s00/_index/auto_explain_plans/20260807T124619Z-feedback-loop-b-join-s00__trajectory_join_pushdown_s00-r01/auto_explain_eu_022.json",
+      "sha256": "f81da7a91a965f6b8f5b0e745132891e57e90d8e46b0c5d052ef9e036ed26605"
+    },
+    {
+      "path": "generated/feedback-loop-runs/20260807T123708Z-pressure-feedback-loop-v1/sweeps/20260807T125847Z-feedback-loop-c-join-s01/_index/auto_explain_plans/20260807T125847Z-feedback-loop-c-join-s01__trajectory_join_pushdown_s01-r01/auto_explain_eu_009.json",
+      "sha256": "f353e41346b98e2282049f6a3de5b92048224c779dce3ab60d498bc2c075d709"
+    }
+  ],
+  "source_repository_commit": "1892a85c0576017f898df9162c4c1b5ac21f1d03",
+  "source_run": "generated/feedback-loop-runs/20260807T123708Z-pressure-feedback-loop-v1",
+  "title": "Regionalno potiskivanje spajanja",
+  "user_scenario": "Razli\u010dite SQL varijante iste ru\u010dno povezane analiti\u010dke namjere"
+}

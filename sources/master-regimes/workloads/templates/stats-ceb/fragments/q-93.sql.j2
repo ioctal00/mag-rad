@@ -1,0 +1,7 @@
+select count(*) as result_count
+FROM {{ schema_name }}.votes AS v, {{ schema_name }}.posts AS p, {{ schema_name }}.users AS u
+WHERE v.UserId = u.Id
+  AND p.OwnerUserId = u.Id
+  AND p.PostTypeId = 2
+  AND p.CreationDate <= CAST('2014-08-26 22:40:26' AS timestamp)
+  AND u.Views >= 0

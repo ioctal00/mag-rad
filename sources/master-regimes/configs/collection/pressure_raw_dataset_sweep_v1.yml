@@ -1,0 +1,157 @@
+dataset_sweep_id: pressure-raw-datasets-v1
+collection_contract_version: pressure-raw-v1
+generator:
+  name: citus-datagen
+  version_source: git_commit_at_load_time
+snapshot_contract:
+  checksum_scope: profile_and_aggregate_audit_artifacts
+  row_level_checksum_included: false
+  limitation: >-
+    Snapshot identitet povezuje profil, generator, sjeme, vremenski oslonac,
+    broj redova, raspodjelu i placement audite. Ne predstavlja nezavisni
+    checksum sadrzaja svakog reda nakon novog ucitavanja.
+  id_inputs:
+    - dataset_profile_sha256
+    - generator_git_commit
+    - seed
+    - base_time_unix
+    - lookback_days
+    - load_method
+    - region
+  required_runtime_evidence:
+    - dataset_profile_sha256
+    - generator_git_commit
+    - seed
+    - base_time_unix
+    - lookback_days
+    - measured_event_time_min
+    - measured_event_time_max
+    - table_row_counts
+    - regional_distribution
+    - hot_key_profile
+    - shard_placement_snapshot
+    - worker_placement_snapshot
+    - snapshot_checksum
+
+profiles:
+  raw-small-balanced-v1:
+    profile: ../../datasets/profiles/raw-small-balanced.yml
+    size_class: small
+    skew_level: balanced
+    regional_distribution: balanced
+    join_size_ratio_class: events_to_users_2_to_1
+    intended_batches: [gac, remote, repartition, regional, skew]
+  pilot-balanced-v1:
+    profile: ../../datasets/profiles/pilot-balanced.yml
+    size_class: medium
+    skew_level: balanced
+    regional_distribution: balanced
+    join_size_ratio_class: events_to_users_2_to_1
+    intended_batches: [gac, remote, repartition, regional, skew]
+  raw-large-balanced-v1:
+    profile: ../../datasets/profiles/raw-large-balanced.yml
+    size_class: large
+    skew_level: balanced
+    regional_distribution: balanced
+    join_size_ratio_class: events_to_users_5_to_1
+    intended_batches: [gac, remote, repartition, regional]
+  raw-small-balanced-wide-global-dim-v1:
+    profile: ../../datasets/profiles/raw-small-balanced-wide-global-dim.yml
+    size_class: small
+    skew_level: balanced
+    regional_distribution: balanced
+    join_size_ratio_class: expanded_global_dimension_4x_users
+    intended_batches: [repartition]
+  pilot-balanced-wide-global-dim-v1:
+    profile: ../../datasets/profiles/pilot-balanced-wide-global-dim.yml
+    size_class: medium
+    skew_level: balanced
+    regional_distribution: balanced
+    join_size_ratio_class: expanded_global_dimension_4x_users
+    intended_batches: [repartition]
+  raw-large-balanced-wide-global-dim-v1:
+    profile: ../../datasets/profiles/raw-large-balanced-wide-global-dim.yml
+    size_class: large
+    skew_level: balanced
+    regional_distribution: balanced
+    join_size_ratio_class: expanded_global_dimension_4x_users
+    intended_batches: [repartition]
+
+  raw-small-skew-moderate-v1:
+    profile: ../../datasets/profiles/raw-small-skew-moderate.yml
+    size_class: small
+    skew_level: moderate
+    regional_distribution: balanced
+    intended_batches: [skew]
+  raw-small-skew-heavy-v1:
+    profile: ../../datasets/profiles/raw-small-skew-heavy.yml
+    size_class: small
+    skew_level: heavy
+    regional_distribution: balanced
+    intended_batches: [skew]
+  raw-medium-skew-moderate-v1:
+    profile: ../../datasets/profiles/raw-medium-skew-moderate.yml
+    size_class: medium
+    skew_level: moderate
+    regional_distribution: balanced
+    intended_batches: [skew]
+  pilot-skew-heavy-v1:
+    profile: ../../datasets/profiles/pilot-skew-heavy.yml
+    size_class: medium
+    skew_level: heavy
+    regional_distribution: balanced
+    intended_batches: [skew]
+  raw-large-skew-moderate-v1:
+    profile: ../../datasets/profiles/raw-large-skew-moderate.yml
+    size_class: large
+    skew_level: moderate
+    regional_distribution: balanced
+    intended_batches: [skew]
+  raw-large-skew-heavy-v1:
+    profile: ../../datasets/profiles/raw-large-skew-heavy.yml
+    size_class: large
+    skew_level: heavy
+    regional_distribution: balanced
+    intended_batches: [skew]
+
+  pilot-region-imbalanced-v1:
+    profile: ../../datasets/profiles/pilot-region-imbalanced.yml
+    size_class: medium
+    skew_level: balanced
+    regional_distribution: asymmetric_9_to_1
+    intended_batches: [skew, combined]
+  pilot-region-local-skew-asymmetric-medium-v1:
+    profile: ../../datasets/profiles/pilot-region-local-skew-asymmetric-medium.yml
+    size_class: medium
+    skew_level: region_local_heavy
+    regional_distribution: asymmetric_skew
+    intended_batches: [skew, combined]
+
+  n3-medium-balanced-wide-global-dim-v1:
+    profile: ../../datasets/profiles/n3-medium-balanced-wide-global-dim.yml
+    size_class: medium
+    skew_level: balanced
+    regional_distribution: balanced_three_regions
+    join_size_ratio_class: expanded_global_dimension_4x_users
+    intended_batches: [n3_holdout]
+  n3-medium-apac-dominant-wide-global-dim-v1:
+    profile: ../../datasets/profiles/n3-medium-apac-dominant-wide-global-dim.yml
+    size_class: medium
+    skew_level: balanced
+    regional_distribution: apac_dominant_three_regions
+    join_size_ratio_class: expanded_global_dimension_4x_users
+    intended_batches: [n3_holdout]
+  n3-large-balanced-wide-global-dim-v1:
+    profile: ../../datasets/profiles/n3-large-balanced-wide-global-dim.yml
+    size_class: large
+    skew_level: balanced
+    regional_distribution: balanced_three_regions
+    join_size_ratio_class: expanded_global_dimension_4x_users
+    intended_batches: [n3_holdout]
+  n3-large-apac-dominant-wide-global-dim-v1:
+    profile: ../../datasets/profiles/n3-large-apac-dominant-wide-global-dim.yml
+    size_class: large
+    skew_level: balanced
+    regional_distribution: apac_dominant_three_regions
+    join_size_ratio_class: expanded_global_dimension_4x_users
+    intended_batches: [n3_holdout]

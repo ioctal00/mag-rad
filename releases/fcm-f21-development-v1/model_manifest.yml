@@ -1,0 +1,92 @@
+contract: phase1_m0_reduced_fuzzy_clustering_v1
+candidate: configs/features/phase1_flow_ratio_candidate.yml
+matrix: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_m0_flow_ratio_v3_reduced_scaled.csv
+context: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_context.csv
+output_dir: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy
+row_count: 1964
+feature_count: 21
+features:
+- remote_path_share
+- remote_to_final_rows_ratio
+- wan_output_to_final_rows_ratio
+- drf_bytes_proxy
+- global_group_merge_ratio
+- temp_bytes_to_wan_bytes_ratio
+- temp_blocks_per_wan_row
+- temp_blocks_per_final_row
+- spill_per_wan_mb
+- hash_batches_max
+- remote_region_rows_isf
+- worker_task_scan_rows_isf
+- worker_task_scan_actual_rows_max_share
+- task_count_to_shard_count_ratio
+- active_task_share
+- citus_repartition_query
+- worker_task_seq_scan_share
+- root_rows_estimate_error_log
+- foreign_scan_rows_estimate_error_log
+- aggregate_rows_estimate_error_log
+- remote_root_rows_estimate_error_log
+k_values:
+- 4
+- 5
+seeds:
+- 0
+- 1
+- 2
+- 3
+- 4
+- 5
+- 6
+- 7
+- 8
+- 9
+fuzzifier: 1.7
+max_iter: 600
+tolerance: 0.0001
+elapsed_seconds: 27.50763750076294
+representative_runs_by_k:
+- k: 4
+  seed: 0
+  iterations: 46
+  converged: true
+  objective: 14421.48234402669
+  silhouette_hard_labels: 0.21396007280321483
+  partition_coefficient: 0.5302241007080288
+  partition_entropy: 0.8855262744245401
+  avg_max_membership: 0.6435974557784608
+  median_max_membership: 0.6772608582287709
+  avg_top2_margin: 0.45699517179687776
+  cluster_min_size: 285
+  cluster_max_size: 652
+  cluster_min_share: 0.14511201629327902
+  cluster_max_share: 0.3319755600814664
+  elapsed_seconds: 0.7631573677062988
+- k: 5
+  seed: 5
+  iterations: 58
+  converged: true
+  objective: 12110.380167300304
+  silhouette_hard_labels: 0.208634163540593
+  partition_coefficient: 0.49428500870620923
+  partition_entropy: 1.0141356826835743
+  avg_max_membership: 0.606139709504504
+  median_max_membership: 0.6036422903060874
+  avg_top2_margin: 0.4383370224028101
+  cluster_min_size: 228
+  cluster_max_size: 645
+  cluster_min_share: 0.11608961303462322
+  cluster_max_share: 0.3284114052953157
+  elapsed_seconds: 0.27001261711120605
+outputs:
+  scores: fuzzy_seed_scores.csv
+  summary: k_summary.csv
+  stability: seed_stability.csv
+  association: posthoc_context_association.csv
+  memberships: memberships_representative_by_k.csv
+  centers: cluster_centers_representative_by_k.csv
+  profiles: cluster_feature_profiles.csv
+  top_profiles: cluster_top_feature_deviations.csv
+  context_values: cluster_context_top_values.csv
+  prototypes: prototype_and_ambiguous_runs.csv
+  progress_log: progress.jsonl

@@ -1,0 +1,65 @@
+batch_id: batch-130-repartition
+kind: isolated
+pressure_axis: repartition_join
+backend: standard_corpus
+status: ready
+source_manifest: master-regimes/workloads/corpus/pressure-raw-v1/batch-130-repartition.yml
+source_manifest_sha256: ced5ba4c9897f9523b215aaaa995a9fd7b25e8f922294781ecc245661b4c29c4
+rendered_plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-130-repartition/rendered/corpus_execution_plan.yml
+rendered_execution_count: 594
+rendered_group_count: 6
+groups:
+- group_id: pressure-raw-v1-repartition__pilot-balanced-v1__gac_force_remote_join__analytics_clients
+  instance_count: 102
+  target_group: analytics_clients
+  target_host: ''
+  measurement_lane: global_gac_serial
+  dataset_profile_id: pilot-balanced-v1
+  dataset_size_class: medium
+  planned_work_units: 408.0
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-130-repartition/rendered/groups/pressure-raw-v1-repartition__pilot-balanced-v1__gac_force_remote_join__analytics_clients/instance_manifest.csv
+- group_id: pressure-raw-v1-repartition__pilot-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients
+  instance_count: 96
+  target_group: analytics_clients
+  target_host: ''
+  measurement_lane: global_gac_serial
+  dataset_profile_id: pilot-balanced-wide-global-dim-v1
+  dataset_size_class: medium
+  planned_work_units: 384.0
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-130-repartition/rendered/groups/pressure-raw-v1-repartition__pilot-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients/instance_manifest.csv
+- group_id: pressure-raw-v1-repartition__raw-large-balanced-v1__gac_force_remote_join__analytics_clients
+  instance_count: 102
+  target_group: analytics_clients
+  target_host: ''
+  measurement_lane: global_gac_serial
+  dataset_profile_id: raw-large-balanced-v1
+  dataset_size_class: large
+  planned_work_units: 1088.0
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-130-repartition/rendered/groups/pressure-raw-v1-repartition__raw-large-balanced-v1__gac_force_remote_join__analytics_clients/instance_manifest.csv
+- group_id: pressure-raw-v1-repartition__raw-large-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients
+  instance_count: 96
+  target_group: analytics_clients
+  target_host: ''
+  measurement_lane: global_gac_serial
+  dataset_profile_id: raw-large-balanced-wide-global-dim-v1
+  dataset_size_class: large
+  planned_work_units: 1024.0
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-130-repartition/rendered/groups/pressure-raw-v1-repartition__raw-large-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients/instance_manifest.csv
+- group_id: pressure-raw-v1-repartition__raw-small-balanced-v1__gac_force_remote_join__analytics_clients
+  instance_count: 102
+  target_group: analytics_clients
+  target_host: ''
+  measurement_lane: global_gac_serial
+  dataset_profile_id: raw-small-balanced-v1
+  dataset_size_class: small
+  planned_work_units: 136.0
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-130-repartition/rendered/groups/pressure-raw-v1-repartition__raw-small-balanced-v1__gac_force_remote_join__analytics_clients/instance_manifest.csv
+- group_id: pressure-raw-v1-repartition__raw-small-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients
+  instance_count: 96
+  target_group: analytics_clients
+  target_host: ''
+  measurement_lane: global_gac_serial
+  dataset_profile_id: raw-small-balanced-wide-global-dim-v1
+  dataset_size_class: small
+  planned_work_units: 128.0
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-130-repartition/rendered/groups/pressure-raw-v1-repartition__raw-small-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients/instance_manifest.csv

@@ -1,0 +1,66 @@
+@startuml
+
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 15
+skinparam ArrowColor #455054
+skinparam ArrowThickness 1
+skinparam BoxPadding 3
+skinparam sequence {
+  ParticipantBackgroundColor #f3f5f5
+  ParticipantBorderColor #263238
+  ParticipantFontColor #182024
+  LifeLineBorderColor #7b8588
+  LifeLineBackgroundColor #ffffff
+  GroupBorderColor #7b8588
+  GroupBackgroundColor #fafbfb
+  GroupHeaderFontColor #182024
+}
+skinparam database {
+  BackgroundColor #dfeceb
+  BorderColor #176b61
+  FontColor #182024
+}
+skinparam note {
+  BackgroundColor #f7f8f8
+  BorderColor #7b8588
+  FontColor #182024
+}
+
+hide footbox
+
+actor "Orkestrator" as O
+database "GAC" as G
+database "EU Citus\nkoordinator\n+ 2 workera" as EU
+database "US Citus\nkoordinator\n+ 2 workera" as US
+participant "Pipeline nakon\nizvršenja" as P
+
+== SQL tok tokom izvršavanja ==
+
+O -> G : EXPLAIN ANALYZE\nFORMAT JSON\nTop-K [query_run_id]
+activate G
+
+G -> EU : EU FDW udaljeni SQL\nSELECT tenant_id,\nvalue, created_at
+activate EU
+EU -> G : 32 taska na 2 workera\n200.000 redova
+deactivate EU
+
+G -> US : US FDW udaljeni SQL\nSELECT tenant_id,\nvalue, created_at
+activate US
+US -> G : 32 taska na 2 workera\n200.000 redova
+deactivate US
+
+G -> O : GAC plan: Aggregate, Sort, LIMIT 50\n+ status izvršenja
+deactivate G
+
+== Naknadni tok dokaznih artefakata ==
+
+O --> P : GAC plan + metapodaci izvršenja
+EU --> P : ograničeni EU plan + 32 task fragmenta
+US --> P : ograničeni US plan + 32 task fragmenta
+activate P
+P --> P : E_i: korelacija 1 + 2 + 64 artefakta\nZ_i, x_i^(19), u_i^(4)
+P --> O : dijagnostički sažetak
+deactivate P
+
+@enduml

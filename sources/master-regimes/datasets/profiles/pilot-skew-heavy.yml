@@ -1,0 +1,71 @@
+dataset_id: pilot-skew-heavy-v1
+generator: citus-datagen
+seed: 42
+base_time_unix: 1782864000
+budget_class: pilot
+
+scale:
+  tenants_total: 2000
+  events_per_tenant_avg: 200
+  users_per_tenant_avg: 100
+  lookback_days: 30
+
+regions:
+  eu:
+    tenant_id_range: [1, 1000]
+  us:
+    tenant_id_range: [10001, 11000]
+
+distribution:
+  distribution_key: tenant_id
+  shard_count: 32
+  skew_profile: heavy
+  hot_tenant_pct: 1
+  hot_event_pct: 50
+
+capabilities:
+  supports_reference_join: true
+  supports_colocated_user_join: true
+  supports_global_users: true
+  supports_global_user_dimension: true
+  supports_non_colocated_join: true
+  supports_cross_region_user_overlap: false
+  supports_high_group_cardinality: true
+  supports_hot_tenants: true
+  supports_hot_time_windows: false
+  supports_hot_tenant_skew: true
+  supports_region_imbalance: false
+  supports_region_local_skew_asymmetry: false
+  supports_shard_skew: false
+  supports_wide_payload: false
+  supports_large_scan: true
+  supports_distribution_key_filter: true
+  supports_region_partitioning: true
+  supports_etl_rollups: true
+  supports_tenant_tiers: true
+  supports_selective_filters: true
+  supports_materialized_refresh: true
+
+expected_audit_signals:
+  table_counts_min:
+    tenants: 1000
+    events: 150000
+    users: 80000
+    global_users: 80000
+  tenant_skew:
+    events_cv_min: 1.5
+    max_to_mean_ratio_min: 10.0
+    top1_event_share_min: 0.01
+    top5_event_share_min: 0.04
+    hot_tenant_count_min: 8
+    hot_event_share_min: 0.45
+    hot_tenant_ids_available: true
+  parameter_sources:
+    hot_tenant_ids:
+      source: hot_tenant_manifest.csv
+      column: tenant_id
+      order_by: tenant_rank
+    tenant_ids:
+      source: tenant_distribution.csv
+      column: tenant_id
+      order_by: tenant_id

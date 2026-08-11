@@ -1,0 +1,128 @@
+contract_version: mitigation-action-audit-v1
+program_id: pressure-raw-v1
+
+canonical_gain_target:
+  name: global_gac_mitigation_gain_log2
+  formula: log2(median_stressed_elapsed_seconds / median_mitigated_elapsed_seconds)
+  target_scope: global_query
+  repetitions_per_condition: 3
+  negative_values_allowed: true
+
+result_equivalence:
+  strict_statuses:
+    - exact_multiset
+  review_statuses:
+    - same_row_count_hash_diff_review
+  invalid_statuses:
+    - row_count_mismatch
+    - missing_or_duplicate_signature
+
+correctness_recovery:
+  accepted_statuses:
+    - exact_snapshot
+    - tolerance_equivalent
+
+readiness_thresholds:
+  minimum_pairs: 40
+  minimum_strict_pairs: 20
+  minimum_stressed_templates: 3
+  minimum_datasets: 3
+  minimum_groups_for_holdout: 3
+  minimum_pairs_per_holdout_group: 2
+  strong_gain_log2_median: 0.25
+  strong_positive_pair_share: 0.75
+  moderate_gain_log2_median: 0.10
+  moderate_positive_pair_share: 0.60
+
+policies:
+  gac_memory:
+    display_name: Povećanje GAC work_mem
+    intended_use: limited_gain_candidate
+  gac_regional_reduction:
+    display_name: Primjenjivi regionalni reduction rewrite
+    intended_use: policy_gain_candidate
+  remote_transport_bundle:
+    display_name: Zajedničko poboljšanje udaljene putanje
+    intended_use: limited_gain_candidate
+  remote_transport_calibration:
+    display_name: Izolovana kalibracija transportnih komponenti
+    intended_use: calibration_only
+  hot_shard_placement:
+    display_name: Disperzija hot shardova
+    intended_use: gain_candidate_or_null_result
+  repartition_colocation:
+    display_name: Zamjena repartitiona colocated distribucijom
+    intended_use: primary_gain_candidate
+  regional_memory:
+    display_name: Povećanje regionalnog work_mem
+    intended_use: gain_candidate_or_null_result
+
+actions:
+  increase_gac_work_mem:
+    policy_id: gac_memory
+    display_name: Povećaj GAC work_mem
+    action_kind: deployable_action
+    expected_changed_fields_any: [work_mem, runtime_config_id]
+  regional_join_pushdown:
+    policy_id: gac_regional_reduction
+    display_name: Izvrši join regionalno
+    action_kind: policy_member
+    expected_changed_fields_any: [template_id, physical_strategy_id]
+  regional_partial_aggregation:
+    policy_id: gac_regional_reduction
+    display_name: Izvrši parcijalnu agregaciju regionalno
+    action_kind: policy_member
+    expected_changed_fields_any: [template_id, physical_strategy_id]
+  regional_prededuplication:
+    policy_id: gac_regional_reduction
+    display_name: Izvrši prededupliciranje regionalno
+    action_kind: policy_member
+    expected_changed_fields_any: [template_id, physical_strategy_id]
+  regional_topk_candidates:
+    policy_id: gac_regional_reduction
+    display_name: Pošalji regionalne Top-K kandidate
+    action_kind: policy_member
+    expected_changed_fields_any: [template_id, physical_strategy_id]
+  mitigate_remote_path_bundle:
+    policy_id: remote_transport_bundle
+    display_name: Poboljšaj remote putanju kao zajednički paket
+    action_kind: bundled_action
+    expected_changed_fields_any:
+      - fetch_size
+      - configured_latency_ms
+      - configured_bandwidth_mbit
+  increase_fetch_size:
+    policy_id: remote_transport_calibration
+    display_name: Povećaj fetch_size
+    action_kind: calibration_action
+    expected_changed_fields_any: [fetch_size]
+  remove_added_delay:
+    policy_id: remote_transport_calibration
+    display_name: Ukloni kontrolisano dodatno kašnjenje
+    action_kind: calibration_action
+    expected_changed_fields_any: [configured_latency_ms]
+  remove_bandwidth_limit:
+    policy_id: remote_transport_calibration
+    display_name: Ukloni kontrolisano ograničenje propusnosti
+    action_kind: calibration_action
+    expected_changed_fields_any: [configured_bandwidth_mbit]
+  disperse_hot_shards:
+    policy_id: hot_shard_placement
+    display_name: Disperziraj hot shardove
+    action_kind: deployable_action
+    expected_changed_fields_any: [placement_state_id, placement_action]
+  use_colocated_distribution:
+    policy_id: repartition_colocation
+    display_name: Koristi colocated distribuciju
+    action_kind: deployable_action
+    expected_changed_fields_any: [template_id, physical_strategy_id]
+  null_join_strategy_intervention:
+    policy_id: repartition_colocation
+    display_name: Negativna kontrola join strategije
+    action_kind: negative_control_action
+    expected_no_change: true
+  increase_regional_work_mem:
+    policy_id: regional_memory
+    display_name: Povećaj regionalni work_mem
+    action_kind: deployable_action
+    expected_changed_fields_any: [regional_pg_options_json, runtime_config_id]

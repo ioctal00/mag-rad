@@ -1,0 +1,192 @@
+analysis_id: confirmatory-skew-v1
+protocol_version: 1
+source_manifest: workloads/corpus/corpus_manifest.confirmatory-skew-v1.yml
+source_render_dir: generated/corpus/confirmatory-skew-v1-source
+output_dir: generated/corpus/confirmatory-skew-v1
+selection: workloads/corpus/confirmatory_skew_v1_selection.csv
+readiness_report_dir: analysis/reports/confirmatory-skew-v1-local-readiness
+checkpoint: llmcontext/plans/checkpoints/confirmatory-skew-v1-local-readiness.yml
+
+design:
+  topology_id: eu_us_gac
+  runtime_config_id: default
+  repetitions: 3
+  state_order: [A, B, C, D]
+  condition_count: 4
+  state_condition_count: 16
+  expected_execution_count: 48
+  b_c_pair_count: 12
+  order_policy: deterministic_shuffle_within_state
+  shuffle_seed: 20260725
+  cache_policy: mixed_cache_confirmatory_first_observed
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  database_result_rows_stored: false
+  hard_timeout_seconds: 300
+  timeout_grace_seconds: 30
+
+states:
+  A:
+    state_name: balanced
+    dataset_profile_id: pilot-balanced-v1
+    placement_state_id: balanced_default
+    logical_data_contract_id: pilot-balanced-v1-seed-42
+    placement_action: audit_only
+  B:
+    state_name: skew_dispersed
+    dataset_profile_id: pilot-skew-heavy-v1
+    placement_state_id: hot_shards_dispersed
+    logical_data_contract_id: pilot-skew-heavy-v1-seed-42
+    placement_action: disperse_hot_shards
+  C:
+    state_name: skew_concentrated
+    dataset_profile_id: pilot-skew-heavy-v1
+    placement_state_id: hot_shards_concentrated
+    logical_data_contract_id: pilot-skew-heavy-v1-seed-42
+    placement_action: concentrate_hot_shards
+  D:
+    state_name: region_imbalanced
+    dataset_profile_id: pilot-region-imbalanced-v1
+    placement_state_id: region_imbalanced_default
+    logical_data_contract_id: pilot-region-imbalanced-v1-seed-42
+    placement_action: audit_only
+
+query_conditions:
+  - condition_id: top_tenants__regional_reduced
+    corpus_cell_id: confirm_top_tenants_regional_reduced
+    logical_question_id: top_tenants
+    physical_strategy_id: regional_reduced
+    template_id: gac_fdw_multiregion_top_tenants
+    parameters:
+      lookback_days: 7
+      limit_k: 50
+  - condition_id: top_tenants__raw_gac_finalize
+    corpus_cell_id: confirm_top_tenants_raw_finalize
+    logical_question_id: top_tenants
+    physical_strategy_id: raw_gac_finalize
+    template_id: gac_fdw_multiregion_top_tenants_raw_finalize
+    parameters:
+      lookback_days: 7
+      limit_k: 50
+  - condition_id: tenant_point__regional_reduced
+    corpus_cell_id: confirm_tenant_point_regional_reduced
+    logical_question_id: tenant_point_rollup
+    physical_strategy_id: regional_reduced
+    template_id: gac_fdw_multiregion_tenant_point_rollup
+    parameters:
+      eu_tenant_id: 1
+      us_tenant_id: 10001
+      lookback_days: 7
+  - condition_id: tenant_point__raw_gac_finalize
+    corpus_cell_id: confirm_tenant_point_raw_finalize
+    logical_question_id: tenant_point_rollup
+    physical_strategy_id: raw_gac_finalize
+    template_id: gac_fdw_multiregion_tenant_point_raw_finalize
+    parameters:
+      eu_tenant_id: 1
+      us_tenant_id: 10001
+      lookback_days: 7
+
+hot_tenant_contract:
+  derivation: first_round(region_tenant_count * hot_tenant_pct / 100)
+  source_profile: datasets/profiles/pilot-skew-heavy.yml
+  eu_hot_tenant_ids: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  us_hot_tenant_ids:
+    [10001, 10002, 10003, 10004, 10005, 10006, 10007, 10008, 10009, 10010]
+  eu_cold_control_ids: [100, 500, 1000]
+  us_cold_control_ids: [10100, 10500, 11000]
+
+placement:
+  regions: [eu, us]
+  metadata_source: citus_shards
+  shard_lookup_function: get_shard_id_for_distribution_column
+  move_function: citus_move_shard_placement
+  move_signature:
+    - shard_id
+    - source_node_name
+    - source_node_port
+    - target_node_name
+    - target_node_port
+    - shard_transfer_mode
+  shard_transfer_mode: block_writes
+  no_concurrent_writes: true
+  colocated_shards_move_together: true
+  dispersed:
+    algorithm: greedy_hot_event_mass_balance
+    dominant_hot_event_share_max: 0.65
+    tie_breaker: worker_name_then_shard_id
+  concentrated:
+    algorithm: move_all_hot_bearing_colocation_groups_to_designated_worker
+    dominant_hot_event_share_min: 0.80
+    designated_worker_policy: lexicographically_first_active_primary_worker
+  rollback:
+    primary: replay_inverse_moves_from_placement_intervention_manifest
+    fallback: clean_reload_same_dataset_profile_and_seed
+  invariants:
+    - regional_table_row_counts
+    - hot_tenant_ids
+    - hot_tenant_event_counts
+    - hot_event_share
+    - logical_data_contract_id
+
+outcomes:
+  primary:
+    - worker_rows_cv
+    - dominant_hot_worker_hot_event_share
+  secondary:
+    - worker_task_count_cv
+    - worker_time_cv
+    - wisf_rows_report_only
+    - remote_region_rows_isf
+    - remote_region_bytes_isf
+    - gac_topology_contrast
+  controls:
+    - worker_task_scan_rows_isf
+    - worker_task_scan_actual_rows_max_share
+    - regional_table_row_counts
+    - hot_event_share
+    - main_plan_fingerprint
+  expected_directions:
+    b_c_equal:
+      - regional_table_row_counts
+      - hot_tenant_ids
+      - hot_event_share
+      - rendered_sql_sha256
+    c_greater_than_b:
+      - dominant_hot_worker_hot_event_share
+      - worker_rows_cv
+    c_greater_or_equal_b:
+      - worker_time_cv
+    c_may_equal_b:
+      - worker_task_scan_rows_isf
+    d_greater_than_a:
+      - remote_region_rows_isf
+
+frozen_model:
+  model_id: clean-run-v1-m0_flow_ratio_v3_reduced-fcm-k4
+  retrain: false
+  training_rows_include_confirmatory: false
+  feature_count: 21
+  manifest: analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+  scaled_matrix: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_m0_flow_ratio_v3_reduced_scaled.csv
+  raw_matrix: analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_m0_flow_ratio_v3_reduced_raw.csv
+  candidate_config: configs/features/phase1_flow_ratio_candidate.yml
+  centers: analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy/cluster_centers_representative_by_k.csv
+  hash_policy: compute_and_freeze_during_plan_09
+
+artifact_contract:
+  required_query_scopes: [main, regional_coordinator, worker_task]
+  required_index_tables:
+    - query_runs
+    - execution_features
+    - region_fragments
+    - worker_task_fragments
+  database_result_rows_stored: false
+
+stop_conditions:
+  - b_c_logical_data_contract_differs
+  - placement_mapping_not_provable
+  - worker_identity_missing_from_task_evidence
+  - model_or_feature_contract_change_required
+  - new_broad_workload_or_generator_required
+  - capability_smoke_not_closed_in_one_working_day

@@ -1,0 +1,7 @@
+gate,observed,required_min,status
+result_correctness,0.9041095890410958,1.0,FAIL
+projected_completed_rows,1.0,1.0,PASS
+finite_projection,1.0,1.0,PASS
+within_frozen_p99,1.0,0.75,PASS
+contract_hash_matches_freeze,1.0,1.0,PASS
+model_refit_prohibited,1.0,1.0,PASS

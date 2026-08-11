@@ -1,0 +1,81 @@
+contract_version: fuzzy-memory-topk-panel-v1
+corpus_id: fuzzy-memory-topk-panel-v1
+
+design:
+  expected_source_cells: 12
+  expected_conditions: 96
+  expected_executions: 288
+  expected_scenarios: 24
+  expected_component_families: 3
+  expected_dataset_profiles: 2
+  repetitions_per_condition: 3
+  actions_per_scenario: 3
+  common_identity_fields:
+    - component_match_id
+    - logical_question_id
+    - dataset_profile_id
+    - topology_id
+    - execution_scope
+    - target_scope
+    - param_json
+
+scenario_actions:
+  fuzzy_topk_transport_severe: &actions
+    - increase_gac_work_mem
+    - regional_topk_candidates
+    - mitigate_remote_path_bundle
+  fuzzy_topk_memory_severe: *actions
+  fuzzy_topk_balanced: *actions
+
+runtime_transitions:
+  increase_gac_work_mem:
+    baseline_by_component:
+      default: cross_action_stressed
+      fuzzy_topk_transport_severe: cross_action_stressed
+      fuzzy_topk_memory_severe: fuzzy_memory_topk_memory_stressed
+      fuzzy_topk_balanced: fuzzy_memory_topk_balanced_stressed
+    action_by_component:
+      default: cross_action_gac_memory_mitigated
+      fuzzy_topk_transport_severe: cross_action_gac_memory_mitigated
+      fuzzy_topk_memory_severe: fuzzy_memory_topk_memory_gac_mitigated
+      fuzzy_topk_balanced: fuzzy_memory_topk_balanced_gac_mitigated
+    allowed_changes:
+      - pg_options.work_mem
+  regional_topk_candidates:
+    baseline_by_component:
+      default: cross_action_stressed
+      fuzzy_topk_transport_severe: cross_action_stressed
+      fuzzy_topk_memory_severe: fuzzy_memory_topk_memory_stressed
+      fuzzy_topk_balanced: fuzzy_memory_topk_balanced_stressed
+    action_by_component:
+      default: cross_action_stressed
+      fuzzy_topk_transport_severe: cross_action_stressed
+      fuzzy_topk_memory_severe: fuzzy_memory_topk_memory_stressed
+      fuzzy_topk_balanced: fuzzy_memory_topk_balanced_stressed
+    allowed_changes: []
+  mitigate_remote_path_bundle:
+    baseline_by_component:
+      default: cross_action_stressed
+      fuzzy_topk_transport_severe: cross_action_stressed
+      fuzzy_topk_memory_severe: fuzzy_memory_topk_memory_stressed
+      fuzzy_topk_balanced: fuzzy_memory_topk_balanced_stressed
+    action_by_component:
+      default: cross_action_remote_mitigated
+      fuzzy_topk_transport_severe: cross_action_remote_mitigated
+      fuzzy_topk_memory_severe: fuzzy_memory_topk_memory_remote_mitigated
+      fuzzy_topk_balanced: fuzzy_memory_topk_balanced_remote_mitigated
+    allowed_changes:
+      - psql_variables.FETCH_COUNT
+      - fdw_server_options.fetch_size
+      - network_profile.configured_delay_ms
+      - network_profile.configured_bandwidth_mbit
+
+sql_transitions:
+  regional_topk_candidates:
+    baseline_template: gac_fdw_coordinator_raw_event_topk
+    action_template: gac_fdw_coordinator_regional_event_topk
+
+analysis:
+  target: log2_median_stressed_over_action_elapsed
+  minimum_completed_repetitions: 3
+  required_result_signature_status: captured

@@ -1,0 +1,23 @@
+sweep_id: two-profiles-three-shapes-v2
+region: eu
+
+datasets:
+  - id: smoke-balanced
+    profile: two-profiles-three-shapes-v2/smoke-balanced.yml
+    load_method: sql
+  - id: smoke-skew
+    profile: two-profiles-three-shapes-v2/smoke-skew.yml
+    load_method: sql
+
+runtime_configs:
+  - id: default
+    pg_options: {}
+    psql_variables:
+      FETCH_COUNT: "1000"
+
+workload:
+  instance_manifest: two-profiles-three-shapes-v2/instance_manifest.csv
+  max_instances: 3
+
+collection:
+  global_stats_scope: none

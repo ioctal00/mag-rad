@@ -1,0 +1,95 @@
+contract_version: feedback-loop-aggregate-exact-addendum-v1
+experiment_id: pressure-feedback-loop-aggregate-exact-v1
+inherits_fixed_contracts:
+  pressure_domains: pressure_domain_manifest.yaml
+  intervention_catalog: intervention_catalog.yaml
+  rq_h_mapping: RQ_H_MAPPING.md
+
+scope:
+  topology_id: eu_us_gac_n2_active
+  dataset_profile_id: locked_current_dataset_snapshot
+  logical_question_id: event_exact_full_flow_summary
+  result_contract:
+    mode: ordered_sequence_and_multiset_hash
+    deterministic_shape: one exact COUNT/MIN/MAX row
+    floating_point_tolerance: forbidden
+  executed_actions:
+    - fdw_fetch_size_10000
+    - regional_pushdown_rewrite
+    - wan_delay_10ms_probe
+  catalogued_but_not_executed_actions_are_results: false
+
+templates:
+  raw: gac_fdw_multiregion_event_exact_raw_summary
+  regional: gac_fdw_multiregion_event_exact_regional_summary
+  suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+
+states:
+  A_raw_baseline:
+    template: raw
+    fetch_size: 1000
+    wan_delay_ms: 0
+  B_fetch_size:
+    template: raw
+    fetch_size: 10000
+    wan_delay_ms: 0
+  C_regional_aggregate:
+    template: regional
+    fetch_size: 10000
+    wan_delay_ms: 0
+  D_wan_delay:
+    template: regional
+    fetch_size: 10000
+    wan_delay_ms: 10
+  R0_prime_rollback:
+    template: raw
+    fetch_size: 1000
+    wan_delay_ms: 0
+
+transitions:
+  - id: aggregate-exact-fetch-size
+    source: A_raw_baseline
+    target: B_fetch_size
+    action_id: fdw_fetch_size_10000
+    hypothesis: >-
+      Veci FDW fetch_size smanjit ce broj fetch ciklusa i udaljeno cekanje bez
+      promjene payload-a ili rezultata.
+    target_domains: [remote_fdw_path]
+    expected_runtime_direction: improved_or_unchanged
+  - id: aggregate-exact-pushdown
+    source: B_fetch_size
+    target: C_regional_aggregate
+    action_id: regional_pushdown_rewrite
+    hypothesis: >-
+      Regionalni COUNT/MIN/MAX smanjit ce broj redova i bajtova koji ulaze u GAC
+      te pomjeriti profil prema regionalnoj redukciji.
+    target_domains: [regional_reduction, remote_fdw_path, gac_finalization]
+    expected_runtime_direction: improved
+  - id: aggregate-exact-wan-delay
+    source: C_regional_aggregate
+    target: D_wan_delay
+    action_id: wan_delay_10ms_probe
+    hypothesis: >-
+      Dodatnih 10 ms na EU egress putanji povecat ce RTT/boundary-wait dokaz i
+      produziti izvrsenje iako regionalni payload ostaje mali.
+    target_domains: [remote_fdw_path]
+    expected_runtime_direction: worsened
+
+execution_order:
+  policy: frozen_williams_order
+  repetitions_per_state: 5
+  blocks:
+    - [A_raw_baseline, B_fetch_size, D_wan_delay, C_regional_aggregate]
+    - [B_fetch_size, C_regional_aggregate, A_raw_baseline, D_wan_delay]
+    - [C_regional_aggregate, D_wan_delay, B_fetch_size, A_raw_baseline]
+    - [D_wan_delay, A_raw_baseline, C_regional_aggregate, B_fetch_size]
+    - [A_raw_baseline, B_fetch_size, D_wan_delay, C_regional_aggregate]
+  final_rollback_state: R0_prime_rollback
+  final_rollback_repetitions: 5
+  total_execution_count: 25
+
+outcome_axes:
+  result_validity: [equivalent, non_equivalent]
+  end_to_end_effect: [positive, negative, no_material_change, indeterminate]
+  physical_transition:
+    [predominantly_favorable, predominantly_adverse, mixed, sparse, unavailable]

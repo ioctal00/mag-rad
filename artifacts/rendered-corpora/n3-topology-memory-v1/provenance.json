@@ -1,0 +1,62 @@
+{
+  "captured_at_utc": "2026-08-06T08:40:46.436311+00:00",
+  "contract_version": "n3-topology-memory-experiment-v1",
+  "experiment_id": "n3-topology-memory-v1",
+  "file_sha256": {
+    "configs/models/fuzzy_intervention_memory_v1.yml": "6b25d56f475cfb297644f5794e024a87ef40239ab64055b3f2ea39e9cf1640b5",
+    "configs/validation/n3_topology_memory_experiment_v1.yml": "60e58b02d3108138d6798412905fe233866457fd07366f24a4b404d42717959b",
+    "datasets/profiles/topology-isolation-large-n2.yml": "1d93c6efec8fac952daaf56823a6882f94e6bb2bbdf0b7d465379c398953e618",
+    "datasets/profiles/topology-isolation-large-n3.yml": "30ea4df7fe3c9c090d01b7840a3a6f5c29665a332f301110d1725729e214efa0",
+    "datasets/profiles/topology-isolation-medium-n2.yml": "1b149a485bc428b1433577a1851c9eab17b071b0f697f48c09f4f2316f3cc32c",
+    "datasets/profiles/topology-isolation-medium-n3.yml": "a23379b58122b13df643ca6fd4e372fb9df6eef94863d28774891fa26ceed04e",
+    "datasets/profiles/topology-isolation-small-n2.yml": "a2c852b270b402c70c08f79ab0f12eced690a910ef669f875c610b3b32f187ff",
+    "datasets/profiles/topology-isolation-small-n3.yml": "d2faf94859591796e484efb860205cb269904f9c132596598b77532f3b9a8983",
+    "datasets/profiles/topology-isolation-xlarge-n2.yml": "2b642798150bce8b5c31075e683330c648f705a4072c345ce87d0eb7710dc4dd",
+    "datasets/profiles/topology-isolation-xlarge-n3.yml": "b5c7d305f0ec594b6c52bbc18fb444b922def4348c95f85f0f08f9974685bf0b",
+    "workloads/corpus/query-groups.yml": "de03b32d2cc72c1e5a3040634df749e8f3a3267b555cf66b22439ca370767ad9",
+    "workloads/corpus/runtime-configs.yml": "4fa52aef2bae48bcf43fb17918bb357999f3717e0cecfec8c0d817eb81e79e0d",
+    "workloads/templates/gac-fdw/gac_fdw_dba_topk_raw.sql.j2": "a4b7cb4d66a9fc69c0ac5adb08eb5d55a365ad8757b7b71e7f5ed9444a9b5d0e",
+    "workloads/templates/gac-fdw/gac_fdw_dba_topk_regional.sql.j2": "e6aa1d21897f93b0ace203218f9c83fb3c126299e49693f24871357dbd7fd5bc"
+  },
+  "git_commits": {
+    "citus-datagen": "cacbfdd7f7ac3f38d8e4f1e4469accae24aa6f53",
+    "master-regimes": "22ff867a835574146f527dd3bddbaa57425c0a91",
+    "master-regimes-infra": "0d56fe6f5c2c430749fc2bcbaf440ddccbc36933",
+    "psql-benchmarks": "3d0d4c8fa5d1a7ddc0bb30ca5d1c4b420b01f5fc"
+  },
+  "inventory": {
+    "available": true,
+    "host_count": 10,
+    "host_names": [
+      "apac-coord-1",
+      "apac-worker-1",
+      "apac-worker-2",
+      "eu-analytics-1",
+      "eu-coord-1",
+      "eu-worker-1",
+      "eu-worker-2",
+      "us-coord-1",
+      "us-worker-1",
+      "us-worker-2"
+    ],
+    "path": "master-regimes-infra/ansible/inventory/generated.json",
+    "sha256": "5cb382a161f57893f2829ad7b7bba7ca4ced0d5a6437d69d3582a6c08c945658"
+  },
+  "model_freeze": {
+    "coverage_quantile": 0.99,
+    "distance_metric": "euclidean",
+    "minimum_history_for_available": 2,
+    "model_id": "fuzzy-intervention-memory-v1-state-space",
+    "neighbors": 5,
+    "pca_components": 6,
+    "reference_report": "analysis/reports/fuzzy-intervention-memory-v1",
+    "refit_on_n3": false,
+    "state_contract": "configs/models/fuzzy_intervention_memory_v1.yml"
+  },
+  "retry_policy": {
+    "attempt_resolution": "latest_successful_logical_slot",
+    "automatic_retry_count": 0,
+    "retain_failed_attempts": true,
+    "timeout_is_explicit_status": true
+  }
+}

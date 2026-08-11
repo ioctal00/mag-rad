@@ -1,0 +1,123 @@
+---
+- name: Deploy analytics client
+  when: analytics_client_enabled | bool
+  block:
+    - name: Derive analytics client region from inventory groups
+      ansible.builtin.set_fact:
+        analytics_client_region_effective: >-
+          {{
+            analytics_client_region
+            if analytics_client_region | length > 0
+            else ('eu' if 'eu' in group_names else ('us' if 'us' in group_names else 'global'))
+          }}
+
+    - name: Ensure analytics client directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      loop:
+        - "{{ analytics_client_repo_dir | dirname }}"
+        - "{{ analytics_client_log_dir }}"
+        - "{{ analytics_client_run_root }}"
+
+    - name: Install analytics client packages
+      ansible.builtin.apt:
+        name: "{{ analytics_client_extra_packages }}"
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Install uv via official installer
+      ansible.builtin.shell: "curl -LsSf {{ analytics_client_uv_installer_url }} | sh"
+      args:
+        creates: "{{ analytics_client_uv_install_dir }}/uv"
+
+    - name: Symlink uv into /usr/local/bin
+      ansible.builtin.file:
+        src: "{{ analytics_client_uv_install_dir }}/uv"
+        dest: /usr/local/bin/uv
+        state: link
+
+    - name: Check for locally synced analytics-client source
+      ansible.builtin.stat:
+        path: "{{ analytics_client_repo_dir }}/pyproject.toml"
+      register: analytics_client_local_source
+
+    - name: Clone or update analytics client repository
+      when: analytics_client_git_clone_suffix | length > 0
+      no_log: true
+      block:
+        - name: Write temporary Git netrc for analytics client clone
+          ansible.builtin.copy:
+            dest: /root/.netrc
+            owner: root
+            group: root
+            mode: "0600"
+            content: |
+              machine {{ analytics_client_git_clone_suffix | regex_replace('^https://([^/]+)/.*$', '\1') }}
+              login {{ master_regimes_git_username | default('x-access-token', true) }}
+              password {{ master_regimes_git_pat }}
+          when:
+            - analytics_client_git_clone_suffix is match('^https://')
+            - master_regimes_git_pat | default('', true) | length > 0
+
+        - name: Mark analytics client repository as safe for Git
+          ansible.builtin.command:
+            cmd: "git config --global --add safe.directory {{ analytics_client_repo_dir }}"
+          changed_when: false
+
+        - name: Clone or update analytics client repository with clean remote URL
+          ansible.builtin.git:
+            repo: "{{ analytics_client_git_clone_suffix }}"
+            dest: "{{ analytics_client_repo_dir }}"
+            version: "{{ analytics_client_git_branch }}"
+            update: true
+            force: true
+      always:
+        - name: Remove temporary Git netrc after analytics client clone
+          ansible.builtin.file:
+            path: /root/.netrc
+            state: absent
+          when:
+            - analytics_client_git_clone_suffix is match('^https://')
+            - master_regimes_git_pat | default('', true) | length > 0
+          no_log: true
+
+    - name: Fail when analytics-client source is missing
+      ansible.builtin.fail:
+        msg: "Sync local analytics-client first, or set analytics_client_git_clone_suffix as an explicit fallback."
+      when:
+        - analytics_client_git_clone_suffix | length == 0
+        - not analytics_client_local_source.stat.exists
+
+    - name: Render analytics client environment file
+      ansible.builtin.template:
+        src: env.j2
+        dest: "{{ analytics_client_repo_dir }}/.env"
+        owner: root
+        group: root
+        mode: "0600"
+      no_log: true
+
+    - name: Find analytics client helper scripts
+      ansible.builtin.find:
+        paths: "{{ analytics_client_repo_dir }}/bin"
+        file_type: file
+      register: analytics_client_helper_scripts
+      failed_when: false
+
+    - name: Ensure analytics client helper scripts are executable
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        mode: "0755"
+      loop: "{{ analytics_client_helper_scripts.files | default([]) }}"
+
+    - name: Sync analytics client virtual environment with uv
+      ansible.builtin.command:
+        cmd: /usr/local/bin/uv sync
+        chdir: "{{ analytics_client_repo_dir }}"
+      environment:
+        PATH: "{{ analytics_client_uv_install_dir }}:{{ ansible_facts['env']['PATH'] }}"

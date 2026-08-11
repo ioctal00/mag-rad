@@ -1,0 +1,79 @@
+{
+  "collection_contract_sha256": "cf52bff84011de3983f9e0bc9df8e590161443b1f63d47fafd02e78b93a427a8",
+  "dataset_profile_count": 13,
+  "dataset_sweep_sha256": "a88f5b1b0ba52581601ac6e4928bf355163fc8015b74c7645d702474470f9c7b",
+  "distinct_configuration_count": 869,
+  "distinct_sql_shape_count": 143,
+  "execution_optimization": {
+    "avoided_redundant_signature_queries": 1738,
+    "instrumented_execution_count": 2607,
+    "query_level_concurrency": 1,
+    "result_signature_scope": "first_repetition_per_condition",
+    "stream_only_result_signature_query_count": 869
+  },
+  "intervention_level_count": 3,
+  "original_plan_reference": {
+    "combined_holdout": 240,
+    "isolated": 624,
+    "n3_holdout": 72,
+    "sentinels": 36,
+    "total": 972
+  },
+  "physical_execution_count": 2607,
+  "planned_counterfactual_pair_count": 418,
+  "planned_pairs_by_axis": {
+    "gac_finalization": 99,
+    "regional_finalization": 75,
+    "remote_path": 75,
+    "repartition_join": 99,
+    "worker_data_skew": 70
+  },
+  "prepared_batch_count": 3,
+  "progress_plan": {
+    "cost_class_counts": {
+      "extreme": 103,
+      "heavy": 849,
+      "light": 782,
+      "medium": 873
+    },
+    "dataset_size_counts": {
+      "large": 885,
+      "medium": 837,
+      "small": 885
+    },
+    "dataset_weights": {
+      "large": 8.0,
+      "medium": 3.0,
+      "small": 1.0
+    },
+    "eta_policy": {
+      "blocked_batches_excluded_from_eta": true,
+      "dynamic_rate": "median_elapsed_seconds_per_work_unit",
+      "high_confidence_sample_count_gte": 20,
+      "initial_estimate": "planned_work_units",
+      "low_confidence_sample_count_lt": 5
+    },
+    "planned_work_units": 17424.0,
+    "runtime_multipliers": {
+      "pressure_gac_memory_stressed": 1.5,
+      "pressure_regional_memory_stressed": 1.5,
+      "pressure_remote_bandwidth_10mbit": 4.0,
+      "pressure_remote_bandwidth_50mbit": 2.0,
+      "pressure_remote_delay_20ms": 2.0,
+      "pressure_remote_delay_80ms": 4.0,
+      "pressure_remote_fetch_100": 4.0,
+      "pressure_remote_fetch_2000": 2.0,
+      "pressure_remote_raw_stressed": 2.0
+    },
+    "slot_count": 2607
+  },
+  "rendered_batch_count": 5,
+  "revised_plan": {
+    "blocked_n3_holdout": 96,
+    "collection_smoke": 30,
+    "prepared_combined_holdout": 180,
+    "prepared_sentinels": 30,
+    "rendered_isolated": 2607,
+    "total_if_all_prepared_batches_are_later_materialized": 2943
+  }
+}

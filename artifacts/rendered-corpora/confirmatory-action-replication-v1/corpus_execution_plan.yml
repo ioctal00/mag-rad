@@ -1,0 +1,657 @@
+corpus_id: confirmatory-action-replication-v1
+source_manifest: master-regimes/generated/corpus/confirmatory-action-replication-v1-source/corpus_manifest.yml
+rendered_corpus_manifest: master-regimes/generated/corpus/confirmatory-action-replication-v1/corpus_manifest.yml
+corpus_cells: master-regimes/generated/corpus/confirmatory-action-replication-v1/corpus_cells.csv
+region: eu
+max_instances_per_cell: null
+execution_budget:
+  hard_timeout_seconds: 1800
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: balanced_williams_confirmatory
+  order_policy: explicit_schedule
+  explicit_schedule:
+  - corpus_cell_id: q27_user_sum__baseline
+    repetition_index: 0
+  - corpus_cell_id: q27_user_sum__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q27_user_sum__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q27_user_sum__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q26_tenant_hour_count__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q26_tenant_hour_count__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q26_tenant_hour_count__baseline
+    repetition_index: 0
+  - corpus_cell_id: q26_tenant_hour_count__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q18_event_recent_high_value__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q18_event_recent_high_value__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q18_event_recent_high_value__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q18_event_recent_high_value__baseline
+    repetition_index: 0
+  - corpus_cell_id: q24_tenant_midband_sum__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q24_tenant_midband_sum__baseline
+    repetition_index: 0
+  - corpus_cell_id: q24_tenant_midband_sum__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q24_tenant_midband_sum__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q20_event_tenant_weighted__baseline
+    repetition_index: 0
+  - corpus_cell_id: q20_event_tenant_weighted__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q20_event_tenant_weighted__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q20_event_tenant_weighted__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q25_tenant_day_avg__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q25_tenant_day_avg__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q25_tenant_day_avg__baseline
+    repetition_index: 0
+  - corpus_cell_id: q25_tenant_day_avg__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q21_tenant_value_range__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q21_tenant_value_range__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q21_tenant_value_range__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q21_tenant_value_range__baseline
+    repetition_index: 0
+  - corpus_cell_id: q17_event_log_value__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q17_event_log_value__baseline
+    repetition_index: 0
+  - corpus_cell_id: q17_event_log_value__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q17_event_log_value__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q22_tenant_distinct_users__baseline
+    repetition_index: 0
+  - corpus_cell_id: q22_tenant_distinct_users__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q22_tenant_distinct_users__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q22_tenant_distinct_users__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q23_tenant_even_user_count__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q23_tenant_even_user_count__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q23_tenant_even_user_count__baseline
+    repetition_index: 0
+  - corpus_cell_id: q23_tenant_even_user_count__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q16_event_value_squared__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q16_event_value_squared__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q16_event_value_squared__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q16_event_value_squared__baseline
+    repetition_index: 0
+  - corpus_cell_id: q30_user_day_sum__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q30_user_day_sum__baseline
+    repetition_index: 0
+  - corpus_cell_id: q30_user_day_sum__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q30_user_day_sum__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q19_event_old_low_value__baseline
+    repetition_index: 0
+  - corpus_cell_id: q19_event_old_low_value__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q19_event_old_low_value__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q19_event_old_low_value__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q29_user_value_range__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q29_user_value_range__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q29_user_value_range__baseline
+    repetition_index: 0
+  - corpus_cell_id: q29_user_value_range__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q28_user_count__regional_topk_candidates
+    repetition_index: 0
+  - corpus_cell_id: q28_user_count__mitigate_remote_path_bundle
+    repetition_index: 0
+  - corpus_cell_id: q28_user_count__increase_gac_work_mem
+    repetition_index: 0
+  - corpus_cell_id: q28_user_count__baseline
+    repetition_index: 0
+  - corpus_cell_id: q30_user_day_sum__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q30_user_day_sum__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q30_user_day_sum__baseline
+    repetition_index: 1
+  - corpus_cell_id: q30_user_day_sum__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q21_tenant_value_range__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q21_tenant_value_range__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q21_tenant_value_range__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q21_tenant_value_range__baseline
+    repetition_index: 1
+  - corpus_cell_id: q18_event_recent_high_value__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q18_event_recent_high_value__baseline
+    repetition_index: 1
+  - corpus_cell_id: q18_event_recent_high_value__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q18_event_recent_high_value__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q20_event_tenant_weighted__baseline
+    repetition_index: 1
+  - corpus_cell_id: q20_event_tenant_weighted__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q20_event_tenant_weighted__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q20_event_tenant_weighted__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q29_user_value_range__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q29_user_value_range__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q29_user_value_range__baseline
+    repetition_index: 1
+  - corpus_cell_id: q29_user_value_range__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q16_event_value_squared__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q16_event_value_squared__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q16_event_value_squared__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q16_event_value_squared__baseline
+    repetition_index: 1
+  - corpus_cell_id: q26_tenant_hour_count__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q26_tenant_hour_count__baseline
+    repetition_index: 1
+  - corpus_cell_id: q26_tenant_hour_count__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q26_tenant_hour_count__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q27_user_sum__baseline
+    repetition_index: 1
+  - corpus_cell_id: q27_user_sum__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q27_user_sum__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q27_user_sum__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q22_tenant_distinct_users__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q22_tenant_distinct_users__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q22_tenant_distinct_users__baseline
+    repetition_index: 1
+  - corpus_cell_id: q22_tenant_distinct_users__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q24_tenant_midband_sum__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q24_tenant_midband_sum__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q24_tenant_midband_sum__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q24_tenant_midband_sum__baseline
+    repetition_index: 1
+  - corpus_cell_id: q19_event_old_low_value__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q19_event_old_low_value__baseline
+    repetition_index: 1
+  - corpus_cell_id: q19_event_old_low_value__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q19_event_old_low_value__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q23_tenant_even_user_count__baseline
+    repetition_index: 1
+  - corpus_cell_id: q23_tenant_even_user_count__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q23_tenant_even_user_count__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q23_tenant_even_user_count__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q28_user_count__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q28_user_count__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q28_user_count__baseline
+    repetition_index: 1
+  - corpus_cell_id: q28_user_count__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q17_event_log_value__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q17_event_log_value__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q17_event_log_value__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q17_event_log_value__baseline
+    repetition_index: 1
+  - corpus_cell_id: q25_tenant_day_avg__mitigate_remote_path_bundle
+    repetition_index: 1
+  - corpus_cell_id: q25_tenant_day_avg__baseline
+    repetition_index: 1
+  - corpus_cell_id: q25_tenant_day_avg__regional_topk_candidates
+    repetition_index: 1
+  - corpus_cell_id: q25_tenant_day_avg__increase_gac_work_mem
+    repetition_index: 1
+  - corpus_cell_id: q20_event_tenant_weighted__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q20_event_tenant_weighted__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q20_event_tenant_weighted__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q20_event_tenant_weighted__baseline
+    repetition_index: 2
+  - corpus_cell_id: q30_user_day_sum__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q30_user_day_sum__baseline
+    repetition_index: 2
+  - corpus_cell_id: q30_user_day_sum__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q30_user_day_sum__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q26_tenant_hour_count__baseline
+    repetition_index: 2
+  - corpus_cell_id: q26_tenant_hour_count__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q26_tenant_hour_count__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q26_tenant_hour_count__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q23_tenant_even_user_count__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q23_tenant_even_user_count__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q23_tenant_even_user_count__baseline
+    repetition_index: 2
+  - corpus_cell_id: q23_tenant_even_user_count__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q16_event_value_squared__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q16_event_value_squared__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q16_event_value_squared__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q16_event_value_squared__baseline
+    repetition_index: 2
+  - corpus_cell_id: q19_event_old_low_value__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q19_event_old_low_value__baseline
+    repetition_index: 2
+  - corpus_cell_id: q19_event_old_low_value__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q19_event_old_low_value__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q22_tenant_distinct_users__baseline
+    repetition_index: 2
+  - corpus_cell_id: q22_tenant_distinct_users__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q22_tenant_distinct_users__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q22_tenant_distinct_users__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q27_user_sum__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q27_user_sum__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q27_user_sum__baseline
+    repetition_index: 2
+  - corpus_cell_id: q27_user_sum__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q18_event_recent_high_value__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q18_event_recent_high_value__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q18_event_recent_high_value__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q18_event_recent_high_value__baseline
+    repetition_index: 2
+  - corpus_cell_id: q24_tenant_midband_sum__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q24_tenant_midband_sum__baseline
+    repetition_index: 2
+  - corpus_cell_id: q24_tenant_midband_sum__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q24_tenant_midband_sum__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q21_tenant_value_range__baseline
+    repetition_index: 2
+  - corpus_cell_id: q21_tenant_value_range__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q21_tenant_value_range__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q21_tenant_value_range__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q17_event_log_value__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q17_event_log_value__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q17_event_log_value__baseline
+    repetition_index: 2
+  - corpus_cell_id: q17_event_log_value__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q28_user_count__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q28_user_count__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q28_user_count__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q28_user_count__baseline
+    repetition_index: 2
+  - corpus_cell_id: q29_user_value_range__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q29_user_value_range__baseline
+    repetition_index: 2
+  - corpus_cell_id: q29_user_value_range__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q29_user_value_range__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q25_tenant_day_avg__baseline
+    repetition_index: 2
+  - corpus_cell_id: q25_tenant_day_avg__increase_gac_work_mem
+    repetition_index: 2
+  - corpus_cell_id: q25_tenant_day_avg__mitigate_remote_path_bundle
+    repetition_index: 2
+  - corpus_cell_id: q25_tenant_day_avg__regional_topk_candidates
+    repetition_index: 2
+  - corpus_cell_id: q27_user_sum__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q27_user_sum__baseline
+    repetition_index: 3
+  - corpus_cell_id: q27_user_sum__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q27_user_sum__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q23_tenant_even_user_count__baseline
+    repetition_index: 3
+  - corpus_cell_id: q23_tenant_even_user_count__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q23_tenant_even_user_count__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q23_tenant_even_user_count__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q20_event_tenant_weighted__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q20_event_tenant_weighted__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q20_event_tenant_weighted__baseline
+    repetition_index: 3
+  - corpus_cell_id: q20_event_tenant_weighted__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q16_event_value_squared__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q16_event_value_squared__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q16_event_value_squared__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q16_event_value_squared__baseline
+    repetition_index: 3
+  - corpus_cell_id: q26_tenant_hour_count__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q26_tenant_hour_count__baseline
+    repetition_index: 3
+  - corpus_cell_id: q26_tenant_hour_count__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q26_tenant_hour_count__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q21_tenant_value_range__baseline
+    repetition_index: 3
+  - corpus_cell_id: q21_tenant_value_range__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q21_tenant_value_range__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q21_tenant_value_range__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q29_user_value_range__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q29_user_value_range__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q29_user_value_range__baseline
+    repetition_index: 3
+  - corpus_cell_id: q29_user_value_range__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q30_user_day_sum__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q30_user_day_sum__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q30_user_day_sum__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q30_user_day_sum__baseline
+    repetition_index: 3
+  - corpus_cell_id: q28_user_count__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q28_user_count__baseline
+    repetition_index: 3
+  - corpus_cell_id: q28_user_count__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q28_user_count__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q19_event_old_low_value__baseline
+    repetition_index: 3
+  - corpus_cell_id: q19_event_old_low_value__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q19_event_old_low_value__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q19_event_old_low_value__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q24_tenant_midband_sum__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q24_tenant_midband_sum__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q24_tenant_midband_sum__baseline
+    repetition_index: 3
+  - corpus_cell_id: q24_tenant_midband_sum__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q18_event_recent_high_value__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q18_event_recent_high_value__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q18_event_recent_high_value__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q18_event_recent_high_value__baseline
+    repetition_index: 3
+  - corpus_cell_id: q25_tenant_day_avg__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q25_tenant_day_avg__baseline
+    repetition_index: 3
+  - corpus_cell_id: q25_tenant_day_avg__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q25_tenant_day_avg__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q17_event_log_value__baseline
+    repetition_index: 3
+  - corpus_cell_id: q17_event_log_value__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q17_event_log_value__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q17_event_log_value__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q22_tenant_distinct_users__increase_gac_work_mem
+    repetition_index: 3
+  - corpus_cell_id: q22_tenant_distinct_users__regional_topk_candidates
+    repetition_index: 3
+  - corpus_cell_id: q22_tenant_distinct_users__baseline
+    repetition_index: 3
+  - corpus_cell_id: q22_tenant_distinct_users__mitigate_remote_path_bundle
+    repetition_index: 3
+  - corpus_cell_id: q17_event_log_value__baseline
+    repetition_index: 4
+  - corpus_cell_id: q17_event_log_value__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q17_event_log_value__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q17_event_log_value__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q18_event_recent_high_value__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q18_event_recent_high_value__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q18_event_recent_high_value__baseline
+    repetition_index: 4
+  - corpus_cell_id: q18_event_recent_high_value__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q27_user_sum__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q27_user_sum__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q27_user_sum__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q27_user_sum__baseline
+    repetition_index: 4
+  - corpus_cell_id: q19_event_old_low_value__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q19_event_old_low_value__baseline
+    repetition_index: 4
+  - corpus_cell_id: q19_event_old_low_value__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q19_event_old_low_value__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q30_user_day_sum__baseline
+    repetition_index: 4
+  - corpus_cell_id: q30_user_day_sum__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q30_user_day_sum__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q30_user_day_sum__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q28_user_count__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q28_user_count__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q28_user_count__baseline
+    repetition_index: 4
+  - corpus_cell_id: q28_user_count__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q26_tenant_hour_count__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q26_tenant_hour_count__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q26_tenant_hour_count__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q26_tenant_hour_count__baseline
+    repetition_index: 4
+  - corpus_cell_id: q23_tenant_even_user_count__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q23_tenant_even_user_count__baseline
+    repetition_index: 4
+  - corpus_cell_id: q23_tenant_even_user_count__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q23_tenant_even_user_count__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q16_event_value_squared__baseline
+    repetition_index: 4
+  - corpus_cell_id: q16_event_value_squared__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q16_event_value_squared__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q16_event_value_squared__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q24_tenant_midband_sum__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q24_tenant_midband_sum__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q24_tenant_midband_sum__baseline
+    repetition_index: 4
+  - corpus_cell_id: q24_tenant_midband_sum__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q20_event_tenant_weighted__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q20_event_tenant_weighted__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q20_event_tenant_weighted__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q20_event_tenant_weighted__baseline
+    repetition_index: 4
+  - corpus_cell_id: q21_tenant_value_range__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q21_tenant_value_range__baseline
+    repetition_index: 4
+  - corpus_cell_id: q21_tenant_value_range__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q21_tenant_value_range__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q25_tenant_day_avg__baseline
+    repetition_index: 4
+  - corpus_cell_id: q25_tenant_day_avg__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q25_tenant_day_avg__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q25_tenant_day_avg__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q22_tenant_distinct_users__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q22_tenant_distinct_users__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q22_tenant_distinct_users__baseline
+    repetition_index: 4
+  - corpus_cell_id: q22_tenant_distinct_users__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q29_user_value_range__regional_topk_candidates
+    repetition_index: 4
+  - corpus_cell_id: q29_user_value_range__mitigate_remote_path_bundle
+    repetition_index: 4
+  - corpus_cell_id: q29_user_value_range__increase_gac_work_mem
+    repetition_index: 4
+  - corpus_cell_id: q29_user_value_range__baseline
+    repetition_index: 4
+  repetitions_default: 1
+  record_run_order: true
+  record_buffer_features: true
+  preserve_instance_order_across_runtime_configs: true
+  fdw_auto_explain: true
+  fdw_auto_explain_regions:
+  - active_regions
+  os_sampler: true
+  os_sampler_node_groups:
+  - active_regions
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: true
+  remote_edge_context: true
+  group_runtime_configs_by_active_scope: true
+execution_backend: master-regimes-infra.database_sweep
+included_execution_classes:
+- pilot
+source_cell_count: 60
+manifest_cell_count: 60
+excluded_cell_count: 0
+group_count: 1
+groups:
+- group_id: confirmatory-action-replication-v1__topology-isolation-large-n3-v1__runtime-bundle-multi-edge__analytics_clients
+  sweep_id: confirmatory-action-replication-v1__topology-isolation-large-n3-v1__runtime-bundle-multi-edge__analytics_clients
+  dataset_profile_id: topology-isolation-large-n3-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: multiple
+  runtime_config_ids:
+  - dba_topk_balanced_gac_mitigated
+  - dba_topk_balanced_remote_mitigated
+  - dba_topk_balanced_stressed
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: combined_pressure
+  runtime_expected_effect: multiple
+  network_profile_id: multiple
+  cell_count: 60
+  instance_count: 300
+  instance_manifest: master-regimes/generated/corpus/confirmatory-action-replication-v1/groups/confirmatory-action-replication-v1__topology-isolation-large-n3-v1__runtime-bundle-multi-edge__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/confirmatory-action-replication-v1/sweeps/confirmatory-action-replication-v1__topology-isolation-large-n3-v1__runtime-bundle-multi-edge__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false

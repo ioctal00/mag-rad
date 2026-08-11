@@ -1,0 +1,37 @@
+---
+- name: Install PgBouncer package
+  ansible.builtin.apt:
+    name: pgbouncer
+    state: present
+
+- name: Ensure PgBouncer configuration directory permissions
+  ansible.builtin.file:
+    path: /etc/pgbouncer
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: "0755"
+
+- name: Deploy PgBouncer configuration
+  ansible.builtin.template:
+    src: pgbouncer.ini.j2
+    dest: /etc/pgbouncer/pgbouncer.ini
+    owner: postgres
+    group: postgres
+    mode: "0640"
+  notify: Restart pgbouncer
+
+- name: Deploy PgBouncer userlist
+  ansible.builtin.template:
+    src: userlist.txt.j2
+    dest: /etc/pgbouncer/userlist.txt
+    owner: postgres
+    group: postgres
+    mode: "0640"
+  notify: Restart pgbouncer
+
+- name: Ensure PgBouncer service is enabled
+  ansible.builtin.service:
+    name: pgbouncer
+    enabled: true
+    state: started

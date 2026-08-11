@@ -1,0 +1,162 @@
+---
+- name: Deploy citus-datagen
+  when: citus_datagen_enabled | bool
+  block:
+    - name: Derive datagen region from inventory metadata
+      ansible.builtin.set_fact:
+        citus_datagen_region_effective: >-
+          {{
+            citus_datagen_region
+            if citus_datagen_region | length > 0
+            else (hostvars[inventory_hostname].logical_region | default(''))
+          }}
+
+    - name: Fail when datagen region cannot be derived
+      ansible.builtin.fail:
+        msg: "Unable to derive citus_datagen_region. Set it explicitly or provide logical_region in inventory host variables."
+      when: citus_datagen_region_effective | length == 0
+
+    - name: Check whether datagen tenant range exists for current region
+      ansible.builtin.assert:
+        that:
+          - citus_datagen_tenant_ranges[citus_datagen_region_effective] is defined
+        fail_msg: "Missing citus_datagen_tenant_ranges entry for region {{ citus_datagen_region_effective }}."
+
+    - name: Validate datagen generator settings
+      ansible.builtin.assert:
+        that:
+          - citus_datagen_load_method in ['csv', 'sql', 'copy_pipe']
+          - citus_datagen_distribution in ['uniform', 'hot_tenants']
+          - citus_datagen_hot_tenant_pct | float > 0
+          - citus_datagen_hot_tenant_pct | float <= 100
+          - citus_datagen_hot_event_pct | float > 0
+          - citus_datagen_hot_event_pct | float < 100
+        fail_msg: "Invalid citus_datagen_* generator settings."
+
+    - name: Ensure datagen directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      loop:
+        - "{{ citus_datagen_repo_dir | dirname }}"
+        - "{{ citus_datagen_output_root }}"
+        - "{{ citus_datagen_output_root }}/{{ citus_datagen_region_effective }}"
+        - "{{ citus_datagen_log_dir }}"
+
+    - name: Install uv via official installer
+      ansible.builtin.shell: "curl -LsSf {{ citus_datagen_uv_installer_url }} | sh"
+      args:
+        creates: "{{ citus_datagen_uv_install_dir }}/uv"
+
+    - name: Symlink uv into /usr/local/bin
+      ansible.builtin.file:
+        src: "{{ citus_datagen_uv_install_dir }}/uv"
+        dest: /usr/local/bin/uv
+        state: link
+
+    - name: Check for locally synced citus-datagen source
+      ansible.builtin.stat:
+        path: "{{ citus_datagen_repo_dir }}/pyproject.toml"
+      register: citus_datagen_local_source
+
+    - name: Clone or update citus-datagen repository
+      when: citus_datagen_git_clone_suffix | length > 0
+      no_log: true
+      block:
+        - name: Write temporary Git netrc for citus-datagen clone
+          ansible.builtin.copy:
+            dest: /root/.netrc
+            owner: root
+            group: root
+            mode: "0600"
+            content: |
+              machine {{ citus_datagen_git_clone_suffix | regex_replace('^https://([^/]+)/.*$', '\1') }}
+              login {{ master_regimes_git_username | default('x-access-token', true) }}
+              password {{ master_regimes_git_pat }}
+          when:
+            - citus_datagen_git_clone_suffix is match('^https://')
+            - master_regimes_git_pat | default('', true) | length > 0
+
+        - name: Mark citus-datagen repository as safe for Git
+          ansible.builtin.command:
+            cmd: "git config --global --add safe.directory {{ citus_datagen_repo_dir }}"
+          changed_when: false
+
+        - name: Clone or update citus-datagen repository with clean remote URL
+          ansible.builtin.git:
+            repo: "{{ citus_datagen_git_clone_suffix }}"
+            dest: "{{ citus_datagen_repo_dir }}"
+            version: "{{ citus_datagen_git_branch }}"
+            update: true
+            force: true
+      always:
+        - name: Remove temporary Git netrc after citus-datagen clone
+          ansible.builtin.file:
+            path: /root/.netrc
+            state: absent
+          when:
+            - citus_datagen_git_clone_suffix is match('^https://')
+            - master_regimes_git_pat | default('', true) | length > 0
+          no_log: true
+
+    - name: Fail when citus-datagen source is missing
+      ansible.builtin.fail:
+        msg: "Sync local citus-datagen first with `make repo-sync-datagen`, or set citus_datagen_git_clone_suffix as an explicit fallback."
+      when:
+        - citus_datagen_git_clone_suffix | length == 0
+        - not citus_datagen_local_source.stat.exists
+
+    - name: Read deployed citus-datagen branch
+      ansible.builtin.command:
+        cmd: "git -C {{ citus_datagen_repo_dir }} branch --show-current"
+      register: citus_datagen_deployed_branch
+      changed_when: false
+      when: citus_datagen_git_clone_suffix | length > 0
+
+    - name: Verify deployed citus-datagen branch
+      ansible.builtin.assert:
+        that:
+          - citus_datagen_deployed_branch.stdout == citus_datagen_git_branch
+        fail_msg: >-
+          citus-datagen is on branch
+          {{ citus_datagen_deployed_branch.stdout | default('unknown') }},
+          expected {{ citus_datagen_git_branch }}.
+      when: citus_datagen_git_clone_suffix | length > 0
+
+    - name: Render citus-datagen environment file
+      ansible.builtin.template:
+        src: env.j2
+        dest: "{{ citus_datagen_repo_dir }}/.env"
+        owner: root
+        group: root
+        mode: "0600"
+
+    - name: Ensure citus-datagen helper scripts are executable
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: "0755"
+      loop:
+        - "{{ citus_datagen_repo_dir }}/bin/load"
+        - "{{ citus_datagen_repo_dir }}/bin/reset-and-load"
+
+    - name: Sync citus-datagen virtual environment with uv
+      ansible.builtin.command:
+        cmd: /usr/local/bin/uv sync
+        chdir: "{{ citus_datagen_repo_dir }}"
+      environment:
+        PATH: "{{ citus_datagen_uv_install_dir }}:{{ ansible_facts['env']['PATH'] }}"
+
+    - name: Remove stale citus-datagen C++ COPY generator before remote build
+      ansible.builtin.file:
+        path: "{{ citus_datagen_repo_dir }}/{{ citus_datagen_copy_generator_path }}"
+        state: absent
+      when: citus_datagen_load_method == "copy_pipe"
+
+    - name: Build citus-datagen C++ COPY generator
+      ansible.builtin.command:
+        cmd: make -C tools/cpp
+        chdir: "{{ citus_datagen_repo_dir }}"
+      when: citus_datagen_load_method == "copy_pipe"

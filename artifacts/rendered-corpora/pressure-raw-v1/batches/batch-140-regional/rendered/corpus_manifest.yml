@@ -1,0 +1,175 @@
+corpus_id: pressure-raw-v1-regional
+corpus_version: pressure-raw-corpus-v1
+batch_id: batch-140-regional
+collection_contract_version: pressure-raw-v1
+parameter_defaults:
+  as_of_unix: [1782864000]
+description: >
+  Regional coordinator finalization and spill observed through a GAC
+  single-edge query. The batch contains 54 positive pairs and 21
+  tenant-point controls.
+query_groups: ../query-groups.yml
+runtime_catalog: ../runtime-configs.yml
+
+dataset_profiles:
+  raw-small-balanced-v1:
+    profile: ../../../datasets/profiles/raw-small-balanced.yml
+    load_method: copy_pipe
+  pilot-balanced-v1:
+    profile: ../../../datasets/profiles/pilot-balanced.yml
+    load_method: copy_pipe
+  raw-large-balanced-v1:
+    profile: ../../../datasets/profiles/raw-large-balanced.yml
+    load_method: copy_pipe
+
+execution_budget: {hard_timeout_seconds: 1800, timeout_grace_seconds: 30}
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260730
+  repetitions_default: 3
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  fdw_auto_explain_regions: [eu]
+  os_sampler: true
+  os_sampler_node_groups: [eu, analytics_clients]
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: false
+
+cells:
+  - corpus_cell_id: regional_positive_mitigated
+    logical_question_id: user_value_topk
+    execution_strategy: fdw_raw
+    execution_scope: gac_single_edge
+    target_scope: global_query
+    template_id: gac_fdw_single_edge_regional_user_value_topk
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: pressure_regional_memory_mitigated
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: regional_finalization
+    pressure_axis: regional_finalization
+    pressure_level: mitigated
+    pressure_pair_key: regional__single_edge_user_topk
+    mitigation_action: increase_regional_work_mem
+    target_metric: global_gac_mitigation_gain_log2
+    dataset_role: pressure_isolated
+    parameters:
+      cutoff_ts:
+        - "2026-06-24 00:00:00+00"
+        - "2026-06-17 00:00:00+00"
+        - "2026-06-01 00:00:00+00"
+      limit_k: [25000, 50000]
+      tenant_modulus: [4, 2, 1]
+
+  - corpus_cell_id: regional_positive_stressed
+    logical_question_id: user_value_topk
+    execution_strategy: fdw_raw
+    execution_scope: gac_single_edge
+    target_scope: global_query
+    template_id: gac_fdw_single_edge_regional_user_value_topk
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: pressure_regional_memory_stressed
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: regional_finalization
+    pressure_axis: regional_finalization
+    pressure_level: stressed
+    pressure_pair_key: regional__single_edge_user_topk
+    mitigation_action: increase_regional_work_mem
+    target_metric: global_gac_mitigation_gain_log2
+    dataset_role: pressure_isolated
+    parameters:
+      cutoff_ts:
+        - "2026-06-24 00:00:00+00"
+        - "2026-06-17 00:00:00+00"
+        - "2026-06-01 00:00:00+00"
+      limit_k: [25000, 50000]
+      tenant_modulus: [4, 2, 1]
+
+  - corpus_cell_id: regional_positive_intermediate_subset
+    logical_question_id: user_value_topk
+    execution_strategy: fdw_raw
+    execution_scope: gac_single_edge
+    target_scope: global_query
+    template_id: gac_fdw_single_edge_regional_user_value_topk
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: pressure_regional_memory_intermediate
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    intervention_axis: regional_finalization
+    pressure_axis: regional_finalization
+    pressure_level: intermediate
+    pressure_pair_key: regional__single_edge_user_topk
+    mitigation_action: increase_regional_work_mem
+    target_metric: global_execution_time_seconds
+    dataset_role: pressure_calibration
+    parameters:
+      cutoff_ts: ["2026-06-17 00:00:00+00"]
+      limit_k: [50000]
+      tenant_modulus: [2, 1]
+
+  - corpus_cell_id: regional_control_mitigated
+    logical_question_id: tenant_point_rollup
+    execution_strategy: fdw_raw
+    execution_scope: gac_single_edge
+    target_scope: global_query
+    template_id: gac_fdw_tenant_point_rollup
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: pressure_regional_memory_mitigated
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: regional_finalization
+    pressure_axis: regional_finalization
+    pressure_level: mitigated
+    pressure_pair_key: regional__tenant_point_control
+    mitigation_action: increase_regional_work_mem
+    target_metric: global_gac_mitigation_gain_log2
+    dataset_role: pressure_negative_control
+    parameters:
+      tenant_id: [1, 2, 10, 100, 500, 1000, 1500]
+      lookback_days: [7]
+
+  - corpus_cell_id: regional_control_stressed
+    logical_question_id: tenant_point_rollup
+    execution_strategy: fdw_raw
+    execution_scope: gac_single_edge
+    target_scope: global_query
+    template_id: gac_fdw_tenant_point_rollup
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: pressure_regional_memory_stressed
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: regional_finalization
+    pressure_axis: regional_finalization
+    pressure_level: stressed
+    pressure_pair_key: regional__tenant_point_control
+    mitigation_action: increase_regional_work_mem
+    target_metric: global_gac_mitigation_gain_log2
+    dataset_role: pressure_negative_control
+    parameters:
+      tenant_id: [1, 2, 10, 100, 500, 1000, 1500]
+      lookback_days: [7]
+
+  - corpus_cell_id: regional_control_intermediate_subset
+    logical_question_id: tenant_point_rollup
+    execution_strategy: fdw_raw
+    execution_scope: gac_single_edge
+    target_scope: global_query
+    template_id: gac_fdw_tenant_point_rollup
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: pressure_regional_memory_intermediate
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: regional_finalization
+    pressure_axis: regional_finalization
+    pressure_level: intermediate
+    pressure_pair_key: regional__tenant_point_control
+    mitigation_action: increase_regional_work_mem
+    target_metric: global_execution_time_seconds
+    dataset_role: pressure_negative_control
+    parameters:
+      tenant_id: [1]
+      lookback_days: [7]

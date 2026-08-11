@@ -1,0 +1,11 @@
+check,status,observed,expected
+plan_11_e0_all_pass,PASS,27/27,all E0 checks PASS
+b_c_regional_row_counts_equal,PASS,EU and US table counts compared,identical by region
+b_c_logical_dataset_hash_equal,PASS,EU and US tenant distribution hashes compared,exact match
+b_c_hot_event_share_equal,PASS,B=0.5/0.5; C=0.5/0.5,exact match
+b_hot_shards_dispersed,PASS,0.5 / 0.5,<= 0.65
+c_hot_shards_concentrated,PASS,1.0 / 1.0,>= 0.80
+a_region_balanced,PASS,200000 / 200000 events,EU=US
+d_region_ratio_nine,PASS,360000 / 40000 events,EU/US=9
+b_c_pair_contract,PASS,12 pairs; 4 conditions,12 pairs; 4 conditions
+a_d_pair_contract,PASS,12 pairs; 4 conditions,12 pairs; 4 conditions

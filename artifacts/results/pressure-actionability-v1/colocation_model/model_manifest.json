@@ -1,0 +1,158 @@
+{
+  "action_selector_included": false,
+  "alpha": 1.0,
+  "contract_version": "colocation-gain-model-v1",
+  "feature_contract": [
+    {
+      "family": "gac_fanin",
+      "name": "coordinator_fanin_rows",
+      "transform": "log1p"
+    },
+    {
+      "family": "gac_fanin",
+      "name": "coordinator_fanin_bytes_estimated",
+      "transform": "log1p"
+    },
+    {
+      "family": "gac_fanin",
+      "name": "coordinator_final_rows",
+      "transform": "log1p"
+    },
+    {
+      "family": "gac_finalization",
+      "name": "coordinator_non_foreign_time_share_proxy",
+      "transform": "identity"
+    },
+    {
+      "family": "gac_finalization",
+      "name": "coordinator_join_operator_count",
+      "transform": "log1p"
+    },
+    {
+      "family": "regional_flow",
+      "name": "remote_region_actual_rows_sum",
+      "transform": "log1p"
+    },
+    {
+      "family": "regional_flow",
+      "name": "remote_region_tuple_bytes_sum",
+      "transform": "log1p"
+    },
+    {
+      "family": "regional_flow",
+      "name": "remote_region_task_count_sum",
+      "transform": "log1p"
+    },
+    {
+      "family": "repartition",
+      "name": "remote_citus_dependent_map_task_count_sum",
+      "transform": "log1p"
+    },
+    {
+      "family": "repartition",
+      "name": "remote_citus_repartition_fanout_ratio_max",
+      "transform": "log1p"
+    },
+    {
+      "family": "worker_task",
+      "name": "worker_task_actual_rows_sum",
+      "transform": "log1p"
+    },
+    {
+      "family": "worker_task",
+      "name": "worker_task_scan_actual_rows_sum",
+      "transform": "log1p"
+    },
+    {
+      "family": "network_flow",
+      "name": "regional_coordinator_tx_bytes_sum",
+      "transform": "log1p"
+    },
+    {
+      "family": "network_flow",
+      "name": "analytics_rx_bytes_sum",
+      "transform": "log1p"
+    },
+    {
+      "family": "network_flow",
+      "name": "worker_tx_bytes_sum",
+      "transform": "log1p"
+    },
+    {
+      "family": "resource_response",
+      "name": "os_cpu_busy_pct_mean",
+      "transform": "identity"
+    },
+    {
+      "family": "resource_response",
+      "name": "os_mem_used_peak_bytes_max",
+      "transform": "log1p"
+    },
+    {
+      "family": "resource_response",
+      "name": "os_disk_read_bytes_sum",
+      "transform": "log1p"
+    },
+    {
+      "family": "resource_response",
+      "name": "os_disk_written_bytes_sum",
+      "transform": "log1p"
+    }
+  ],
+  "feature_count": 19,
+  "feature_names": [
+    "coordinator_fanin_rows",
+    "coordinator_fanin_bytes_estimated",
+    "coordinator_final_rows",
+    "coordinator_non_foreign_time_share_proxy",
+    "coordinator_join_operator_count",
+    "remote_region_actual_rows_sum",
+    "remote_region_tuple_bytes_sum",
+    "remote_region_task_count_sum",
+    "remote_citus_dependent_map_task_count_sum",
+    "remote_citus_repartition_fanout_ratio_max",
+    "worker_task_actual_rows_sum",
+    "worker_task_scan_actual_rows_sum",
+    "regional_coordinator_tx_bytes_sum",
+    "analytics_rx_bytes_sum",
+    "worker_tx_bytes_sum",
+    "os_cpu_busy_pct_mean",
+    "os_mem_used_peak_bytes_max",
+    "os_disk_read_bytes_sum",
+    "os_disk_written_bytes_sum"
+  ],
+  "gate": "MIXED_MODEL_EVIDENCE",
+  "gate_reasons": [
+    "ridge_does_not_beat_median_mae:leave_scenario_level_out"
+  ],
+  "holdouts": [
+    {
+      "group_field": "stressed_template_id",
+      "name": "leave_stressed_template_out"
+    },
+    {
+      "group_field": "dataset_profile_id",
+      "name": "leave_dataset_out"
+    },
+    {
+      "group_field": "scenario_level",
+      "name": "leave_scenario_level_out"
+    },
+    {
+      "group_field": "dataset_size_class",
+      "name": "leave_size_class_out"
+    }
+  ],
+  "input_scope": "raw_stressed_post_execution_pair_median",
+  "mitigation_action": "use_colocated_distribution",
+  "model_kind": "ridge",
+  "pair_count": 75,
+  "preprocessing_embedded_in_model": true,
+  "program_id": "pressure-raw-v1",
+  "target": {
+    "field": "target_log2_gain_median",
+    "meaning": "log2(median_stressed_elapsed_seconds / median_mitigated_elapsed_seconds)",
+    "negative_values_allowed": true,
+    "scope": "global_query"
+  }
+}

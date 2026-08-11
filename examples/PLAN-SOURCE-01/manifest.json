@@ -1,0 +1,30 @@
+{
+  "artifact_id": "PLAN-SOURCE-01",
+  "artifact_role": "illustrative_single_plan_boundaries",
+  "files": {
+    "gac-plan.json": "8613d6eaace5d11b43a2007ccd4ec07185bf5dfedeb08ec719e1dda5a5c1c1a9",
+    "gac-query.sql": "8d6c0320860e6efb9c49d46d5398f3b7e1318b4f4c0dd467225404921caab657",
+    "regional-plan.json": "008e06cc469b5dc086ad91bddccb40746a3064130fd486bddd8cf089e6abd207",
+    "regional-query.sql": "cee10470a3e38164d79422b4cb1003508c7750fad172ac325d6d7b864cee15c1"
+  },
+  "packaged_on": "2026-08-09",
+  "sanitization": {
+    "private_runtime_addresses_replaced_with": "<runtime-private-ip>",
+    "plan_structure_or_measurements_changed": false
+  },
+  "scope": {
+    "plans_belong_to_same_execution": false,
+    "supports": "visual explanation of boundaries of one PostgreSQL plan",
+    "supports_numerical_experimental_claims": false
+  },
+  "sources": {
+    "accessed_on": "2026-07-26",
+    "gac_pev2_url": "https://explain.dalibo.com/plan/f3c6526g5828a9d8",
+    "regional_pev2_url": "https://explain.dalibo.com/plan/bg5860g69d46g3g5"
+  },
+  "temporal_contract": {
+    "status": "legacy_illustrative",
+    "uses_wall_clock_functions": true
+  },
+  "thesis_reference": "Figure 2"
+}

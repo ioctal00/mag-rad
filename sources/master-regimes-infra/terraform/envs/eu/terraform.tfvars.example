@@ -1,0 +1,54 @@
+# Vultr API key se preporučeno zadaje preko trajne lokalne environment
+# varijable, npr. kroz privatni fajl ~/.config/sivbp-repro/vultr.env koji se
+# učitava iz ~/.bashrc:
+#   . ~/.config/sivbp-repro/vultr.env
+# Ne upisivati API key u ovaj fajl ako će se fajl slati dalje.
+# Ako se ipak koristi lokalni privatni tfvars, Terraform varijabla je:
+#   vultr_api_key = "..."
+
+project_tag = "sivbp"
+region_code = "ams"
+
+ssh_keys = {
+  laptop = "ssh-ed25519 AAAA...replace-me..."
+}
+
+admin_ipv4_cidrs = [
+  "203.0.113.10/32"
+]
+
+web_ipv4_cidrs = [
+  "0.0.0.0/0"
+]
+
+db_access_ipv4_cidrs = []
+
+backend_count     = 0
+worker_count      = 2
+# Podrazumijevani profil za ponovno izvođenje koristi jeftiniji Vultr VPS.
+# Za finalni bare-metal profil koristiti:
+#   make infra-profile-baremetal ENV=eu
+# ili za cijelu topologiju:
+#   make boundary-infra-up INFRA_PROFILE=baremetal
+compute_resource_type = "instance"
+backend_plan      = "vc2-2c-4gb"
+global_analytics_client_enabled     = false
+global_analytics_client_region_code = "cdg"
+global_analytics_client_plan        = "vc2-2c-4gb"
+global_analytics_client_resource_type = "instance"
+global_analytics_client_attach_vpc  = false
+bare_metal_mdisk_mode = null
+coordinator_plan  = "vc2-2c-4gb"
+worker_plan       = "vc2-2c-4gb"
+os_id             = 1743
+postgres_version  = "18"
+citus_package     = "postgresql-18-citus-14.0"
+app_db_name       = "app"
+app_db_user       = "app"
+
+postgres_admin_password = "replace-with-strong-password"
+app_db_password         = "replace-with-strong-password"
+
+remote_analytics_base_url = ""
+
+tags = ["eu", "citus"]

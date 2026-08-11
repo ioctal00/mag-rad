@@ -1,0 +1,10 @@
+select count(*) as result_count
+FROM {{ schema_name }}.comments AS c, {{ schema_name }}.posts AS p, {{ schema_name }}.users AS u
+WHERE u.Id = p.OwnerUserId
+  AND c.UserId = u.Id
+  AND c.Score = 0
+  AND p.AnswerCount <= 5
+  AND p.CommentCount >= 0
+  AND p.CommentCount <= 11
+  AND p.FavoriteCount <= 27
+  AND u.Reputation >= 1

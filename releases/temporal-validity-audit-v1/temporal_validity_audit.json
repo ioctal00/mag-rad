@@ -1,0 +1,99 @@
+{
+  "audit_id": "temporal-validity-audit-v1",
+  "dataset_regenerated": false,
+  "generated_from_archived_artifacts_only": true,
+  "later_panels": {
+    "confirmatory_action_replication": {
+      "sql_file_count": 60,
+      "temporal_modes": {
+        "fixed_literal": 60
+      }
+    },
+    "dba_local_memory": {
+      "sql_file_count": 60,
+      "temporal_modes": {
+        "fixed_literal": 60
+      }
+    },
+    "feedback_loop": {
+      "sql_file_count": 85,
+      "temporal_modes": {
+        "fixed_literal": 71,
+        "no_wall_clock": 14
+      }
+    },
+    "feedback_loop_exact_aggregate": {
+      "sql_file_count": 25,
+      "temporal_modes": {
+        "no_wall_clock": 25
+      }
+    },
+    "fuzzy_memory_topk": {
+      "sql_file_count": 96,
+      "temporal_modes": {
+        "fixed_literal": 96
+      }
+    },
+    "n3_topology_memory": {
+      "sql_file_count": 180,
+      "temporal_modes": {
+        "fixed_literal": 180
+      }
+    }
+  },
+  "legacy_fcm_corpus": {
+    "conservative_maximum_cutoff_shift_fraction_by_lookback_days": {
+      "1": 0.15358724528992618,
+      "14": 0.010970517520709013,
+      "3": 0.051195748429975395,
+      "30": 0.005119574842997539,
+      "7": 0.021941035041418026
+    },
+    "current_date_queries_stayed_on_generation_utc_date": true,
+    "dataset_base_time_unix_values": [
+      "0"
+    ],
+    "dataset_sweep_count": 8,
+    "exact_temporal_rerun": "Weak. Reproduction requires reconstructing each sweep-specific wall-clock origin; rerunning the legacy SQL today is not equivalent.",
+    "execution_count": 1964,
+    "f19_hard_cluster_vs_within_sweep_time_quartile_nmi": 0.0018646318551056719,
+    "hard_cluster_vs_within_sweep_time_quartile_nmi": 0.0010976916066982618,
+    "internal_validity": "Usable for the archived descriptive FCM analysis: each sweep regenerated the dataset immediately before queries, dataset generation and SQL shared the same wall-clock origin, no UTC date rollover affected current_date, and the post-hoc audit found no material cluster/time-order association for either the historical F21 or promoted F19 hard labels.",
+    "interpretation_limit": "The timing audit is diagnostic, not proof that moving cutoffs had zero effect. Bounded cutoff movement remains part of measurement noise.",
+    "lookback_vs_within_sweep_time_quartile_nmi": 0.0018715769718659948,
+    "maximum_lag_hours": 3.6860938869582283,
+    "median_lag_hours": 1.0628677754269704,
+    "minimum_lag_hours": 0.01111617194281684,
+    "model_refit_performed": false,
+    "p95_lag_hours": 3.4041526611215533,
+    "sql_temporal_modes": {
+      "dynamic_current_date": 240,
+      "dynamic_now": 1718,
+      "no_wall_clock": 6
+    }
+  },
+  "live_sql_executed": false,
+  "model_refit_performed": false,
+  "overall_conclusion": "A query can be weakly reproducible today while its archived comparison remains internally informative. Claims are therefore limited per block: F19 and F21 are descriptive with a bounded temporal limitation; 21 empty temporal controls do not support action effects; substantive wide pairs and later panels retain their stated experimental role.",
+  "wide_intervention_program": {
+    "condition_count": 869,
+    "condition_temporal_modes": {
+      "dynamic_current_date": 42,
+      "fixed_as_of": 535,
+      "fixed_literal": 264,
+      "no_wall_clock": 28
+    },
+    "dynamic_empty_negative_control_pairs": 21,
+    "exact_temporal_rerun": "Strong for the 397 substantive pairs under the frozen dataset contract; weak for the 21 current_date controls.",
+    "execution_count": 2607,
+    "execution_temporal_modes": {
+      "dynamic_current_date": 126,
+      "fixed_as_of": 1605,
+      "fixed_literal": 792,
+      "no_wall_clock": 84
+    },
+    "internal_validity": "All 418 archived pairs remain result-equivalent. The 21 current_date pairs are valid only as empty-result no-work negative controls; the remaining 397 pairs support substantive intervention comparisons.",
+    "pair_count": 418,
+    "substantive_frozen_or_time_independent_pairs": 397
+  }
+}

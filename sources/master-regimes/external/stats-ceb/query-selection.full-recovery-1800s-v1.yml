@@ -1,0 +1,201 @@
+selection_id: stats-ceb-full-recovery-1800s-v1
+source_lock: source-lock.yml
+selection_frozen_before_recovery_execution: true
+selection_rationale: >
+  All and only the 16 incomplete queries from the primary
+  stats-ceb-full-no-refit-v1 audit are retried. Inclusion depends only on the
+  recorded primary completion stage, never on model distance, membership,
+  plan shape, or desired recovery outcome.
+selection_method:
+  algorithm: filter the frozen 146-query selection by primary incomplete status
+  source_selection_id: stats-ceb-full-no-refit-v1
+  source_query_count: 146
+  included_query_count: 16
+  primary_timeout_seconds: 300
+  recovery_timeout_seconds: 1800
+  outcome_fields_used_for_selection:
+    - primary_completion_stage
+  model_fields_used_for_selection: []
+  technical_exclusions: []
+recovery_contract:
+  parent_logical_run_id: stats-ceb-full-no-refit-v1
+  correctness_incomplete_query_ids:
+    - 30
+    - 34
+    - 45
+    - 58
+    - 89
+    - 104
+    - 105
+    - 108
+    - 114
+    - 120
+    - 122
+    - 126
+    - 132
+    - 135
+  collector_incomplete_query_ids:
+    - 68
+    - 106
+  attempts_per_query: 1
+  query_concurrency: 1
+  timeout_seconds: 1800
+  timeout_is_final_for_this_recovery: true
+  preserve_primary_result: true
+regional_semantics:
+  dataset_snapshot: replicated_identical
+  comparison_rule: Q(D_eu) = Q(D_us) = Q(D_baseline)
+  aggregation_rule: never_sum_regional_counts
+physical_design:
+  design_id: stats-ceb-post-centric-v1
+  shard_count: 32
+  reference_tables:
+    - users
+    - badges
+    - tags
+  distributed_tables:
+    posts: id
+    comments: postid
+    votes: postid
+    posthistory: postid
+    postlinks: postid
+queries:
+  - query_id: 30
+    expected_count: 232039659
+    source_sha256: 37f65c8164ee4af213aef82dbb30994bdf939d3cb5b777b8825d4a8a1e070db0
+    expected_citus_strategy: observed_not_preregistered
+    tables: [badges, posts, users, votes]
+    table_count_stratum: 4
+    selection_hash: 14c2e6f5f39b0c271a5f70aa685d259d4bdab4307041473322ad20e947479ccb
+    reason: Incomplete in the primary 300-second correctness phase.
+  - query_id: 34
+    expected_count: 593169291
+    source_sha256: 11be4009ad1e784ba52462c46a0b3805d74726562aeaf458216d72244e44544b
+    expected_citus_strategy: observed_not_preregistered
+    tables: [badges, comments, users, votes]
+    table_count_stratum: 4
+    selection_hash: a7f793239f6a3c54f65c0ebfccb4853a3ce06d479658716c2034ef70b31d1762
+    reason: Incomplete in the primary 300-second correctness phase.
+  - query_id: 45
+    expected_count: 6272
+    source_sha256: 7b1ce25f68cbeab3804d3a42323d0f0edc9d9286d7368e375027ccc2d44c79d8
+    expected_citus_strategy: observed_not_preregistered
+    tables: [badges, posthistory, users, votes]
+    table_count_stratum: 4
+    selection_hash: 6a80411deb2179f4b92e51936ab060133f8d770b71194191253cb4ddd2550650
+    reason: Incomplete in the primary 300-second correctness phase.
+  - query_id: 58
+    expected_count: 17849233970
+    source_sha256: 12ff10446758bc5a25de80fd045cd38ae40cce97caed6938424a03460af3d559
+    expected_citus_strategy: observed_not_preregistered
+    tables: [badges, posthistory, postlinks, posts, users, votes]
+    table_count_stratum: 6
+    selection_hash: 930f833b3f7199a3cb3c0ed3d9df8f898469a05ca33e01bb91b09e80a69a4c68
+    reason: Incomplete in the primary 300-second correctness phase.
+  - query_id: 68
+    expected_count: 1112747282
+    source_sha256: 72aa665092a5fba1e1bdcbbdc5de3889e409503de8fad0b16022b923c433e973
+    expected_citus_strategy: observed_not_preregistered
+    tables: [badges, comments, posthistory, postlinks, posts, votes]
+    table_count_stratum: 6
+    selection_hash: f9f5dce7f8dbe2198841870107004e70334158dc615313cb6861548bdcd668bb
+    reason: >
+      Correctness passed in the primary audit, but instrumented EXPLAIN ANALYZE
+      exceeded 300 seconds.
+  - query_id: 89
+    expected_count: 1356723
+    source_sha256: 4e878cd6287730a4f30f256d73dcc18c8f391f3fe2df37407c1ed3bc7f6e27d1
+    expected_citus_strategy: observed_not_preregistered
+    tables: [posthistory, posts, users]
+    table_count_stratum: 3
+    selection_hash: f0853cbd595c17b183ccc2462291ea8a14ff9ee2a8642d520029a42bab887013
+    reason: Incomplete in the primary 300-second correctness phase.
+  - query_id: 104
+    expected_count: 11075893
+    source_sha256: 45e608be18ddec99d398527d04539237590b34aa79d27c07287b4514b62bdc91
+    expected_citus_strategy: observed_not_preregistered
+    tables: [comments, posthistory, users, votes]
+    table_count_stratum: 4
+    selection_hash: f3c2f49a4d18769a77a0f88ce920a94c38e20152e73cb8bfe29f45b96de8f233
+    reason: Incomplete in the primary 300-second correctness phase.
+  - query_id: 105
+    expected_count: 183537163
+    source_sha256: accac7201a8f3365e909a8dd30c450928ca8b095cdda2dee12cdccdbdaf48f50
+    expected_citus_strategy: observed_not_preregistered
+    tables: [comments, posthistory, users, votes]
+    table_count_stratum: 4
+    selection_hash: 722a168a64c360bd42e8b335b7bfd938fefb9eef6c551c39a13203151cbe6302
+    reason: Incomplete in the primary 300-second correctness phase.
+  - query_id: 106
+    expected_count: 569476
+    source_sha256: 0c74e38d22b3dccfb211bd0aa58d8fbbbab06692874b48af083bb1f6b4ab0e2e
+    expected_citus_strategy: observed_not_preregistered
+    tables: [comments, posthistory, users, votes]
+    table_count_stratum: 4
+    selection_hash: 72a6316de87ff5f6040cf4a140d7bd440e2bb017fa9d8812a0e89cd17d86de6b
+    reason: >
+      Correctness passed in the primary audit, but instrumented EXPLAIN ANALYZE
+      exceeded 300 seconds.
+  - query_id: 108
+    expected_count: 593169291
+    source_sha256: b6516c6c2fb854a672d0e0c2fd6f01441938b1be5c9e6e55eb05b26bf0c31641
+    expected_citus_strategy: observed_not_preregistered
+    tables: [badges, comments, users, votes]
+    table_count_stratum: 4
+    selection_hash: e06413cbeb5d20fe8578196d023557d6ab26e27127e0a817d00ed3c5edb30f22
+    reason: Incomplete in the primary 300-second correctness phase.
+  - query_id: 114
+    expected_count: 19424781
+    source_sha256: 61b6ca2c95489a44e7fe96bbcd25c3b0435e8b584c8278eaddf2d3f39c37fa03
+    expected_citus_strategy: observed_not_preregistered
+    tables: [badges, comments, posthistory, users]
+    table_count_stratum: 4
+    selection_hash: 9afa3f9ac93a9f92ef010dde77b8f7ddea7f4f3f7ffd86315c15698660a83730
+    reason: Incomplete in the primary 300-second correctness phase.
+  - query_id: 120
+    expected_count: 11637523617
+    source_sha256: 2be87e4520683874edf0856980804dab5b750d3ccc506ef2618bc7b7ad960c83
+    expected_citus_strategy: observed_not_preregistered
+    tables: [badges, posthistory, posts, users]
+    table_count_stratum: 4
+    selection_hash: eab4d8fde47ed7b0f88c316b5a9d0daf04f3659a769e7938fcaa45040e609e3c
+    reason: Incomplete in the primary 300-second correctness phase.
+  - query_id: 122
+    expected_count: 11206879551
+    source_sha256: e4c2629faf97fe048845d3955bb13deac60656edfa6aa7e74b7877d4857fa7bb
+    expected_citus_strategy: observed_not_preregistered
+    tables: [badges, posthistory, posts, users]
+    table_count_stratum: 4
+    selection_hash: fe08eaa87b22ec3f4c01d08bf9bae74cfc55bfefd1525415b21b8cd4ea2cad86
+    reason: Incomplete in the primary 300-second correctness phase.
+  - query_id: 126
+    expected_count: 3136348028
+    source_sha256: 7f13dce941ae95eb92b0f83dd0942eb8431d50fd63a5264a2ba3f2245f1b0249
+    expected_citus_strategy: observed_not_preregistered
+    tables: [badges, posthistory, users, votes]
+    table_count_stratum: 4
+    selection_hash: d8d8731d17ed7a228b1d6d662d7b391f9da5ce1934a12fb71da9aa3975f5443f
+    reason: Incomplete in the primary 300-second correctness phase.
+  - query_id: 132
+    expected_count: 96484
+    source_sha256: d0cd08bd1ea2036813d92e6e8cddb022a0e01cb1076fa20ba9e69bd0c57c0c5a
+    expected_citus_strategy: observed_not_preregistered
+    tables: [comments, posthistory, posts, users, votes]
+    table_count_stratum: 5
+    selection_hash: 8c2b882a7d4a8f16eca3fcdf14cfeb71b66b54615c504ce96171fb11b4a7adca
+    reason: Incomplete in the primary 300-second correctness phase.
+  - query_id: 135
+    expected_count: 2263957167
+    source_sha256: 481d936cf6beee67d8b510a075169ca6790a12bd55707ecb6f8774a577bf0aa4
+    expected_citus_strategy: observed_not_preregistered
+    tables: [badges, comments, posthistory, posts, users]
+    table_count_stratum: 5
+    selection_hash: 861ec0f1c74f2d48637de1787cde9a94cb86a54019c4c6d56a561967021098aa
+    reason: Incomplete in the primary 300-second correctness phase.
+model_contract:
+  model_id: semantic-v2-transfer-oriented-fcm
+  refit_allowed: false
+  feature_schema_change_allowed: false
+  projection_role: external_full_workload_extended_budget_recovery
+  ood_rule: nearest_center_distance_above_frozen_baseline_p99
+  post_observation_contract_changes_allowed: false

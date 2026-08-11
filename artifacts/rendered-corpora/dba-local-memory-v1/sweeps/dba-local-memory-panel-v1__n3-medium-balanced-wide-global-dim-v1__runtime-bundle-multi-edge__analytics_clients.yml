@@ -1,0 +1,275 @@
+sweep_id: dba-local-memory-panel-v1__n3-medium-balanced-wide-global-dim-v1__runtime-bundle-multi-edge__analytics_clients
+region: eu
+datasets:
+- id: n3-medium-balanced-wide-global-dim-v1
+  profile: master-regimes/datasets/profiles/n3-medium-balanced-wide-global-dim.yml
+  load_method: copy_pipe
+  adapter: citus_datagen
+  regions: &id001
+  - eu
+  - us
+  - apac
+runtime_configs:
+- id: dba_topk_balanced_gac_mitigated
+  pg_options:
+    work_mem: 256MB
+  regional_pg_options:
+    work_mem: 64kB
+  psql_variables:
+    FETCH_COUNT: '1000'
+  fdw_server_options:
+    fetch_size: '1000'
+  network_profile:
+    id: dba_topk_balanced_gac_mitigated
+    enabled: true
+    scope: region_egress_to_analytics
+    target_region_ids:
+    - eu
+    - us
+    - apac
+    configured_delay_ms: 15
+    configured_jitter_ms: 0
+    configured_loss_percent: 0
+    configured_bandwidth_mbit: 50
+  intervention_axis: combined_pressure
+  expected_effect: One-at-a-time GAC memory mitigation.
+- id: dba_topk_balanced_remote_mitigated
+  pg_options:
+    work_mem: 256kB
+  regional_pg_options:
+    work_mem: 64kB
+  psql_variables:
+    FETCH_COUNT: '10000'
+  fdw_server_options:
+    fetch_size: '10000'
+  network_profile:
+    id: dba_topk_balanced_remote_mitigated
+    enabled: true
+    scope: region_egress_to_analytics
+    target_region_ids:
+    - eu
+    - us
+    - apac
+    configured_delay_ms: 0
+    configured_jitter_ms: 0
+    configured_loss_percent: 0
+    configured_bandwidth_mbit: 0
+  intervention_axis: combined_pressure
+  expected_effect: One-at-a-time remote transport mitigation.
+- id: dba_topk_balanced_stressed
+  pg_options:
+    work_mem: 256kB
+  regional_pg_options:
+    work_mem: 64kB
+  psql_variables:
+    FETCH_COUNT: '1000'
+  fdw_server_options:
+    fetch_size: '1000'
+  network_profile:
+    id: dba_topk_balanced_stressed
+    enabled: true
+    scope: region_egress_to_analytics
+    target_region_ids:
+    - eu
+    - us
+    - apac
+    configured_delay_ms: 15
+    configured_jitter_ms: 0
+    configured_loss_percent: 0
+    configured_bandwidth_mbit: 50
+  intervention_axis: combined_pressure
+  expected_effect: Shared mixed state for the DBA episode panel.
+- id: dba_topk_memory_gac_mitigated
+  pg_options:
+    work_mem: 256MB
+  regional_pg_options:
+    work_mem: 64kB
+  psql_variables:
+    FETCH_COUNT: '2000'
+  fdw_server_options:
+    fetch_size: '2000'
+  network_profile:
+    id: dba_topk_memory_gac_mitigated
+    enabled: true
+    scope: region_egress_to_analytics
+    target_region_ids:
+    - eu
+    - us
+    - apac
+    configured_delay_ms: 5
+    configured_jitter_ms: 0
+    configured_loss_percent: 0
+    configured_bandwidth_mbit: 100
+  intervention_axis: combined_pressure
+  expected_effect: One-at-a-time GAC memory mitigation.
+- id: dba_topk_memory_remote_mitigated
+  pg_options:
+    work_mem: 64kB
+  regional_pg_options:
+    work_mem: 64kB
+  psql_variables:
+    FETCH_COUNT: '10000'
+  fdw_server_options:
+    fetch_size: '10000'
+  network_profile:
+    id: dba_topk_memory_remote_mitigated
+    enabled: true
+    scope: region_egress_to_analytics
+    target_region_ids:
+    - eu
+    - us
+    - apac
+    configured_delay_ms: 0
+    configured_jitter_ms: 0
+    configured_loss_percent: 0
+    configured_bandwidth_mbit: 0
+  intervention_axis: combined_pressure
+  expected_effect: One-at-a-time remote transport mitigation.
+- id: dba_topk_memory_stressed
+  pg_options:
+    work_mem: 64kB
+  regional_pg_options:
+    work_mem: 64kB
+  psql_variables:
+    FETCH_COUNT: '2000'
+  fdw_server_options:
+    fetch_size: '2000'
+  network_profile:
+    id: dba_topk_memory_stressed
+    enabled: true
+    scope: region_egress_to_analytics
+    target_region_ids:
+    - eu
+    - us
+    - apac
+    configured_delay_ms: 5
+    configured_jitter_ms: 0
+    configured_loss_percent: 0
+    configured_bandwidth_mbit: 100
+  intervention_axis: combined_pressure
+  expected_effect: Shared memory-stressed state for the DBA episode panel.
+- id: dba_topk_transport_gac_mitigated
+  pg_options:
+    work_mem: 256MB
+  regional_pg_options:
+    work_mem: 64kB
+  psql_variables:
+    FETCH_COUNT: '500'
+  fdw_server_options:
+    fetch_size: '500'
+  network_profile:
+    id: dba_topk_transport_gac_mitigated
+    enabled: true
+    scope: region_egress_to_analytics
+    target_region_ids:
+    - eu
+    - us
+    - apac
+    configured_delay_ms: 30
+    configured_jitter_ms: 0
+    configured_loss_percent: 0
+    configured_bandwidth_mbit: 20
+  intervention_axis: combined_pressure
+  expected_effect: One-at-a-time GAC memory mitigation.
+- id: dba_topk_transport_remote_mitigated
+  pg_options:
+    work_mem: 64kB
+  regional_pg_options:
+    work_mem: 64kB
+  psql_variables:
+    FETCH_COUNT: '10000'
+  fdw_server_options:
+    fetch_size: '10000'
+  network_profile:
+    id: dba_topk_transport_remote_mitigated
+    enabled: true
+    scope: region_egress_to_analytics
+    target_region_ids:
+    - eu
+    - us
+    - apac
+    configured_delay_ms: 0
+    configured_jitter_ms: 0
+    configured_loss_percent: 0
+    configured_bandwidth_mbit: 0
+  intervention_axis: combined_pressure
+  expected_effect: One-at-a-time remote transport mitigation.
+- id: dba_topk_transport_stressed
+  pg_options:
+    work_mem: 64kB
+  regional_pg_options:
+    work_mem: 64kB
+  psql_variables:
+    FETCH_COUNT: '500'
+  fdw_server_options:
+    fetch_size: '500'
+  network_profile:
+    id: dba_topk_transport_stressed
+    enabled: true
+    scope: region_egress_to_analytics
+    target_region_ids:
+    - eu
+    - us
+    - apac
+    configured_delay_ms: 30
+    configured_jitter_ms: 0
+    configured_loss_percent: 0
+    configured_bandwidth_mbit: 20
+  intervention_axis: combined_pressure
+  expected_effect: Shared transport-stressed state for the DBA episode panel.
+workload:
+  instance_manifest: master-regimes/generated/corpus/dba-local-memory-v1/groups/dba-local-memory-panel-v1__n3-medium-balanced-wide-global-dim-v1__runtime-bundle-multi-edge__analytics_clients/instance_manifest.csv
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260805
+  filter_instances_by_runtime_config: true
+collection:
+  global_stats_scope: none
+  target_group: analytics_clients
+  citus_explain_all_tasks: true
+  hard_timeout_seconds: 1800
+  timeout_grace_seconds: 30
+  cache_policy: mixed_cache_dba_local_memory
+  record_run_order: true
+  record_buffer_features: true
+  os_sampler: true
+  os_sampler_node_groups: &id002
+  - eu
+  - us
+  - apac
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: true
+  remote_edge_context: true
+  fdw_auto_explain: true
+  fdw_auto_explain_regions: &id003
+  - eu
+  - us
+  - apac
+  fdw_bootstrap:
+    enabled: true
+    regions: *id001
+    adapter: citus_datagen
+execution_policy:
+  cache_policy: mixed_cache_dba_local_memory
+  measurement_lane: global_gac_serial
+  query_concurrency: 1
+  representative_region: ''
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  repetitions_default: 1
+  sentinel_repetitions: 1
+  cache_features_in_default_model: false
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260805
+  record_run_order: true
+  record_buffer_features: true
+  os_sampler: true
+  os_sampler_node_groups: *id002
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: true
+  remote_edge_context: true
+  remote_edge_context_requested: true
+  fdw_auto_explain: true
+  fdw_auto_explain_regions: *id003
+  fdw_auto_explain_requested: true

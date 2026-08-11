@@ -1,0 +1,2 @@
+fold_count,row_count,weighted_hard_label_ari,minimum_hard_label_ari,weighted_mean_membership_l1,maximum_center_shift
+11,1964,0.9142651769895149,0.6417113632391321,0.1188453125225417,0.4588492618867033

@@ -1,0 +1,92 @@
+dataset_id: pilot-region-local-skew-asymmetric-medium-v1
+generator: citus-datagen
+seed: 42
+base_time_unix: 1782864000
+budget_class: pilot_companion
+
+scale:
+  tenants_total: 1600
+  events_per_tenant_avg: 250
+  users_per_tenant_avg: 100
+  lookback_days: 30
+
+regions:
+  eu:
+    tenant_id_range: [1, 800]
+    distribution:
+      skew_profile: heavy
+      hot_tenant_pct: 5
+      hot_event_pct: 65
+  us:
+    tenant_id_range: [10001, 10800]
+    distribution:
+      skew_profile: balanced
+
+distribution:
+  distribution_key: tenant_id
+  shard_count: 32
+  skew_profile: balanced
+
+capabilities:
+  supports_reference_join: true
+  supports_colocated_user_join: true
+  supports_global_users: true
+  supports_global_user_dimension: true
+  supports_non_colocated_join: true
+  supports_cross_region_user_overlap: false
+  supports_high_group_cardinality: true
+  supports_hot_tenants: true
+  supports_hot_time_windows: false
+  supports_hot_tenant_skew: true
+  supports_region_imbalance: false
+  supports_region_local_skew_asymmetry: true
+  supports_shard_skew: false
+  supports_wide_payload: false
+  supports_large_scan: true
+  supports_distribution_key_filter: true
+  supports_region_partitioning: true
+  supports_etl_rollups: true
+  supports_tenant_tiers: true
+  supports_selective_filters: true
+  supports_materialized_refresh: true
+
+expected_audit_signals:
+  table_counts_min:
+    tenants: 700
+    events: 140000
+    users: 70000
+    global_users: 70000
+  tenant_skew:
+    events_cv_min: 1.2
+    max_to_mean_ratio_min: 5.0
+    top1_event_share_min: 0.01
+    top5_event_share_min: 0.07
+    hot_tenant_count_min: 35
+    hot_event_share_min: 0.60
+    hot_tenant_ids_available: true
+  parameter_sources:
+    hot_tenant_ids:
+      source: hot_tenant_manifest.csv
+      column: tenant_id
+      order_by: tenant_rank
+    tenant_ids:
+      source: tenant_distribution.csv
+      column: tenant_id
+      order_by: tenant_id
+
+expected_audit_signals_by_region:
+  eu:
+    tenant_skew:
+      events_cv_min: 1.2
+      max_to_mean_ratio_min: 5.0
+      top1_event_share_min: 0.01
+      top5_event_share_min: 0.07
+      hot_tenant_count_min: 35
+      hot_event_share_min: 0.60
+      hot_tenant_ids_available: true
+  us:
+    tenant_skew:
+      events_cv_max: 0.40
+      max_to_mean_ratio_max: 2.0
+      top1_event_share_max: 0.04
+      hot_tenant_ids_available: false

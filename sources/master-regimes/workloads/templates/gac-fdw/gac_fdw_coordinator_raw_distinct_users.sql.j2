@@ -1,0 +1,14 @@
+with events_all as materialized (
+  select e.user_id
+  from fdw_eu.events e
+  where e.created_at >= timestamptz '{{ cutoff_ts }}'
+    and e.user_id <= {{ user_id_max }}::bigint
+  union all
+  select e.user_id
+  from fdw_us.events e
+  where e.created_at >= timestamptz '{{ cutoff_ts }}'
+    and e.user_id <= {{ user_id_max }}::bigint
+)
+select distinct user_id
+from events_all
+order by user_id;

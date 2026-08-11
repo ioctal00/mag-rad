@@ -1,0 +1,4 @@
+check_id,left_column,right_column,right_multiplier,applicable_rows,max_abs_difference,status
+wan_output_to_final_equals_global_group_merge,wan_output_to_final_rows_ratio,global_group_merge_ratio,1.0,1684,0.0,PASS
+spill_per_wan_mb_is_128x_spill_bytes_ratio,spill_per_wan_mb,spill_bytes_to_wan_bytes_ratio,128.0,1684,9.094947017729282e-13,PASS
+drf_bytes_equals_regional_input_to_wan_rows,drf_bytes_proxy,regional_input_to_wan_rows_ratio,1.0,1684,1.1368683772161603e-13,PASS

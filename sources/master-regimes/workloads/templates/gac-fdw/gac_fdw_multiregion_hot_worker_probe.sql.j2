@@ -1,0 +1,36 @@
+with regional_hot_workers as (
+  select
+    'eu'::text as source_region,
+    e.tenant_id,
+    count(*) as events_count,
+    sum(
+      {% for term in range(cpu_terms) -%}
+      ((e.user_id % {{ 97 + term }})::bigint)
+      {%- if not loop.last %} + {% endif -%}
+      {% endfor %}
+    ) as worker_checksum
+  from fdw_eu.events e
+  where e.tenant_id between {{ eu_hot_tenant_min }} and {{ eu_hot_tenant_max }}
+  group by e.tenant_id
+  union all
+  select
+    'us'::text as source_region,
+    e.tenant_id,
+    count(*) as events_count,
+    sum(
+      {% for term in range(cpu_terms) -%}
+      ((e.user_id % {{ 97 + term }})::bigint)
+      {%- if not loop.last %} + {% endif -%}
+      {% endfor %}
+    ) as worker_checksum
+  from fdw_us.events e
+  where e.tenant_id between {{ us_hot_tenant_min }} and {{ us_hot_tenant_max }}
+  group by e.tenant_id
+)
+select
+  source_region,
+  sum(events_count) as events_count,
+  sum(worker_checksum) as worker_checksum
+from regional_hot_workers
+group by source_region
+order by source_region;

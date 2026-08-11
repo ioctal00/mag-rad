@@ -1,0 +1,70 @@
+---
+- name: Baseline host preparation
+  hosts: all
+  become: true
+  vars_files:
+    - ../group_vars/all.yml
+  roles:
+    - common
+    - ssh_access
+    - ebpf_tools
+
+- name: Configure PostgreSQL and Citus nodes
+  hosts: db_nodes
+  become: true
+  vars_files:
+    - ../group_vars/all.yml
+  roles:
+    - role: postgresql_citus
+      tags:
+        - postgresql_citus
+    - role: psql_benchmarks
+      tags:
+        - psql_benchmarks
+
+- name: Configure PgBouncer on coordinators
+  hosts: coordinators
+  become: true
+  vars_files:
+    - ../group_vars/all.yml
+  roles:
+    - pgbouncer
+    - role: citus_datagen
+      tags:
+        - citus_datagen
+
+- name: Configure global analytics nodes
+  hosts: analytics_clients
+  become: true
+  vars_files:
+    - ../group_vars/all.yml
+  roles:
+    - role: analytics_node
+      tags:
+        - analytics_node
+        - analytics_client
+    - role: psql_benchmarks
+      tags:
+        - psql_benchmarks
+        - analytics_client
+
+- name: Configure read-only demo database user
+  hosts: db_nodes:analytics_clients
+  become: true
+  vars_files:
+    - ../group_vars/all.yml
+  roles:
+    - role: db_readonly_user
+      tags:
+        - db_readonly_user
+        - cloudb_web
+
+- name: Deploy cloudb-web portal
+  hosts: web_portals
+  become: true
+  vars_files:
+    - ../group_vars/all.yml
+  roles:
+    - role: cloudb_web
+      tags:
+        - cloudb_web

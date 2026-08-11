@@ -1,0 +1,10 @@
+with all_events as (
+  select * from fdw_eu.events
+  union all
+  select * from fdw_us.events
+)
+select count(*) as events_count,
+       avg(value) as avg_value,
+       min(value) as min_value,
+       max(value) as max_value
+from all_events;

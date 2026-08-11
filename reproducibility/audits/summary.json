@@ -1,0 +1,311 @@
+{
+  "audit_mode": "offline_read_only",
+  "collection_contract": {
+    "correlation_requires_controlled_serial_execution": true,
+    "logical_archive_count": 9,
+    "logical_query_count": 3185,
+    "os_metrics_are_host_context": true,
+    "raw_archive_count": 9,
+    "raw_attempt_count": 3145,
+    "release_hash_scope": "all",
+    "release_hashes_verified": 6474,
+    "result_signature_is_follow_up_execution": true
+  },
+  "configuration_contract": {
+    "ansible_structural_checks": {
+      "pass": 3,
+      "warn": 7
+    },
+    "exact_binary_runtime_reconstruction": false,
+    "snapshot_mismatches": 0
+  },
+  "dataset_coverage": {
+    "catalog_profiles": 29,
+    "final_action_panels_cover_worker_skew": false,
+    "one_region_hot_tenant_executions": 60,
+    "one_region_worker_skew_executed": true,
+    "one_region_worker_skew_profile": "pilot-region-local-skew-asymmetric-medium-v1",
+    "profile_hashes_verified": 29,
+    "wide_condition_count": 869,
+    "wide_dataset_count": 13,
+    "wide_empty_time_controls": 21,
+    "wide_execution_count": 2607,
+    "wide_pair_count": 418,
+    "wide_substantive_pairs": 397,
+    "worker_skew_executions": 420
+  },
+  "documented_limit_ids": [
+    "L1_path_rewrite",
+    "L2_no_database_snapshot",
+    "L3_partial_raw_indexes",
+    "L4_historical_source_state",
+    "L5_clean_temporal",
+    "L6_pressure_dynamic_controls",
+    "L7_feedback_dataset_profile",
+    "L8_live_environment",
+    "L9_timing_equivalence"
+  ],
+  "executions": {
+    "ansible": {
+      "command": "python3 reproducibility/audits/ansible/audit.py --source sources/master-regimes-infra --package sources/master-regimes-infra --output reproducibility/audits/ansible/findings.json --strict",
+      "return_code": 0
+    },
+    "collector": {
+      "command": "python3 reproducibility/audits/collector/audit.py --full-hash",
+      "return_code": 0
+    },
+    "datasets": {
+      "command": "python3 reproducibility/audits/datasets/audit.py",
+      "return_code": 0
+    },
+    "sweeps": {
+      "command": "python3 reproducibility/audits/sweeps/audit.py",
+      "return_code": 0
+    },
+    "terraform": {
+      "command": "python3 reproducibility/audits/terraform/audit.py --root . --json reproducibility/audits/terraform/findings.json",
+      "return_code": 0
+    }
+  },
+  "live_actions_performed": false,
+  "schema_version": 1,
+  "status": "PASS_WITH_DOCUMENTED_LIMITATIONS",
+  "structural_failures": [],
+  "sweep_contract": {
+    "catalog_sql_rows": 3819,
+    "check_count": 75,
+    "confirmatory": {
+      "collection_validation_counts": {
+        "edges": 900,
+        "executions": 300,
+        "hardware_snapshots": 2,
+        "node_artifacts": 3000,
+        "regions": 900,
+        "signatures": 60,
+        "worker_task_fragments": 57600
+      },
+      "conditions": 60,
+      "order": "locked explicit Williams schedule",
+      "physical_executions": 300,
+      "position_count_range": [
+        18,
+        19
+      ],
+      "query_shapes": 15,
+      "rendered_sql_files": 60,
+      "repetitions_per_condition": 5
+    },
+    "dba": {
+      "conditions": 60,
+      "decision_points": 45,
+      "order": "deterministic_interleaved_shuffle(seed=20260805) within four dataset groups",
+      "physical_executions": 180,
+      "query_shapes": 15,
+      "rendered_sql_files": 60,
+      "sql_reuse": "one rendered SQL file per condition is referenced by every temporal repetition; runtime/network treatments are applied outside SQL"
+    },
+    "feedback": {
+      "aggregate_exact_executions": 25,
+      "canonical_instrumented_executions": 60,
+      "canonical_sql_state_files": 9,
+      "correctness_only_executions": 5,
+      "decision_logs": {
+        "aggregate_exact": 3,
+        "main": 5
+      },
+      "main_frozen_replay": {
+        "canonical": 20,
+        "superseded": 20
+      },
+      "main_manifest_rows": 85,
+      "superseded_replay_executions": 20,
+      "temporal_contract": {
+        "sql_file_count": 85,
+        "temporal_modes": {
+          "fixed_literal": 71,
+          "no_wall_clock": 14
+        }
+      }
+    },
+    "n3": {
+      "action_count": 3,
+      "block_counts": {
+        "n2_control": 60,
+        "phase_a_actions": 45,
+        "phase_a_baseline": 15,
+        "phase_b_actions": 45,
+        "phase_b_baseline": 15
+      },
+      "interpretation": "each 60-execution round is 15 scenarios x baseline/three actions, not repeated measurements",
+      "physical_executions": 180,
+      "repetitions_per_condition": 1,
+      "scenario_count": 15,
+      "shuffle_seeds": {
+        "n2_control": [
+          "202608061"
+        ],
+        "phase_a_actions": [
+          "202608063"
+        ],
+        "phase_a_baseline": [
+          "202608062"
+        ],
+        "phase_b_actions": [
+          "202608065"
+        ],
+        "phase_b_baseline": [
+          "202608064"
+        ]
+      }
+    },
+    "pressure": {
+      "attempt_candidates": 3027,
+      "attempt_policy": "latest_successful_program_attempt",
+      "axis_counts": {
+        "gac_finalization": 594,
+        "regional_finalization": 477,
+        "remote_path": 522,
+        "repartition_join": 594,
+        "worker_data_skew": 420
+      },
+      "backend_counts": {
+        "placement_aware_worker": 420,
+        "standard_corpus": 2187
+      },
+      "conditions": 869,
+      "counterfactual_pairs": 418,
+      "dataset_profile_count": 13,
+      "order": "deterministic interleaving for standard lanes; explicit 30-slot placement-state lanes for skew interventions",
+      "physical_executions": 2607,
+      "rendered_sql_files": 799,
+      "temporal_contract": "397 frozen/time-independent substantive pairs; 21 current_date empty-result negative controls"
+    }
+  },
+  "topology": {
+    "current_n2": {
+      "active_profile": "vps",
+      "gac_nodes": 1,
+      "logical_regions": [
+        "eu",
+        "us"
+      ],
+      "physical_provider_regions": [
+        "ams"
+      ],
+      "plan": "vhf-1c-2gb",
+      "regional_nodes": 6,
+      "system_id": "eu-us-gac-vps",
+      "total_nodes": 7
+    },
+    "current_n3": {
+      "active_profile": "vps",
+      "gac_nodes": 1,
+      "logical_regions": [
+        "apac",
+        "eu",
+        "us"
+      ],
+      "physical_provider_regions": [
+        "ams"
+      ],
+      "plan": "vhf-1c-2gb",
+      "regional_nodes": 9,
+      "system_id": "eu-us-apac-gac-vps",
+      "total_nodes": 10
+    },
+    "historical": {
+      "available": true,
+      "runs": {
+        "clean-run-v1": {
+          "logical_regions": [
+            "eu",
+            "gac",
+            "us"
+          ],
+          "nodes": 7,
+          "physical_regions": [
+            "ams",
+            "cdg",
+            "ewr"
+          ],
+          "source_commits": [
+            "eb15b8e97112c0eadc31b80005e96c784f914d66"
+          ]
+        },
+        "clean-run-v1-region-asymmetry": {
+          "logical_regions": [
+            "eu",
+            "gac",
+            "us"
+          ],
+          "nodes": 7,
+          "physical_regions": [
+            "ams"
+          ],
+          "source_commits": [
+            "36276016a062e98c70750072942074592242d1a3"
+          ]
+        },
+        "clean-run-v1-region-asymmetry-skew-rerun": {
+          "logical_regions": [
+            "eu",
+            "gac",
+            "us"
+          ],
+          "nodes": 7,
+          "physical_regions": [
+            "ams"
+          ],
+          "source_commits": [
+            "36276016a062e98c70750072942074592242d1a3"
+          ]
+        },
+        "clean-run-v1-validation-holdout": {
+          "logical_regions": [
+            "eu",
+            "gac",
+            "us"
+          ],
+          "nodes": 7,
+          "physical_regions": [
+            "ams"
+          ],
+          "source_commits": [
+            "36276016a062e98c70750072942074592242d1a3"
+          ]
+        },
+        "clean-run-v1-wan-latency": {
+          "logical_regions": [
+            "eu",
+            "gac",
+            "us"
+          ],
+          "nodes": 7,
+          "physical_regions": [
+            "ams",
+            "cdg",
+            "ewr"
+          ],
+          "source_commits": [
+            "eb15b8e97112c0eadc31b80005e96c784f914d66"
+          ]
+        },
+        "repeatability-v1": {
+          "logical_regions": [
+            "eu",
+            "gac",
+            "us"
+          ],
+          "nodes": 7,
+          "physical_regions": [
+            "ams"
+          ],
+          "source_commits": [
+            "8794985db540aac4e80f2bc91b99ed49e37ff340"
+          ]
+        }
+      }
+    },
+    "logical_regions_are_physical_cloud_regions": false
+  }
+}

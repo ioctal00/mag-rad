@@ -1,0 +1,173 @@
+---
+- name: Configure analytics node
+  when: analytics_node_enabled | bool
+  block:
+    - name: Derive analytics node region from inventory groups
+      ansible.builtin.set_fact:
+        analytics_node_region_effective: >-
+          {{
+            analytics_node_region
+            if analytics_node_region | length > 0
+            else (hostvars[inventory_hostname].logical_region | default('global'))
+          }}
+
+    - name: Ensure analytics node directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      loop:
+        - "{{ analytics_node_repo_dir | dirname }}"
+        - "{{ analytics_node_log_dir }}"
+        - "{{ analytics_node_run_root }}"
+        - "{{ analytics_node_tls_dir }}"
+
+    - name: Install analytics node packages
+      ansible.builtin.apt:
+        name: "{{ analytics_node_extra_packages }}"
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Derive private CIDRs allowed to reach temporary iperf listeners
+      ansible.builtin.set_fact:
+        analytics_node_iperf_allowed_cidrs_effective: >-
+          {{
+            (
+              analytics_node_iperf_allowed_cidrs
+              + (
+                  [hostvars[inventory_hostname].vpc_cidr]
+                  if hostvars[inventory_hostname].vpc_cidr is defined
+                  and hostvars[inventory_hostname].vpc_cidr
+                  else []
+                )
+            )
+            | unique
+          }}
+      when: analytics_node_iperf_measurement_enabled | bool
+
+    - name: Check analytics node firewall status
+      ansible.builtin.command: ufw status
+      register: analytics_node_ufw_status
+      changed_when: false
+      when: analytics_node_iperf_measurement_enabled | bool
+
+    - name: Allow temporary iperf listeners only from private experiment CIDRs
+      ansible.builtin.command:
+        cmd: >-
+          ufw allow proto tcp from {{ item }}
+          to any port {{ analytics_node_iperf_port_range }}
+      loop: "{{ analytics_node_iperf_allowed_cidrs_effective }}"
+      register: analytics_node_iperf_ufw_allow
+      changed_when: "'Rule added' in analytics_node_iperf_ufw_allow.stdout"
+      when:
+        - analytics_node_iperf_measurement_enabled | bool
+        - "'Status: active' in analytics_node_ufw_status.stdout"
+
+    - name: Deploy analytics client CA certificate
+      ansible.builtin.copy:
+        src: "{{ analytics_node_tls_ca_src }}"
+        dest: "{{ analytics_node_tls_dir }}/{{ analytics_node_tls_ca_filename }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Configure local analytics PostgreSQL
+      ansible.builtin.import_tasks: postgresql.yml
+      when: analytics_node_postgresql_enabled | bool
+
+    - name: Install uv via official installer
+      ansible.builtin.shell: "curl -LsSf {{ analytics_node_uv_installer_url }} | sh"
+      args:
+        creates: "{{ analytics_node_uv_install_dir }}/uv"
+
+    - name: Symlink uv into /usr/local/bin
+      ansible.builtin.file:
+        src: "{{ analytics_node_uv_install_dir }}/uv"
+        dest: /usr/local/bin/uv
+        state: link
+
+    - name: Check for locally synced analytics-client source
+      ansible.builtin.stat:
+        path: "{{ analytics_node_repo_dir }}/pyproject.toml"
+      register: analytics_node_local_source
+
+    - name: Clone or update analytics client repository
+      when: analytics_node_git_clone_suffix | length > 0
+      no_log: true
+      block:
+        - name: Write temporary Git netrc for analytics node clone
+          ansible.builtin.copy:
+            dest: /root/.netrc
+            owner: root
+            group: root
+            mode: "0600"
+            content: |
+              machine {{ analytics_node_git_clone_suffix | regex_replace('^https://([^/]+)/.*$', '\1') }}
+              login {{ master_regimes_git_username | default('x-access-token', true) }}
+              password {{ master_regimes_git_pat }}
+          when:
+            - analytics_node_git_clone_suffix is match('^https://')
+            - master_regimes_git_pat | default('', true) | length > 0
+
+        - name: Mark analytics node repository as safe for Git
+          ansible.builtin.command:
+            cmd: "git config --global --add safe.directory {{ analytics_node_repo_dir }}"
+          changed_when: false
+
+        - name: Clone or update analytics client repository with clean remote URL
+          ansible.builtin.git:
+            repo: "{{ analytics_node_git_clone_suffix }}"
+            dest: "{{ analytics_node_repo_dir }}"
+            version: "{{ analytics_node_git_branch }}"
+            update: true
+            force: true
+      always:
+        - name: Remove temporary Git netrc after analytics node clone
+          ansible.builtin.file:
+            path: /root/.netrc
+            state: absent
+          when:
+            - analytics_node_git_clone_suffix is match('^https://')
+            - master_regimes_git_pat | default('', true) | length > 0
+          no_log: true
+
+    - name: Check analytics-client source after optional clone
+      ansible.builtin.stat:
+        path: "{{ analytics_node_repo_dir }}/pyproject.toml"
+      register: analytics_node_source_after_clone
+
+    - name: Render analytics node environment file
+      ansible.builtin.template:
+        src: env.j2
+        dest: "{{ analytics_node_repo_dir }}/.env"
+        owner: root
+        group: root
+        mode: "0600"
+      no_log: true
+      when: analytics_node_source_after_clone.stat.exists
+
+    - name: Find analytics node helper scripts
+      ansible.builtin.find:
+        paths: "{{ analytics_node_repo_dir }}/bin"
+        file_type: file
+      register: analytics_node_helper_scripts
+      failed_when: false
+      when: analytics_node_source_after_clone.stat.exists
+
+    - name: Ensure analytics node helper scripts are executable
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        mode: "0755"
+      loop: "{{ analytics_node_helper_scripts.files | default([]) }}"
+      when: analytics_node_source_after_clone.stat.exists
+
+    - name: Sync analytics node virtual environment with uv
+      ansible.builtin.command:
+        cmd: /usr/local/bin/uv sync
+        chdir: "{{ analytics_node_repo_dir }}"
+      environment:
+        PATH: "{{ analytics_node_uv_install_dir }}:{{ ansible_facts['env']['PATH'] }}"
+      when: analytics_node_source_after_clone.stat.exists

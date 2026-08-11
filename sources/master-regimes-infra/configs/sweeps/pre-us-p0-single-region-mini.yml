@@ -1,0 +1,24 @@
+sweep_id: pre-us-p0-single-region-mini
+region: eu
+
+datasets:
+  - id: smoke-balanced
+    profile: two-profiles-three-shapes-v2/smoke-balanced.yml
+    load_method: sql
+  - id: smoke-skew
+    profile: two-profiles-three-shapes-v2/smoke-skew.yml
+    load_method: sql
+
+runtime_configs:
+  - id: default
+    pg_options: {}
+    psql_variables: {}
+
+workload:
+  instance_manifest: ../master-regimes/generated/workloads/single-region-core/pre-us-p0-representative/instance_manifest.csv
+  max_instances: 9
+
+collection:
+  global_stats_scope: none
+  target_group: coordinators
+  citus_explain_all_tasks: true

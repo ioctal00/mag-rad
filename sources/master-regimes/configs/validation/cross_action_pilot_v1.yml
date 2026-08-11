@@ -1,0 +1,160 @@
+contract_version: cross-action-pilot-v1
+corpus_id: cross-action-pilot-v1
+
+design:
+  expected_source_cells: 24
+  expected_conditions: 48
+  expected_executions: 144
+  expected_scenarios: 12
+  expected_component_families: 6
+  expected_dataset_profiles: 2
+  repetitions_per_condition: 3
+  actions_per_scenario: 3
+  common_identity_fields:
+    - component_match_id
+    - logical_question_id
+    - dataset_profile_id
+    - topology_id
+    - execution_scope
+    - target_scope
+    - param_json
+
+scenario_actions:
+  pilot_remote_filter:
+    - increase_fetch_size
+    - remove_added_delay
+    - remove_bandwidth_limit
+  pilot_remote_rollup:
+    - increase_fetch_size
+    - remove_added_delay
+    - remove_bandwidth_limit
+  pilot_remote_wide:
+    - increase_fetch_size
+    - remove_added_delay
+    - remove_bandwidth_limit
+  pilot_gac_aggregate:
+    - increase_gac_work_mem
+    - regional_partial_aggregation
+    - mitigate_remote_path_bundle
+  pilot_repartition_join:
+    - use_colocated_distribution
+    - mitigate_remote_path_bundle
+    - increase_regional_work_mem
+  pilot_gac_topk:
+    - regional_topk_candidates
+    - increase_gac_work_mem
+    - mitigate_remote_path_bundle
+
+runtime_transitions:
+  increase_fetch_size:
+    baseline: cross_action_stressed
+    action: cross_action_fetch_mitigated
+    allowed_changes:
+      - psql_variables.FETCH_COUNT
+      - fdw_server_options.fetch_size
+  remove_added_delay:
+    baseline: cross_action_stressed
+    action: cross_action_delay_mitigated
+    allowed_changes:
+      - network_profile.configured_delay_ms
+  remove_bandwidth_limit:
+    baseline: cross_action_stressed
+    action: cross_action_bandwidth_mitigated
+    allowed_changes:
+      - network_profile.configured_bandwidth_mbit
+  mitigate_remote_path_bundle:
+    baseline_by_component:
+      pilot_repartition_join: cross_action_join_stressed
+      default: cross_action_stressed
+    action_by_component:
+      pilot_repartition_join: cross_action_join_remote_mitigated
+      default: cross_action_remote_mitigated
+    allowed_changes:
+      - psql_variables.FETCH_COUNT
+      - fdw_server_options.fetch_size
+      - network_profile.configured_delay_ms
+      - network_profile.configured_bandwidth_mbit
+  increase_gac_work_mem:
+    baseline: cross_action_stressed
+    action: cross_action_gac_memory_mitigated
+    allowed_changes:
+      - pg_options.work_mem
+  increase_regional_work_mem:
+    baseline: cross_action_join_stressed
+    action: cross_action_join_regional_memory_mitigated
+    allowed_changes:
+      - regional_pg_options.work_mem
+  regional_partial_aggregation:
+    baseline: cross_action_stressed
+    action: cross_action_stressed
+    allowed_changes: []
+  regional_topk_candidates:
+    baseline: cross_action_stressed
+    action: cross_action_stressed
+    allowed_changes: []
+  use_colocated_distribution:
+    baseline: cross_action_join_stressed
+    action: cross_action_join_stressed
+    allowed_changes: []
+
+sql_transitions:
+  regional_partial_aggregation:
+    baseline_template: gac_fdw_coordinator_raw_user_topk
+    action_template: gac_fdw_coordinator_partial_user_topk
+  regional_topk_candidates:
+    baseline_template: gac_fdw_coordinator_raw_event_topk
+    action_template: gac_fdw_coordinator_regional_event_topk
+  use_colocated_distribution:
+    baseline_template: gac_fdw_single_edge_repartition_user_join_pair
+    action_template: gac_fdw_single_edge_colocated_user_join_pair
+
+analysis:
+  target: log2_median_stressed_over_action_elapsed
+  minimum_completed_repetitions: 3
+  required_result_signature_status: captured
+  minimum_distinct_action_rankings: 3
+  minimum_pairwise_rank_reversals: 2
+  minimum_repeat_stable_scenario_share: 0.8
+  minimum_feature_model_pairwise_improvement: 0.05
+  require_lower_feature_model_regret: true
+  bootstrap_samples: 10000
+  primary_feature_model: expanded28_elastic_net
+  models:
+    random_state: 42
+    semantic19_ridge_alpha: 10.0
+    expanded28_ridge_alpha: 10.0
+    expanded28_elastic_net_alpha: 0.1
+    expanded28_elastic_net_l1_ratio: 0.5
+    boosting_n_estimators: 100
+    boosting_learning_rate: 0.03
+    boosting_max_depth: 2
+    boosting_min_samples_leaf: 3
+  features:
+    - coordinator_fanin_rows
+    - coordinator_fanin_bytes_estimated
+    - coordinator_final_rows
+    - coordinator_non_foreign_time_share_proxy
+    - coordinator_blocking_input_rows_sum
+    - coordinator_temp_written_blocks
+    - coordinator_hash_batches_max
+    - remote_region_actual_rows_sum
+    - remote_region_actual_time_sum
+    - remote_region_tuple_bytes_sum
+    - remote_region_task_count_sum
+    - remote_citus_dependent_map_task_count_sum
+    - remote_citus_repartition_fanout_ratio_max
+    - worker_task_actual_rows_sum
+    - worker_task_scan_actual_rows_sum
+    - worker_task_actual_time_sum
+    - worker_task_within_region_scan_rows_isf_normalized_max
+    - worker_task_spill_count
+    - worker_task_temp_written_sum
+    - regional_coordinator_tx_bytes_sum
+    - analytics_rx_bytes_sum
+    - worker_tx_bytes_sum
+    - os_cpu_busy_pct_mean
+    - os_mem_used_peak_bytes_max
+    - os_disk_read_bytes_sum
+    - os_disk_written_bytes_sum
+    - os_net_rx_bytes_sum
+    - os_net_tx_bytes_sum

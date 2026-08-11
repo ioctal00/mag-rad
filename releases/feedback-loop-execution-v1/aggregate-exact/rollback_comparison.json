@@ -1,0 +1,16 @@
+{
+  "end_to_end_effect": "no_material_change",
+  "gain": {
+    "bootstrap_samples": 10000,
+    "bootstrap_seed": 20260807,
+    "direction": "within_noise_or_unavailable",
+    "elapsed_log2_gain": -0.03438660689907021,
+    "interval_high": 0.3771635176669196,
+    "interval_low": -0.13457514162572534,
+    "noise_status": "within_noise"
+  },
+  "physical_transition": "sparse",
+  "result_validity": "equivalent",
+  "source_state_id": "A_raw_baseline",
+  "target_state_id": "R0_prime_rollback"
+}

@@ -1,0 +1,46 @@
+with regional_segment_rollup as (
+  select
+    'eu'::text as source_region,
+    u.user_segment,
+    u.user_status,
+    count(*) as events_count,
+    count(distinct e.tenant_id) as tenant_count,
+    round(sum(e.value::numeric), 6) as total_value
+  from fdw_eu.events e
+  join fdw_eu.users u
+    on u.tenant_id = e.tenant_id
+   and u.user_id = e.user_id
+  where e.created_at >= {% if cutoff_ts is defined %}timestamptz '{{ cutoff_ts }}'{% else %}coalesce(to_timestamp(nullif({{ as_of_unix | default(0) }}, 0)), now()) - make_interval(days => {{ lookback_days }}::int){% endif %}
+    and ({{ eu_tenant_id_filter | default(0) }}::bigint = 0 or e.tenant_id = {{ eu_tenant_id_filter | default(0) }}::bigint)
+    and mod(e.tenant_id, {{ tenant_modulus | default(1) }}::bigint) = 0
+    and e.user_id <= {{ user_id_max | default(2147483647) }}::bigint
+  group by u.user_segment, u.user_status
+  union all
+  select
+    'us'::text as source_region,
+    u.user_segment,
+    u.user_status,
+    count(*) as events_count,
+    count(distinct e.tenant_id) as tenant_count,
+    round(sum(e.value::numeric), 6) as total_value
+  from fdw_us.events e
+  join fdw_us.users u
+    on u.tenant_id = e.tenant_id
+   and u.user_id = e.user_id
+  where e.created_at >= {% if cutoff_ts is defined %}timestamptz '{{ cutoff_ts }}'{% else %}coalesce(to_timestamp(nullif({{ as_of_unix | default(0) }}, 0)), now()) - make_interval(days => {{ lookback_days }}::int){% endif %}
+    and ({{ us_tenant_id_filter | default(0) }}::bigint = 0 or e.tenant_id = {{ us_tenant_id_filter | default(0) }}::bigint)
+    and mod(e.tenant_id, {{ tenant_modulus | default(1) }}::bigint) = 0
+    and e.user_id <= {{ user_id_max | default(2147483647) }}::bigint
+  group by u.user_segment, u.user_status
+)
+select
+  user_segment,
+  user_status,
+  count(distinct source_region) as regions_touched,
+  sum(events_count) as events_count,
+  sum(tenant_count) as tenant_count,
+  sum(total_value) as total_value
+from regional_segment_rollup
+group by user_segment, user_status
+order by total_value desc, user_segment, user_status
+limit {{ limit_k }};

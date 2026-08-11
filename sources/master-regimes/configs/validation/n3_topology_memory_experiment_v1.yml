@@ -1,0 +1,135 @@
+contract_version: n3-topology-memory-experiment-v1
+experiment_id: n3-topology-memory-v1
+description: >
+  Controlled topology-isolation experiment over the fifteen frozen DBA Top-K
+  SQL shapes. A fresh N=2 control panel is followed by two N=3 rounds. Phase A
+  recommendations are frozen from N=2 evidence before any N=3 action outcome;
+  Phase B recommendations are frozen after all Phase A outcomes and before any
+  Phase B action outcome.
+
+actions:
+  - increase_gac_work_mem
+  - regional_topk_candidates
+  - mitigate_remote_path_bundle
+
+action_applicability:
+  policy: explicit_panel_contract_and_result_equivalence
+  query_family: gac_topk
+
+model_freeze:
+  model_id: fuzzy-intervention-memory-v1-state-space
+  state_contract: configs/models/fuzzy_intervention_memory_v1.yml
+  reference_report: analysis/reports/fuzzy-intervention-memory-v1
+  pca_components: 6
+  neighbors: 5
+  distance_metric: euclidean
+  coverage_quantile: 0.99
+  minimum_history_for_available: 2
+  refit_on_n3: false
+
+execution:
+  hard_timeout_seconds: 1800
+  timeout_grace_seconds: 30
+  result_signature_scope: first_repetition_per_condition
+  ordering_policy: deterministic_blocked_shuffle
+  seeds:
+    n2_control: 202608061
+    phase_a_baseline: 202608062
+    phase_a_actions: 202608063
+    phase_b_baseline: 202608064
+    phase_b_actions: 202608065
+  retry_policy:
+    attempt_resolution: latest_successful_logical_slot
+    retain_failed_attempts: true
+    timeout_is_explicit_status: true
+    automatic_retry_count: 0
+
+topologies:
+  n2:
+    topology_id: eu_us_gac
+    active_regions: [eu, us]
+    region_count: 2
+    expected_nodes: 7
+  n3:
+    topology_id: eu_us_apac_gac
+    active_regions: [eu, us, apac]
+    region_count: 3
+    expected_nodes: 10
+
+blocks:
+  - id: n2_control
+    topology: n2
+    phase: reference
+    cells: baseline_and_actions
+    expected_executions: 60
+  - id: phase_a_baseline
+    topology: n3
+    phase: A
+    cells: baseline
+    expected_executions: 15
+  - id: phase_a_actions
+    topology: n3
+    phase: A
+    cells: actions
+    expected_executions: 45
+    recommendation_freeze: phase_a_recommendations
+  - id: phase_b_baseline
+    topology: n3
+    phase: B
+    cells: baseline
+    expected_executions: 15
+  - id: phase_b_actions
+    topology: n3
+    phase: B
+    cells: actions
+    expected_executions: 45
+    recommendation_freeze: phase_b_recommendations
+
+dataset_pairs:
+  small:
+    pair_id: topology-isolation-small-v1
+    n2: {id: topology-isolation-small-n2-v1, profile: datasets/profiles/topology-isolation-small-n2.yml}
+    n3: {id: topology-isolation-small-n3-v1, profile: datasets/profiles/topology-isolation-small-n3.yml}
+  large:
+    pair_id: topology-isolation-large-v1
+    n2: {id: topology-isolation-large-n2-v1, profile: datasets/profiles/topology-isolation-large-n2.yml}
+    n3: {id: topology-isolation-large-n3-v1, profile: datasets/profiles/topology-isolation-large-n3.yml}
+  medium:
+    pair_id: topology-isolation-medium-v1
+    n2: {id: topology-isolation-medium-n2-v1, profile: datasets/profiles/topology-isolation-medium-n2.yml}
+    n3: {id: topology-isolation-medium-n3-v1, profile: datasets/profiles/topology-isolation-medium-n3.yml}
+  xlarge:
+    pair_id: topology-isolation-xlarge-v1
+    n2: {id: topology-isolation-xlarge-n2-v1, profile: datasets/profiles/topology-isolation-xlarge-n2.yml}
+    n3: {id: topology-isolation-xlarge-n3-v1, profile: datasets/profiles/topology-isolation-xlarge-n3.yml}
+
+runtime_profiles:
+  transport:
+    baseline: dba_topk_transport_stressed
+    remote: dba_topk_transport_remote_mitigated
+    gac_memory: dba_topk_transport_gac_mitigated
+  memory:
+    baseline: dba_topk_memory_stressed
+    remote: dba_topk_memory_remote_mitigated
+    gac_memory: dba_topk_memory_gac_mitigated
+  balanced:
+    baseline: dba_topk_balanced_stressed
+    remote: dba_topk_balanced_remote_mitigated
+    gac_memory: dba_topk_balanced_gac_mitigated
+
+scenarios:
+  - {order: 1, query_id: q01_event_value_desc, query_shape: event_value_desc, dataset_pair: small, profile: transport, cutoff_ts: "2026-06-30 00:00:00+00", limit_k: 25}
+  - {order: 2, query_id: q02_event_value_asc, query_shape: event_value_asc, dataset_pair: small, profile: memory, cutoff_ts: "2026-06-29 00:00:00+00", limit_k: 100}
+  - {order: 3, query_id: q03_event_recent, query_shape: event_recent, dataset_pair: small, profile: balanced, cutoff_ts: "2026-06-24 00:00:00+00", limit_k: 250}
+  - {order: 4, query_id: q04_event_oldest, query_shape: event_oldest, dataset_pair: small, profile: transport, cutoff_ts: "2026-06-17 00:00:00+00", limit_k: 500}
+  - {order: 5, query_id: q05_event_deviation, query_shape: event_deviation, dataset_pair: large, profile: memory, cutoff_ts: "2026-06-30 00:00:00+00", limit_k: 50}
+  - {order: 6, query_id: q06_tenant_sum, query_shape: tenant_sum, dataset_pair: large, profile: balanced, cutoff_ts: "2026-06-29 00:00:00+00", limit_k: 100}
+  - {order: 7, query_id: q07_tenant_count, query_shape: tenant_count, dataset_pair: large, profile: transport, cutoff_ts: "2026-06-24 00:00:00+00", limit_k: 250}
+  - {order: 8, query_id: q08_tenant_avg, query_shape: tenant_avg, dataset_pair: large, profile: memory, cutoff_ts: "2026-06-17 00:00:00+00", limit_k: 500}
+  - {order: 9, query_id: q09_tenant_max, query_shape: tenant_max, dataset_pair: medium, profile: balanced, cutoff_ts: "2026-06-30 00:00:00+00", limit_k: 50}
+  - {order: 10, query_id: q10_tenant_min, query_shape: tenant_min, dataset_pair: medium, profile: transport, cutoff_ts: "2026-06-29 00:00:00+00", limit_k: 100}
+  - {order: 11, query_id: q11_tenant_high_count, query_shape: tenant_high_count, dataset_pair: medium, profile: memory, cutoff_ts: "2026-06-24 00:00:00+00", limit_k: 250}
+  - {order: 12, query_id: q12_tenant_user_sum, query_shape: tenant_user_sum, dataset_pair: medium, profile: balanced, cutoff_ts: "2026-06-17 00:00:00+00", limit_k: 500}
+  - {order: 13, query_id: q13_tenant_user_count, query_shape: tenant_user_count, dataset_pair: xlarge, profile: transport, cutoff_ts: "2026-06-30 00:00:00+00", limit_k: 50}
+  - {order: 14, query_id: q14_tenant_day_sum, query_shape: tenant_day_sum, dataset_pair: xlarge, profile: memory, cutoff_ts: "2026-06-24 00:00:00+00", limit_k: 100}
+  - {order: 15, query_id: q15_tenant_day_count, query_shape: tenant_day_count, dataset_pair: xlarge, profile: balanced, cutoff_ts: "2026-06-17 00:00:00+00", limit_k: 250}

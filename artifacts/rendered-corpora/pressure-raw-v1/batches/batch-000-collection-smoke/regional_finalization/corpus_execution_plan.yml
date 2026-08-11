@@ -1,0 +1,47 @@
+corpus_id: batch-000-collection-smoke-regional_finalization
+source_manifest: master-regimes/configs/collection/batches/batch-000-collection-smoke.yml
+corpus_version: pressure-raw-corpus-v1
+collection_contract_version: pressure-raw-v1
+execution_backend: master-regimes-infra.database_sweep
+group_count: 2
+groups:
+- group_id: batch-000-collection-smoke__regional_finalization__pressure-raw-v1-regional__raw-small-balanced-v1__pressure_regional_memory_mitigated__analytics_clients
+  sweep_id: batch-000-collection-smoke__regional_finalization__pressure-raw-v1-regional__raw-small-balanced-v1__pressure_regional_memory_mitigated__analytics_clients
+  dataset_profile_id: raw-small-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_regional_memory_mitigated
+  target_group: analytics_clients
+  strategies:
+  - fdw_raw
+  runtime_intervention_axis: regional_finalization
+  runtime_expected_effect: 'The same regional plan should avoid or reduce temp I/O
+    relative to pressure_regional_memory_stressed.
+
+    '
+  network_profile_id: ''
+  cell_count: 2
+  instance_count: 3
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/regional_finalization/pressure-raw-v1-regional__raw-small-balanced-v1__pressure_regional_memory_mitigated__analytics_clients.instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/regional_finalization/pressure-raw-v1-regional__raw-small-balanced-v1__pressure_regional_memory_mitigated__analytics_clients.sweep.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: batch-000-collection-smoke__regional_finalization__pressure-raw-v1-regional__raw-small-balanced-v1__pressure_regional_memory_stressed__analytics_clients
+  sweep_id: batch-000-collection-smoke__regional_finalization__pressure-raw-v1-regional__raw-small-balanced-v1__pressure_regional_memory_stressed__analytics_clients
+  dataset_profile_id: raw-small-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_regional_memory_stressed
+  target_group: analytics_clients
+  strategies:
+  - fdw_raw
+  runtime_intervention_axis: regional_finalization
+  runtime_expected_effect: 'Regional sort/hash/aggregate operators should spill while
+    GAC session memory remains unchanged.
+
+    '
+  network_profile_id: ''
+  cell_count: 2
+  instance_count: 3
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/regional_finalization/pressure-raw-v1-regional__raw-small-balanced-v1__pressure_regional_memory_stressed__analytics_clients.instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/regional_finalization/pressure-raw-v1-regional__raw-small-balanced-v1__pressure_regional_memory_stressed__analytics_clients.sweep.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false

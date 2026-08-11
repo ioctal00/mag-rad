@@ -1,0 +1,29 @@
+contract_version: colocation-review-eligibility-v1
+program_id: pressure-raw-v1
+mitigation_action: use_colocated_distribution
+meaning:
+  candidate: repartition join worth reviewing for a colocated distribution
+  limitation: query-level evidence does not prove workload-wide safety of redistribution
+required_evidence:
+  - citus_repartition_observed_v2
+  - remote_citus_map_merge_job_count_sum
+  - join_shape_id
+  - distribution_key
+  - join_uses_distribution_key
+candidate_rule:
+  repartition_observed: true
+  minimum_map_merge_jobs: 1
+  join_shape_required: true
+  distribution_metadata_required: true
+  join_uses_current_distribution_key: false
+statuses:
+  candidate: candidate_requires_schema_and_workload_review
+  no_repartition: no_repartition_evidence
+  current_distribution_key: join_already_uses_distribution_key
+  missing_semantics: insufficient_join_or_distribution_metadata
+controlled_validation:
+  positive_action: use_colocated_distribution
+  positive_variant: stressed
+  negative_variant: mitigated
+  require_all_positive_candidates: true
+  require_zero_negative_candidates: true

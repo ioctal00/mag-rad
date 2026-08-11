@@ -1,0 +1,29 @@
+system_id: eu-us-gac-vps
+provider: vultr
+project_tag: master-regimes
+
+postgres:
+  version: "18"
+  citus_package: "postgresql-18-citus-14.0"
+  app_db: app
+  app_user: app
+  passwords_source: env
+
+compute_profile:
+  name: vps
+  coordinator_plan: vc2-2c-4gb
+  worker_plan: vc2-2c-4gb
+  analytics_plan: vc2-2c-4gb
+
+regions:
+  eu:
+    vultr_region: ams
+    worker_count: 2
+  us:
+    vultr_region: ewr
+    worker_count: 2
+
+global_analytics:
+  enabled: true
+  vultr_region: cdg
+  fdw_enabled: true

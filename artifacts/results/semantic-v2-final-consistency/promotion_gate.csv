@@ -1,0 +1,14 @@
+gate,gate_type,value,threshold,status
+chronology_and_hashes,core,1.0,1.0,PASS
+k4_seed_stability,core,0.8925959119131807,0.8,PASS
+k4_nontrivial_silhouette,core,0.6095309433990855,0.2,PASS
+leave_family_out_weighted_ari,core,0.9142651769895149,0.75,PASS
+repeatability_minimum_cluster_agreement,core,1.0,0.95,PASS
+v2b_frozen_p99_coverage,core,1.0,0.75,PASS
+v2b_not_worse_than_v1,core,5.0,0.0,PASS
+validation_holdout_v2_coverage,core,0.9743589743589743,0.95,PASS
+validation_ood_semantically_attributed,core,1.0,1.0,PASS
+validation_v2_uniformly_better_than_v1,informational,4.0,0.0,WARN
+all_weighted_values_finite,core,0.0,0.0,PASS
+bc_top_tenants_exceeds_point_control,core,0.18244155418170432,0.0,PASS
+ad_top_tenants_exceeds_point_control,core,0.21138523469878262,0.0,PASS

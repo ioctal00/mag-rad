@@ -1,0 +1,115 @@
+logical_run_id,setting,value,provenance,source
+clean-run-v1,auto_explain,log_min_duration=0; analyze=true; buffers=true; timing=false,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/run_query_collection.py
+clean-run-v1,cache_policy,mixed_cache_first_observed,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.clean-run-v1.yml
+clean-run-v1,citus_explain_all_tasks,True,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/run_query_collection.py
+clean-run-v1,database_result_rows_stored,False,reconstructed_from_versioned_config,collector contract
+clean-run-v1,explicit_cache_reset,False,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.clean-run-v1.yml
+clean-run-v1,fcm_fuzzifier,1.7,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1,fcm_k,4,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1,fcm_seeds,0..9,reconstructed_from_versioned_config,configs/features/phase1_flow_ratio_candidate.yml
+clean-run-v1,hard_timeout_seconds,900,recorded_at_run_time,_index/query_runs.csv
+clean-run-v1,main_explain_options,ANALYZE=true; BUFFERS=true; VERBOSE=true; FORMAT=JSON,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/run_query_collection.py
+clean-run-v1,model_feature_count,21,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1,model_input_id,m0_flow_ratio_v3_reduced,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1,observation_unit,query_run_id,reconstructed_from_versioned_config,collector contract
+clean-run-v1,order_policy,deterministic_shuffle,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.clean-run-v1.yml
+clean-run-v1,repetitions,1,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.clean-run-v1.yml
+clean-run-v1,retry_semantics,append_attempt_then_logical_resolve,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/index_corpus_run_attempts.py
+clean-run-v1,shuffle_seed,20260626,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.clean-run-v1.yml
+clean-run-v1,timeout_grace_seconds,30,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.clean-run-v1.yml
+clean-run-v1,warmup_per_instance,False,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.clean-run-v1.yml
+clean-run-v1-region-asymmetry,auto_explain,log_min_duration=0; analyze=true; buffers=true; timing=false,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/run_query_collection.py
+clean-run-v1-region-asymmetry,cache_policy,mixed_cache_first_observed,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml
+clean-run-v1-region-asymmetry,citus_explain_all_tasks,True,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/run_query_collection.py
+clean-run-v1-region-asymmetry,database_result_rows_stored,False,reconstructed_from_versioned_config,collector contract
+clean-run-v1-region-asymmetry,explicit_cache_reset,False,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml
+clean-run-v1-region-asymmetry,fcm_fuzzifier,1.7,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1-region-asymmetry,fcm_k,4,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1-region-asymmetry,fcm_seeds,0..9,reconstructed_from_versioned_config,configs/features/phase1_flow_ratio_candidate.yml
+clean-run-v1-region-asymmetry,hard_timeout_seconds,300,recorded_at_run_time,_index/query_runs.csv
+clean-run-v1-region-asymmetry,main_explain_options,ANALYZE=true; BUFFERS=true; VERBOSE=true; FORMAT=JSON,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/run_query_collection.py
+clean-run-v1-region-asymmetry,model_feature_count,21,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1-region-asymmetry,model_input_id,m0_flow_ratio_v3_reduced,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1-region-asymmetry,observation_unit,query_run_id,reconstructed_from_versioned_config,collector contract
+clean-run-v1-region-asymmetry,order_policy,deterministic_shuffle,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml
+clean-run-v1-region-asymmetry,repetitions,1,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml
+clean-run-v1-region-asymmetry,retry_semantics,append_attempt_then_logical_resolve,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/index_corpus_run_attempts.py
+clean-run-v1-region-asymmetry,shuffle_seed,20260702,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml
+clean-run-v1-region-asymmetry,timeout_grace_seconds,30,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml
+clean-run-v1-region-asymmetry,warmup_per_instance,False,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml
+clean-run-v1-region-asymmetry-skew-rerun,auto_explain,log_min_duration=0; analyze=true; buffers=true; timing=false,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/run_query_collection.py
+clean-run-v1-region-asymmetry-skew-rerun,cache_policy,mixed_cache_first_observed,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml
+clean-run-v1-region-asymmetry-skew-rerun,citus_explain_all_tasks,True,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/run_query_collection.py
+clean-run-v1-region-asymmetry-skew-rerun,database_result_rows_stored,False,reconstructed_from_versioned_config,collector contract
+clean-run-v1-region-asymmetry-skew-rerun,explicit_cache_reset,False,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml
+clean-run-v1-region-asymmetry-skew-rerun,fcm_fuzzifier,1.7,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1-region-asymmetry-skew-rerun,fcm_k,4,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1-region-asymmetry-skew-rerun,fcm_seeds,0..9,reconstructed_from_versioned_config,configs/features/phase1_flow_ratio_candidate.yml
+clean-run-v1-region-asymmetry-skew-rerun,hard_timeout_seconds,300,recorded_at_run_time,_index/query_runs.csv
+clean-run-v1-region-asymmetry-skew-rerun,main_explain_options,ANALYZE=true; BUFFERS=true; VERBOSE=true; FORMAT=JSON,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/run_query_collection.py
+clean-run-v1-region-asymmetry-skew-rerun,model_feature_count,21,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1-region-asymmetry-skew-rerun,model_input_id,m0_flow_ratio_v3_reduced,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1-region-asymmetry-skew-rerun,observation_unit,query_run_id,reconstructed_from_versioned_config,collector contract
+clean-run-v1-region-asymmetry-skew-rerun,order_policy,deterministic_shuffle,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml
+clean-run-v1-region-asymmetry-skew-rerun,repetitions,1,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml
+clean-run-v1-region-asymmetry-skew-rerun,retry_semantics,append_attempt_then_logical_resolve,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/index_corpus_run_attempts.py
+clean-run-v1-region-asymmetry-skew-rerun,shuffle_seed,20260702,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml
+clean-run-v1-region-asymmetry-skew-rerun,timeout_grace_seconds,30,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml
+clean-run-v1-region-asymmetry-skew-rerun,warmup_per_instance,False,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.region-asymmetry-companion-v1.yml
+clean-run-v1-validation-holdout,auto_explain,log_min_duration=0; analyze=true; buffers=true; timing=false,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/run_query_collection.py
+clean-run-v1-validation-holdout,cache_policy,mixed_cache_first_observed,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.validation-holdout-v1.yml
+clean-run-v1-validation-holdout,citus_explain_all_tasks,True,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/run_query_collection.py
+clean-run-v1-validation-holdout,database_result_rows_stored,False,reconstructed_from_versioned_config,collector contract
+clean-run-v1-validation-holdout,explicit_cache_reset,False,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.validation-holdout-v1.yml
+clean-run-v1-validation-holdout,fcm_fuzzifier,1.7,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1-validation-holdout,fcm_k,4,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1-validation-holdout,fcm_seeds,0..9,reconstructed_from_versioned_config,configs/features/phase1_flow_ratio_candidate.yml
+clean-run-v1-validation-holdout,hard_timeout_seconds,300,recorded_at_run_time,_index/query_runs.csv
+clean-run-v1-validation-holdout,main_explain_options,ANALYZE=true; BUFFERS=true; VERBOSE=true; FORMAT=JSON,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/run_query_collection.py
+clean-run-v1-validation-holdout,model_feature_count,21,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1-validation-holdout,model_input_id,m0_flow_ratio_v3_reduced,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1-validation-holdout,observation_unit,query_run_id,reconstructed_from_versioned_config,collector contract
+clean-run-v1-validation-holdout,order_policy,deterministic_shuffle,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.validation-holdout-v1.yml
+clean-run-v1-validation-holdout,repetitions,1,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.validation-holdout-v1.yml
+clean-run-v1-validation-holdout,retry_semantics,append_attempt_then_logical_resolve,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/index_corpus_run_attempts.py
+clean-run-v1-validation-holdout,shuffle_seed,20260706,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.validation-holdout-v1.yml
+clean-run-v1-validation-holdout,timeout_grace_seconds,30,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.validation-holdout-v1.yml
+clean-run-v1-validation-holdout,warmup_per_instance,False,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.validation-holdout-v1.yml
+clean-run-v1-wan-latency,auto_explain,log_min_duration=0; analyze=true; buffers=true; timing=false,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/run_query_collection.py
+clean-run-v1-wan-latency,cache_policy,mixed_cache_first_observed,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.wan-latency-companion-v1.yml
+clean-run-v1-wan-latency,citus_explain_all_tasks,True,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/run_query_collection.py
+clean-run-v1-wan-latency,database_result_rows_stored,False,reconstructed_from_versioned_config,collector contract
+clean-run-v1-wan-latency,explicit_cache_reset,False,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.wan-latency-companion-v1.yml
+clean-run-v1-wan-latency,fcm_fuzzifier,1.7,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1-wan-latency,fcm_k,4,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1-wan-latency,fcm_seeds,0..9,reconstructed_from_versioned_config,configs/features/phase1_flow_ratio_candidate.yml
+clean-run-v1-wan-latency,hard_timeout_seconds,300,recorded_at_run_time,_index/query_runs.csv
+clean-run-v1-wan-latency,main_explain_options,ANALYZE=true; BUFFERS=true; VERBOSE=true; FORMAT=JSON,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/run_query_collection.py
+clean-run-v1-wan-latency,model_feature_count,21,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1-wan-latency,model_input_id,m0_flow_ratio_v3_reduced,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+clean-run-v1-wan-latency,observation_unit,query_run_id,reconstructed_from_versioned_config,collector contract
+clean-run-v1-wan-latency,order_policy,deterministic_shuffle,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.wan-latency-companion-v1.yml
+clean-run-v1-wan-latency,repetitions,1,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.wan-latency-companion-v1.yml
+clean-run-v1-wan-latency,retry_semantics,append_attempt_then_logical_resolve,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/index_corpus_run_attempts.py
+clean-run-v1-wan-latency,shuffle_seed,20260627,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.wan-latency-companion-v1.yml
+clean-run-v1-wan-latency,timeout_grace_seconds,30,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.wan-latency-companion-v1.yml
+clean-run-v1-wan-latency,warmup_per_instance,False,reconstructed_from_versioned_config,master-regimes/workloads/corpus/corpus_manifest.wan-latency-companion-v1.yml
+repeatability-v1,auto_explain,log_min_duration=0; analyze=true; buffers=true; timing=false,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/run_query_collection.py
+repeatability-v1,cache_policy,mixed_cache_repeatability_audit,reconstructed_from_versioned_config,docs/experiments/repeatability_protocol.md
+repeatability-v1,citus_explain_all_tasks,True,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/run_query_collection.py
+repeatability-v1,database_result_rows_stored,False,reconstructed_from_versioned_config,collector contract
+repeatability-v1,explicit_cache_reset,False,reconstructed_from_versioned_config,docs/experiments/repeatability_protocol.md
+repeatability-v1,fcm_fuzzifier,1.7,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+repeatability-v1,fcm_k,4,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+repeatability-v1,fcm_seeds,0..9,reconstructed_from_versioned_config,configs/features/phase1_flow_ratio_candidate.yml
+repeatability-v1,hard_timeout_seconds,"300,900",recorded_at_run_time,_index/query_runs.csv
+repeatability-v1,main_explain_options,ANALYZE=true; BUFFERS=true; VERBOSE=true; FORMAT=JSON,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/run_query_collection.py
+repeatability-v1,model_feature_count,21,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+repeatability-v1,model_input_id,m0_flow_ratio_v3_reduced,reconstructed_from_versioned_config,master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+repeatability-v1,observation_unit,query_run_id,reconstructed_from_versioned_config,collector contract
+repeatability-v1,order_policy,deterministic_interleaved_shuffle,reconstructed_from_versioned_config,docs/experiments/repeatability_protocol.md
+repeatability-v1,repetitions,3; sentinels 5,reconstructed_from_versioned_config,docs/experiments/repeatability_protocol.md
+repeatability-v1,retry_semantics,append_attempt_then_logical_resolve,reconstructed_from_versioned_config,master-regimes-infra/common-scripts/index_corpus_run_attempts.py
+repeatability-v1,shuffle_seed,20260724,reconstructed_from_versioned_config,configs/validation/repeatability_analysis.yml
+repeatability-v1,timeout_grace_seconds,30,reconstructed_from_versioned_config,repeatability protocol
+repeatability-v1,warmup_per_instance,False,reconstructed_from_versioned_config,docs/experiments/repeatability_protocol.md

@@ -1,0 +1,81 @@
+dataset_id: stats-ceb-full-no-refit-v1
+profile_contract: external_relational_v1
+generator: stats-ceb-zenodo
+seed: 0
+budget_class: external_full_workload
+source_lock: ../../external/stats-ceb/source-lock.yml
+description: >
+  Identical pinned STATS-CEB snapshot loaded into EU and US logical Citus
+  regions for a complete 146-query no-refit external audit.
+regions:
+  eu:
+    snapshot_role: replicated_identical
+  us:
+    snapshot_role: replicated_identical
+regional_semantics:
+  comparison_rule: per_region_equals_baseline
+  aggregate_regional_results: false
+  rationale: >
+    Each region contains the complete snapshot. Q(D_eu) and Q(D_us) are
+    independently compared with Q(D_baseline). Regional scalar counts are
+    never summed.
+physical_design:
+  design_id: stats-ceb-post-centric-v1
+  shard_count: 32
+  reference_tables: [users, badges, tags]
+  distributed_tables:
+    posts: id
+    comments: postid
+    votes: postid
+    posthistory: postid
+    postlinks: postid
+execution_adapter:
+  id: stats_ceb
+  regional_database: app
+  regional_schema: stats
+  baseline_prepare_region: eu
+  baseline_database: analytics
+  baseline_schema: stats_baseline
+  fdw_schemas:
+    eu: stats_eu
+    us: stats_us
+  fdw_servers:
+    eu: eu_citus
+    us: us_citus
+  citus_ddl: ../../configs/stats-ceb/citus-post-centric-v1.sql
+  correctness_selection: ../../external/stats-ceb/query-selection.full-no-refit-v1.yml
+  source_cache_dir: tmp/stats-ceb
+expected_audit_signals:
+  external_relational:
+    tables:
+      - users
+      - badges
+      - posts
+      - tags
+      - postlinks
+      - posthistory
+      - comments
+      - votes
+    region_snapshot_equality_required: true
+capabilities:
+  supports_reference_join: true
+  supports_colocated_user_join: false
+  supports_global_users: false
+  supports_global_user_dimension: false
+  supports_non_colocated_join: true
+  supports_cross_region_user_overlap: true
+  supports_high_group_cardinality: false
+  supports_hot_tenants: false
+  supports_hot_time_windows: false
+  supports_hot_tenant_skew: false
+  supports_region_imbalance: false
+  supports_region_local_skew_asymmetry: false
+  supports_shard_skew: false
+  supports_wide_payload: true
+  supports_large_scan: true
+  supports_distribution_key_filter: true
+  supports_region_partitioning: false
+  supports_etl_rollups: false
+  supports_tenant_tiers: false
+  supports_selective_filters: true
+  supports_materialized_refresh: false

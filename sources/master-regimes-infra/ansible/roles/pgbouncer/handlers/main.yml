@@ -1,0 +1,6 @@
+---
+- name: Restart pgbouncer
+  ansible.builtin.service:
+    name: pgbouncer
+    state: restarted
+

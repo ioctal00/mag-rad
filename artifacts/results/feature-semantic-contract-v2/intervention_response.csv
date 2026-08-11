@@ -1,0 +1,3 @@
+intervention,feature,source_proxy,positive_control_median_delta,negative_control_median_delta,status
+B-C worker placement,worker_scan_rows_cv_normalized,worker_rows_cv,0.5482313728338939,0.0,PASS
+A-D regional asymmetry,remote_region_rows_isf_normalized,remote_region_rows_isf,0.8,,PASS

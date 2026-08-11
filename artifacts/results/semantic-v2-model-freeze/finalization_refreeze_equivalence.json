@@ -1,0 +1,18 @@
+{
+  "audit_id": "semantic-v2-finalization-refreeze-equivalence",
+  "verified_at_utc": "2026-07-27T15:18:00Z",
+  "scope": "No-refit reprojection of the original 12-query STATS-CEB holdout",
+  "reason": "The family-weighting label was corrected, the P99 quantile method was made explicit, and coverage metadata was added without changing the numerical model.",
+  "old_feature_contract_sha256": "1c942ffd57a2f284a498cc80cfb88a3c13855ed53928f3184fbb753d1504ac0c",
+  "old_model_manifest_sha256": "600e37339221ea90bcc3140a87cd1a4a7161acd214e393098109d9bb1c7fa85d",
+  "current_feature_contract_sha256": "762df5a8bcc488bd5ca50d297957a8b2a5f062ecaf575b3dd13cf74caee34446",
+  "current_model_manifest_sha256": "a7f441ff6e937a9615b3128c220752739d9380382e971d7f56eebd05d879941d",
+  "model_refit_performed": false,
+  "byte_identical_outputs": {
+    "holdout_projection.csv": "e658a314d3d97e6583784f0f7ff2ef1e1e334e44d222394fbd70f0d7a90790e5",
+    "holdout_semantic_weighted.csv": "107f12c738028f1d7fcc9ceb2d7eacbc82ffc19f6a9998a21ae96136fb7ba99f",
+    "holdout_v1_v2_comparison.csv": "bf4b3d0a3d551538c40da091778b342e448176a2265e33886d5428cbdf358fcf",
+    "holdout_gate.csv": "8642387614f1b53f9562f6fd18443e5c5e8a89c1d2bdac863a18f1b523065eb8"
+  },
+  "interpretation": "The finalization revision changes provenance hashes but not the projected feature geometry, memberships, coverage decisions, or acceptance gate for the original external holdout."
+}

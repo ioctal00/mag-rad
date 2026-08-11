@@ -1,0 +1,113 @@
+{
+  "coverage_reference": {
+    "maximum": 2.0530134626272765,
+    "median": 0.4101047228723562,
+    "metric": "euclidean_in_fold_standardized_feature_space",
+    "minimum": 0.11619965486447442,
+    "quantile": 0.99,
+    "threshold": 1.8694068247510753,
+    "training_pair_count": 75
+  },
+  "freeze_contract": "colocation-ranking-before-n3-v1",
+  "git_commit": "d53a18f2e0648a2b2ee9bd755f21a1a4a2f53e01",
+  "git_worktree_clean": true,
+  "n3_design": {
+    "condition_count": 32,
+    "dataset_count": 4,
+    "execution_count": 96,
+    "group_count": 4,
+    "pair_count": 16,
+    "regions": [
+      "eu",
+      "us",
+      "apac"
+    ],
+    "rendered_sql_count": 32,
+    "repetitions_per_condition": 3,
+    "template_count": 8,
+    "variants": [
+      "mitigated",
+      "stressed"
+    ]
+  },
+  "no_refit": true,
+  "primary_estimator": "ridge",
+  "primary_ranking_metrics": [
+    "spearman",
+    "kendall",
+    "ndcg_at_5",
+    "top3_recall",
+    "top5_recall"
+  ],
+  "ranking_support_rule": {
+    "calibration_metrics_are_secondary": true,
+    "coverage_is_warning_only": true,
+    "minimum_kendall": 0.35,
+    "minimum_ndcg_at_5": 0.8,
+    "minimum_spearman": 0.5,
+    "minimum_top5_recall": 0.6
+  },
+  "selected_feature_names": [
+    "coordinator_fanin_rows",
+    "coordinator_fanin_bytes_estimated",
+    "coordinator_final_rows",
+    "coordinator_non_foreign_time_share_proxy",
+    "coordinator_join_operator_count",
+    "remote_region_actual_rows_sum",
+    "remote_region_tuple_bytes_sum",
+    "remote_region_task_count_sum",
+    "remote_citus_dependent_map_task_count_sum",
+    "remote_citus_repartition_fanout_ratio_max",
+    "worker_task_actual_rows_sum",
+    "worker_task_scan_actual_rows_sum",
+    "regional_coordinator_tx_bytes_sum",
+    "analytics_rx_bytes_sum",
+    "worker_tx_bytes_sum",
+    "os_cpu_busy_pct_mean",
+    "os_mem_used_peak_bytes_max",
+    "os_disk_read_bytes_sum",
+    "os_disk_written_bytes_sum"
+  ],
+  "selected_feature_view": "extended",
+  "source_sha256": {
+    "batch_contract": "2ee49de4da646ca783d1a9454d8b43ca7fe893839de010925969f0e3e644264b",
+    "benchmark_manifest": "230dfd354448e5ece4308d1d42f578b2ff3733c12f92bca389029c0541a01743",
+    "corpus_manifest": "6e6c27ff8e3d77e9c7aac273a38dc7b510c41b4d079b719d1e34cb503b647a0a",
+    "expected_executions": "49f18b5d3d76c32067216e3e0c1c1fec1866a2f64ce118b0d37fe8ec110d4fe8",
+    "model": "6ea08e6f1903c78d073f1c026f16ce05079b268fc4635540bb12e48a36fb4dce",
+    "ranking_contract": "6f508ce8a66ba5d78de2507a36b081e619d89ef9d13cfe1ee1328d5eb15f6952",
+    "rendered_execution_plan": "e6754b54fe81100dbfd431591cbadf12e4603b0c323207250797eb959d472a38",
+    "training_pair_reference": "2218f902545685c1bba6ee56b6ffabc7cdf911babffcd6b6a8043726a6bed488"
+  },
+  "target": {
+    "field": "target_log2_gain",
+    "meaning": "log2(median_stressed_elapsed_seconds / median_mitigated_elapsed_seconds)",
+    "scope": "global_query"
+  },
+  "training_reference": {
+    "pair_count": 75,
+    "row_count": 75,
+    "selected_feature_names": [
+      "coordinator_fanin_rows",
+      "coordinator_fanin_bytes_estimated",
+      "coordinator_final_rows",
+      "coordinator_non_foreign_time_share_proxy",
+      "coordinator_join_operator_count",
+      "remote_region_actual_rows_sum",
+      "remote_region_tuple_bytes_sum",
+      "remote_region_task_count_sum",
+      "remote_citus_dependent_map_task_count_sum",
+      "remote_citus_repartition_fanout_ratio_max",
+      "worker_task_actual_rows_sum",
+      "worker_task_scan_actual_rows_sum",
+      "regional_coordinator_tx_bytes_sum",
+      "analytics_rx_bytes_sum",
+      "worker_tx_bytes_sum",
+      "os_cpu_busy_pct_mean",
+      "os_mem_used_peak_bytes_max",
+      "os_disk_read_bytes_sum",
+      "os_disk_written_bytes_sum"
+    ],
+    "target_field": "target_log2_gain"
+  }
+}

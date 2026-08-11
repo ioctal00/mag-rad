@@ -1,0 +1,153 @@
+x-datasets: &n3_datasets
+  - n3-medium-balanced-wide-global-dim-v1
+  - n3-medium-apac-dominant-wide-global-dim-v1
+  - n3-large-balanced-wide-global-dim-v1
+  - n3-large-apac-dominant-wide-global-dim-v1
+x-common-parameters: &common_parameters
+  lookback_days: [30]
+  limit_k: [100]
+  tenant_modulus: [1]
+  user_id_max: [2147483647]
+x-common: &common
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  target_scope: global_query
+  dataset_profile_id: *n3_datasets
+  runtime_config_id: gac_force_remote_join
+  topology_id: eu_us_apac_gac
+  intervention_role: positive_case
+  intervention_axis: join_strategy
+  pressure_axis: repartition_join
+  mitigation_action: use_colocated_distribution
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: pressure_topology_holdout
+  scenario_level: n3_no_refit
+
+corpus_id: pressure-raw-v1-n3-colocation-holdout
+corpus_version: pressure-raw-corpus-v1
+batch_id: batch-300-n3-holdout
+collection_contract_version: pressure-raw-v1
+parameter_defaults:
+  as_of_unix: [1782864000]
+description: >
+  Frozen N=3 no-refit colocation holdout: four SQL result shapes, two scale
+  classes, two regional placement profiles, two pair members and three
+  repetitions. All three FDW edges participate in one global GAC execution.
+query_groups: ../query-groups.yml
+runtime_catalog: ../runtime-configs.yml
+
+dataset_profiles:
+  n3-medium-balanced-wide-global-dim-v1:
+    profile: ../../../datasets/profiles/n3-medium-balanced-wide-global-dim.yml
+    load_method: copy_pipe
+  n3-medium-apac-dominant-wide-global-dim-v1:
+    profile: ../../../datasets/profiles/n3-medium-apac-dominant-wide-global-dim.yml
+    load_method: copy_pipe
+  n3-large-balanced-wide-global-dim-v1:
+    profile: ../../../datasets/profiles/n3-large-balanced-wide-global-dim.yml
+    load_method: copy_pipe
+  n3-large-apac-dominant-wide-global-dim-v1:
+    profile: ../../../datasets/profiles/n3-large-apac-dominant-wide-global-dim.yml
+    load_method: copy_pipe
+
+execution_budget: {hard_timeout_seconds: 1800, timeout_grace_seconds: 30}
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260802
+  repetitions_default: 3
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  fdw_auto_explain_regions: [eu, us, apac]
+  os_sampler: true
+  os_sampler_node_groups: [db_nodes, analytics_clients]
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: true
+  remote_edge_context: true
+
+cells:
+  - <<: *common
+    corpus_cell_id: n3_segment_colocated
+    logical_question_id: user_segment_topk
+    template_id: gac_fdw_n3_colocated_user_join
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: n3_colocation__segment_aggregate
+    physical_strategy_id: colocated_distributed_join
+    join_shape_id: segment_aggregate
+    parameters: *common_parameters
+  - <<: *common
+    corpus_cell_id: n3_segment_repartition
+    logical_question_id: user_segment_topk
+    template_id: gac_fdw_n3_repartition_user_join
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: n3_colocation__segment_aggregate
+    physical_strategy_id: repartition_mapmerge_join
+    join_shape_id: segment_aggregate
+    parameters: *common_parameters
+
+  - <<: *common
+    corpus_cell_id: n3_user_topk_colocated
+    logical_question_id: joined_user_value_topk
+    template_id: gac_fdw_n3_colocated_user_value_topk
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: n3_colocation__user_value_topk
+    physical_strategy_id: colocated_distributed_join
+    join_shape_id: user_value_topk
+    parameters: *common_parameters
+  - <<: *common
+    corpus_cell_id: n3_user_topk_repartition
+    logical_question_id: joined_user_value_topk
+    template_id: gac_fdw_n3_repartition_user_value_topk
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: n3_colocation__user_value_topk
+    physical_strategy_id: repartition_mapmerge_join
+    join_shape_id: user_value_topk
+    parameters: *common_parameters
+
+  - <<: *common
+    corpus_cell_id: n3_row_sample_colocated
+    logical_question_id: joined_event_sample
+    template_id: gac_fdw_n3_colocated_joined_event_sample
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: n3_colocation__joined_row_sample
+    physical_strategy_id: colocated_distributed_join
+    join_shape_id: joined_row_sample
+    parameters: *common_parameters
+  - <<: *common
+    corpus_cell_id: n3_row_sample_repartition
+    logical_question_id: joined_event_sample
+    template_id: gac_fdw_n3_repartition_joined_event_sample
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: n3_colocation__joined_row_sample
+    physical_strategy_id: repartition_mapmerge_join
+    join_shape_id: joined_row_sample
+    parameters: *common_parameters
+
+  - <<: *common
+    corpus_cell_id: n3_summary_colocated
+    logical_question_id: joined_event_summary
+    template_id: gac_fdw_n3_colocated_join_summary
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: n3_colocation__scalar_summary
+    physical_strategy_id: colocated_distributed_join
+    join_shape_id: scalar_summary
+    parameters: *common_parameters
+  - <<: *common
+    corpus_cell_id: n3_summary_repartition
+    logical_question_id: joined_event_summary
+    template_id: gac_fdw_n3_repartition_join_summary
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: n3_colocation__scalar_summary
+    physical_strategy_id: repartition_mapmerge_join
+    join_shape_id: scalar_summary
+    parameters: *common_parameters

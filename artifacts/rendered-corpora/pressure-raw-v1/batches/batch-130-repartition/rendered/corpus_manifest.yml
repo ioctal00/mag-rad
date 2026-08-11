@@ -1,0 +1,564 @@
+x-join-datasets: &join_datasets
+  - raw-small-balanced-v1
+  - raw-small-balanced-wide-global-dim-v1
+  - pilot-balanced-v1
+  - pilot-balanced-wide-global-dim-v1
+  - raw-large-balanced-v1
+  - raw-large-balanced-wide-global-dim-v1
+x-base-join-datasets: &base_join_datasets
+  - raw-small-balanced-v1
+  - pilot-balanced-v1
+  - raw-large-balanced-v1
+x-positive-common: &positive_common
+  execution_strategy: fdw_raw
+  execution_scope: gac_single_edge
+  target_scope: global_query
+  dataset_profile_id: *join_datasets
+  runtime_config_id: gac_force_remote_join
+  topology_id: eu_us_gac
+  intervention_role: positive_case
+  intervention_axis: join_strategy
+  pressure_axis: repartition_join
+  mitigation_action: use_colocated_distribution
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: pressure_isolated
+x-control-common: &control_common
+  execution_strategy: fdw_raw
+  execution_scope: gac_single_edge
+  target_scope: global_query
+  dataset_profile_id: *join_datasets
+  runtime_config_id: gac_force_remote_join
+  topology_id: eu_us_gac
+  intervention_role: negative_control
+  intervention_axis: join_strategy
+  pressure_axis: repartition_join
+  mitigation_action: null_join_strategy_intervention
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: pressure_negative_control
+
+corpus_id: pressure-raw-v1-repartition
+corpus_version: pressure-raw-corpus-v1
+batch_id: batch-130-repartition
+collection_contract_version: pressure-raw-v1
+parameter_defaults:
+  as_of_unix: [1782864000]
+description: >
+  Ninety-nine counterfactual pairs. Seventy-five positive pairs cover four
+  SQL result shapes, three selectivity levels, three dataset sizes, expanded
+  global-user dimensions and router calibration. Twenty-four negative-control
+  pairs cover reference-table joins and tenant-point queries.
+query_groups: ../query-groups.yml
+runtime_catalog: ../runtime-configs.yml
+
+dataset_profiles:
+  raw-small-balanced-v1:
+    profile: ../../../datasets/profiles/raw-small-balanced.yml
+    load_method: copy_pipe
+  raw-small-balanced-wide-global-dim-v1:
+    profile: ../../../datasets/profiles/raw-small-balanced-wide-global-dim.yml
+    load_method: copy_pipe
+  pilot-balanced-v1:
+    profile: ../../../datasets/profiles/pilot-balanced.yml
+    load_method: copy_pipe
+  pilot-balanced-wide-global-dim-v1:
+    profile: ../../../datasets/profiles/pilot-balanced-wide-global-dim.yml
+    load_method: copy_pipe
+  raw-large-balanced-v1:
+    profile: ../../../datasets/profiles/raw-large-balanced.yml
+    load_method: copy_pipe
+  raw-large-balanced-wide-global-dim-v1:
+    profile: ../../../datasets/profiles/raw-large-balanced-wide-global-dim.yml
+    load_method: copy_pipe
+
+execution_budget: {hard_timeout_seconds: 1800, timeout_grace_seconds: 30}
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260730
+  repetitions_default: 3
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  fdw_auto_explain_regions: [eu]
+  os_sampler: true
+  os_sampler_node_groups: [eu, analytics_clients]
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: false
+
+cells:
+  # Segment/status aggregate: compact result after a distributed join.
+  - <<: *positive_common
+    corpus_cell_id: join_segment_sparse_colocated
+    logical_question_id: user_segment_topk
+    template_id: gac_fdw_single_edge_colocated_user_join_pair
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: repartition__segment_aggregate__sparse
+    physical_strategy_id: colocated_distributed_join
+    scenario_level: sparse
+    join_shape_id: segment_aggregate
+    parameters:
+      lookback_days: [1]
+      limit_k: [50]
+      tenant_id_filter: [0]
+      tenant_modulus: [16]
+      user_id_max: [5]
+  - <<: *positive_common
+    corpus_cell_id: join_segment_sparse_repartition
+    logical_question_id: user_segment_topk
+    template_id: gac_fdw_single_edge_repartition_user_join_pair
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: repartition__segment_aggregate__sparse
+    physical_strategy_id: repartition_mapmerge_join
+    scenario_level: sparse
+    join_shape_id: segment_aggregate
+    parameters:
+      lookback_days: [1]
+      limit_k: [50]
+      tenant_id_filter: [0]
+      tenant_modulus: [16]
+      user_id_max: [5]
+  - <<: *positive_common
+    corpus_cell_id: join_segment_moderate_colocated
+    logical_question_id: user_segment_topk
+    template_id: gac_fdw_single_edge_colocated_user_join_pair
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: repartition__segment_aggregate__moderate
+    physical_strategy_id: colocated_distributed_join
+    scenario_level: moderate
+    join_shape_id: segment_aggregate
+    parameters:
+      lookback_days: [7]
+      limit_k: [50]
+      tenant_id_filter: [0]
+      tenant_modulus: [4]
+      user_id_max: [25]
+  - <<: *positive_common
+    corpus_cell_id: join_segment_moderate_repartition
+    logical_question_id: user_segment_topk
+    template_id: gac_fdw_single_edge_repartition_user_join_pair
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: repartition__segment_aggregate__moderate
+    physical_strategy_id: repartition_mapmerge_join
+    scenario_level: moderate
+    join_shape_id: segment_aggregate
+    parameters:
+      lookback_days: [7]
+      limit_k: [50]
+      tenant_id_filter: [0]
+      tenant_modulus: [4]
+      user_id_max: [25]
+  - <<: *positive_common
+    corpus_cell_id: join_segment_broad_colocated
+    logical_question_id: user_segment_topk
+    template_id: gac_fdw_single_edge_colocated_user_join_pair
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: repartition__segment_aggregate__broad
+    physical_strategy_id: colocated_distributed_join
+    scenario_level: broad
+    join_shape_id: segment_aggregate
+    parameters:
+      lookback_days: [30]
+      limit_k: [50]
+      tenant_id_filter: [0]
+      tenant_modulus: [1]
+      user_id_max: [2147483647]
+  - <<: *positive_common
+    corpus_cell_id: join_segment_broad_repartition
+    logical_question_id: user_segment_topk
+    template_id: gac_fdw_single_edge_repartition_user_join_pair
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: repartition__segment_aggregate__broad
+    physical_strategy_id: repartition_mapmerge_join
+    scenario_level: broad
+    join_shape_id: segment_aggregate
+    parameters:
+      lookback_days: [30]
+      limit_k: [50]
+      tenant_id_filter: [0]
+      tenant_modulus: [1]
+      user_id_max: [2147483647]
+
+  # User-level Top-K: high-cardinality post-join grouping.
+  - <<: *positive_common
+    corpus_cell_id: join_user_topk_sparse_colocated
+    logical_question_id: joined_user_value_topk
+    template_id: gac_fdw_single_edge_colocated_user_value_topk_pair
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: repartition__user_topk__sparse
+    physical_strategy_id: colocated_distributed_join
+    scenario_level: sparse
+    join_shape_id: user_value_topk
+    parameters:
+      lookback_days: [1]
+      limit_k: [100]
+      tenant_id_filter: [0]
+      tenant_modulus: [16]
+      user_id_max: [5]
+  - <<: *positive_common
+    corpus_cell_id: join_user_topk_sparse_repartition
+    logical_question_id: joined_user_value_topk
+    template_id: gac_fdw_single_edge_repartition_user_value_topk_pair
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: repartition__user_topk__sparse
+    physical_strategy_id: repartition_mapmerge_join
+    scenario_level: sparse
+    join_shape_id: user_value_topk
+    parameters:
+      lookback_days: [1]
+      limit_k: [100]
+      tenant_id_filter: [0]
+      tenant_modulus: [16]
+      user_id_max: [5]
+  - <<: *positive_common
+    corpus_cell_id: join_user_topk_moderate_colocated
+    logical_question_id: joined_user_value_topk
+    template_id: gac_fdw_single_edge_colocated_user_value_topk_pair
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: repartition__user_topk__moderate
+    physical_strategy_id: colocated_distributed_join
+    scenario_level: moderate
+    join_shape_id: user_value_topk
+    parameters:
+      lookback_days: [7]
+      limit_k: [100]
+      tenant_id_filter: [0]
+      tenant_modulus: [4]
+      user_id_max: [25]
+  - <<: *positive_common
+    corpus_cell_id: join_user_topk_moderate_repartition
+    logical_question_id: joined_user_value_topk
+    template_id: gac_fdw_single_edge_repartition_user_value_topk_pair
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: repartition__user_topk__moderate
+    physical_strategy_id: repartition_mapmerge_join
+    scenario_level: moderate
+    join_shape_id: user_value_topk
+    parameters:
+      lookback_days: [7]
+      limit_k: [100]
+      tenant_id_filter: [0]
+      tenant_modulus: [4]
+      user_id_max: [25]
+  - <<: *positive_common
+    corpus_cell_id: join_user_topk_broad_colocated
+    logical_question_id: joined_user_value_topk
+    template_id: gac_fdw_single_edge_colocated_user_value_topk_pair
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: repartition__user_topk__broad
+    physical_strategy_id: colocated_distributed_join
+    scenario_level: broad
+    join_shape_id: user_value_topk
+    parameters:
+      lookback_days: [30]
+      limit_k: [100]
+      tenant_id_filter: [0]
+      tenant_modulus: [1]
+      user_id_max: [2147483647]
+  - <<: *positive_common
+    corpus_cell_id: join_user_topk_broad_repartition
+    logical_question_id: joined_user_value_topk
+    template_id: gac_fdw_single_edge_repartition_user_value_topk_pair
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: repartition__user_topk__broad
+    physical_strategy_id: repartition_mapmerge_join
+    scenario_level: broad
+    join_shape_id: user_value_topk
+    parameters:
+      lookback_days: [30]
+      limit_k: [100]
+      tenant_id_filter: [0]
+      tenant_modulus: [1]
+      user_id_max: [2147483647]
+
+  # Joined-row sample: bounded wide output rather than aggregate-only output.
+  - <<: *positive_common
+    corpus_cell_id: join_row_sample_sparse_colocated
+    logical_question_id: joined_event_sample
+    template_id: gac_fdw_single_edge_colocated_joined_event_sample_pair
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: repartition__row_sample__sparse
+    physical_strategy_id: colocated_distributed_join
+    scenario_level: sparse
+    join_shape_id: joined_row_sample
+    parameters:
+      lookback_days: [1]
+      limit_k: [100]
+      tenant_id_filter: [0]
+      tenant_modulus: [16]
+      user_id_max: [5]
+  - <<: *positive_common
+    corpus_cell_id: join_row_sample_sparse_repartition
+    logical_question_id: joined_event_sample
+    template_id: gac_fdw_single_edge_repartition_joined_event_sample_pair
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: repartition__row_sample__sparse
+    physical_strategy_id: repartition_mapmerge_join
+    scenario_level: sparse
+    join_shape_id: joined_row_sample
+    parameters:
+      lookback_days: [1]
+      limit_k: [100]
+      tenant_id_filter: [0]
+      tenant_modulus: [16]
+      user_id_max: [5]
+  - <<: *positive_common
+    corpus_cell_id: join_row_sample_moderate_colocated
+    logical_question_id: joined_event_sample
+    template_id: gac_fdw_single_edge_colocated_joined_event_sample_pair
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: repartition__row_sample__moderate
+    physical_strategy_id: colocated_distributed_join
+    scenario_level: moderate
+    join_shape_id: joined_row_sample
+    parameters:
+      lookback_days: [7]
+      limit_k: [100]
+      tenant_id_filter: [0]
+      tenant_modulus: [4]
+      user_id_max: [25]
+  - <<: *positive_common
+    corpus_cell_id: join_row_sample_moderate_repartition
+    logical_question_id: joined_event_sample
+    template_id: gac_fdw_single_edge_repartition_joined_event_sample_pair
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: repartition__row_sample__moderate
+    physical_strategy_id: repartition_mapmerge_join
+    scenario_level: moderate
+    join_shape_id: joined_row_sample
+    parameters:
+      lookback_days: [7]
+      limit_k: [100]
+      tenant_id_filter: [0]
+      tenant_modulus: [4]
+      user_id_max: [25]
+  - <<: *positive_common
+    corpus_cell_id: join_row_sample_broad_colocated
+    logical_question_id: joined_event_sample
+    template_id: gac_fdw_single_edge_colocated_joined_event_sample_pair
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: repartition__row_sample__broad
+    physical_strategy_id: colocated_distributed_join
+    scenario_level: broad
+    join_shape_id: joined_row_sample
+    parameters:
+      lookback_days: [30]
+      limit_k: [100]
+      tenant_id_filter: [0]
+      tenant_modulus: [1]
+      user_id_max: [2147483647]
+  - <<: *positive_common
+    corpus_cell_id: join_row_sample_broad_repartition
+    logical_question_id: joined_event_sample
+    template_id: gac_fdw_single_edge_repartition_joined_event_sample_pair
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: repartition__row_sample__broad
+    physical_strategy_id: repartition_mapmerge_join
+    scenario_level: broad
+    join_shape_id: joined_row_sample
+    parameters:
+      lookback_days: [30]
+      limit_k: [100]
+      tenant_id_filter: [0]
+      tenant_modulus: [1]
+      user_id_max: [2147483647]
+
+  # Scalar summary: tiny final output after potentially large internal work.
+  - <<: *positive_common
+    corpus_cell_id: join_scalar_sparse_colocated
+    logical_question_id: joined_event_summary
+    template_id: gac_fdw_single_edge_colocated_join_summary_pair
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: repartition__scalar_summary__sparse
+    physical_strategy_id: colocated_distributed_join
+    scenario_level: sparse
+    join_shape_id: scalar_summary
+    parameters:
+      lookback_days: [1]
+      tenant_id_filter: [0]
+      tenant_modulus: [16]
+      user_id_max: [5]
+  - <<: *positive_common
+    corpus_cell_id: join_scalar_sparse_repartition
+    logical_question_id: joined_event_summary
+    template_id: gac_fdw_single_edge_repartition_join_summary_pair
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: repartition__scalar_summary__sparse
+    physical_strategy_id: repartition_mapmerge_join
+    scenario_level: sparse
+    join_shape_id: scalar_summary
+    parameters:
+      lookback_days: [1]
+      tenant_id_filter: [0]
+      tenant_modulus: [16]
+      user_id_max: [5]
+  - <<: *positive_common
+    corpus_cell_id: join_scalar_moderate_colocated
+    logical_question_id: joined_event_summary
+    template_id: gac_fdw_single_edge_colocated_join_summary_pair
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: repartition__scalar_summary__moderate
+    physical_strategy_id: colocated_distributed_join
+    scenario_level: moderate
+    join_shape_id: scalar_summary
+    parameters:
+      lookback_days: [7]
+      tenant_id_filter: [0]
+      tenant_modulus: [4]
+      user_id_max: [25]
+  - <<: *positive_common
+    corpus_cell_id: join_scalar_moderate_repartition
+    logical_question_id: joined_event_summary
+    template_id: gac_fdw_single_edge_repartition_join_summary_pair
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: repartition__scalar_summary__moderate
+    physical_strategy_id: repartition_mapmerge_join
+    scenario_level: moderate
+    join_shape_id: scalar_summary
+    parameters:
+      lookback_days: [7]
+      tenant_id_filter: [0]
+      tenant_modulus: [4]
+      user_id_max: [25]
+  - <<: *positive_common
+    corpus_cell_id: join_scalar_broad_colocated
+    logical_question_id: joined_event_summary
+    template_id: gac_fdw_single_edge_colocated_join_summary_pair
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: repartition__scalar_summary__broad
+    physical_strategy_id: colocated_distributed_join
+    scenario_level: broad
+    join_shape_id: scalar_summary
+    parameters:
+      lookback_days: [30]
+      tenant_id_filter: [0]
+      tenant_modulus: [1]
+      user_id_max: [2147483647]
+  - <<: *positive_common
+    corpus_cell_id: join_scalar_broad_repartition
+    logical_question_id: joined_event_summary
+    template_id: gac_fdw_single_edge_repartition_join_summary_pair
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: repartition__scalar_summary__broad
+    physical_strategy_id: repartition_mapmerge_join
+    scenario_level: broad
+    join_shape_id: scalar_summary
+    parameters:
+      lookback_days: [30]
+      tenant_id_filter: [0]
+      tenant_modulus: [1]
+      user_id_max: [2147483647]
+
+  # Router calibration: one colocated shard versus global repartitioning.
+  - <<: *positive_common
+    corpus_cell_id: join_router_colocated
+    logical_question_id: user_segment_topk
+    template_id: gac_fdw_single_edge_colocated_user_join_pair
+    dataset_profile_id: *base_join_datasets
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: repartition__router_calibration
+    physical_strategy_id: router_colocated_join
+    scenario_level: router
+    join_shape_id: segment_aggregate
+    parameters:
+      lookback_days: [30]
+      limit_k: [50]
+      tenant_id_filter: [1]
+      tenant_modulus: [1]
+      user_id_max: [2147483647]
+  - <<: *positive_common
+    corpus_cell_id: join_router_repartition
+    logical_question_id: user_segment_topk
+    template_id: gac_fdw_single_edge_repartition_user_join_pair
+    dataset_profile_id: *base_join_datasets
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: repartition__router_calibration
+    physical_strategy_id: repartition_mapmerge_join
+    scenario_level: router
+    join_shape_id: segment_aggregate
+    parameters:
+      lookback_days: [30]
+      limit_k: [50]
+      tenant_id_filter: [1]
+      tenant_modulus: [1]
+      user_id_max: [2147483647]
+
+  # Reference-table join controls: the two variants are deliberately identical.
+  - <<: *control_common
+    corpus_cell_id: reference_join_control_mitigated
+    logical_question_id: tenant_tier_daily_join
+    template_id: gac_fdw_tenant_tier_join
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: repartition__reference_join_control
+    physical_strategy_id: reference_table_join_control
+    scenario_level: control
+    join_shape_id: reference_daily_aggregate
+    parameters:
+      lookback_days: [1, 30]
+  - <<: *control_common
+    corpus_cell_id: reference_join_control_stressed
+    logical_question_id: tenant_tier_daily_join
+    template_id: gac_fdw_tenant_tier_join
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: repartition__reference_join_control
+    physical_strategy_id: reference_table_join_control
+    scenario_level: control
+    join_shape_id: reference_daily_aggregate
+    parameters:
+      lookback_days: [1, 30]
+
+  # No-join controls: detect background variation in paired measurements.
+  - <<: *control_common
+    corpus_cell_id: tenant_point_control_mitigated
+    logical_question_id: tenant_point_rollup
+    template_id: gac_fdw_tenant_point_rollup
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: repartition__tenant_point_control
+    physical_strategy_id: tenant_point_no_join_control
+    scenario_level: control
+    join_shape_id: no_join_tenant_point
+    parameters:
+      tenant_id: [1, 100]
+      lookback_days: [7]
+  - <<: *control_common
+    corpus_cell_id: tenant_point_control_stressed
+    logical_question_id: tenant_point_rollup
+    template_id: gac_fdw_tenant_point_rollup
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: repartition__tenant_point_control
+    physical_strategy_id: tenant_point_no_join_control
+    scenario_level: control
+    join_shape_id: no_join_tenant_point
+    parameters:
+      tenant_id: [1, 100]
+      lookback_days: [7]

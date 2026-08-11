@@ -1,0 +1,80 @@
+---
+- name: Destructively remove PostgreSQL/Citus packages and data
+  hosts: "db_nodes:analytics_clients"
+  become: true
+  vars_files:
+    - ../group_vars/all.yml
+  vars:
+    postgresql_reinstall_confirm: false
+    postgresql_reinstall_versions:
+      - "14"
+      - "15"
+      - "16"
+      - "17"
+      - "18"
+  tasks:
+    - name: Require explicit PostgreSQL reinstall confirmation
+      ansible.builtin.fail:
+        msg: >-
+          This playbook destroys PostgreSQL clusters, local PostgreSQL data,
+          Citus packages, ETL tables and generated databases. Re-run with
+          -e postgresql_reinstall_confirm=true.
+      when: not (postgresql_reinstall_confirm | bool)
+
+    - name: Stop PgBouncer before PostgreSQL reinstall
+      ansible.builtin.service:
+        name: pgbouncer
+        state: stopped
+      failed_when: false
+
+    - name: Stop PostgreSQL before reinstall
+      ansible.builtin.service:
+        name: postgresql
+        state: stopped
+      failed_when: false
+
+    - name: Drop known PostgreSQL clusters
+      ansible.builtin.command:
+        cmd: "pg_dropcluster --stop {{ item }} main"
+      loop: "{{ postgresql_reinstall_versions }}"
+      register: postgresql_reinstall_dropcluster
+      changed_when: postgresql_reinstall_dropcluster.rc == 0
+      failed_when: false
+
+    - name: Purge PostgreSQL and Citus packages
+      ansible.builtin.shell: |
+        set -euo pipefail
+        export DEBIAN_FRONTEND=noninteractive
+        packages="$(
+          dpkg-query -W -f='${binary:Package}\n' \
+            | awk '/^(postgresql|citus|libcitus)/ { print }' \
+            | tr '\n' ' '
+        )"
+        if [[ -n "$packages" ]]; then
+          apt-mark unhold $packages 2>/dev/null || true
+          apt-get purge -y $packages
+          apt-get autoremove -y --purge
+        fi
+      args:
+        executable: /bin/bash
+
+    - name: Remove PostgreSQL local state directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/postgresql
+        - /etc/postgresql-common
+        - /var/lib/postgresql
+        - /var/lib/postgresql-common
+        - /var/log/postgresql
+
+    - name: Remove Citus repository marker to force repository setup
+      ansible.builtin.file:
+        path: /usr/local/share/citus-repo-installed
+        state: absent
+
+    - name: Remove old Citus repository setup script
+      ansible.builtin.file:
+        path: /usr/local/bin/install-citus-repo.sh
+        state: absent

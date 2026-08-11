@@ -1,0 +1,41 @@
+{
+  "checks": {
+    "aggregate_safety_stop": {
+      "status": "PASS"
+    },
+    "decision_log_leakage": {
+      "decision_start_count": 5,
+      "status": "PASS",
+      "validation_errors": []
+    },
+    "execution_statuses": {
+      "status": "PASS"
+    },
+    "frozen_action_catalog": {
+      "status": "PASS"
+    },
+    "frozen_replay": {
+      "expected": 20,
+      "observed": 20,
+      "status": "PASS"
+    },
+    "infrastructure_restored": {
+      "status": "PASS"
+    },
+    "instrumented_executions": {
+      "expected": 60,
+      "observed": 60,
+      "status": "PASS"
+    },
+    "pre_outcome_decisions": {
+      "decision_count": 5,
+      "outcome_count": 5,
+      "status": "PASS"
+    },
+    "valid_transition_results": {
+      "status": "PASS"
+    }
+  },
+  "status": "PASS",
+  "validated_at_utc": "2026-08-07T14:29:07.413004Z"
+}

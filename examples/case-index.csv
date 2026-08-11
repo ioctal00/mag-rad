@@ -1,0 +1,4 @@
+case_id,user_scenario,logical_question_id,action_id,path
+CASE-AGG-01,Ponavljanje istog SQL-a u kompatibilnom kontekstu,trajectory_aggregate_exact_full_flow,restore_origin,examples/CASE-AGG-01
+CASE-JOIN-01,Različite SQL varijante iste ručno povezane analitičke namjere,trajectory_join_pushdown,regional_pushdown_rewrite,examples/CASE-JOIN-01
+CASE-WAN-01,Isti SQL nakon deklarisane konfiguracijske intervencije,trajectory_aggregate_exact_full_flow,wan_delay_10ms_probe,examples/CASE-WAN-01

@@ -1,0 +1,868 @@
+program_id: pressure-raw-v1
+corpus_version: pressure-raw-corpus-v1
+collection_contract_version: pressure-raw-v1
+source_program: master-regimes/configs/collection/pressure_raw_program_v1.yml
+source_program_sha256: 10cb50b18d8a4e974e56287f71a63edb347353e2bf0fd3945cb4a5e98ab57a8e
+collection_contract: master-regimes/configs/collection/pressure_raw_collection_v1.yml
+collection_contract_sha256: cf52bff84011de3983f9e0bc9df8e590161443b1f63d47fafd02e78b93a427a8
+dataset_sweep: master-regimes/configs/collection/pressure_raw_dataset_sweep_v1.yml
+dataset_sweep_sha256: a88f5b1b0ba52581601ac6e4928bf355163fc8015b74c7645d702474470f9c7b
+execution_matrix: master-regimes/generated/corpus/pressure-raw-v1/execution_matrix.csv
+pair_coverage: master-regimes/generated/corpus/pressure-raw-v1/pair_coverage.csv
+configuration_coverage: master-regimes/generated/corpus/pressure-raw-v1/configuration_coverage.csv
+manifest_coverage_audit: master-regimes/generated/corpus/pressure-raw-v1/manifest_coverage_audit.json
+program_summary: master-regimes/generated/corpus/pressure-raw-v1/program_summary.json
+execution_policy:
+  append_only: true
+  resume_unit: rendered_execution_group
+  successful_raw_artifacts_are_never_deleted: true
+  retry_creates_new_attempt_id: true
+  database_result_rows_stored: false
+  result_signature_stream_only: true
+  result_signature_scope: first_repetition_per_condition
+  full_program_auto_run_forbidden: true
+consolidation_policy:
+  attempt_resolution: latest_successful_program_attempt
+  training_eligible_roles:
+  - primary
+  role_by_batch_kind:
+    isolated: primary
+    collection_smoke: smoke
+    combined_holdout: holdout
+    topology_holdout: holdout
+    sentinel: sentinel
+  external_batch_roles:
+    batch-900-component-calibration: calibration
+  unknown_batch_policy: reject
+  duplicate_primary_slot_policy: reject
+  auto_refresh_after_completed_batch: true
+progress_plan:
+  slot_count: 2607
+  planned_work_units: 17424.0
+  dataset_weights:
+    small: 1.0
+    medium: 3.0
+    large: 8.0
+  runtime_multipliers:
+    pressure_remote_bandwidth_10mbit: 4.0
+    pressure_remote_bandwidth_50mbit: 2.0
+    pressure_remote_delay_80ms: 4.0
+    pressure_remote_delay_20ms: 2.0
+    pressure_remote_fetch_100: 4.0
+    pressure_remote_fetch_2000: 2.0
+    pressure_remote_raw_stressed: 2.0
+    pressure_gac_memory_stressed: 1.5
+    pressure_regional_memory_stressed: 1.5
+  cost_class_counts:
+    extreme: 103
+    heavy: 849
+    light: 782
+    medium: 873
+  dataset_size_counts:
+    large: 885
+    medium: 837
+    small: 885
+  eta_policy:
+    initial_estimate: planned_work_units
+    dynamic_rate: median_elapsed_seconds_per_work_unit
+    low_confidence_sample_count_lt: 5
+    high_confidence_sample_count_gte: 20
+    blocked_batches_excluded_from_eta: true
+execution_topology_policy:
+  primary_analysis_unit: query_run_id
+  query_level_concurrency: 1
+  measured_queries_are_serial: true
+  setup_operations_may_run_in_parallel: true
+  topology_generalization:
+    notation:
+      region_count: N
+      workers_in_region: W_r
+    current_reference_deployment:
+      topology_id: eu_us_gac
+      region_count: 2
+      region_ids:
+      - eu
+      - us
+      worker_count_by_region:
+        eu: 2
+        us: 2
+      runtime_inventory_must_match: true
+    first_prepared_holdout:
+      topology_id: eu_us_apac_gac
+      region_count: 3
+      minimum_worker_count_per_region: 2
+      status: blocked_until_topology_preflight
+    invariants:
+    - one_query_run_id_per_global_sql_execution
+    - one_remote_edge_child_row_per_active_region
+    - one_region_child_row_per_active_region
+    - variable_worker_task_child_rows_are_allowed
+    - fixed_eu_us_model_columns_are_forbidden
+    - topology_snapshot_id_is_required
+    - execution_features_use_permutation_invariant_aggregations
+    - topology_holdout_never_merges_into_training_without_explicit_policy
+  lanes:
+    global_gac_serial:
+      batches:
+      - batch-100-gac
+      - batch-110-remote
+      - batch-120-skew
+      - batch-200-combined-holdout
+      - batch-400-sentinels
+      target_group: analytics_clients
+      execution_rule: 'Execute one query through GAC. The same query_run_id owns GAC,
+        remote-edge, regional coordinator and worker/task evidence. Do not replay
+        the same condition separately on EU and US.
+
+        '
+    gac_single_edge_serial:
+      batches:
+      - batch-130-repartition
+      - batch-140-regional
+      target_group: analytics_clients
+      selected_edge: eu_to_gac
+      execution_rule: 'Execute one GAC query whose FDW relation set references only
+        the selected region. The query_run_id owns the GAC plan, one remote edge,
+        the regional auto_explain plan and available worker/task evidence. Only templates
+        that pass the regional-pushdown equivalence gate may enter this lane.
+
+        '
+    topology_holdout_serial:
+      batches:
+      - batch-300-n3-holdout
+      target_group: analytics_clients
+      execution_rule: 'Execute one global query per condition only after the declared
+        N-region inventory, per-region worker map and edge contract pass preflight.
+
+        '
+  forbidden_optimizations:
+  - parallel_pair_members
+  - parallel_queries_sharing_gac
+  - duplicate_symmetric_region_replays
+  - replacing_one_global_gac_query_with_two_single_edge_fdw_queries
+  - mixing_direct_regional_elapsed_time_with_global_gac_targets
+  allowed_parallelism:
+  - independent_dataset_loads_on_eu_and_us
+  - independent_bootstrap_or_static_preflight_steps
+  single_edge_fdw_policy: 'GAC single-edge runs are the primary lane for isolated
+    regional pressure only after template-level pushdown equivalence is demonstrated.
+    They preserve a globally measured GAC target without duplicating a symmetric second
+    region. Multi-edge GAC remains mandatory for fan-in, imbalance and combined cases.
+    Direct regional runs are component-calibration evidence only.
+
+    '
+  target_definition_policy:
+    primary_target_scope: global_query
+    mitigation_gain_formula: log2(gac_elapsed_stressed / gac_elapsed_mitigated)
+    direct_region_target_scope: component_region
+    direct_region_targets_must_not_enter_primary_regressors: true
+  gac_single_edge_equivalence_gate:
+    decision: GO_WITH_CONSTRAINTS
+    report: analysis/reports/gac-single-edge-equivalence-probe-v1/README.md
+    approved_template_ids:
+    - gac_fdw_single_edge_colocated_user_join_pair
+    - gac_fdw_single_edge_repartition_user_join_pair
+    - gac_fdw_single_edge_regional_user_value_topk
+    direct_region_role: component_calibration_only
+    task_timing_behind_fdw: unavailable_in_embedded_task_plan
+    mapmerge_task_evidence: structurally_unavailable_in_both_scopes
+manual_execution_protocol:
+  freeze_before_first_production_batch:
+  - pressure_raw_collection_v1.yml
+  - source_manifests
+  - generated_checksums
+  stages:
+  - id: production_probe
+    action: run_one_small_segment_from_each_isolated_axis
+    gate: raw_index_and_new_telemetry_columns_valid
+  - id: isolated_batches
+    batch_order:
+    - batch-100-gac
+    - batch-110-remote
+    - batch-120-skew
+    - batch-130-repartition
+    - batch-140-regional
+    gate: completeness_correctness_and_pair_audit_pass
+  - id: combined_holdout
+    batch_order:
+    - batch-200-combined-holdout
+    gate: isolated_batches_frozen
+  - id: topology_holdout
+    batch_order:
+    - batch-300-n3-holdout
+    gate: three_region_preflight_pass
+  sentinel_policy:
+    source_batch: batch-400-sentinels
+    run_at:
+    - before_first_isolated_batch
+    - after_batch-110-remote
+    - after_batch-120-skew
+    - after_batch-140-regional
+    - after_combined_holdout
+    never_run_all_sentinels_as_one_terminal_block: true
+coverage_gate:
+  expected_isolated_configuration_count: 869
+  expected_isolated_execution_count: 2607
+  expected_repetitions_per_configuration: 3
+  expected_planned_pair_count: 418
+  planned_pairs_by_axis:
+    gac_finalization: 99
+    remote_path: 75
+    worker_data_skew: 70
+    repartition_join: 99
+    regional_finalization: 75
+  minimum_expected_valid_pairs_after_collection_by_axis: 60
+  minimum_negative_control_configurations_by_axis: 20
+  required_network_calibration_blocks:
+  - bandwidth_only
+  - delay_only
+  - fetch_only
+  minimum_network_calibration_sql_shapes: 4
+  minimum_network_calibration_datasets: 2
+  minimum_combined_base_cases: 20
+  minimum_fully_one_at_a_time_mitigated_base_cases: 10
+  require_negative_control_per_axis: true
+  require_stable_identity_columns:
+  - condition_id
+  - pair_id
+  - batch_id
+rendered_batches:
+- batch_id: batch-100-gac
+  kind: isolated
+  pressure_axis: gac_finalization
+  backend: standard_corpus
+  status: ready
+  source_manifest: master-regimes/workloads/corpus/pressure-raw-v1/batch-100-gac.yml
+  source_manifest_sha256: fa2b5981b710b9175678e1be620a4d542cf71a0e2293fd7aa56e7cc0d33407a9
+  rendered_plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-100-gac/rendered/corpus_execution_plan.yml
+  rendered_execution_count: 594
+  rendered_group_count: 9
+  groups:
+  - group_id: pressure-raw-v1-gac__pilot-balanced-v1__default__analytics_clients
+    instance_count: 120
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: pilot-balanced-v1
+    dataset_size_class: medium
+    planned_work_units: 480.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-100-gac/rendered/groups/pressure-raw-v1-gac__pilot-balanced-v1__default__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-gac__pilot-balanced-v1__pressure_gac_memory_mitigated__analytics_clients
+    instance_count: 39
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: pilot-balanced-v1
+    dataset_size_class: medium
+    planned_work_units: 156.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-100-gac/rendered/groups/pressure-raw-v1-gac__pilot-balanced-v1__pressure_gac_memory_mitigated__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-gac__pilot-balanced-v1__pressure_gac_memory_stressed__analytics_clients
+    instance_count: 39
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: pilot-balanced-v1
+    dataset_size_class: medium
+    planned_work_units: 234.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-100-gac/rendered/groups/pressure-raw-v1-gac__pilot-balanced-v1__pressure_gac_memory_stressed__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-gac__raw-large-balanced-v1__default__analytics_clients
+    instance_count: 120
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-v1
+    dataset_size_class: large
+    planned_work_units: 1280.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-100-gac/rendered/groups/pressure-raw-v1-gac__raw-large-balanced-v1__default__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-gac__raw-large-balanced-v1__pressure_gac_memory_mitigated__analytics_clients
+    instance_count: 39
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-v1
+    dataset_size_class: large
+    planned_work_units: 416.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-100-gac/rendered/groups/pressure-raw-v1-gac__raw-large-balanced-v1__pressure_gac_memory_mitigated__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-gac__raw-large-balanced-v1__pressure_gac_memory_stressed__analytics_clients
+    instance_count: 39
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-v1
+    dataset_size_class: large
+    planned_work_units: 624.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-100-gac/rendered/groups/pressure-raw-v1-gac__raw-large-balanced-v1__pressure_gac_memory_stressed__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-gac__raw-small-balanced-v1__default__analytics_clients
+    instance_count: 120
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-v1
+    dataset_size_class: small
+    planned_work_units: 160.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-100-gac/rendered/groups/pressure-raw-v1-gac__raw-small-balanced-v1__default__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-gac__raw-small-balanced-v1__pressure_gac_memory_mitigated__analytics_clients
+    instance_count: 39
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-v1
+    dataset_size_class: small
+    planned_work_units: 52.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-100-gac/rendered/groups/pressure-raw-v1-gac__raw-small-balanced-v1__pressure_gac_memory_mitigated__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-gac__raw-small-balanced-v1__pressure_gac_memory_stressed__analytics_clients
+    instance_count: 39
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-v1
+    dataset_size_class: small
+    planned_work_units: 78.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-100-gac/rendered/groups/pressure-raw-v1-gac__raw-small-balanced-v1__pressure_gac_memory_stressed__analytics_clients/instance_manifest.csv
+  batch_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-100-gac/batch_manifest.yml
+- batch_id: batch-110-remote
+  kind: isolated
+  pressure_axis: remote_path
+  backend: standard_corpus
+  status: ready
+  source_manifest: master-regimes/workloads/corpus/pressure-raw-v1/batch-110-remote.yml
+  source_manifest_sha256: 44dce0ae5a9aedb53ebdbae0917e8d46bf6ae40f0db3cd984551bc9ec90be8fd
+  rendered_plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/corpus_execution_plan.yml
+  rendered_execution_count: 522
+  rendered_group_count: 24
+  groups:
+  - group_id: pressure-raw-v1-remote__pilot-balanced-v1__pressure_remote_mitigated__analytics_clients
+    instance_count: 51
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: pilot-balanced-v1
+    dataset_size_class: medium
+    planned_work_units: 204.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__pilot-balanced-v1__pressure_remote_mitigated__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__pilot-balanced-v1__pressure_remote_raw_stressed__analytics_clients
+    instance_count: 51
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: pilot-balanced-v1
+    dataset_size_class: medium
+    planned_work_units: 408.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__pilot-balanced-v1__pressure_remote_raw_stressed__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_bandwidth_10mbit__analytics_clients
+    instance_count: 12
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-v1
+    dataset_size_class: large
+    planned_work_units: 512.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_bandwidth_10mbit__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_bandwidth_50mbit__analytics_clients
+    instance_count: 12
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-v1
+    dataset_size_class: large
+    planned_work_units: 256.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_bandwidth_50mbit__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_bandwidth_unlimited__analytics_clients
+    instance_count: 12
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-v1
+    dataset_size_class: large
+    planned_work_units: 128.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_bandwidth_unlimited__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_delay_0ms__analytics_clients
+    instance_count: 12
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-v1
+    dataset_size_class: large
+    planned_work_units: 128.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_delay_0ms__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_delay_20ms__analytics_clients
+    instance_count: 12
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-v1
+    dataset_size_class: large
+    planned_work_units: 256.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_delay_20ms__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_delay_80ms__analytics_clients
+    instance_count: 12
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-v1
+    dataset_size_class: large
+    planned_work_units: 512.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_delay_80ms__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_fetch_10000__analytics_clients
+    instance_count: 12
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-v1
+    dataset_size_class: large
+    planned_work_units: 128.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_fetch_10000__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_fetch_100__analytics_clients
+    instance_count: 12
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-v1
+    dataset_size_class: large
+    planned_work_units: 512.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_fetch_100__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_fetch_2000__analytics_clients
+    instance_count: 12
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-v1
+    dataset_size_class: large
+    planned_work_units: 256.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_fetch_2000__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_mitigated__analytics_clients
+    instance_count: 51
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-v1
+    dataset_size_class: large
+    planned_work_units: 544.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_mitigated__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_raw_stressed__analytics_clients
+    instance_count: 51
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-v1
+    dataset_size_class: large
+    planned_work_units: 1088.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_raw_stressed__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_10mbit__analytics_clients
+    instance_count: 12
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-v1
+    dataset_size_class: small
+    planned_work_units: 64.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_10mbit__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_50mbit__analytics_clients
+    instance_count: 12
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-v1
+    dataset_size_class: small
+    planned_work_units: 32.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_50mbit__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_unlimited__analytics_clients
+    instance_count: 12
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-v1
+    dataset_size_class: small
+    planned_work_units: 16.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_unlimited__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_delay_0ms__analytics_clients
+    instance_count: 12
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-v1
+    dataset_size_class: small
+    planned_work_units: 16.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_delay_0ms__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_delay_20ms__analytics_clients
+    instance_count: 12
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-v1
+    dataset_size_class: small
+    planned_work_units: 32.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_delay_20ms__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_delay_80ms__analytics_clients
+    instance_count: 12
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-v1
+    dataset_size_class: small
+    planned_work_units: 64.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_delay_80ms__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_fetch_10000__analytics_clients
+    instance_count: 12
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-v1
+    dataset_size_class: small
+    planned_work_units: 16.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_fetch_10000__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_fetch_100__analytics_clients
+    instance_count: 12
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-v1
+    dataset_size_class: small
+    planned_work_units: 64.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_fetch_100__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_fetch_2000__analytics_clients
+    instance_count: 12
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-v1
+    dataset_size_class: small
+    planned_work_units: 32.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_fetch_2000__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_mitigated__analytics_clients
+    instance_count: 51
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-v1
+    dataset_size_class: small
+    planned_work_units: 68.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_mitigated__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_raw_stressed__analytics_clients
+    instance_count: 51
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-v1
+    dataset_size_class: small
+    planned_work_units: 136.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_raw_stressed__analytics_clients/instance_manifest.csv
+  batch_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/batch_manifest.yml
+- batch_id: batch-120-skew
+  kind: isolated
+  pressure_axis: worker_data_skew
+  backend: placement_aware_worker
+  status: ready
+  source_manifest: master-regimes/workloads/corpus/pressure-raw-v1/batch-120-skew.yml
+  source_manifest_sha256: 87693cedce9dae1b268736004bb6e7e874bbe98936366add6af6f9051683df07
+  rendered_execution_count: 420
+  rendered_segment_count: 7
+  segments:
+  - segment_id: batch-120-skew-raw-small-skew-moderate-v1
+    dataset_profile_id: raw-small-skew-moderate-v1
+    backend: placement_aware_worker
+    config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-moderate-v1/config.yml
+    plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-moderate-v1/plan/corpus_execution_plan.yml
+    execution_count: 60
+    group_count: 2
+    dataset_size_class: small
+    planned_work_units: 80.0
+  - segment_id: batch-120-skew-raw-small-skew-heavy-v1
+    dataset_profile_id: raw-small-skew-heavy-v1
+    backend: placement_aware_worker
+    config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-heavy-v1/config.yml
+    plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-heavy-v1/plan/corpus_execution_plan.yml
+    execution_count: 60
+    group_count: 2
+    dataset_size_class: small
+    planned_work_units: 80.0
+  - segment_id: batch-120-skew-raw-medium-skew-moderate-v1
+    dataset_profile_id: raw-medium-skew-moderate-v1
+    backend: placement_aware_worker
+    config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-medium-skew-moderate-v1/config.yml
+    plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-medium-skew-moderate-v1/plan/corpus_execution_plan.yml
+    execution_count: 60
+    group_count: 2
+    dataset_size_class: medium
+    planned_work_units: 240.0
+  - segment_id: batch-120-skew-pilot-skew-heavy-v1
+    dataset_profile_id: pilot-skew-heavy-v1
+    backend: placement_aware_worker
+    config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/pilot-skew-heavy-v1/config.yml
+    plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/pilot-skew-heavy-v1/plan/corpus_execution_plan.yml
+    execution_count: 60
+    group_count: 2
+    dataset_size_class: medium
+    planned_work_units: 240.0
+  - segment_id: batch-120-skew-raw-large-skew-moderate-v1
+    dataset_profile_id: raw-large-skew-moderate-v1
+    backend: placement_aware_worker
+    config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-large-skew-moderate-v1/config.yml
+    plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-large-skew-moderate-v1/plan/corpus_execution_plan.yml
+    execution_count: 60
+    group_count: 2
+    dataset_size_class: large
+    planned_work_units: 640.0
+  - segment_id: batch-120-skew-raw-large-skew-heavy-v1
+    dataset_profile_id: raw-large-skew-heavy-v1
+    backend: placement_aware_worker
+    config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-large-skew-heavy-v1/config.yml
+    plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-large-skew-heavy-v1/plan/corpus_execution_plan.yml
+    execution_count: 60
+    group_count: 2
+    dataset_size_class: large
+    planned_work_units: 640.0
+  - segment_id: batch-120-skew-pilot-region-local-skew-asymmetric-medium-v1
+    dataset_profile_id: pilot-region-local-skew-asymmetric-medium-v1
+    backend: placement_aware_worker
+    config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/pilot-region-local-skew-asymmetric-medium-v1/config.yml
+    plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/pilot-region-local-skew-asymmetric-medium-v1/plan/corpus_execution_plan.yml
+    execution_count: 60
+    group_count: 2
+    dataset_size_class: medium
+    planned_work_units: 240.0
+  batch_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/batch_manifest.yml
+- batch_id: batch-130-repartition
+  kind: isolated
+  pressure_axis: repartition_join
+  backend: standard_corpus
+  status: ready
+  source_manifest: master-regimes/workloads/corpus/pressure-raw-v1/batch-130-repartition.yml
+  source_manifest_sha256: ced5ba4c9897f9523b215aaaa995a9fd7b25e8f922294781ecc245661b4c29c4
+  rendered_plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-130-repartition/rendered/corpus_execution_plan.yml
+  rendered_execution_count: 594
+  rendered_group_count: 6
+  groups:
+  - group_id: pressure-raw-v1-repartition__pilot-balanced-v1__gac_force_remote_join__analytics_clients
+    instance_count: 102
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: pilot-balanced-v1
+    dataset_size_class: medium
+    planned_work_units: 408.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-130-repartition/rendered/groups/pressure-raw-v1-repartition__pilot-balanced-v1__gac_force_remote_join__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-repartition__pilot-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients
+    instance_count: 96
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: pilot-balanced-wide-global-dim-v1
+    dataset_size_class: medium
+    planned_work_units: 384.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-130-repartition/rendered/groups/pressure-raw-v1-repartition__pilot-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-repartition__raw-large-balanced-v1__gac_force_remote_join__analytics_clients
+    instance_count: 102
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-v1
+    dataset_size_class: large
+    planned_work_units: 1088.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-130-repartition/rendered/groups/pressure-raw-v1-repartition__raw-large-balanced-v1__gac_force_remote_join__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-repartition__raw-large-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients
+    instance_count: 96
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-wide-global-dim-v1
+    dataset_size_class: large
+    planned_work_units: 1024.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-130-repartition/rendered/groups/pressure-raw-v1-repartition__raw-large-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-repartition__raw-small-balanced-v1__gac_force_remote_join__analytics_clients
+    instance_count: 102
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-v1
+    dataset_size_class: small
+    planned_work_units: 136.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-130-repartition/rendered/groups/pressure-raw-v1-repartition__raw-small-balanced-v1__gac_force_remote_join__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-repartition__raw-small-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients
+    instance_count: 96
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-wide-global-dim-v1
+    dataset_size_class: small
+    planned_work_units: 128.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-130-repartition/rendered/groups/pressure-raw-v1-repartition__raw-small-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients/instance_manifest.csv
+  batch_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-130-repartition/batch_manifest.yml
+- batch_id: batch-140-regional
+  kind: isolated
+  pressure_axis: regional_finalization
+  backend: standard_corpus
+  status: ready
+  source_manifest: master-regimes/workloads/corpus/pressure-raw-v1/batch-140-regional.yml
+  source_manifest_sha256: 167bf052c5b260138c017bb94dd2e2b998d75f83f10917de7c30c6f66620b4db
+  rendered_plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-140-regional/rendered/corpus_execution_plan.yml
+  rendered_execution_count: 477
+  rendered_group_count: 9
+  groups:
+  - group_id: pressure-raw-v1-regional__pilot-balanced-v1__pressure_regional_memory_intermediate__analytics_clients
+    instance_count: 9
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: pilot-balanced-v1
+    dataset_size_class: medium
+    planned_work_units: 36.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-140-regional/rendered/groups/pressure-raw-v1-regional__pilot-balanced-v1__pressure_regional_memory_intermediate__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-regional__pilot-balanced-v1__pressure_regional_memory_mitigated__analytics_clients
+    instance_count: 75
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: pilot-balanced-v1
+    dataset_size_class: medium
+    planned_work_units: 300.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-140-regional/rendered/groups/pressure-raw-v1-regional__pilot-balanced-v1__pressure_regional_memory_mitigated__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-regional__pilot-balanced-v1__pressure_regional_memory_stressed__analytics_clients
+    instance_count: 75
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: pilot-balanced-v1
+    dataset_size_class: medium
+    planned_work_units: 450.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-140-regional/rendered/groups/pressure-raw-v1-regional__pilot-balanced-v1__pressure_regional_memory_stressed__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-regional__raw-large-balanced-v1__pressure_regional_memory_intermediate__analytics_clients
+    instance_count: 9
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-v1
+    dataset_size_class: large
+    planned_work_units: 96.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-140-regional/rendered/groups/pressure-raw-v1-regional__raw-large-balanced-v1__pressure_regional_memory_intermediate__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-regional__raw-large-balanced-v1__pressure_regional_memory_mitigated__analytics_clients
+    instance_count: 75
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-v1
+    dataset_size_class: large
+    planned_work_units: 800.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-140-regional/rendered/groups/pressure-raw-v1-regional__raw-large-balanced-v1__pressure_regional_memory_mitigated__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-regional__raw-large-balanced-v1__pressure_regional_memory_stressed__analytics_clients
+    instance_count: 75
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-large-balanced-v1
+    dataset_size_class: large
+    planned_work_units: 1200.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-140-regional/rendered/groups/pressure-raw-v1-regional__raw-large-balanced-v1__pressure_regional_memory_stressed__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-regional__raw-small-balanced-v1__pressure_regional_memory_intermediate__analytics_clients
+    instance_count: 9
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-v1
+    dataset_size_class: small
+    planned_work_units: 12.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-140-regional/rendered/groups/pressure-raw-v1-regional__raw-small-balanced-v1__pressure_regional_memory_intermediate__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-regional__raw-small-balanced-v1__pressure_regional_memory_mitigated__analytics_clients
+    instance_count: 75
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-v1
+    dataset_size_class: small
+    planned_work_units: 100.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-140-regional/rendered/groups/pressure-raw-v1-regional__raw-small-balanced-v1__pressure_regional_memory_mitigated__analytics_clients/instance_manifest.csv
+  - group_id: pressure-raw-v1-regional__raw-small-balanced-v1__pressure_regional_memory_stressed__analytics_clients
+    instance_count: 75
+    target_group: analytics_clients
+    target_host: ''
+    measurement_lane: global_gac_serial
+    dataset_profile_id: raw-small-balanced-v1
+    dataset_size_class: small
+    planned_work_units: 150.0
+    instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-140-regional/rendered/groups/pressure-raw-v1-regional__raw-small-balanced-v1__pressure_regional_memory_stressed__analytics_clients/instance_manifest.csv
+  batch_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-140-regional/batch_manifest.yml
+smoke_batch:
+  batch_id: batch-000-collection-smoke
+  kind: collection_smoke
+  status: ready
+  source: master-regimes/configs/collection/batches/batch-000-collection-smoke.yml
+  source_sha256: 6c74a346c9f8618b99c157f6ea65392b539a6869952a47c1f40624d8a7e22dbe
+  execution_count: 30
+  segments:
+  - segment_id: batch-000-collection-smoke-gac_finalization
+    pressure_axis: gac_finalization
+    backend: standard_corpus
+    status: ready
+    plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/gac_finalization/corpus_execution_plan.yml
+    execution_count: 6
+  - segment_id: batch-000-collection-smoke-remote_path
+    pressure_axis: remote_path
+    backend: standard_corpus
+    status: ready
+    plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/remote_path/corpus_execution_plan.yml
+    execution_count: 6
+  - segment_id: batch-000-collection-smoke-worker_data_skew
+    pressure_axis: worker_data_skew
+    backend: placement_aware_worker
+    status: ready
+    config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/worker_data_skew/config.yml
+    plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-120-skew/segments/raw-small-skew-heavy-v1/plan/corpus_execution_plan.yml
+    execution_count: 6
+  - segment_id: batch-000-collection-smoke-repartition_join
+    pressure_axis: repartition_join
+    backend: standard_corpus
+    status: ready
+    plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/repartition_join/corpus_execution_plan.yml
+    execution_count: 6
+  - segment_id: batch-000-collection-smoke-regional_finalization
+    pressure_axis: regional_finalization
+    backend: standard_corpus
+    status: ready
+    plan: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/regional_finalization/corpus_execution_plan.yml
+    execution_count: 6
+  gate:
+    require_pair_resolution: true
+    require_result_hash_equality: true
+    require_intervention_apply_reset: true
+    require_main_plan: true
+    require_regional_and_worker_evidence_when_applicable: true
+    require_network_telemetry_for_remote_pair: true
+    require_system_telemetry: true
+    require_effective_runtime_values: true
+    require_raw_index_without_manual_edits: true
+  batch_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/batch_manifest.yml
+prepared_batches:
+- batch_id: batch-200-combined-holdout
+  kind: combined_holdout
+  source: master-regimes/configs/collection/batches/batch-200-combined-holdout.yml
+  status: prepared_not_executed
+  source_sha256: c3331de314d5aaf30d32cc5e49691cdcd60d4ae8756c1c517a087073d3a2e1bd
+- batch_id: batch-300-n3-holdout
+  kind: topology_holdout
+  source: master-regimes/configs/collection/batches/batch-300-n3-holdout.yml
+  status: blocked_until_three_region_inventory
+  source_sha256: a039193f6163ba416b9fa097ae4ba617b91423a19941880629fe9d3419e89268
+  planned_execution_count: 96
+  planned_configuration_count: 32
+  repetitions: 3
+  design:
+    sql_template_count: 4
+    dataset_scale_count: 2
+    placement_profile_count: 2
+    pair_member_count: 2
+    placement_profiles:
+    - balanced_three_regions
+    - apac_dominant_three_regions
+    model_refit_allowed: false
+    expected_pair_count: 16
+  required_region_count: 3
+  required_worker_count_by_region:
+    eu: 2
+    us: 2
+    apac: 2
+  minimum_worker_count_per_region: 2
+- batch_id: batch-400-sentinels
+  kind: sentinel
+  source: master-regimes/configs/collection/batches/batch-400-sentinels.yml
+  status: prepared_not_executed
+  source_sha256: 2cbea5d727989e8437dd767914e7fcd9e4c7fbf101ff8d89383efddb02d18755

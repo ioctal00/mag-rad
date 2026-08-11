@@ -1,0 +1,74 @@
+corpus_id: stats-ceb-full-recovery-1800s-v1
+vocabulary: ../../docs/corpus-vocabulary.md
+query_groups: query-groups.yml
+runtime_catalog: runtime-configs.yml
+topology_id: eu_us_gac
+topology_scope: eu_us_gac
+description: >
+  One fixed extended-budget recovery attempt for all 16 incomplete queries
+  from the primary STATS-CEB full no-refit audit. The data, SQL, physical
+  design, feature contract, family weights, k=4 centers, fuzzifier m=1.7,
+  empirical P99 threshold and prototype names remain frozen.
+execution_budget:
+  hard_timeout_seconds: 1800
+  timeout_grace_seconds: 60
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  repetitions_default: 1
+  cache_features_in_default_model: false
+  order_policy: manifest_order
+  shuffle_seed: 20260728
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  correctness_filter_workload_to_passed: true
+dataset_profiles:
+  stats-ceb-full-recovery-1800s-v1:
+    profile: ../../datasets/profiles/stats-ceb-full-recovery-1800s.yml
+    load_method: custom_dump
+cells:
+  - corpus_cell_id: stats_ceb_full_recovery_1800s
+    logical_question_id: stats_ceb_count
+    execution_strategy: multiregion_union
+    template_id: stats_ceb_multiregion_count
+    dataset_profile_id: stats-ceb-full-recovery-1800s-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: final_check
+    intervention_axis: execution_budget
+    expected_regime_targets:
+      - remote_fetch_heavy
+      - join_movement
+      - well_reduced_localized
+    execution_class: pilot
+    parameters:
+      query_id:
+        - 30
+        - 34
+        - 45
+        - 58
+        - 68
+        - 89
+        - 104
+        - 105
+        - 106
+        - 108
+        - 114
+        - 120
+        - 122
+        - 126
+        - 132
+        - 135
+frozen_model_contract:
+  model_id: semantic-v2-transfer-oriented-fcm
+  feature_contract: ../../configs/features/feature_semantic_contract_v2.yml
+  model_freeze: ../../analysis/reports/semantic-v2-model-freeze/semantic_v2_model_manifest.yml
+  fuzzifier: 1.7
+  primary_resolution: 4
+  refit_allowed: false
+  feature_schema_change_allowed: false
+  post_observation_contract_changes_allowed: false
+  projection_role: external_full_workload_extended_budget_recovery
+  ood_requires_absolute_distance: true

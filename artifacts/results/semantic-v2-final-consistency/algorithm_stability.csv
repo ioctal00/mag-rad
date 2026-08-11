@@ -1,0 +1,4 @@
+algorithm,ari_mean,ari_min,ari_max,ari_std
+FCM,,,,
+K-means,0.8500096818455357,0.5699452574165228,1.0,0.11751501134970062
+Ward,1.0,1.0,1.0,0.0

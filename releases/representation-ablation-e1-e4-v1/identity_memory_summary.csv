@@ -1,0 +1,9 @@
+evaluation,reference_method,identity_definition,episode_count,recommendation_count,abstention_count,coverage,correct_decision_count,top1_accuracy,mean_regret_log2
+E1,exact_context_memory,logical_identity+topology_id,15,0,15,0.0,0,,
+E1,logical_query_memory,logical_identity_without_topology,15,0,15,0.0,0,,
+E2,exact_context_memory,logical_identity+topology_id,45,30,15,0.6666666666666666,30,1.0,0.0
+E2,logical_query_memory,logical_identity_without_topology,45,30,15,0.6666666666666666,30,1.0,0.0
+E3,exact_context_memory,logical_identity+topology_id,15,0,15,0.0,0,,
+E3,logical_query_memory,logical_identity_without_topology,15,15,0,1.0,15,1.0,0.0
+E4,exact_context_memory,logical_identity+topology_id,15,15,0,1.0,15,1.0,0.0
+E4,logical_query_memory,logical_identity_without_topology,15,15,0,1.0,15,1.0,0.0

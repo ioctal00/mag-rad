@@ -1,0 +1,175 @@
+corpus_id: confirmatory-skew-v1
+protocol_version: 1
+source_manifest: master-regimes/workloads/corpus/corpus_manifest.confirmatory-skew-v1.yml
+source_execution_plan: master-regimes/generated/corpus/confirmatory-skew-v1-source/corpus_execution_plan.yml
+source_selection: master-regimes/workloads/corpus/confirmatory_skew_v1_selection.csv
+design_matrix: master-regimes/generated/corpus/confirmatory-skew-v1/design_matrix.csv
+frozen_contract: master-regimes/generated/corpus/confirmatory-skew-v1/frozen_contract.json
+execution_backend: master-regimes-infra.database_sweep
+placement_aware_runner_required: true
+locally_rendered_without_infrastructure: true
+dry_run_only_until_capability_gate: true
+database_result_rows_stored: false
+query_condition_count: 4
+state_condition_count: 16
+execution_condition_count: 16
+execution_count: 48
+state_count: 4
+state_order:
+- A
+- B
+- C
+- D
+execution_policy:
+  cache_policy: mixed_cache_confirmatory_first_observed
+  order_policy: deterministic_shuffle_within_state
+  shuffle_seed: 20260725
+  repetitions: 3
+  warmup_per_instance: false
+  explicit_cache_reset: false
+placement_contract:
+  regions:
+  - eu
+  - us
+  metadata_source: citus_shards
+  shard_lookup_function: get_shard_id_for_distribution_column
+  move_function: citus_move_shard_placement
+  move_signature:
+  - shard_id
+  - source_node_name
+  - source_node_port
+  - target_node_name
+  - target_node_port
+  - shard_transfer_mode
+  shard_transfer_mode: block_writes
+  no_concurrent_writes: true
+  colocated_shards_move_together: true
+  dispersed:
+    algorithm: greedy_hot_event_mass_balance
+    dominant_hot_event_share_max: 0.65
+    tie_breaker: worker_name_then_shard_id
+  concentrated:
+    algorithm: move_all_hot_bearing_colocation_groups_to_designated_worker
+    dominant_hot_event_share_min: 0.8
+    designated_worker_policy: lexicographically_first_active_primary_worker
+  rollback:
+    primary: replay_inverse_moves_from_placement_intervention_manifest
+    fallback: clean_reload_same_dataset_profile_and_seed
+  invariants:
+  - regional_table_row_counts
+  - hot_tenant_ids
+  - hot_tenant_event_counts
+  - hot_event_share
+  - logical_data_contract_id
+artifact_contract:
+  required_query_scopes:
+  - main
+  - regional_coordinator
+  - worker_task
+  required_index_tables:
+  - query_runs
+  - execution_features
+  - region_fragments
+  - worker_task_fragments
+  database_result_rows_stored: false
+group_count: 4
+groups:
+- group_id: confirmatory-skew-v1--state-A--pilot-balanced-v1--default--analytics-clients
+  sweep_id: confirmatory-skew-v1--state-A--pilot-balanced-v1--default--analytics-clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: default
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  network_profile_id: ''
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/confirmatory-skew-v1/groups/confirmatory-skew-v1--state-A--pilot-balanced-v1--default--analytics-clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/confirmatory-skew-v1/sweeps/confirmatory-skew-v1--state-A--pilot-balanced-v1--default--analytics-clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  state_id: A
+  state_name: balanced
+  placement_state_id: balanced_default
+  placement_action: audit_only
+  logical_data_contract_id: pilot-balanced-v1-seed-42
+  dataset_transition: clean_load
+  pre_group_action: audit_only
+  requires_placement_orchestrator: false
+  condition_count: 4
+- group_id: confirmatory-skew-v1--state-B--pilot-skew-heavy-v1--default--analytics-clients
+  sweep_id: confirmatory-skew-v1--state-B--pilot-skew-heavy-v1--default--analytics-clients
+  dataset_profile_id: pilot-skew-heavy-v1
+  runtime_config_id: default
+  target_group: analytics_clients
+  strategies: &id001
+  - multiregion_union
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  network_profile_id: ''
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/confirmatory-skew-v1/groups/confirmatory-skew-v1--state-B--pilot-skew-heavy-v1--default--analytics-clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/confirmatory-skew-v1/sweeps/confirmatory-skew-v1--state-B--pilot-skew-heavy-v1--default--analytics-clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  state_id: B
+  state_name: skew_dispersed
+  placement_state_id: hot_shards_dispersed
+  placement_action: disperse_hot_shards
+  logical_data_contract_id: pilot-skew-heavy-v1-seed-42
+  dataset_transition: clean_load
+  pre_group_action: disperse_hot_shards
+  requires_placement_orchestrator: true
+  condition_count: 4
+- group_id: confirmatory-skew-v1--state-C--pilot-skew-heavy-v1--default--analytics-clients
+  sweep_id: confirmatory-skew-v1--state-C--pilot-skew-heavy-v1--default--analytics-clients
+  dataset_profile_id: pilot-skew-heavy-v1
+  runtime_config_id: default
+  target_group: analytics_clients
+  strategies: *id001
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  network_profile_id: ''
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/confirmatory-skew-v1/groups/confirmatory-skew-v1--state-C--pilot-skew-heavy-v1--default--analytics-clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/confirmatory-skew-v1/sweeps/confirmatory-skew-v1--state-C--pilot-skew-heavy-v1--default--analytics-clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  state_id: C
+  state_name: skew_concentrated
+  placement_state_id: hot_shards_concentrated
+  placement_action: concentrate_hot_shards
+  logical_data_contract_id: pilot-skew-heavy-v1-seed-42
+  dataset_transition: reuse_previous_loaded_dataset
+  pre_group_action: concentrate_hot_shards
+  requires_placement_orchestrator: true
+  condition_count: 4
+- group_id: confirmatory-skew-v1--state-D--pilot-region-imbalanced-v1--default--analytics-clients
+  sweep_id: confirmatory-skew-v1--state-D--pilot-region-imbalanced-v1--default--analytics-clients
+  dataset_profile_id: pilot-region-imbalanced-v1
+  runtime_config_id: default
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  network_profile_id: ''
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/confirmatory-skew-v1/groups/confirmatory-skew-v1--state-D--pilot-region-imbalanced-v1--default--analytics-clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/confirmatory-skew-v1/sweeps/confirmatory-skew-v1--state-D--pilot-region-imbalanced-v1--default--analytics-clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+  state_id: D
+  state_name: region_imbalanced
+  placement_state_id: region_imbalanced_default
+  placement_action: audit_only
+  logical_data_contract_id: pilot-region-imbalanced-v1-seed-42
+  dataset_transition: clean_load
+  pre_group_action: audit_only
+  requires_placement_orchestrator: false
+  condition_count: 4

@@ -1,0 +1,8 @@
+entity_type,entity_id,intervention_role,strict_pair_count,stressed_template_count,dataset_count,median_log2_gain,median_speedup,category,model_status,decision_reason
+action,use_colocated_distribution,positive_case,75,4,6,5.020591619781458,32.46001181245457,primary_predictive_result,MIXED_MODEL_EVIDENCE,strong template/dataset transfer; unseen scenario-level extrapolation does not beat median baseline
+action,mitigate_remote_path_bundle,positive_case,24,4,3,4.477353071589394,22.27499297417044,bounded_intervention_study,model_deferred,24 strict pairs remain below the action-audit minimum of 40
+policy,gac_regional_reduction,positive_case,60,4,3,1.3737597152021557,2.591450281801999,deterministically_routed_policy,limited_prediction_only,four actions are confounded with four stressed SQL templates
+action,disperse_hot_shards,positive_case,49,4,7,-0.0067098982455954,0.995359851855256,negative_end_to_end_result,no_positive_gain_model,placement changes physical imbalance but median end-to-end gain is near zero
+action,increase_regional_work_mem,positive_case,54,1,3,0.0592511876835892,1.0419248227835445,negative_end_to_end_result,no_positive_gain_model,spill mitigation has weak and template-specific end-to-end gain
+action,increase_gac_work_mem,positive_case,15,1,3,0.1020557333854388,1.0733017487835876,bounded_intervention_study,model_deferred,one stressed SQL template and 15 strict pairs
+policy,remote_transport_calibration,calibration,24,4,2,2.038925806115357,4.109394417096216,mechanism_calibration,not_a_general_model,"isolates fetch, delay and bandwidth effects on two datasets"

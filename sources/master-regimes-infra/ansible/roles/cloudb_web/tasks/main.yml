@@ -1,0 +1,894 @@
+---
+- name: Deploy cloudb-web portal
+  when: cloudb_web_enabled | bool
+  block:
+    - name: Build cloudb-web target host lists
+      ansible.builtin.set_fact:
+        cloudb_web_gac_hosts: "{{ groups.get('analytics_clients', []) | list }}"
+        cloudb_web_eu_coord_hosts: "{{ groups.get('coordinators', []) | select('match', '^eu-') | list }}"
+        cloudb_web_us_coord_hosts: "{{ groups.get('coordinators', []) | select('match', '^us-') | list }}"
+
+    - name: Validate cloudb-web topology inputs
+      ansible.builtin.assert:
+        that:
+          - cloudb_web_gac_hosts | length > 0
+          - cloudb_web_eu_coord_hosts | length > 0
+          - cloudb_web_us_coord_hosts | length > 0
+          - cloudb_web_db_user | length > 0
+          - cloudb_web_db_password | length > 0
+          - cloudb_web_basic_auth_users | length > 0
+          - cloudb_web_viewer_auth_users | length > 0 or cloudb_web_viewer_auth_disabled | bool
+        fail_msg: "cloudb-web requires GAC/EU/US hosts and auth/database secrets."
+      no_log: true
+
+    - name: Validate cloudb-web application source mode
+      ansible.builtin.assert:
+        that:
+          - cloudb_web_app_source_mode in ['local', 'git']
+          - cloudb_web_app_source_mode != 'git' or cloudb_web_apps_repo | length > 0
+        fail_msg: "cloudb-web app source mode must be local or git; git mode requires cloudb_web_apps_repo."
+
+    - name: Derive cloudb-web database endpoints
+      ansible.builtin.set_fact:
+        cloudb_web_gac_host: "{{ hostvars[cloudb_web_gac_hosts[0]].private_ip | default(hostvars[cloudb_web_gac_hosts[0]].ansible_host, true) }}"
+        cloudb_web_eu_host: "{{ hostvars[cloudb_web_eu_coord_hosts[0]].private_ip | default(hostvars[cloudb_web_eu_coord_hosts[0]].ansible_host, true) }}"
+        cloudb_web_us_host: "{{ hostvars[cloudb_web_us_coord_hosts[0]].private_ip | default(hostvars[cloudb_web_us_coord_hosts[0]].ansible_host, true) }}"
+
+    - name: Derive local source paths
+      ansible.builtin.set_fact:
+        cloudb_web_repo_root: "{{ playbook_dir }}/../.."
+        cloudb_web_cloudb_source_abs: "{{ playbook_dir }}/../../{{ cloudb_web_cloudb_source_hint }}"
+        cloudb_web_viewer_source_abs: "{{ playbook_dir }}/../../{{ cloudb_web_viewer_source_hint }}"
+        cloudb_web_tls_origin_cert_local_abs: "{{ playbook_dir }}/../../{{ cloudb_web_tls_origin_cert_local_path }}"
+        cloudb_web_tls_origin_key_local_abs: "{{ playbook_dir }}/../../{{ cloudb_web_tls_origin_key_local_path }}"
+        cloudb_web_viewer_snapshot_local_abs: "{{ playbook_dir }}/../../{{ cloudb_web_viewer_snapshot_local_path }}"
+        cloudb_web_live_inventory_local_abs: "{{ playbook_dir }}/../inventory/generated.json"
+        cloudb_web_master_regimes_local_root: "{{ playbook_dir }}/../../../master-regimes"
+        cloudb_web_live_ssh_key_local_abs: >-
+          {{ lookup('env', 'MASTER_REGIMES_SSH_PRIVATE_KEY_FILE') |
+          default(ansible_ssh_private_key_file | default(''), true) }}
+
+    - name: Check local cloudb-web source
+      ansible.builtin.stat:
+        path: "{{ cloudb_web_cloudb_source_abs }}/docker-compose.yml"
+      delegate_to: localhost
+      become: false
+      vars:
+        ansible_become: false
+      register: cloudb_web_cloudb_source
+      when: cloudb_web_app_source_mode == 'local'
+
+    - name: Check local viewer source
+      ansible.builtin.stat:
+        path: "{{ cloudb_web_viewer_source_abs }}/package.json"
+      delegate_to: localhost
+      become: false
+      vars:
+        ansible_become: false
+      register: cloudb_web_viewer_source
+      when: cloudb_web_app_source_mode == 'local'
+
+    - name: Validate local deploy sources
+      ansible.builtin.assert:
+        that:
+          - cloudb_web_cloudb_source.stat.exists
+          - cloudb_web_viewer_source.stat.exists
+        fail_msg: "cloudb-web or regime-diagnosis-viewer local source is missing."
+      when: cloudb_web_app_source_mode == 'local'
+
+    - name: Install cloudb-web packages
+      ansible.builtin.apt:
+        name: "{{ cloudb_web_packages }}"
+        state: present
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Ensure Docker service is enabled
+      ansible.builtin.service:
+        name: docker
+        enabled: true
+        state: started
+
+    - name: Clone or update master-regimes-apps repository
+      when: cloudb_web_app_source_mode == 'git'
+      no_log: true
+      block:
+        - name: Ensure master-regimes-apps parent directory exists
+          ansible.builtin.file:
+            path: "{{ cloudb_web_apps_repo_dir | dirname }}"
+            state: directory
+            owner: root
+            group: root
+            mode: "0755"
+
+        - name: Write temporary Git netrc for master-regimes-apps clone
+          ansible.builtin.copy:
+            dest: /root/.netrc
+            owner: root
+            group: root
+            mode: "0600"
+            content: |
+              machine {{ cloudb_web_apps_repo | regex_replace('^https://([^/]+)/.*$', '\1') }}
+              login {{ master_regimes_git_username | default('x-access-token', true) }}
+              password {{ master_regimes_git_pat }}
+          when:
+            - cloudb_web_apps_repo is match('^https://')
+            - master_regimes_git_pat | default('', true) | length > 0
+
+        - name: Mark master-regimes-apps repository as safe for Git
+          ansible.builtin.command:
+            cmd: "git config --global --add safe.directory {{ cloudb_web_apps_repo_dir }}"
+          changed_when: false
+
+        - name: Clone or update master-regimes-apps repository
+          ansible.builtin.git:
+            repo: "{{ cloudb_web_apps_repo }}"
+            dest: "{{ cloudb_web_apps_repo_dir }}"
+            version: "{{ cloudb_web_apps_branch }}"
+            update: true
+            force: true
+      always:
+        - name: Remove temporary Git netrc after master-regimes-apps clone
+          ansible.builtin.file:
+            path: /root/.netrc
+            state: absent
+          when:
+            - cloudb_web_apps_repo is match('^https://')
+            - master_regimes_git_pat | default('', true) | length > 0
+          no_log: true
+
+    - name: Read deployed master-regimes-apps branch
+      ansible.builtin.command:
+        cmd: "git -C {{ cloudb_web_apps_repo_dir }} branch --show-current"
+      register: cloudb_web_apps_deployed_branch
+      changed_when: false
+      when: cloudb_web_app_source_mode == 'git'
+
+    - name: Verify deployed master-regimes-apps branch
+      ansible.builtin.assert:
+        that:
+          - cloudb_web_apps_deployed_branch.stdout == cloudb_web_apps_branch
+        fail_msg: >-
+          master-regimes-apps is on branch
+          {{ cloudb_web_apps_deployed_branch.stdout | default('unknown') }},
+          expected {{ cloudb_web_apps_branch }}.
+      when: cloudb_web_app_source_mode == 'git'
+
+    - name: Clone or update live diagnosis pipeline repositories
+      when: cloudb_web_live_pipeline_enabled | bool
+      no_log: true
+      block:
+        - name: Ensure live diagnosis repository parent directories exist
+          ansible.builtin.file:
+            path: "{{ item.dest | dirname }}"
+            state: directory
+            owner: root
+            group: root
+            mode: "0755"
+          loop:
+            - dest: "{{ cloudb_web_master_regimes_repo_dir }}"
+            - dest: "{{ cloudb_web_master_regimes_infra_repo_dir }}"
+
+        - name: Write temporary Git netrc for live diagnosis repository clone
+          ansible.builtin.copy:
+            dest: /root/.netrc
+            owner: root
+            group: root
+            mode: "0600"
+            content: |
+              machine github.com
+              login {{ master_regimes_git_username | default('x-access-token', true) }}
+              password {{ master_regimes_git_pat }}
+          when:
+            - master_regimes_git_pat | default('', true) | length > 0
+
+        - name: Mark live diagnosis repositories as safe for Git
+          ansible.builtin.command:
+            cmd: "git config --global --add safe.directory {{ item }}"
+          loop:
+            - "{{ cloudb_web_master_regimes_repo_dir }}"
+            - "{{ cloudb_web_master_regimes_infra_repo_dir }}"
+          changed_when: false
+
+        - name: Clone or update live diagnosis repositories
+          ansible.builtin.git:
+            repo: "{{ item.repo }}"
+            dest: "{{ item.dest }}"
+            version: "{{ item.version }}"
+            update: true
+            force: true
+          loop:
+            - repo: "{{ cloudb_web_master_regimes_repo }}"
+              dest: "{{ cloudb_web_master_regimes_repo_dir }}"
+              version: "{{ cloudb_web_master_regimes_branch }}"
+            - repo: "{{ cloudb_web_master_regimes_infra_repo }}"
+              dest: "{{ cloudb_web_master_regimes_infra_repo_dir }}"
+              version: "{{ cloudb_web_master_regimes_infra_branch }}"
+      always:
+        - name: Remove temporary Git netrc after live diagnosis repository clone
+          ansible.builtin.file:
+            path: /root/.netrc
+            state: absent
+          when:
+            - master_regimes_git_pat | default('', true) | length > 0
+          no_log: true
+
+    - name: Read deployed live diagnosis repository branches
+      ansible.builtin.command:
+        cmd: "git -C {{ item.dest }} branch --show-current"
+      loop:
+        - dest: "{{ cloudb_web_master_regimes_repo_dir }}"
+          branch: "{{ cloudb_web_master_regimes_branch }}"
+        - dest: "{{ cloudb_web_master_regimes_infra_repo_dir }}"
+          branch: "{{ cloudb_web_master_regimes_infra_branch }}"
+      register: cloudb_web_live_deployed_branches
+      changed_when: false
+      when: cloudb_web_live_pipeline_enabled | bool
+
+    - name: Verify deployed live diagnosis repository branches
+      ansible.builtin.assert:
+        that:
+          - item.stdout == item.item.branch
+        fail_msg: >-
+          {{ item.item.dest }} is on branch
+          {{ item.stdout | default('unknown') }},
+          expected {{ item.item.branch }}.
+      loop: "{{ cloudb_web_live_deployed_branches.results | default([]) }}"
+      when: cloudb_web_live_pipeline_enabled | bool
+
+    - name: Use master-regimes-apps checkout as application root
+      ansible.builtin.set_fact:
+        cloudb_web_root: "{{ cloudb_web_apps_repo_dir }}/{{ cloudb_web_apps_cloudb_subdir }}"
+        cloudb_web_viewer_root: "{{ cloudb_web_apps_repo_dir }}/{{ cloudb_web_apps_viewer_subdir }}"
+      when: cloudb_web_app_source_mode == 'git'
+
+    - name: Check effective cloudb-web source
+      ansible.builtin.stat:
+        path: "{{ cloudb_web_root }}/docker-compose.yml"
+      register: cloudb_web_effective_cloudb_source
+      when: cloudb_web_app_source_mode == 'git'
+
+    - name: Check effective viewer source
+      ansible.builtin.stat:
+        path: "{{ cloudb_web_viewer_root }}/package.json"
+      register: cloudb_web_effective_viewer_source
+      when: cloudb_web_app_source_mode == 'git'
+
+    - name: Validate effective application sources
+      ansible.builtin.assert:
+        that:
+          - cloudb_web_effective_cloudb_source.stat.exists
+          - cloudb_web_effective_viewer_source.stat.exists
+        fail_msg: "Effective cloudb-web or regime-diagnosis-viewer source is missing on the portal host."
+      when: cloudb_web_app_source_mode == 'git'
+
+    - name: Check local live diagnosis inventory
+      ansible.builtin.stat:
+        path: "{{ cloudb_web_live_inventory_local_abs }}"
+      delegate_to: localhost
+      become: false
+      vars:
+        ansible_become: false
+      register: cloudb_web_live_inventory_local
+      when: cloudb_web_live_pipeline_enabled | bool
+
+    - name: Validate local live diagnosis inventory
+      ansible.builtin.assert:
+        that:
+          - cloudb_web_live_inventory_local.stat.exists
+        fail_msg: >-
+          Live diagnosis requires ansible/inventory/generated.json. Run
+          make single-eu-inventory TOPOLOGY=eu-us-gac-vps before deploying apps.
+      when: cloudb_web_live_pipeline_enabled | bool
+
+    - name: Ensure live diagnosis inventory directory exists
+      ansible.builtin.file:
+        path: "{{ cloudb_web_master_regimes_infra_repo_dir }}/ansible/inventory"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      when: cloudb_web_live_pipeline_enabled | bool
+
+    - name: Install live diagnosis runtime inventory
+      ansible.builtin.copy:
+        src: "{{ cloudb_web_live_inventory_local_abs }}"
+        dest: "{{ cloudb_web_master_regimes_infra_repo_dir }}/ansible/inventory/generated.json"
+        owner: root
+        group: root
+        mode: "0644"
+      when: cloudb_web_live_pipeline_enabled | bool
+
+    - name: Check local live diagnosis SSH private key
+      ansible.builtin.stat:
+        path: "{{ cloudb_web_live_ssh_key_local_abs }}"
+      delegate_to: localhost
+      become: false
+      vars:
+        ansible_become: false
+      register: cloudb_web_live_ssh_key_local
+      no_log: true
+      when: cloudb_web_live_pipeline_enabled | bool
+
+    - name: Validate local live diagnosis SSH private key
+      ansible.builtin.assert:
+        that:
+          - cloudb_web_live_ssh_key_local_abs | length > 0
+          - cloudb_web_live_ssh_key_local.stat.exists
+        fail_msg: "Live diagnosis requires the configured SSH private key to be available locally."
+      no_log: true
+      when: cloudb_web_live_pipeline_enabled | bool
+
+    - name: Ensure live diagnosis runtime config directories exist
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "{{ item.mode }}"
+      loop:
+        - path: "{{ cloudb_web_live_config_dir }}"
+          mode: "0700"
+        - path: "{{ cloudb_web_live_ssh_key_remote_path | dirname }}"
+          mode: "0700"
+      when: cloudb_web_live_pipeline_enabled | bool
+
+    - name: Install live diagnosis SSH private key
+      ansible.builtin.copy:
+        src: "{{ cloudb_web_live_ssh_key_local_abs }}"
+        dest: "{{ cloudb_web_live_ssh_key_remote_path }}"
+        owner: root
+        group: root
+        mode: "0600"
+      no_log: true
+      when: cloudb_web_live_pipeline_enabled | bool
+
+    - name: Install live diagnosis runtime env file
+      ansible.builtin.copy:
+        dest: "{{ cloudb_web_live_config_dir }}/env"
+        owner: root
+        group: root
+        mode: "0600"
+        content: |
+          export MASTER_REGIMES_SSH_PRIVATE_KEY_FILE={{ cloudb_web_live_ssh_key_remote_path }}
+          export MASTER_REGIMES_SSH_HOST_FIELD=private_ip
+      no_log: true
+      when: cloudb_web_live_pipeline_enabled | bool
+
+    - name: Check local live diagnosis model bundle paths
+      ansible.builtin.stat:
+        path: "{{ cloudb_web_master_regimes_local_root }}/{{ item }}"
+      delegate_to: localhost
+      become: false
+      vars:
+        ansible_become: false
+      register: cloudb_web_live_model_bundle_local
+      loop: "{{ cloudb_web_live_model_bundle_paths }}"
+      when: cloudb_web_live_pipeline_enabled | bool
+
+    - name: Validate local live diagnosis model bundle
+      ansible.builtin.assert:
+        that:
+          - >-
+            {{
+              cloudb_web_live_model_bundle_local.results
+              | selectattr('stat.exists')
+              | list
+              | length
+              == cloudb_web_live_model_bundle_paths | length
+            }}
+        fail_msg: "Live diagnosis model bundle is incomplete under ../master-regimes/analysis."
+      when: cloudb_web_live_pipeline_enabled | bool
+
+    - name: Ensure live diagnosis model bundle parent directories exist
+      ansible.builtin.file:
+        path: "{{ cloudb_web_master_regimes_repo_dir }}/{{ item | dirname }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      loop: "{{ cloudb_web_live_model_bundle_paths }}"
+      when: cloudb_web_live_pipeline_enabled | bool
+
+    - name: Install live diagnosis model bundle
+      ansible.posix.synchronize:
+        src: "{{ cloudb_web_master_regimes_local_root }}/{{ item }}/"
+        dest: "{{ cloudb_web_master_regimes_repo_dir }}/{{ item }}/"
+        delete: true
+      loop: "{{ cloudb_web_live_model_bundle_paths }}"
+      when: cloudb_web_live_pipeline_enabled | bool
+
+    - name: Ensure cloudb-web directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      loop:
+        - "{{ cloudb_web_root }}"
+        - "{{ cloudb_web_viewer_root }}"
+        - "{{ cloudb_web_static_root }}"
+        - "{{ cloudb_web_tls_webroot }}"
+        - "{{ cloudb_web_tls_webroot }}/.well-known"
+        - "{{ cloudb_web_tls_webroot }}/.well-known/acme-challenge"
+
+    - name: Validate TLS provider
+      ansible.builtin.assert:
+        that:
+          - cloudb_web_tls_provider in ['letsencrypt', 'cloudflare_origin']
+        fail_msg: "cloudb-web TLS provider must be letsencrypt or cloudflare_origin."
+      when: cloudb_web_tls_enabled | bool
+
+    - name: Check local Cloudflare origin certificate
+      ansible.builtin.stat:
+        path: "{{ cloudb_web_tls_origin_cert_local_abs }}"
+      delegate_to: localhost
+      become: false
+      vars:
+        ansible_become: false
+      register: cloudb_web_tls_origin_cert_local
+      when:
+        - cloudb_web_tls_enabled | bool
+        - cloudb_web_tls_provider == 'cloudflare_origin'
+
+    - name: Check local Cloudflare origin private key
+      ansible.builtin.stat:
+        path: "{{ cloudb_web_tls_origin_key_local_abs }}"
+      delegate_to: localhost
+      become: false
+      vars:
+        ansible_become: false
+      register: cloudb_web_tls_origin_key_local
+      no_log: true
+      when:
+        - cloudb_web_tls_enabled | bool
+        - cloudb_web_tls_provider == 'cloudflare_origin'
+
+    - name: Validate local Cloudflare origin certificate files
+      ansible.builtin.assert:
+        that:
+          - cloudb_web_tls_origin_cert_local.stat.exists
+          - cloudb_web_tls_origin_key_local.stat.exists
+        fail_msg: "Cloudflare origin TLS is enabled, but origin.pem/origin.key were not found locally."
+      no_log: true
+      when:
+        - cloudb_web_tls_enabled | bool
+        - cloudb_web_tls_provider == 'cloudflare_origin'
+
+    - name: Ensure Cloudflare origin certificate directory exists
+      ansible.builtin.file:
+        path: "{{ cloudb_web_tls_origin_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0700"
+      when:
+        - cloudb_web_tls_enabled | bool
+        - cloudb_web_tls_provider == 'cloudflare_origin'
+
+    - name: Install Cloudflare origin certificate
+      ansible.builtin.copy:
+        src: "{{ cloudb_web_tls_origin_cert_local_abs }}"
+        dest: "{{ cloudb_web_tls_origin_cert_remote_path }}"
+        owner: root
+        group: root
+        mode: "0644"
+      no_log: true
+      when:
+        - cloudb_web_tls_enabled | bool
+        - cloudb_web_tls_provider == 'cloudflare_origin'
+
+    - name: Install Cloudflare origin private key
+      ansible.builtin.copy:
+        src: "{{ cloudb_web_tls_origin_key_local_abs }}"
+        dest: "{{ cloudb_web_tls_origin_key_remote_path }}"
+        owner: root
+        group: root
+        mode: "0600"
+      no_log: true
+      when:
+        - cloudb_web_tls_enabled | bool
+        - cloudb_web_tls_provider == 'cloudflare_origin'
+
+    - name: Check existing Let's Encrypt certificate
+      ansible.builtin.stat:
+        path: "{{ cloudb_web_tls_fullchain }}"
+      register: cloudb_web_tls_cert_stat
+      when: cloudb_web_tls_enabled | bool
+
+    - name: Set current TLS certificate availability
+      ansible.builtin.set_fact:
+        cloudb_web_tls_cert_available: "{{ cloudb_web_tls_cert_stat.stat.exists | default(false) }}"
+
+    - name: Sync cloudb-web source
+      ansible.posix.synchronize:
+        src: "{{ cloudb_web_cloudb_source_abs }}/"
+        dest: "{{ cloudb_web_root }}/"
+        delete: true
+        rsync_opts:
+          - "--exclude=.git"
+          - "--exclude=.env"
+      when: cloudb_web_app_source_mode == 'local'
+
+    - name: Sync regime diagnosis viewer source
+      ansible.posix.synchronize:
+        src: "{{ cloudb_web_viewer_source_abs }}/"
+        dest: "{{ cloudb_web_viewer_root }}/"
+        delete: true
+        rsync_opts:
+          - "--exclude=.git"
+          - "--exclude=.env"
+          - "--exclude=.env.local"
+          - "--exclude=node_modules"
+          - "--exclude=.next"
+      when: cloudb_web_app_source_mode == 'local'
+
+    - name: Install cloudb-web static portal assets
+      ansible.builtin.copy:
+        src: "{{ cloudb_web_root }}/public/"
+        dest: "{{ cloudb_web_static_root }}/"
+        owner: root
+        group: root
+        mode: preserve
+        remote_src: true
+
+    - name: Check local cloudb-web static portal assets
+      ansible.builtin.stat:
+        path: "{{ cloudb_web_cloudb_source_abs }}/public"
+      delegate_to: localhost
+      become: false
+      vars:
+        ansible_become: false
+      register: cloudb_web_local_static_assets
+
+    - name: Overlay local cloudb-web static portal assets
+      ansible.posix.synchronize:
+        src: "{{ cloudb_web_cloudb_source_abs }}/public/"
+        dest: "{{ cloudb_web_static_root }}/"
+        delete: false
+        rsync_path: "sudo rsync"
+        rsync_opts:
+          - "--chmod=F0644,D0755"
+      delegate_to: localhost
+      become: false
+      vars:
+        ansible_become: false
+      when: cloudb_web_local_static_assets.stat.exists | default(false)
+
+    - name: Check local regime diagnosis viewer snapshot payload
+      ansible.builtin.stat:
+        path: "{{ cloudb_web_viewer_snapshot_local_abs }}"
+      delegate_to: localhost
+      become: false
+      vars:
+        ansible_become: false
+      register: cloudb_web_viewer_snapshot_local
+
+    - name: Check local regime diagnosis viewer detail payloads
+      ansible.builtin.stat:
+        path: "{{ cloudb_web_viewer_snapshot_local_abs | dirname }}/diagnoses"
+      delegate_to: localhost
+      become: false
+      vars:
+        ansible_become: false
+      register: cloudb_web_viewer_details_local
+
+    - name: Ensure regime diagnosis viewer public directory exists
+      ansible.builtin.file:
+        path: "{{ cloudb_web_viewer_root }}/public"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Install regime diagnosis viewer snapshot payload when present
+      ansible.builtin.copy:
+        src: "{{ cloudb_web_viewer_snapshot_local_abs }}"
+        dest: "{{ cloudb_web_viewer_root }}/public/diagnosis-data.json"
+        owner: root
+        group: root
+        mode: "0644"
+      when: cloudb_web_viewer_snapshot_local.stat.exists | default(false)
+
+    - name: Ensure regime diagnosis viewer detail directory exists
+      ansible.builtin.file:
+        path: "{{ cloudb_web_viewer_root }}/public/diagnoses"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      when: cloudb_web_viewer_details_local.stat.exists | default(false)
+
+    - name: Install regime diagnosis viewer detail payloads when present
+      ansible.posix.synchronize:
+        src: "{{ cloudb_web_viewer_snapshot_local_abs | dirname }}/diagnoses/"
+        dest: "{{ cloudb_web_viewer_root }}/public/diagnoses/"
+        delete: true
+        rsync_path: "sudo rsync"
+        rsync_opts:
+          - "--chmod=F0644,D0755"
+      delegate_to: localhost
+      become: false
+      vars:
+        ansible_become: false
+      when: cloudb_web_viewer_details_local.stat.exists | default(false)
+
+    - name: Report missing regime diagnosis viewer snapshot payload
+      ansible.builtin.debug:
+        msg: >-
+          No local diagnosis-data.json snapshot found at
+          {{ cloudb_web_viewer_snapshot_local_abs }}. The viewer will still
+          build and live SQL mode can work, but snapshot examples from previous
+          runs will be unavailable until `npm run prepare-data:local` is run in
+          master-regimes-apps/apps/regime-diagnosis-viewer and this role is
+          applied again.
+      when: not (cloudb_web_viewer_snapshot_local.stat.exists | default(false))
+
+    - name: Render cloudb-web runtime environment
+      ansible.builtin.template:
+        src: env.j2
+        dest: "{{ cloudb_web_root }}/.env"
+        owner: root
+        group: root
+        mode: "0600"
+      no_log: true
+
+    - name: Render cloudb-web htpasswd file
+      ansible.builtin.shell: |
+        set -euo pipefail
+        tmp_file="$(mktemp)"
+        trap 'rm -f "$tmp_file"' EXIT
+        python3 - "$tmp_file" <<'PY'
+        import os
+        import re
+        import subprocess
+        import sys
+        from pathlib import Path
+
+        out_path = Path(sys.argv[1])
+        raw = os.environ.get("CLOUDB_WEB_AUTH_USERS", "")
+        pairs = [part.strip() for part in re.split(r"[,;]", raw) if part.strip()]
+        if not pairs:
+            raise SystemExit("CLOUDB_WEB_AUTH_USERS did not contain any user:password pairs")
+
+        rendered = []
+        seen_users = set()
+        for pair in pairs:
+            if ":" not in pair:
+                raise SystemExit("CLOUDB_WEB_AUTH_USERS contains an entry without ':'")
+            user, password = pair.split(":", 1)
+            user = user.strip()
+            if not user or not password:
+                raise SystemExit("CLOUDB_WEB_AUTH_USERS contains an empty username or password")
+            if user in seen_users:
+                raise SystemExit(f"CLOUDB_WEB_AUTH_USERS contains duplicate user: {user}")
+            if user == password:
+                raise SystemExit(f"CLOUDB_WEB_AUTH_USERS password must not equal username: {user}")
+            seen_users.add(user)
+            result = subprocess.run(
+                ["htpasswd", "-Bbn", user, password],
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            line = result.stdout.strip()
+            if not line.startswith(f"{user}:"):
+                raise SystemExit(f"htpasswd did not render expected entry for user: {user}")
+            rendered.append(line)
+
+        out_path.write_text("\n".join(rendered) + "\n", encoding="utf-8")
+        PY
+        test "$(grep -c ':' "$tmp_file")" -ge 1
+        install -o root -g www-data -m 0640 "$tmp_file" "{{ cloudb_web_htpasswd_file }}"
+      args:
+        executable: /bin/bash
+      environment:
+        CLOUDB_WEB_AUTH_USERS: "{{ cloudb_web_basic_auth_users }}"
+      no_log: true
+
+    - name: Render cloudb-web nginx site
+      ansible.builtin.template:
+        src: nginx.conf.j2
+        dest: "{{ cloudb_web_nginx_site }}"
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Allow cloudb-web HTTP/HTTPS through UFW for approved CIDRs
+      ansible.builtin.command:
+        cmd: "ufw allow proto tcp from {{ item.0 }} to any port {{ item.1 }}"
+      loop: "{{ cloudb_web_allowed_cidrs | product([80, 443]) | list }}"
+      register: cloudb_web_ufw_allow
+      changed_when: "'Rule added' in cloudb_web_ufw_allow.stdout"
+      when: cloudb_web_allowed_cidrs | length > 0
+
+    - name: Disable default nginx site
+      ansible.builtin.file:
+        path: /etc/nginx/sites-enabled/default
+        state: absent
+
+    - name: Enable cloudb-web nginx site
+      ansible.builtin.file:
+        src: "{{ cloudb_web_nginx_site }}"
+        dest: "{{ cloudb_web_nginx_site_link }}"
+        state: link
+
+    - name: Validate nginx config
+      ansible.builtin.command:
+        cmd: nginx -t
+      changed_when: false
+
+    - name: Reload nginx
+      ansible.builtin.service:
+        name: nginx
+        enabled: true
+        state: reloaded
+
+    - name: Validate TLS domain input
+      ansible.builtin.assert:
+        that:
+          - cloudb_web_tls_domain | length > 0
+          - cloudb_web_tls_domain != "_"
+        fail_msg: "cloudb-web TLS requires a real domain name, not '_' or empty."
+      when: cloudb_web_tls_enabled | bool
+
+    - name: Resolve TLS domain on web portal host
+      ansible.builtin.command:
+        cmd: "getent ahostsv4 {{ cloudb_web_tls_domain }}"
+      register: cloudb_web_tls_dns_lookup
+      changed_when: false
+      failed_when: false
+      when: cloudb_web_tls_enabled | bool
+
+    - name: Derive TLS DNS readiness
+      ansible.builtin.set_fact:
+        cloudb_web_tls_dns_ipv4s: "{{ cloudb_web_tls_dns_lookup.stdout_lines | default([]) | map('split') | map('first') | unique | list }}"
+        cloudb_web_tls_dns_ready: "{{ ansible_host in (cloudb_web_tls_dns_lookup.stdout_lines | default([]) | map('split') | map('first') | unique | list) }}"
+      when: cloudb_web_tls_enabled | bool
+
+    - name: Write ACME HTTP-01 reachability probe
+      ansible.builtin.copy:
+        dest: "{{ cloudb_web_tls_webroot }}/.well-known/acme-challenge/cloudb-web-probe"
+        owner: root
+        group: root
+        mode: "0644"
+        content: "{{ inventory_hostname }}\n"
+      when:
+        - cloudb_web_tls_enabled | bool
+        - cloudb_web_tls_provider == 'letsencrypt'
+        - not cloudb_web_tls_cert_available | bool
+
+    - name: Check ACME HTTP-01 reachability through public domain
+      ansible.builtin.command:
+        cmd: "curl --connect-timeout 5 --max-time 12 -fsS http://{{ cloudb_web_tls_domain }}/.well-known/acme-challenge/cloudb-web-probe"
+      register: cloudb_web_tls_http_probe
+      changed_when: false
+      failed_when: false
+      when:
+        - cloudb_web_tls_enabled | bool
+        - cloudb_web_tls_provider == 'letsencrypt'
+        - not cloudb_web_tls_cert_available | bool
+
+    - name: Derive ACME HTTP-01 readiness
+      ansible.builtin.set_fact:
+        cloudb_web_tls_http_ready: "{{ (cloudb_web_tls_http_probe.rc == 0) and ((cloudb_web_tls_http_probe.stdout | trim) == inventory_hostname) }}"
+      when:
+        - cloudb_web_tls_enabled | bool
+        - cloudb_web_tls_provider == 'letsencrypt'
+        - not cloudb_web_tls_cert_available | bool
+
+    - name: Report skipped Let's Encrypt issuance when DNS is not ready
+      ansible.builtin.debug:
+        msg: >-
+          Skipping Let's Encrypt for {{ cloudb_web_tls_domain }} because the
+          public HTTP-01 challenge probe did not return this portal's token.
+          DNS A records seen from the portal are {{ cloudb_web_tls_dns_ipv4s | default([]) }};
+          portal public IP is {{ ansible_host }}. Point the domain/proxy to this
+          portal and rerun make eu-us-gac-vps-cloudb-web-deploy.
+      when:
+        - cloudb_web_tls_enabled | bool
+        - cloudb_web_tls_provider == 'letsencrypt'
+        - not cloudb_web_tls_cert_available | bool
+        - not cloudb_web_tls_http_ready | default(false) | bool
+
+    - name: Ensure certbot renewal deploy hook directory exists
+      ansible.builtin.file:
+        path: /etc/letsencrypt/renewal-hooks/deploy
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+      when: cloudb_web_tls_enabled | bool
+
+    - name: Install nginx reload hook for renewed certificates
+      ansible.builtin.copy:
+        dest: /etc/letsencrypt/renewal-hooks/deploy/reload-nginx.sh
+        owner: root
+        group: root
+        mode: "0755"
+        content: |
+          #!/bin/sh
+          set -eu
+          systemctl reload nginx
+      when: cloudb_web_tls_enabled | bool
+
+    - name: Request Let's Encrypt certificate through HTTP webroot
+      ansible.builtin.shell: |
+        set -euo pipefail
+        certbot certonly \
+          --webroot \
+          --webroot-path "{{ cloudb_web_tls_webroot }}" \
+          --domain "{{ cloudb_web_tls_domain }}" \
+          --cert-name "{{ cloudb_web_tls_cert_name }}" \
+          --non-interactive \
+          --agree-tos \
+          --keep-until-expiring \
+          --register-unsafely-without-email
+      args:
+        executable: /bin/bash
+      register: cloudb_web_certbot
+      changed_when: "'Successfully received certificate' in cloudb_web_certbot.stdout or 'Congratulations' in cloudb_web_certbot.stdout"
+      when:
+        - cloudb_web_tls_enabled | bool
+        - cloudb_web_tls_provider == 'letsencrypt'
+        - not cloudb_web_tls_cert_available | bool
+        - cloudb_web_tls_http_ready | default(false) | bool
+
+    - name: Ensure certbot renewal timer is enabled when available
+      ansible.builtin.systemd:
+        name: certbot.timer
+        enabled: true
+        state: started
+      failed_when: false
+      when:
+        - cloudb_web_tls_enabled | bool
+        - cloudb_web_tls_provider == 'letsencrypt'
+
+    - name: Re-check Let's Encrypt certificate after issuance
+      ansible.builtin.stat:
+        path: "{{ cloudb_web_tls_fullchain }}"
+      register: cloudb_web_tls_cert_stat_after
+      when: cloudb_web_tls_enabled | bool
+
+    - name: Update TLS certificate availability after issuance
+      ansible.builtin.set_fact:
+        cloudb_web_tls_cert_available: "{{ cloudb_web_tls_cert_stat_after.stat.exists | default(false) }}"
+      when: cloudb_web_tls_enabled | bool
+
+    - name: Render final cloudb-web nginx site after TLS check
+      ansible.builtin.template:
+        src: nginx.conf.j2
+        dest: "{{ cloudb_web_nginx_site }}"
+        owner: root
+        group: root
+        mode: "0644"
+      when: cloudb_web_tls_enabled | bool
+
+    - name: Validate final nginx config after TLS check
+      ansible.builtin.command:
+        cmd: nginx -t
+      changed_when: false
+      when: cloudb_web_tls_enabled | bool
+
+    - name: Reload nginx after TLS check
+      ansible.builtin.service:
+        name: nginx
+        enabled: true
+        state: reloaded
+      when: cloudb_web_tls_enabled | bool
+
+    - name: Stop existing cloudb-web docker services before env-sensitive restart
+      ansible.builtin.command:
+        cmd: "{{ cloudb_web_compose_command }} --env-file .env down --remove-orphans"
+        chdir: "{{ cloudb_web_root }}"
+      register: cloudb_web_compose_down
+      changed_when: "'Stopping' in cloudb_web_compose_down.stderr or 'Removing' in cloudb_web_compose_down.stderr or 'Removing' in cloudb_web_compose_down.stdout"
+      failed_when: false
+
+    - name: Start cloudb-web docker services
+      ansible.builtin.command:
+        cmd: "{{ cloudb_web_compose_command }} --env-file .env up -d --remove-orphans"
+        chdir: "{{ cloudb_web_root }}"
+      register: cloudb_web_compose
+      changed_when: "'Started' in cloudb_web_compose.stdout or 'Created' in cloudb_web_compose.stdout or 'Recreated' in cloudb_web_compose.stdout or 'Running' in cloudb_web_compose.stdout"

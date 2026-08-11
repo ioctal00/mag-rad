@@ -1,0 +1,316 @@
+corpus_id: batch-120-skew-raw-small-skew-moderate-v1-source
+corpus_version: pressure-raw-corpus-v1
+batch_id: batch-120-skew
+collection_contract_version: pressure-raw-v1
+parameter_defaults:
+  as_of_unix:
+  - 1782864000
+query_groups: ../../../../../../../workloads/corpus/query-groups.yml
+runtime_catalog: ../../../../../../../workloads/corpus/runtime-configs.yml
+dataset_profiles:
+  raw-small-skew-moderate-v1:
+    profile: ../../../../../../../datasets/profiles/raw-small-skew-moderate.yml
+    load_method: copy_pipe
+execution_budget:
+  hard_timeout_seconds: 1800
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: mixed_cache_worker_skew_raw
+  order_policy: deterministic_shuffle
+  shuffle_seed: 20260730
+  repetitions_default: 1
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  os_sampler: true
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+cells:
+- corpus_cell_id: hot_worker_probe_low_cpu
+  logical_question_id: top_tenants
+  execution_strategy: multiregion_union
+  template_id: gac_fdw_multiregion_hot_worker_probe
+  dataset_profile_id: raw-small-skew-moderate-v1
+  runtime_config_id: default
+  topology_id: eu_us_gac
+  intervention_role: positive_case
+  intervention_axis: dataset_and_shard_placement
+  pressure_axis: worker_data_skew
+  pressure_level: combined
+  variant: combined
+  pressure_pair_key: skew__hot_worker_probe_low_cpu
+  mitigation_action: disperse_hot_shards
+  target_metric: skew_multidimensional_reserved_for_phase_2
+  dataset_role: pressure_isolated
+  activates_hot_data: true
+  task_skew_expected: true
+  worker_skew_placement_sensitive: true
+  shard_pruning_expected: false
+  skew_signature_role: task_and_worker_positive
+  expected_hot_regions: &id001
+  - eu
+  - us
+  parameters:
+    eu_hot_tenant_min:
+    - 1
+    eu_hot_tenant_max:
+    - 10
+    us_hot_tenant_min:
+    - 10001
+    us_hot_tenant_max:
+    - 10010
+    cpu_terms:
+    - 32
+- corpus_cell_id: hot_worker_probe_high_cpu
+  logical_question_id: top_tenants
+  execution_strategy: multiregion_union
+  template_id: gac_fdw_multiregion_hot_worker_probe
+  dataset_profile_id: raw-small-skew-moderate-v1
+  runtime_config_id: default
+  topology_id: eu_us_gac
+  intervention_role: positive_case
+  intervention_axis: dataset_and_shard_placement
+  pressure_axis: worker_data_skew
+  pressure_level: combined
+  variant: combined
+  pressure_pair_key: skew__hot_worker_probe_high_cpu
+  mitigation_action: disperse_hot_shards
+  target_metric: skew_multidimensional_reserved_for_phase_2
+  dataset_role: pressure_isolated
+  activates_hot_data: true
+  task_skew_expected: true
+  worker_skew_placement_sensitive: true
+  shard_pruning_expected: false
+  skew_signature_role: task_and_worker_positive
+  expected_hot_regions: *id001
+  parameters:
+    eu_hot_tenant_min:
+    - 1
+    eu_hot_tenant_max:
+    - 10
+    us_hot_tenant_min:
+    - 10001
+    us_hot_tenant_max:
+    - 10010
+    cpu_terms:
+    - 128
+- corpus_cell_id: top_tenants_short
+  logical_question_id: top_tenants
+  execution_strategy: multiregion_union
+  template_id: gac_fdw_multiregion_top_tenants
+  dataset_profile_id: raw-small-skew-moderate-v1
+  runtime_config_id: default
+  topology_id: eu_us_gac
+  intervention_role: positive_case
+  intervention_axis: dataset_and_shard_placement
+  pressure_axis: worker_data_skew
+  pressure_level: combined
+  variant: combined
+  pressure_pair_key: skew__top_tenants_short
+  mitigation_action: disperse_hot_shards
+  target_metric: skew_multidimensional_reserved_for_phase_2
+  dataset_role: pressure_isolated
+  activates_hot_data: true
+  task_skew_expected: true
+  worker_skew_placement_sensitive: true
+  shard_pruning_expected: false
+  skew_signature_role: task_and_worker_positive
+  expected_hot_regions: *id001
+  parameters:
+    lookback_days:
+    - 7
+    limit_k:
+    - 50
+- corpus_cell_id: top_tenants_full
+  logical_question_id: top_tenants
+  execution_strategy: multiregion_union
+  template_id: gac_fdw_multiregion_top_tenants
+  dataset_profile_id: raw-small-skew-moderate-v1
+  runtime_config_id: default
+  topology_id: eu_us_gac
+  intervention_role: positive_case
+  intervention_axis: dataset_and_shard_placement
+  pressure_axis: worker_data_skew
+  pressure_level: combined
+  variant: combined
+  pressure_pair_key: skew__top_tenants_full
+  mitigation_action: disperse_hot_shards
+  target_metric: skew_multidimensional_reserved_for_phase_2
+  dataset_role: pressure_isolated
+  activates_hot_data: true
+  task_skew_expected: true
+  worker_skew_placement_sensitive: true
+  shard_pruning_expected: false
+  skew_signature_role: task_and_worker_positive
+  expected_hot_regions: *id001
+  parameters:
+    lookback_days:
+    - 30
+    limit_k:
+    - 100
+- corpus_cell_id: top_tenants_medium
+  logical_question_id: top_tenants
+  execution_strategy: multiregion_union
+  template_id: gac_fdw_multiregion_top_tenants
+  dataset_profile_id: raw-small-skew-moderate-v1
+  runtime_config_id: default
+  topology_id: eu_us_gac
+  intervention_role: positive_case
+  intervention_axis: dataset_and_shard_placement
+  pressure_axis: worker_data_skew
+  pressure_level: combined
+  variant: combined
+  pressure_pair_key: skew__top_tenants_medium
+  mitigation_action: disperse_hot_shards
+  target_metric: skew_multidimensional_reserved_for_phase_2
+  dataset_role: pressure_isolated
+  activates_hot_data: true
+  task_skew_expected: true
+  worker_skew_placement_sensitive: true
+  shard_pruning_expected: false
+  skew_signature_role: task_and_worker_positive
+  expected_hot_regions: *id001
+  parameters:
+    lookback_days:
+    - 14
+    limit_k:
+    - 75
+- corpus_cell_id: tenant_point_hot
+  logical_question_id: tenant_point_rollup
+  execution_strategy: multiregion_union
+  template_id: gac_fdw_multiregion_tenant_point_rollup
+  dataset_profile_id: raw-small-skew-moderate-v1
+  runtime_config_id: default
+  topology_id: eu_us_gac
+  intervention_role: negative_control
+  intervention_axis: dataset_and_shard_placement
+  pressure_axis: worker_data_skew
+  pressure_level: combined
+  variant: combined
+  pressure_pair_key: skew__tenant_point_hot
+  mitigation_action: disperse_hot_shards
+  target_metric: skew_multidimensional_reserved_for_phase_2
+  dataset_role: pressure_negative_control
+  activates_hot_data: true
+  task_skew_expected: false
+  worker_skew_placement_sensitive: false
+  shard_pruning_expected: true
+  skew_signature_role: hot_data_pruning_control
+  expected_hot_regions: *id001
+  parameters:
+    eu_tenant_id:
+    - 1
+    us_tenant_id:
+    - 10001
+    lookback_days:
+    - 30
+- corpus_cell_id: tenant_point_cold_control
+  logical_question_id: tenant_point_rollup
+  execution_strategy: multiregion_union
+  template_id: gac_fdw_multiregion_tenant_point_rollup
+  dataset_profile_id: raw-small-skew-moderate-v1
+  runtime_config_id: default
+  topology_id: eu_us_gac
+  intervention_role: negative_control
+  intervention_axis: dataset_and_shard_placement
+  pressure_axis: worker_data_skew
+  pressure_level: combined
+  variant: combined
+  pressure_pair_key: skew__tenant_point_cold_control
+  mitigation_action: disperse_hot_shards
+  target_metric: skew_multidimensional_reserved_for_phase_2
+  dataset_role: pressure_negative_control
+  activates_hot_data: false
+  task_skew_expected: false
+  worker_skew_placement_sensitive: false
+  shard_pruning_expected: true
+  skew_signature_role: cold_data_pruning_control
+  expected_hot_regions: *id001
+  parameters:
+    eu_tenant_id:
+    - 100
+    us_tenant_id:
+    - 10100
+    lookback_days:
+    - 30
+- corpus_cell_id: selective_filter_control
+  logical_question_id: event_filter_summary
+  execution_strategy: multiregion_union
+  template_id: gac_fdw_multiregion_event_filter_summary
+  dataset_profile_id: raw-small-skew-moderate-v1
+  runtime_config_id: default
+  topology_id: eu_us_gac
+  intervention_role: negative_control
+  intervention_axis: dataset_and_shard_placement
+  pressure_axis: worker_data_skew
+  pressure_level: combined
+  variant: combined
+  pressure_pair_key: skew__selective_filter_control
+  mitigation_action: disperse_hot_shards
+  target_metric: skew_multidimensional_reserved_for_phase_2
+  dataset_role: pressure_negative_control
+  activates_hot_data: false
+  task_skew_expected: false
+  worker_skew_placement_sensitive: false
+  shard_pruning_expected: false
+  skew_signature_role: multishard_negative_control
+  expected_hot_regions: *id001
+  parameters:
+    lookback_days:
+    - 1
+    min_value:
+    - 950
+- corpus_cell_id: broad_filter_hot
+  logical_question_id: event_filter_summary
+  execution_strategy: multiregion_union
+  template_id: gac_fdw_multiregion_event_filter_summary
+  dataset_profile_id: raw-small-skew-moderate-v1
+  runtime_config_id: default
+  topology_id: eu_us_gac
+  intervention_role: positive_case
+  intervention_axis: dataset_and_shard_placement
+  pressure_axis: worker_data_skew
+  pressure_level: combined
+  variant: combined
+  pressure_pair_key: skew__broad_filter_hot
+  mitigation_action: disperse_hot_shards
+  target_metric: skew_multidimensional_reserved_for_phase_2
+  dataset_role: pressure_isolated
+  activates_hot_data: true
+  task_skew_expected: true
+  worker_skew_placement_sensitive: true
+  shard_pruning_expected: false
+  skew_signature_role: task_and_worker_positive
+  expected_hot_regions: *id001
+  parameters:
+    lookback_days:
+    - 30
+    min_value:
+    - 0
+- corpus_cell_id: global_rollup
+  logical_question_id: event_full_scan_summary
+  execution_strategy: multiregion_union
+  template_id: gac_fdw_multiregion_event_count_rollup
+  dataset_profile_id: raw-small-skew-moderate-v1
+  runtime_config_id: default
+  topology_id: eu_us_gac
+  intervention_role: positive_case
+  intervention_axis: dataset_and_shard_placement
+  pressure_axis: worker_data_skew
+  pressure_level: combined
+  variant: combined
+  pressure_pair_key: skew__global_rollup
+  mitigation_action: disperse_hot_shards
+  target_metric: skew_multidimensional_reserved_for_phase_2
+  dataset_role: pressure_isolated
+  activates_hot_data: true
+  task_skew_expected: true
+  worker_skew_placement_sensitive: true
+  shard_pruning_expected: false
+  skew_signature_role: task_and_worker_positive
+  expected_hot_regions: *id001
+  parameters:
+    lookback_days:
+    - 30
+    as_of_unix:
+    - 1782864000

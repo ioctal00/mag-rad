@@ -1,0 +1,45 @@
+contract_version: feedback-loop-analysis-v1
+experiment_id: feedback-loop-analysis-v1
+
+inputs:
+  feedback_run: generated/feedback-loop-runs/20260807T123708Z-pressure-feedback-loop-v1
+  aggregate_exact_run: generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1
+  representation_contract: configs/validation/representation_ablation_e1_e4_v1.yml
+  frozen_full_model: analysis/reports/n3-topology-memory-v1/model_freeze_recomputed.json
+
+outputs:
+  release_dir: releases/feedback-loop-analysis-v1
+
+policy:
+  fixed_domains:
+    - remote_fdw_path
+    - regional_reduction
+    - gac_finalization
+    - imbalance
+    - disk_spill
+    - repartition_locality
+  local_memory_retrieval_order:
+    - same_logical_question_id
+    - same_normalized_sql_compatible_context
+    - physical_cross_query_secondary
+  frozen_representation: R3_full_multilayer
+  refit_frozen_representation: false
+  future_outcomes_allowed: false
+  missing_outcome_as_zero: false
+  prototype_clusters: 4
+  prototype_fuzzifier: 1.7
+  prototype_seeds: [11, 29, 47, 71, 101]
+  bootstrap_seed: 20260807
+  bootstrap_samples: 10000
+
+expected:
+  adaptive_transition_count: 5
+  replay_transition_count: 3
+  aggregate_exact_transition_count: 3
+  aggregate_exact_state_count: 5
+  frozen_projected_state_count: 15
+  frozen_candidate_features: 93
+  frozen_active_features: 64
+  frozen_components: 6
+  development_reference_states: 26
+  frozen_p99_threshold: 1.9533554892194174

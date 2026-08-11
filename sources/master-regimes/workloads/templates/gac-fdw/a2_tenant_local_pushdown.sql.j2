@@ -1,0 +1,11 @@
+with all_events as (
+  select * from fdw_eu.events
+  union all
+  select * from fdw_us.events
+)
+select tenant_id,
+       sum(value) as total_value,
+       count(*) as events_count
+from all_events
+where tenant_id = {{ tenant_id }}::bigint
+group by tenant_id;

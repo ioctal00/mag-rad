@@ -1,0 +1,21 @@
+[req]
+default_bits = {{ analytics_node_tls_server_key_size }}
+prompt = no
+default_md = sha256
+distinguished_name = dn
+req_extensions = req_ext
+
+[dn]
+CN = {{ inventory_hostname }}
+
+[req_ext]
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = {{ inventory_hostname }}
+{% if ansible_host is defined and ansible_host | length > 0 %}
+IP.1 = {{ ansible_host }}
+{% endif %}
+{% if public_ipv6 is defined and public_ipv6 | length > 0 %}
+IP.2 = {{ public_ipv6 }}
+{% endif %}

@@ -1,0 +1,139 @@
+@startuml
+title citus-datagen logical schema\nregional Citus dataset for live federation and materialization
+
+hide circle
+skinparam linetype ortho
+skinparam shadowing false
+skinparam class {
+  BackgroundColor White
+  BorderColor #475467
+  ArrowColor #667085
+}
+
+entity "tenants\n(reference table)" as tenants {
+  * tenant_id : bigint <<PK>>
+  --
+  region : text <<not null>>
+  tenant_tier : text <<not null>>
+  tenant_status : text <<not null>>
+  updated_at : timestamptz <<not null>>
+  dimension_version : bigint <<not null>>
+}
+
+entity "events\n(distributed table)" as events {
+  * tenant_id : bigint <<PK, distribution key>>
+  * event_id : bigserial <<PK>>
+  --
+  user_id : bigint <<not null>>
+  value : double precision <<not null>>
+  created_at : timestamptz <<not null>>
+  --
+  idx_events_tenant_created_at
+  (tenant_id, created_at)
+}
+
+entity "users\n(colocated distributed table)" as users {
+  * tenant_id : bigint <<PK, distribution key>>
+  * user_id : bigint <<PK>>
+  --
+  user_segment : text <<not null>>
+  user_status : text <<not null>>
+  signup_at : timestamptz <<not null>>
+  updated_at : timestamptz <<not null>>
+  --
+  idx_users_tenant_segment
+  (tenant_id, user_segment)
+}
+
+entity "global_users\n(non-colocated stress table)" as global_users {
+  * tenant_id : bigint <<PK>>
+  * user_id : bigint <<PK, distribution key>>
+  --
+  user_segment : text <<not null>>
+  user_status : text <<not null>>
+  home_region : text <<not null>>
+  signup_at : timestamptz <<not null>>
+  updated_at : timestamptz <<not null>>
+  --
+  idx_global_users_user_tenant
+  (user_id, tenant_id)
+  idx_global_users_tenant_segment
+  (tenant_id, user_segment)
+}
+
+tenants ||..o{ events : reference join\nby tenant_id
+tenants ||..o{ users : tenant ownership\nby tenant_id
+users ||..o{ events : colocated join\n(tenant_id, user_id)
+global_users ||..o{ events : non-colocated stress join\nuser_id distribution differs
+
+note right of tenants
+  Citus table type:
+  reference table
+
+  Created by:
+  create_reference_table('tenants')
+
+  Purpose:
+  small mutable tenant/dimension table
+  replicated to nodes for local joins.
+
+  Thesis use:
+  tenant_tier/status updates create
+  controlled stale ETL scenarios.
+end note
+
+note right of events
+  Citus table type:
+  distributed table
+
+  Distribution key:
+  tenant_id
+
+  Created by:
+  create_distributed_table('events', 'tenant_id')
+
+  Primary key includes tenant_id because
+  Citus requires uniqueness constraints on
+  distributed tables to include the
+  distribution column.
+end note
+
+note right of users
+  Citus table type:
+  distributed table colocated with events
+
+  Created by:
+  create_distributed_table(
+    'users',
+    'tenant_id',
+    colocate_with => 'events'
+  )
+
+  Purpose:
+  demonstrate worker-local
+  fact/dimension joins inside
+  each regional Citus cluster.
+end note
+
+note right of global_users
+  Distributed by user_id, not tenant_id.
+  This intentionally breaks colocation
+  with events and is useful only as a
+  non-colocated join stress/profiling
+  case.
+
+  Thesis use:
+  concrete Citus regional-shape sentinel
+  for non-colocated join behavior.
+  Keep heavy ANALYZE runs outside the
+  core benchmark unless explicitly bounded.
+end note
+
+note bottom
+  Implemented source of truth: sql/minimal_schema.sql
+
+  The diagram is logical. It shows benchmark-intended relationships even when
+  the DDL does not define every relationship as a FOREIGN KEY.
+end note
+
+@enduml

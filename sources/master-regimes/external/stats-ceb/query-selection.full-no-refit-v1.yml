@@ -1,0 +1,2006 @@
+selection_id: stats-ceb-full-no-refit-v1
+source_lock: source-lock.yml
+selection_frozen_before_plan_execution: true
+selection_rationale: Complete locally compatible workload from the pinned STATS-CEB
+  archive. No query is selected or excluded using runtime, result, plan, distance,
+  membership or OOD behavior.
+selection_method:
+  algorithm: all pinned archive members ordered by query_id
+  archive_query_count: 146
+  included_query_count: 146
+  outcome_fields_used_for_selection: []
+  technical_exclusions: []
+regional_semantics:
+  dataset_snapshot: replicated_identical
+  comparison_rule: Q(D_eu) = Q(D_us) = Q(D_baseline)
+  aggregation_rule: never_sum_regional_counts
+physical_design:
+  design_id: stats-ceb-post-centric-v1
+  shard_count: 32
+  reference_tables:
+  - users
+  - badges
+  - tags
+  distributed_tables:
+    posts: id
+    comments: postid
+    votes: postid
+    posthistory: postid
+    postlinks: postid
+queries:
+- query_id: 1
+  expected_count: 79851
+  source_sha256: db42df6d8a92ed745d491de94c1c3fb342e5f2acf13c63acd229c8991917bc9c
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - users
+  table_count_stratum: 2
+  selection_hash: f30813695fed647c35a6f7b3be8b4d0593eb249570117c2849371829bf38ca76
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 2
+  expected_count: 10220614
+  source_sha256: 634472e51869ff8442e3d3734c361d86f276febf7a5a3e05170f66f1fd36b84f
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  table_count_stratum: 2
+  selection_hash: 01445b220974f44e87bfb481461fe9ed49484e90c9cadde11e7d5378d454fd06
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 3
+  expected_count: 1458075
+  source_sha256: ddaef65e337878408645d333c5e2511bf1d5ac8dbd4c2d8f1e15c7150c8f1f79
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  table_count_stratum: 2
+  selection_hash: 5ee229b294e6ec8e3e80e9eaa709d9daaf0e6a6646771d111be2c6da222144e2
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 4
+  expected_count: 1709781
+  source_sha256: 9ea1c6e0cdd3f6a2fb99473ded515318324767fcfde8cbb541eec8cc9810b32d
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  table_count_stratum: 2
+  selection_hash: 0170375706ce730fac13565fda6f891b3e0c6b735f3b2a386b27fa182c6aa177
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 5
+  expected_count: 7491903
+  source_sha256: 4b456341b38251a6def5ad47e194a25011c7736d0b337088d028f55b796c88f9
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - votes
+  table_count_stratum: 2
+  selection_hash: d66a94e4c75da31575ed996fbc8064f8841e403e652ca4ae1675d963567a7473
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 6
+  expected_count: 428612
+  source_sha256: 66891409a35c07fb5fcc04cc84b89b2d94d07e8a9ed7d2013ffe330a3645efad
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posts
+  table_count_stratum: 2
+  selection_hash: 8e8a31024020b99623644b6bdc1f217ceb9640ecc35422c5caf0cf3aded4c848
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 7
+  expected_count: 699302
+  source_sha256: 4916018bb7732c016eb643b46a29ae8a7ede87000b50e6591976bdb068306f71
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - postlinks
+  - posts
+  table_count_stratum: 3
+  selection_hash: a62315fd31fc65119e5b84cf5d6e8085d188819a6c46333b5c454b75f05de3d8
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 8
+  expected_count: 481420
+  source_sha256: de3e7a70b0d2ee18e53a375d7089aec35ded96c9d3a2c60c3fb12feb518d3b3b
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - postlinks
+  - posts
+  table_count_stratum: 3
+  selection_hash: 4f5fa6b58f5064f727f954397e81a86779e3d4420394095af7cab490ecde0023
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 9
+  expected_count: 698213
+  source_sha256: 2c082c5a71a5a8d6db07b2ac80de79409318fb4496b4f5676984b96b9e72ca92
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - posts
+  table_count_stratum: 3
+  selection_hash: 829da9a41de4e241237a33f79a521ef518d73a1a6d2bed135d17214a11ceb52e
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 10
+  expected_count: 780683
+  source_sha256: f8efc3623be09454e898fb2ba25377ddf123d25a1533f6d7f30e2ecebaab0cd0
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posts
+  - users
+  table_count_stratum: 3
+  selection_hash: ae0a32be685c2939913c629083632df16b96a0a1dfaf95987e3c2e20a197da5f
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 11
+  expected_count: 326559
+  source_sha256: bb68200431728a8041676088775de42d891081762bf0e22df94788713e9957fd
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posts
+  - users
+  table_count_stratum: 3
+  selection_hash: 03c6224c1d9883b3fc9d65655a02b624937104a55fbf339bba6e1f01463a0d99
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 12
+  expected_count: 1018612
+  source_sha256: bcd3176712dfbecba724316c17c00e005920bf0943a1e3bb9f499ddcc923cb70
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - users
+  table_count_stratum: 3
+  selection_hash: a5f6aa6b6ee81ad7fda341a3a71459408ee0a3c1aa99f801d653a3c7786d8a05
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 13
+  expected_count: 315516
+  source_sha256: 17d06e12340ecbcdb559a1e39118c5aa04b99a9674b1af0bafc6e6458790f5d9
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - users
+  - votes
+  table_count_stratum: 3
+  selection_hash: f7a904938dd9a8f17c67a81b392e66b2b9ce8b7c4185bf8e4f516b62ed000af7
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 14
+  expected_count: 200
+  source_sha256: 6e0af811dc892b92b3a169f085b2ed36cb651b2b9249f2efa41b1ae9a594278d
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - users
+  - votes
+  table_count_stratum: 3
+  selection_hash: 071a9ee366f5f38cc9a5972e2eedda60bd754b8144ed5289883054f46ac235fa
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 15
+  expected_count: 10223864
+  source_sha256: 6df1f96d5dfe7a7dd684a5eb18edfdf7b624b4d481395c4946ba0bb26b209c15
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - users
+  table_count_stratum: 3
+  selection_hash: 51b0b73682c3d581eaf505d46f21a307d66a76e3932bd4c292fd4e1d7b7b6cba
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 16
+  expected_count: 245567
+  source_sha256: 2026718837639af3ca4aab6be93bf73ff096bd8e376a656fd8abae82c1a1afc0
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - users
+  table_count_stratum: 3
+  selection_hash: 7c5dd45ad1c287cc4b4390c234f72d29ec534b587dc6706cba93eac31da55f86
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 17
+  expected_count: 70752
+  source_sha256: 6baa107d76ab3b1c0f43df3c9251b93d54ed7c706b582bb45526282b3232cccd
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - posts
+  - tags
+  - votes
+  table_count_stratum: 3
+  selection_hash: b4aa51eebe6941532af9b10e3e47849a30cd5cf392311ce85b3d2694d2f7f23e
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 18
+  expected_count: 63500
+  source_sha256: a11217b54ead63bc6f7ea9c0391f7f81ddae82677f4f179065f13bd26413ebe4
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - posthistory
+  - postlinks
+  - posts
+  table_count_stratum: 3
+  selection_hash: 7628ff33ceddfc5f1223186e7debaab46fcad95ca1dd179627fc1ea097cf00ba
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 19
+  expected_count: 10895
+  source_sha256: 35fc81747336d6cab72344e0e26fd9ed8c4caa994fa7fec2301294aba3b44fc9
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - postlinks
+  - posts
+  - users
+  table_count_stratum: 3
+  selection_hash: 5d826635462b8dd13cc4cf1a01aba8db114fd938a74b1e0de7c7a1a3275bbc33
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 20
+  expected_count: 251068
+  source_sha256: a623e76b1334dc90012cafa2c40aef8da4a0f59a9c82e4f5ad98a14c1e4417ee
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - posthistory
+  - posts
+  - users
+  table_count_stratum: 3
+  selection_hash: d36604795d86acdcc459096593961660dbd533fb6c9b4d4cbcc7948c3a7af123
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 21
+  expected_count: 26836
+  source_sha256: d148fc38ac49d5600bf17810980e0c9e000222a63f08dd6d4fc2afb95525d911
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - posts
+  - users
+  - votes
+  table_count_stratum: 3
+  selection_hash: b41acc671eec0e03467991912fe995c6d814026bc7ab31dbdb81afc0339a9a3e
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 22
+  expected_count: 2488080
+  source_sha256: da970a144289513b24fb63bb9a9f8785602021e5c555b0e49e884b2d77a6375e
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - posts
+  - users
+  - votes
+  table_count_stratum: 3
+  selection_hash: 6708ac1fbcc344de2f053eeef4f16d07594020e07e4cc6b8da2a83942406153f
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 23
+  expected_count: 144017
+  source_sha256: f42d6270780d3be7dd19e38b0450f9bb11744755f48ac3a5bc25b20425df713c
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - users
+  - votes
+  table_count_stratum: 3
+  selection_hash: c05d30e0dc375793bf959d4c0cea9965f18fd35aba146ab1103945318f9a0c02
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 24
+  expected_count: 4582
+  source_sha256: 3de0e09288a07b670dc665b13352977a74f0be3ec0386330c3417e011d059b3f
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - users
+  - votes
+  table_count_stratum: 3
+  selection_hash: df0f709d29ebc70d129864b1e8064a42ecbe9c23c06eb48b01f3437a6f9b00be
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 25
+  expected_count: 176191
+  source_sha256: 243b0f474d51da8709101165671056369f180e0bd38869d389d1e7bf39071d5f
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - postlinks
+  - posts
+  - votes
+  table_count_stratum: 4
+  selection_hash: e7cf87d8963c2ab69e828a04ca2be9bb299fe1f9fa78b545d26860a030104429
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 26
+  expected_count: 25033
+  source_sha256: bc4599d333c49f53170b04bbb60c5efa0df336f17d63378ca421fa36fcba74a4
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - postlinks
+  - posts
+  - users
+  table_count_stratum: 4
+  selection_hash: ebc15284bf5273c43b6eb8e309967c756502903aa7e54b1d0f938ed71b30f12f
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 27
+  expected_count: 42036
+  source_sha256: 47abbb7e46112b6fe438aeadeb69f3e9c7347171bc733368ed87c184f4a56bdb
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posts
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 0c19407ede8790d43d6e0a8644a57c7398e4653e22c28ec12688bbbeef24baa1
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 28
+  expected_count: 16049150
+  source_sha256: 43682a8362ed35f259dfa4ed0648ae4caa21c37f97496082ae30be6986c1aa95
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posts
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 46ad54b5cf11af05ae071dfbc6f5a4f119bf4a7fc1d7f89f0aa468c51c73ca05
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 29
+  expected_count: 595820
+  source_sha256: f25f3db7d966f66040359696ea2be7208e859513a23437cccd52b228377dab23
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posts
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 928a7b94559e5623ed21f82c3ec604b73aa333dd0f8e70b891c17d98659ad602
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 30
+  expected_count: 232039659
+  source_sha256: 37f65c8164ee4af213aef82dbb30994bdf939d3cb5b777b8825d4a8a1e070db0
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posts
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 14c2e6f5f39b0c271a5f70aa685d259d4bdab4307041473322ad20e947479ccb
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 31
+  expected_count: 6672465
+  source_sha256: 7fb77cdc44e8349655a17980762b9070f8cbe2dfb4cc5bc750146cf27cec94f8
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posts
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: f59044a6b4136a5c02d495e613599bf431e74b11236288b50e4bdf00192be620
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 32
+  expected_count: 19402569
+  source_sha256: 5e148dcf40d289f00c12b536763d80548e570a50f7408e00d2130dd459e84cf9
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 336190f5fdffc79d1d40d34623856956f53042777782823ce35e95e3d0ef7b35
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 33
+  expected_count: 6299
+  source_sha256: cbe893027ffdf11a9ed8eba2e62001c0d3b7380f4f1b6c79cde1ea04e4805ad2
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 129548bacef5cff4429e9fa3d36836b2244c2aa2b99522f289b47a113e7a4050
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 34
+  expected_count: 593169291
+  source_sha256: 11be4009ad1e784ba52462c46a0b3805d74726562aeaf458216d72244e44544b
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: a7f793239f6a3c54f65c0ebfccb4853a3ce06d479658716c2034ef70b31d1762
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 35
+  expected_count: 3169724
+  source_sha256: da4b322def85a79f50ef5a12758577f1e0c9c64b85b4f2e2e5fc621d3ce11d67
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: f4b35e108ddc5a8640db5b88dcc1e4529e58b8d9503d8fd20ed08ed835ebdcfd
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 36
+  expected_count: 52313
+  source_sha256: 076839066aa67f146688c73399875b244c9e6f9bd82040061a991d7696868921
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: f733b5c334bf9bc240f1b00a1754f8e6548e970a956f856316103be45a393d26
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 37
+  expected_count: 1633681
+  source_sha256: 4543e5b13ce9ae211f774313284f9378c1c790e19369360b5d0b97b73ad761cb
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - postlinks
+  - votes
+  table_count_stratum: 4
+  selection_hash: 74994194086a1c1e6ccba410f7d890bc2f8ef996edd48636e57d36ae6154b41e
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 38
+  expected_count: 105742741
+  source_sha256: 9a61090e1d08d359cfdcce0645ea945000bb561815bf36bc1b269fd9c8ed41a2
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - users
+  table_count_stratum: 4
+  selection_hash: 883cf3ccc8971673864f305bd73695d79376c7d82dc5ed28f3417a42a8b935ff
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 39
+  expected_count: 2034610
+  source_sha256: e2a660bcaf7c0de6d77b18769876ae1374e8d2df80e17320ab0eb512e802498e
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - users
+  table_count_stratum: 4
+  selection_hash: 932265d386597be83f66eb4b7544e9f45694e9b0e1125f25b75a3e58b263cc9d
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 40
+  expected_count: 28565
+  source_sha256: c7c1104c9c892b1d1a8d54e8e2f3a9b2f2019a0ffc20f4d4848a536bb4be2c0e
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - postlinks
+  - posts
+  - users
+  table_count_stratum: 4
+  selection_hash: 191c0c641a2bbc7e734645655e9b1a6dbbf3d904f00ef1bebfa21529d1526957
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 41
+  expected_count: 1717
+  source_sha256: 6cea2398d3876a3689db9c882440782572a1a52dd2bf15767319a52d0b93a858
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - postlinks
+  - posts
+  - users
+  table_count_stratum: 4
+  selection_hash: 26573528c2e4343435b0b3083ac289f817bf23a7835c331ca583a41179849fee
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 42
+  expected_count: 896180
+  source_sha256: 25828cde22d57a975d874fb3240cffe22506efefb6c5a039c9a78350b919573a
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - posthistory
+  - posts
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 0678a8e99b3c3c4c0874bb0acc49aa20ac883365ccffa33cc210256e80b6b6da
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 43
+  expected_count: 7661811
+  source_sha256: 786897af7fd7e4beb827900dda12bf54f6e59c596d5e65fe88146bd613cdd11c
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posthistory
+  - posts
+  - users
+  table_count_stratum: 4
+  selection_hash: ebcc71aa29c373a6ba6b9df20b05fc6a4ac405da6642aaf404ad503ef0279282
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 44
+  expected_count: 2101105
+  source_sha256: ccba9e44ebebc35db7efcbec466b90e9b839f8c9a585f4a430f1b031167ed8ac
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posthistory
+  - posts
+  - users
+  table_count_stratum: 4
+  selection_hash: 71d7530ee0974ccfe6440f0a33e43bc945d851fbd64ef6056cb95ff91696db6e
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 45
+  expected_count: 6272
+  source_sha256: 7b1ce25f68cbeab3804d3a42323d0f0edc9d9286d7368e375027ccc2d44c79d8
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posthistory
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 6a80411deb2179f4b92e51936ab060133f8d770b71194191253cb4ddd2550650
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 46
+  expected_count: 454094
+  source_sha256: f58dc3f5e5b95bc32e78f5e60f212a8a348aa96120b832777f5835228c869774
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - votes
+  table_count_stratum: 5
+  selection_hash: f35ecc6f7c08976b7bfa1024e805f6a9f160f8f5ac9108c59bbf2db4fc37f4ec
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 47
+  expected_count: 60601561
+  source_sha256: 31e7035f1a16e6f3520dcc3e1a91ab39d48f0dfe84b4fe8512d280c61f36e997
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - posts
+  - users
+  - votes
+  table_count_stratum: 5
+  selection_hash: 5b8506b8371adae54879706c18c5dd9e637a293bcd6301a17027733c3646bd15
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 48
+  expected_count: 224
+  source_sha256: 536ad49ad91c5b643d3ce216f2c67839ac0ea770e6083acbe85d51356469194d
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - users
+  - votes
+  table_count_stratum: 5
+  selection_hash: 523b45aebd50a5e3306181fd446a40afddf85b89af9d2044263df0b700e41b48
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 49
+  expected_count: 18597973
+  source_sha256: 72566a438ca4c2e81ad892f1cc30b99c826fd48140dfb437bd820d0daae6ce71
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posts
+  - users
+  - votes
+  table_count_stratum: 5
+  selection_hash: b14023e08ebbf76a600a9757355889b1bdd09ccee28e85399694eddab6b08fe4
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 50
+  expected_count: 9812
+  source_sha256: 078bc031dbf92a90572eb1cf545dac71163f89972f854b3d46046ea99baadb19
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posts
+  - users
+  - votes
+  table_count_stratum: 5
+  selection_hash: 5a3a9b92530810693f6a0b6ccad0b2418512316f314c755c3522729a7032de69
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 51
+  expected_count: 86914174
+  source_sha256: 5ab166d732d4f7878f702d87aedbdd923ed62c15dbe2c8c84a386211e0553f33
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - posts
+  - users
+  table_count_stratum: 5
+  selection_hash: a0a6ca8e845e72a539c6df28718ac2ea95f67cd06dd058e010f676d3a84e9e66
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 52
+  expected_count: 228748307
+  source_sha256: 1adf128e28a9e70c3286b9ada699c6332f9ee9402cbe487c6a1dfa2ee56165ca
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - posts
+  - users
+  table_count_stratum: 5
+  selection_hash: c3edf0801ec018f815d956be9cb8678bc62cb1dd6f026007b31f53da728aa089
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 53
+  expected_count: 913441
+  source_sha256: cf1b5df3f26d00f8a74e9bf6a90dbb7fa42dc1d7fd03b6403f4dfc2126ace8e8
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - postlinks
+  - posts
+  - users
+  table_count_stratum: 5
+  selection_hash: aad74271bb7398e2fdd471abddb2240d44b41fe373873604dd0dcbe5b6d9f56b
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 54
+  expected_count: 4801
+  source_sha256: 9a2c5cf1223eabdf731e067c334cd381d5e37ffd82e814841c5abefee209e990
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - postlinks
+  - posts
+  - users
+  table_count_stratum: 5
+  selection_hash: 3c2580bbd7a497205722697f236adf439577e05caed7a9307850a9c4b8f643b8
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 55
+  expected_count: 14413
+  source_sha256: 53b058dff64cd9896e17f3d1f1bd9e73765a383a0731adfe80812d456ba2fbaa
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posthistory
+  - posts
+  - tags
+  - users
+  table_count_stratum: 5
+  selection_hash: 49d00a91a2949f46f83dce370022af8093b12244d08eddebfc1048b5f7da1c0f
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 56
+  expected_count: 15887370
+  source_sha256: 101704b02cbf90abac5fe53d97718ac9546d3d910d230482dd82ec76ce5487eb
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posts
+  - tags
+  - users
+  - votes
+  table_count_stratum: 5
+  selection_hash: d6c5a2d2f7f541743a0184ec40242fca929735fae23a9d8bb6ead0bf864012d0
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 57
+  expected_count: 5091
+  source_sha256: 1b6c31be3494cf9e2d9bc40264a9024a02a8a24b17c7cf9ecefdf7b31fc29478
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posts
+  - tags
+  - users
+  - votes
+  table_count_stratum: 5
+  selection_hash: ca601d977020eeabd5df7c1081e6ea3776c520558e0d57046016527bcfe2e35c
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 58
+  expected_count: 17849233970
+  source_sha256: 12ff10446758bc5a25de80fd045cd38ae40cce97caed6938424a03460af3d559
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posthistory
+  - postlinks
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: 930f833b3f7199a3cb3c0ed3d9df8f898469a05ca33e01bb91b09e80a69a4c68
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 59
+  expected_count: 88962973
+  source_sha256: 517c99a505b7629c7c7838a7e34117beb699b73ef308d15697985e7e695e4338
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posthistory
+  - postlinks
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: 84ce7718c5262d0d0379c38d119a1f3609c611513bea53c73a374be1ddd1283f
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 60
+  expected_count: 11947976
+  source_sha256: ef345c106c561b7da68789712a106d7158bf5c2dd4b5d956bcfba0fa6998e6cc
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - postlinks
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: 9825f14c200bd08a136c07adda957967980d92b7b625ebf555e17816af23d1cf
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 61
+  expected_count: 868310
+  source_sha256: 966c199d636ad6fd85045e28488f1693c9a64425263ca85dab3a8da6b137a65b
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - postlinks
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: b88b1c545e59f3452ef9389fc3eadb5617a7d42700e6d34a63cad5d9cda0fb6c
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 62
+  expected_count: 109961
+  source_sha256: 3f566674ab83c29223411136c351e676001f331d678c7f7dac089fa9cd451ede
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - postlinks
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: 5ed9052c7c86cc9958e0d28088beecffa9f66cac26a47f894566686ef2ae2f9e
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 63
+  expected_count: 8893
+  source_sha256: e7476fb5a9e6a2cdea2ca4e9a518c23c49116bbff2d395303d718fcafeefcadf
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - postlinks
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: faa7b65f8a359cb6a922909d52f01dcf862e40ee686e63e7b411871b47df4ebe
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 64
+  expected_count: 692609
+  source_sha256: 4dcd5ea02205ceca1a197acfc4fd57a755a63c2a325053bac979921132e0bc0c
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: cc02481cbb523ca346ad730bfa35155b13c63d548d9d54bb66763b8c1712ef3f
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 65
+  expected_count: 33955
+  source_sha256: 4ec0204403a102a474cc2d593e9fe19c5ea759f643c2f7003cd84e75964a419b
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: e75bb52776fe5aee7e58a8b19566b5ed4bfb2cf9cf9fa961227c7d8a3d6109df
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 66
+  expected_count: 82213
+  source_sha256: 14878cc40d73c815691b2bf28ad417b79c906e2c8338d362e3e27ba0154ce29c
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: 2e93d06e3f2e46913b0b85747faf91ddf75364584750b4c229e8c5458189fa38
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 67
+  expected_count: 469
+  source_sha256: a95479f6c380844e32c56898b85b86c8c10bc7405865325461802ebc9cebb8e6
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: d658aedcb143d0c67f1936cdb10f90e0bf860e2d52e594fe6b5860e59212d8a1
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 68
+  expected_count: 1112747282
+  source_sha256: 72aa665092a5fba1e1bdcbbdc5de3889e409503de8fad0b16022b923c433e973
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - votes
+  table_count_stratum: 6
+  selection_hash: f9f5dce7f8dbe2198841870107004e70334158dc615313cb6861548bdcd668bb
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 69
+  expected_count: 107654752
+  source_sha256: ce9252389ee4a3d734a7739ab1c4c74bfc3c84f9dc21df560b91fe36ed741894
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - votes
+  table_count_stratum: 6
+  selection_hash: ab65eecb0085400e6cffa29ae71d515ae15de3b7401fa3f414a1e8e84ee3c7de
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 70
+  expected_count: 80052528
+  source_sha256: 8d00a20a3c6c7e1dad89fa52c0dc548b4f72722aced2c6e5fb3c8b23188fc8cb
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - votes
+  table_count_stratum: 6
+  selection_hash: 4bcebdecea50d2af4bedec931192efc517c89a38959d9e62f7f3bd69bcc50758
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 71
+  expected_count: 58623592
+  source_sha256: e9cf9179a06387b2b61329fce8b7aa1964497768e74574250ed52203164f38bd
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - votes
+  table_count_stratum: 6
+  selection_hash: 2d17a8b92819f7eb60dce6e832d75f6b438888f850e6ed4f9c1a728be898324c
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 72
+  expected_count: 1582060
+  source_sha256: 05a379db4f7ae7982d6ced8e68771a95bce82b3a93f2b2864caa129e41553ba1
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - votes
+  table_count_stratum: 6
+  selection_hash: 5f34b4dc0521280be620a72f4cf11c791e6aa3e5edebc02ae6a98559599fb0ed
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 73
+  expected_count: 1639421
+  source_sha256: a9e2a06e6a5115deffbddf93de339a65ed7b166ad0eac15b77f3927b87679d56
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - votes
+  table_count_stratum: 6
+  selection_hash: 5b4d00beb7c135bba74018e12c83d835b2c7fc1460ca2288046b215ea1bcb48e
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 74
+  expected_count: 38686327
+  source_sha256: 7c42d0d5d06b0e95cb0504165affa2eed5524cb56d3f25525904e22b090d13fb
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: 6c112ce2105341a8848f2f8ff14eadb4f8db47424a2f171bff77eb7592925af7
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 75
+  expected_count: 3812589
+  source_sha256: a1fc53b0f53c5b789c2434f88b067bde95bb0e7eaf8a44ecde9d14bc4dc8a120
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: bb5636ecaf7f33acdbf10b01e3ea365966ed4e61af61ef414fe5ebf517db7a86
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 76
+  expected_count: 434967
+  source_sha256: a271875d767ed6f82fe8df772c57a8c98ab72e888eb11b0f745823b958e8d66c
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: 19308fe1f41754d9a70e4ef904cba30baadb5ab1f88eb9e17136c8b1ddb43b89
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 77
+  expected_count: 5982882
+  source_sha256: 6edde62e2b72f15ab563cbf316f7b77c2e6504736e6c41563f9b46e843004d0a
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: 487de654e0e6a80e52cbf9d4918dda972d21447eb6ea319e5ee15461f37b9e0a
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 78
+  expected_count: 426751
+  source_sha256: 6c4fa1258d3852f53e664f5db90991fa0d2f397e2596307d12c4b878c28119fd
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: 32e13ca9c39b798aba97f6fa0310d971246c6b6d1a77886d8f3ce2b231603af1
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 79
+  expected_count: 2870375
+  source_sha256: 28a280763b9f546cc2ce62885c4efbbd9115ad19ff4ce4a46908018e1f036a7b
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: 4917155af0b4af7fa9ca3544cf076c32e457f6412c999226e0f6ade08d1cbcb6
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 80
+  expected_count: 1459345
+  source_sha256: cb29ecd83bd0b571a8589ac2102b83c15d7da795a11ed95f1216a10426bdf879
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posts
+  - users
+  table_count_stratum: 3
+  selection_hash: 643161126dc285f619c69e259740a85497b8b7eef78d815469bc666853f8738b
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 81
+  expected_count: 657592
+  source_sha256: 72d20ac5f67b5e3369c4b5f55f4fe8f55e516fcd54aa2d2e4f6466a0669a6276
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posts
+  - users
+  table_count_stratum: 3
+  selection_hash: 06cf56adaae7d38f1dbcaf8210b23e91df1e440071d4579c5b4f3289c153d9c5
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 82
+  expected_count: 1771584
+  source_sha256: 52996fd6188436b8e6fe3e79642085c7ceb036f224ba0bb7110415829fcd466b
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - users
+  table_count_stratum: 3
+  selection_hash: 30d524f8524904b3235247a8707b14c759e3025b204de695529aba9da55bbca4
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 83
+  expected_count: 2323452
+  source_sha256: 5aa5bfc2d6e202c3cda4ee0153395b80cd930ac9f4685d6a655bd096427b43ae
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - users
+  table_count_stratum: 3
+  selection_hash: 85f9bfb8f62536dc7fd252aba76e2acbaaaedb9a308dfe9179070ec69d4a9080
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 84
+  expected_count: 10993951
+  source_sha256: 10817390df247f02f7a68c2cbf7dccd62a0d87f20034363fe0c2a2737059b3b8
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - users
+  - votes
+  table_count_stratum: 3
+  selection_hash: a278c6e2f72b96aee65fc9399db25b4a68b1cd772e92e4a1fb1628e428a18a65
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 85
+  expected_count: 10862842
+  source_sha256: 8495fbf10a4590671badb2002f6fcc157e63a2087ac6d7e402496cc946acd3c3
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - users
+  - votes
+  table_count_stratum: 3
+  selection_hash: 2a0f664163ba6322ee62a10619b4f383d353e4a70a44daa1bdee441cb9c2cc1b
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 86
+  expected_count: 209182
+  source_sha256: dfea279bb1204b0e22f6ccd9bdbad97e4670d5f4a48453517dee4aa04df47301
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posts
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 7ba73671ccaba56d05e61982c5a47f33e6911b9ae0646a1f6c28cdc0ae2f80bf
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 87
+  expected_count: 758411
+  source_sha256: e041cf43593a8e28e88e32fe6fc50963b988fe876d1538b99a72b52063763cf5
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - users
+  table_count_stratum: 3
+  selection_hash: cf05dfee2a7941c711e287c486f322de6eb2e7450f67b4a3558e70cae8d548b0
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 88
+  expected_count: 10223864
+  source_sha256: f6d8fbe2297a32b166c3f84fb7cb955099cafc80561457e8a2913fa1b8876189
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - users
+  table_count_stratum: 3
+  selection_hash: 1bb7de45329fc5fe6d5d628b6bf15474d8caee2089a589d28fcd275fb7d428c1
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 89
+  expected_count: 1356723
+  source_sha256: 4e878cd6287730a4f30f256d73dcc18c8f391f3fe2df37407c1ed3bc7f6e27d1
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - posthistory
+  - posts
+  - users
+  table_count_stratum: 3
+  selection_hash: f0853cbd595c17b183ccc2462291ea8a14ff9ee2a8642d520029a42bab887013
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 90
+  expected_count: 582617
+  source_sha256: 3ccd6fb214e17c5ffbbfc98da119a1ab7dbaed001784020cc3225056bb56d8b0
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - posthistory
+  - posts
+  - users
+  table_count_stratum: 3
+  selection_hash: 43efe08142b91876309cd28aa085f7060e06462cb1ceadccddf02d96e03d19fa
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 91
+  expected_count: 4197329
+  source_sha256: 6ef3ec193c57558f280860ca52caed8e2475e27473d4ed0cddaa4cc2f1f98c05
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - posthistory
+  - posts
+  - users
+  table_count_stratum: 3
+  selection_hash: 23da4e8af6b7d51d9bdf287d8bc5cd72111bd3666fcd6333ea47439e82e0f769
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 92
+  expected_count: 155561
+  source_sha256: 190112f68f28fe6a0a9970eab2e95ebe69de989fb152f77dfb19c083a999f8eb
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - posthistory
+  - posts
+  - users
+  table_count_stratum: 3
+  selection_hash: 921bd27d9839c2057ca5b8ea620f62bbbd6862c927f239d94dfb9867f9125b2a
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 93
+  expected_count: 2162683
+  source_sha256: 517b6a16b89a737fd989ff81e130f48f864f865917e749ac45b0846a5deca6be
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - posts
+  - users
+  - votes
+  table_count_stratum: 3
+  selection_hash: 1e607d42ca886adcf8f21fba30f17fa24ea644d8e1746bd98be89e58e3c9ba22
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 94
+  expected_count: 1100297
+  source_sha256: fccdd166210f215ea96a4a0f7992d0347e75f0c1666bc605cbbe30eb97521341
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - posts
+  - users
+  - votes
+  table_count_stratum: 3
+  selection_hash: 18ed4d2ef1257649d1e6229c46772d67f13818ddb080a30bbcadb5fe7f5914ad
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 95
+  expected_count: 4254157
+  source_sha256: 10137ff045295fdefed6447253bcb01f2b1b3ce13c41fe355694e467de7c4b07
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - posts
+  - votes
+  table_count_stratum: 4
+  selection_hash: 6e828995540a08150db9772e16a0fd484a777ffc120a9668af42ac5741ac2eb4
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 96
+  expected_count: 2016238
+  source_sha256: c7556b622905aaaa832bd16f1456267b00d8e419b9057b90661b451639f5a6e0
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - posts
+  - votes
+  table_count_stratum: 4
+  selection_hash: 9cd28312c93bc758174818116c20d70dca8e229faf2ab38ce893aa6024cf44fb
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 97
+  expected_count: 56359398
+  source_sha256: ef57a6631a5f88478a00e36dead9ed35801a89f7121b2ce3bed4d40e8f9d7450
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posts
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 35aee9c257a2ade4528de4d5998d9f1d4a0c7d1d94bfaa1b10284c3b464a5a9a
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 98
+  expected_count: 40855663
+  source_sha256: 8c1338386b665ba86c61d39cd5228add63991848b1075d8e9fc7f783c612ae2d
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posts
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 38661793c199e3218b088f9cdb5775956c11d7c5b2bbae3e6ccf9871dd91cb63
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 99
+  expected_count: 1490297
+  source_sha256: 284e020daa7a1a3d42197a60a29c294b011c4ad8820816dae0d496aa7a99e269
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posts
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 3d7fdd49b87b4ba5b2d84eb98ce7d357f11f5bb2d2fceab602ed249f600f9e29
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 100
+  expected_count: 303210
+  source_sha256: b8674ccc5a4d8e56470a0657e043a4422610aac9ab78a0e20964a992f0b54a1a
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posts
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 7133b30cfe93f9453e423df7677f3e61da85feb15fd1a03e103e0898ccfa7b71
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 101
+  expected_count: 408599
+  source_sha256: 196ceec16844d93af99e6dd3d56393967474b7c180b4899a183cce1e4d645718
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posts
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 8d68c89fd04f075a6085a88d53dec68fdad52b6a2e3372c7d5f8092400e0e132
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 102
+  expected_count: 2809424
+  source_sha256: 02ea566db0ab7dc7bad5893261ce40f3a080ad61bfb9ee251ee38a366863e2fe
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posts
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: dc3bed120716775ece53f8dd59737a86770f68988548cb5117ee7dcaf9473598
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 103
+  expected_count: 3778084
+  source_sha256: 7d0e96b5eaa2a0892c5702823ca2b1ac0e0c4fc6058d8e9c2291e6966b947455
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posts
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 667bf4934e06043c92742529868af1fdf75020b02b9853e3154b22a1dc1daca7
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 104
+  expected_count: 11075893
+  source_sha256: 45e608be18ddec99d398527d04539237590b34aa79d27c07287b4514b62bdc91
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: f3c2f49a4d18769a77a0f88ce920a94c38e20152e73cb8bfe29f45b96de8f233
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 105
+  expected_count: 183537163
+  source_sha256: accac7201a8f3365e909a8dd30c450928ca8b095cdda2dee12cdccdbdaf48f50
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 722a168a64c360bd42e8b335b7bfd938fefb9eef6c551c39a13203151cbe6302
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 106
+  expected_count: 569476
+  source_sha256: 0c74e38d22b3dccfb211bd0aa58d8fbbbab06692874b48af083bb1f6b4ab0e2e
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 72a6316de87ff5f6040cf4a140d7bd440e2bb017fa9d8812a0e89cd17d86de6b
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 107
+  expected_count: 537352263
+  source_sha256: 6eaab6648c72eb928192e330e21765f6eb6e754f5f3d46be36968c696c1d62b7
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 89d839fe2a363de7be8e8b4243b9aa26af569031151207e1a65cb749115bf5af
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 108
+  expected_count: 593169291
+  source_sha256: b6516c6c2fb854a672d0e0c2fd6f01441938b1be5c9e6e55eb05b26bf0c31641
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: e06413cbeb5d20fe8578196d023557d6ab26e27127e0a817d00ed3c5edb30f22
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 109
+  expected_count: 978405
+  source_sha256: eb85c283cf9fc7107f8b4351aaae5d97ea55791f3b68dc518da6a7ab86bfe9d5
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - votes
+  table_count_stratum: 5
+  selection_hash: 67dc4c73344e5b5cddaddf4ed23e7b2892d48b468e401bea14e96ae207f6bf5b
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 110
+  expected_count: 1104151
+  source_sha256: e281d9d37797aeabce9d8a59e63620c49948b929be12c4ca1cb5655aa6650361
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - votes
+  table_count_stratum: 5
+  selection_hash: 7a5bc70dc2ca43bf97d05fa22902c194a562746e27354b3df0de8aa24493d41a
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 111
+  expected_count: 1957551
+  source_sha256: 6829dd244bdcca93a7a9082d6825c5faa6a8b7f51e90fe49165072289ccc7ca0
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - votes
+  table_count_stratum: 5
+  selection_hash: f374137372d6b21eda7c445f3eefe5246bd3a53b0257114a4431b90ed3c92799
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 112
+  expected_count: 1839326
+  source_sha256: 9a91dffe62d8c3eb50e44a1075d183afb878152d28667485652c28554761b1a0
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - votes
+  table_count_stratum: 5
+  selection_hash: 2aa737b64fa53329a36e798b6ba0bf6bc421089177f8eb5fbc55b966d2bb40c0
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 113
+  expected_count: 18382871
+  source_sha256: a73b0dea1958b612c1f15ed8ac655536a2a6c602a435c051ab874c5dbe9c4e32
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - users
+  table_count_stratum: 4
+  selection_hash: aeee44bd921d5423ee2948e18aa4cbb594f06ed4a9dc95b351f1dd5c27cf03b0
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 114
+  expected_count: 19424781
+  source_sha256: 61b6ca2c95489a44e7fe96bbcd25c3b0435e8b584c8278eaddf2d3f39c37fa03
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - users
+  table_count_stratum: 4
+  selection_hash: 9afa3f9ac93a9f92ef010dde77b8f7ddea7f4f3f7ffd86315c15698660a83730
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 115
+  expected_count: 43927632
+  source_sha256: 41e1451c05e4ca7e5932b81c8eb0a6fe2c7eeba37ec95e7fae87d5c1e8768374
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - users
+  table_count_stratum: 4
+  selection_hash: ddcb6fde0697f41895dcabb9539752935f459eff5c2874bef4a1f39d979ec590
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 116
+  expected_count: 986987
+  source_sha256: f101f13156b722a991b888f9d0aee9f513cfb6fd9c4902453d46d4ba6fa91c3b
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - users
+  table_count_stratum: 4
+  selection_hash: 3039507eb81ea44b788b4a49d535805dea7d6cdb1da43b4a7736743b9d877848
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 117
+  expected_count: 354388
+  source_sha256: 34c77a8ac8bcec176f098d76b17745cc75d1f3aa380fd5b92cf1e9485432a2bd
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - posthistory
+  - posts
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 6da3ba5e1291f911dda7dde5f50ef64796a8dea6b7b578a5ac6d3794b393b963
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 118
+  expected_count: 554302
+  source_sha256: 39662ea9fee98f811a3bd0f396288e3e974265b4b6287200bd67e51390c2ac35
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - posthistory
+  - posts
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 286bec4117a297df6d1752ab54cfcf6ec49d4f9620eac1b302760d2f5ed528d1
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 119
+  expected_count: 1936953
+  source_sha256: 34bf0cc5849014d1cf4e49e3feb4798dd14b4b67983a1b39fe73e79a41bb4a14
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posthistory
+  - posts
+  - users
+  table_count_stratum: 4
+  selection_hash: c62f1ecf65ff3f02605b540e539522e948c1b2c34fcff3be3a549f10ecbb9aae
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 120
+  expected_count: 11637523617
+  source_sha256: 2be87e4520683874edf0856980804dab5b750d3ccc506ef2618bc7b7ad960c83
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posthistory
+  - posts
+  - users
+  table_count_stratum: 4
+  selection_hash: eab4d8fde47ed7b0f88c316b5a9d0daf04f3659a769e7938fcaa45040e609e3c
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 121
+  expected_count: 1116000
+  source_sha256: 6029dcaa19c249adffff52bc96e5b6027b1ab39f15515df9217075580e214153
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posthistory
+  - posts
+  - users
+  table_count_stratum: 4
+  selection_hash: 6abdb9eebc9d02b01dd1a14c1cbf6a619ad0bf72b9010a760d5df41dc2cec5e6
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 122
+  expected_count: 11206879551
+  source_sha256: e4c2629faf97fe048845d3955bb13deac60656edfa6aa7e74b7877d4857fa7bb
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posthistory
+  - posts
+  - users
+  table_count_stratum: 4
+  selection_hash: fe08eaa87b22ec3f4c01d08bf9bae74cfc55bfefd1525415b21b8cd4ea2cad86
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 123
+  expected_count: 154355934
+  source_sha256: ccec788d294beda539ac4f8283e7c6cfbfdf2619328dbb4072ed2f6fdb8d221c
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posthistory
+  - posts
+  - users
+  table_count_stratum: 4
+  selection_hash: d3dda1b70595c8a1333742de752a7dd4a6d45e4ce502c8137632056a4928fb84
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 124
+  expected_count: 6351775
+  source_sha256: cb7cce992e1d5131043f631a7463de48fd6612bf10acc8d277c60fbde17fac91
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posthistory
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 204059254eaef1258c2b9ae5553ff79d506abfa1596f16ba1abb128bd66c5a45
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 125
+  expected_count: 56205
+  source_sha256: 72c80b130f312af5d646e9f46073c757c017cf92afd9655d465c075d92ea9a41
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posthistory
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: 409f6e605db658459c3ede2d8e1e41abd25a29123e12a023f87ec9ae19349464
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 126
+  expected_count: 3136348028
+  source_sha256: 7f13dce941ae95eb92b0f83dd0942eb8431d50fd63a5264a2ba3f2245f1b0249
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posthistory
+  - users
+  - votes
+  table_count_stratum: 4
+  selection_hash: d8d8731d17ed7a228b1d6d662d7b391f9da5ce1934a12fb71da9aa3975f5443f
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 127
+  expected_count: 490921
+  source_sha256: c8dea7465b49cf854be307423115bde1c84a4fdea4f17731eb8c832f5787549e
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - votes
+  table_count_stratum: 5
+  selection_hash: aa3ea903c8eaaf52dbfa178f623a0d86eeacb77028dd40ea3e50631f7730e27a
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 128
+  expected_count: 454094
+  source_sha256: e35380fcd25b15e229f7a6eade2bfd05c420bd65c47251264e163567149044ea
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - votes
+  table_count_stratum: 5
+  selection_hash: 3d077dde5af60bb8e1a3041de70ea7a7cc4b6fe452be6c562061d1e467f8e286
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 129
+  expected_count: 914210
+  source_sha256: 776284074cc5169d3b80c4050df74ec44a7352e96c9d3e44bc485fdfe7257a74
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - votes
+  table_count_stratum: 5
+  selection_hash: 2c985f217fd3e29880e3544967e1111bb893eef8bc0e3e5d2a8d2969e6cc9293
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 130
+  expected_count: 35205
+  source_sha256: fd152c6f4cd149ff75ca6f7b84b82e83d407867d203e1535c6600bfde6be8597
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - users
+  table_count_stratum: 5
+  selection_hash: c266ba584b96cee5246a2722a19483560bea86e904b46216c3e91dd8feb76b48
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 131
+  expected_count: 2863626
+  source_sha256: dd585ee76ebac65274ceef54d963a749f7fb5a9b9dd913696ab6d32666713b90
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - posts
+  - users
+  - votes
+  table_count_stratum: 5
+  selection_hash: 69c9cd8b7491b97838b895d8820042ffa7a1681ff4e15d8767fa211eb18fd42d
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 132
+  expected_count: 96484
+  source_sha256: d0cd08bd1ea2036813d92e6e8cddb022a0e01cb1076fa20ba9e69bd0c57c0c5a
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - posts
+  - users
+  - votes
+  table_count_stratum: 5
+  selection_hash: 8c2b882a7d4a8f16eca3fcdf14cfeb71b66b54615c504ce96171fb11b4a7adca
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 133
+  expected_count: 13971410
+  source_sha256: e46c8fb85893427c6e812ae2028a3329962e9cb8c00f7b69318bd9f2f7dbe59f
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - users
+  - votes
+  table_count_stratum: 5
+  selection_hash: 6fbc4eddb06d606e4d14500d56a751dc327bf3bb0e443699ef2087fc26c514f4
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 134
+  expected_count: 16698
+  source_sha256: f0dfa3cf3945a7964015f204dcf52e6677f0b2e0c76b26695f70ac1fa120f063
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - posts
+  - users
+  table_count_stratum: 5
+  selection_hash: 574411587fe2144ddf189e9766ef3663e2a5b9d4093b530c9af2f71923e32ba4
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 135
+  expected_count: 2263957167
+  source_sha256: 481d936cf6beee67d8b510a075169ca6790a12bd55707ecb6f8774a577bf0aa4
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - posts
+  - users
+  table_count_stratum: 5
+  selection_hash: 861ec0f1c74f2d48637de1787cde9a94cb86a54019c4c6d56a561967021098aa
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 136
+  expected_count: 255355807
+  source_sha256: f90b5202087fee78bdcb8791f018eb3e5fa371b8f57ef21e36fc7c1b3d840543
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - posts
+  - users
+  table_count_stratum: 5
+  selection_hash: 041a7466795bebe6933a20dcbf0109a6d6ea064dd72f87a1b2eb008ec9d3c79c
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 137
+  expected_count: 233930
+  source_sha256: d8ef43f2a74257864568b92f7de672c8f76950c479e4072380b1fa48eb243907
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - postlinks
+  - posts
+  - users
+  table_count_stratum: 5
+  selection_hash: e1a8464152dc616fc6732b4dfd1d2e1f022d7f966ba8496bfb6fd213504ac8a6
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 138
+  expected_count: 15677331
+  source_sha256: 387760ad7ae84e1cbf7763f9a90a5d02764b6b0f3e5286de0c0e44215ec8bbed
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - posts
+  - tags
+  - users
+  - votes
+  table_count_stratum: 5
+  selection_hash: 7cef759fcd7a6c9c3b1e76edceda7b93bcde424364a9c22c8194be2d001cc3f9
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 139
+  expected_count: 4231593
+  source_sha256: 7cd217aa51be28f99523138ded64a20530af56ec5c447d320a7f38a16fdba3ef
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - postlinks
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: 9724f4e20b3be1e21024c017bf79b37cf43ec51fc5561ba8412a05d7c1a6a030
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 140
+  expected_count: 113925678
+  source_sha256: 0ad6ef07eb4f6835407cc3e3a60b6994ac51277d0efd907cc82997a5053e2927
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - users
+  - votes
+  table_count_stratum: 7
+  selection_hash: da1f7be792787c3942729345cc20165b6f7f0b54b3939b293da0d341f4582aa6
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 141
+  expected_count: 312148706
+  source_sha256: 25934f31bff363fa25b39819ef6a825df455b334b7447006cc84bff2bdfd3297
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - users
+  - votes
+  table_count_stratum: 7
+  selection_hash: 2ab6c1d2106e3fa1b414b2adb1e2be6ef1ea3b72f88ac2b14825013183f8953a
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 142
+  expected_count: 299574955
+  source_sha256: 2ee19b361f1ca6587af9f8f741fc29e8a9af8ba77e848617d00d12b777a66b68
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - users
+  - votes
+  table_count_stratum: 7
+  selection_hash: caae73946b24e7c9439b9775fb1a6a81e81898a0b25afdd0c8f1e357e396ced5
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 143
+  expected_count: 155696936
+  source_sha256: 3990df71bfc79509caf0ca071a93e24f3ea95351fdd58dc89b0fdc2847e0091a
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - users
+  - votes
+  table_count_stratum: 7
+  selection_hash: 66fd23fbe29ffb09b28154671606ea41e4f80921ef5e6ce4b64c22cad5fc57bb
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 144
+  expected_count: 18762969
+  source_sha256: e40f393f5be9b1c7f660b8066de3bd3baa1121617e9a22d8bf60c149d6408270
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - badges
+  - comments
+  - posthistory
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: 99c51050fca22c794ca81c6b3d9c2b5dbab2f19cea9b4a19656fc0aa02f47b3d
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 145
+  expected_count: 436286
+  source_sha256: 580bd652c367633152c16b57e669832b9d4410d657990efea6c38f5bfad48bd6
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: c6fd5a4212043ee5fda07ccaa9cd3186fd81291b19c10aeba60d386781fbbd3b
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+- query_id: 146
+  expected_count: 1570429
+  source_sha256: cdb354753c34c118014ced14340f91613b7b4a442a2bd1d8334e89332db2045c
+  expected_citus_strategy: observed_not_preregistered
+  tables:
+  - comments
+  - posthistory
+  - postlinks
+  - posts
+  - users
+  - votes
+  table_count_stratum: 6
+  selection_hash: fffe485acfbc6c240c76a0e830b40c45ed4e92b465fbb5974d5284cd54173b6b
+  reason: Complete pinned STATS-CEB workload member. Inclusion does not depend on
+    runtime, result, plan or model behavior.
+execution_contract:
+  statement_timeout_seconds: 300
+  explain_without_analyze_first: true
+  keep_failed_queries: true
+  statuses:
+  - passed
+  - unsupported_sql
+  - result_mismatch
+  - timeout
+  - incomplete_topology_evidence
+  - feature_contract_failure
+  - infrastructure_failure
+result_contract:
+  persist_database_rows: false
+  persisted_fields:
+  - query_id
+  - baseline_result_hash
+  - eu_result_hash
+  - us_result_hash
+  - schema_hash
+  - comparison_status
+  - tolerance_policy
+  tolerance_policy: exact_integer
+model_contract:
+  model_id: semantic-v2-transfer-oriented-fcm
+  refit_allowed: false
+  feature_schema_change_allowed: false
+  projection_role: external_full_workload_no_refit_audit
+  ood_rule: nearest_center_distance_above_frozen_baseline_p99
+  post_observation_contract_changes_allowed: false

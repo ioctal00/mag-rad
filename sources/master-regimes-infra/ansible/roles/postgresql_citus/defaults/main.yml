@@ -1,0 +1,33 @@
+---
+postgresql_data_checksums: true
+postgresql_tls_enabled: true
+postgresql_private_allowed_cidrs_extra: []
+postgresql_tls_controller_dir: "{{ playbook_dir }}/../../pki/dev-ca"
+postgresql_tls_ca_common_name: "Master Thesis Dev Root CA"
+postgresql_tls_ca_days: 3650
+postgresql_tls_server_days: 825
+postgresql_tls_ca_key_filename: "ca.key"
+postgresql_tls_ca_cert_filename: "ca.crt"
+postgresql_tls_server_key_size: 2048
+postgresql_tls_remote_cert_dir: "/etc/thesis/tls"
+postgresql_tls_server_cert_filename: "server.crt"
+postgresql_tls_server_key_filename: "server.key"
+postgresql_tls_min_protocol_version: "TLSv1.3"
+postgresql_local_socket_dir: "/var/run/postgresql"
+postgresql_port: 5432
+postgresql_listen_addresses: "*"
+postgresql_shared_preload_libraries: "citus,pg_stat_statements"
+postgresql_pg_stat_statements_max: 10000
+postgresql_pg_stat_statements_track: all
+postgresql_password_encryption: "scram-sha-256"
+postgresql_package_hold: true
+postgresql_citus_superuser_pgpass_enabled: true
+pgbouncer_listen_port: 6432
+pgbouncer_client_tls_enabled: true
+pgbouncer_client_tls_sslmode: "allow"
+pgbouncer_client_tls_protocols: "secure"
+citus_shard_count: 32
+citus_enable_stat_counters: true
+citus_stat_statements_track: "all"
+citus_stat_tenants_track: "none"
+citus_enable_repartition_joins: true

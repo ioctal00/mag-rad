@@ -1,0 +1,196 @@
+program_id: pressure-intervention-v1
+protocol_version: 1
+description: >
+  Controlled intervention corpus for five independent mitigation-gain targets.
+  The program is generated locally and executed later by a resumable manual
+  runner. Intervention metadata is never a model input.
+
+target_contract:
+  formula: log2(median(stressed_seconds) / median(mitigated_seconds))
+  outputs:
+    - gac_finalization
+    - remote_path
+    - worker_data_skew
+    - repartition_join
+    - regional_finalization
+  minimum_runtime_separation_ratio: 1.05
+  target_time_scope: global_gac_elapsed_or_direct_regional_elapsed
+  mitigated_row_target: 0.0
+  non_mitigated_row_target: measured_against_paired_mitigated_condition
+  model_inputs_exclude:
+    - dataset_profile_id
+    - runtime_config_id
+    - template_id
+    - pressure_axis
+    - pressure_level
+    - placement_state_id
+    - network_profile
+
+design:
+  repetitions: 3
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260730
+  cache_policy: mixed_cache_first_observed
+  database_result_rows_stored: false
+  hard_timeout_seconds: 900
+  timeout_grace_seconds: 30
+  datasets:
+    - pilot-balanced-v1
+    - pilot-skew-heavy-v1
+
+planned_blocks:
+  isolated_continuous:
+    axes: [gac_finalization, remote_path, regional_finalization]
+    sql_shapes_per_axis: 8
+    dataset_count: 2
+    levels: [mitigated, intermediate, stressed]
+    repetitions: 3
+    planned_executions: 432
+  isolated_repartition:
+    sql_shapes: 8
+    dataset_count: 2
+    levels: [mitigated, stressed]
+    repetitions: 3
+    planned_executions: 96
+  isolated_worker_skew:
+    sql_shapes: 16
+    dataset_count: 1
+    levels: [mitigated, stressed]
+    repetitions: 3
+    planned_executions: 96
+  combined_holdout:
+    condition_blocks: 10
+    sql_shapes_per_block: 4
+    levels: [mitigated, stressed]
+    repetitions: 3
+    planned_executions: 240
+  topology_holdout:
+    conditions: 32
+    repetitions: 3
+    required_region_count: 3
+    planned_executions: 96
+  repeatability_sentinels:
+    conditions: 12
+    repetitions: 3
+    planned_executions: 36
+  planned_total: 996
+
+level_contract:
+  gac_finalization:
+    mitigated: 256MB
+    intermediate: 4MB
+    stressed: 64kB
+  regional_finalization:
+    mitigated: 256MB
+    intermediate: 4MB
+    stressed: 64kB
+  remote_path:
+    mitigated:
+      fetch_size: 10000
+      delay_ms: 0
+      bandwidth_mbit: 0
+    intermediate:
+      fetch_size: 2000
+      delay_ms: 10
+      bandwidth_mbit: 50
+    stressed:
+      fetch_size: 1000
+      delay_ms: 20
+      bandwidth_mbit: 20
+  repartition_join:
+    mitigated: colocated users join
+    stressed: non-colocated global_users MapMerge join
+  worker_data_skew:
+    mitigated: hot shards dispersed across workers
+    stressed: hot shards concentrated on one worker
+
+shape_grids:
+  gac_finalization:
+    template_id: gac_fdw_multiregion_amplified_user_value_topk
+    logical_question_id: user_value_topk
+    execution_strategy: multiregion_union
+    parameters:
+      lookback_days: [14, 30]
+      limit_k: [100000, 200000]
+      amplification_factor: [4, 8]
+  remote_path:
+    template_id: gac_fdw_multiregion_raw_region_rollup
+    logical_question_id: event_full_scan_summary
+    execution_strategy: multiregion_union
+    parameters:
+      lookback_days: [1, 3, 7, 14, 21, 30, 45, 60]
+  regional_finalization:
+    template_id: q13_amplified_user_topk
+    logical_question_id: user_value_topk
+    execution_strategy: single_region_citus
+    parameters:
+      lookback_days: [14, 30]
+      limit_k: [50000, 100000]
+      amplification_factor: [8, 16]
+      payload_repeat: [16]
+  repartition_join:
+    mitigated_template_id: q11_colocated_user_join_pair
+    stressed_template_id: q12_repartition_user_join_pair
+    logical_question_id: user_segment_topk
+    execution_strategy: single_region_citus
+    parameters:
+      lookback_days: [1, 7, 14, 30]
+      limit_k: [25, 100]
+  worker_data_skew:
+    template_id: gac_fdw_multiregion_hot_worker_probe
+    logical_question_id: top_tenants
+    execution_strategy: multiregion_union
+    parameters:
+      eu_hot_tenant_max: [5, 10]
+      us_hot_tenant_max: [10005, 10010]
+      cpu_terms: [32, 64, 96, 128]
+
+combined_holdout:
+  standard_blocks:
+    - id: gac_under_remote_intermediate
+      target_axis: gac_finalization
+      secondary_pressure: remote_path_intermediate
+    - id: gac_under_remote_stressed
+      target_axis: gac_finalization
+      secondary_pressure: remote_path_stressed
+    - id: remote_under_gac_intermediate
+      target_axis: remote_path
+      secondary_pressure: gac_finalization_intermediate
+    - id: remote_under_gac_stressed
+      target_axis: remote_path
+      secondary_pressure: gac_finalization_stressed
+    - id: regional_under_repartition
+      target_axis: regional_finalization
+      secondary_pressure: repartition_join_stressed
+    - id: repartition_under_regional_stressed
+      target_axis: repartition_join
+      secondary_pressure: regional_finalization_stressed
+  worker_blocks:
+    - id: worker_under_gac_stressed
+      secondary_runtime: worker_fixed_gac_stressed
+    - id: worker_under_remote_intermediate
+      secondary_runtime: worker_fixed_remote_intermediate
+    - id: worker_under_remote_stressed
+      secondary_runtime: worker_fixed_remote_stressed
+    - id: worker_under_gac_intermediate
+      secondary_runtime: worker_fixed_gac_intermediate
+
+topology_holdout:
+  topology_id: eu_us_apac_gac
+  required_region_count: 3
+  execution_backend: blocked_until_three_region_inventory
+  policy: >
+    The generator records all 96 frozen no-refit slots but the manual runner
+    must refuse this segment until inventory, FDW bootstrap and model-freeze
+    checks prove three independent regions.
+
+smoke_gate:
+  report: analysis/reports/pressure-intervention-smoke-v2/pressure_pair_targets.csv
+  required_axes:
+    - gac_finalization
+    - remote_path
+    - worker_data_skew
+    - repartition_join
+    - regional_finalization
+  required_status: confirmed
+  require_training_eligible: true

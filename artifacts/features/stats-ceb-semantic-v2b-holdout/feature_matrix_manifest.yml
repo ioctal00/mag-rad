@@ -1,0 +1,58 @@
+feature_matrix_contract: master_regimes_feature_matrix_v1
+fdw_pushdown_fidelity_contract: fdw_pushdown_fidelity_v1
+source_index_dir: master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/stats-ceb-semantic-v2b-holdout/_index
+schema_path: master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/stats-ceb-semantic-v2b-holdout/_index/feature_schema.yml
+topology: multi_region
+row_count: 12
+outputs:
+  all: execution_features_all.csv
+  m0: execution_features_m0.csv
+  m1: execution_features_m1.csv
+  context: model_context.csv
+  severity: execution_severity.csv
+  dataset_diagnosis: dataset_diagnosis.csv
+  m0_catalog: feature_catalog_m0.csv
+  m1_catalog: feature_catalog_m1.csv
+  categorical_expansions: categorical_expansions.csv
+  quality_report: feature_quality_report.csv
+matrices:
+  all:
+    description: complete merged execution feature layer before model-role filtering
+    column_count: 479
+    feature_count: 478
+  m0:
+    description: core_model_v1 behavioral input features
+    column_count: 154
+    feature_count: 153
+    schema_feature_count: 153
+    non_numeric_source_features_expanded: []
+  m1:
+    description: core_model_v1 plus plan_structure_v1 ablation features
+    column_count: 217
+    feature_count: 216
+    schema_feature_count: 212
+    non_numeric_source_features_expanded:
+    - dominant_rows_node_type
+    - dominant_time_node_type
+    - first_blocking_operator_type
+  context:
+    description: IDs, labels, runtime knobs, audit and quality-gate columns
+    column_count: 189
+  severity:
+    description: "post-hoc indeks opa\u017Eenog intenziteta u odnosu na topologiju;\
+      \ not a clustering input"
+    column_count: 52
+    row_count: 12
+  dataset_diagnosis:
+    description: dataset profile scale/skew/capability context; not a clustering input
+    column_count: 19
+    row_count: 1
+rules:
+  null_policy: missing values remain blank; zero is emitted only for explicitly derived
+    count/boolean features
+  default_model_filter: included_in_default_model=true and model_role=input
+  severity_policy: execution_severity.csv uses deployment/topology-relative observed-intensity
+    proxy scores and remains separated from M0/M1 clustering inputs
+  m1_extra_filter: structural_feature=true and model_role=input
+  categorical_policy: non-numeric selected input features are one-hot expanded with
+    source_feature__category columns

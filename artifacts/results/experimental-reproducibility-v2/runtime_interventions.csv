@@ -1,0 +1,46 @@
+logical_run_id,runtime_config_id,intervention_axis,work_mem,fetch_size,configured_netem_delay_ms,configured_jitter_ms,configured_loss_percent,network_scope,network_apply_status,network_reset_status,pg_options_json,psql_variables_json,fdw_server_options_json,netem_semantics,configured_delay_is_rtt,observed_query_count,value_provenance,expected_effect
+clean-run-v1,default,none,,,,,,,,,{},{},{},,False,1730,recorded_at_run_time,baseline
+clean-run-v1,fetch_large,fetch_size,,10000,,,,,,,{},"{""FETCH_COUNT"": ""10000""}","{""fetch_size"": ""10000""}",,False,72,recorded_at_run_time,"Should reduce fetch batching overhead for high remote-row-flow queries compared with fetch_small.
+"
+clean-run-v1,fetch_small,fetch_size,,100,,,,,,,{},"{""FETCH_COUNT"": ""100""}","{""fetch_size"": ""100""}",,False,72,recorded_at_run_time,"Should affect FDW remote-row-flow or WAN-sensitive queries more than reduced/localized negative controls.
+"
+clean-run-v1,work_mem_high,work_mem,256MB,,,,,,,,"{""work_mem"": ""256MB""}",{},{},,False,45,recorded_at_run_time,"Should reduce spill/blocking pressure relative to work_mem_low when the query is memory-sensitive.
+"
+clean-run-v1,work_mem_low,work_mem,4MB,,,,,,,,"{""work_mem"": ""4MB""}",{},{},,False,45,recorded_at_run_time,"Should increase spill/blocking pressure for sort/hash/aggregate-heavy plans more than simple localized controls.
+"
+clean-run-v1-region-asymmetry,default,none,,,,,,,,,{},{},{},,False,150,recorded_at_run_time,baseline
+clean-run-v1-region-asymmetry-skew-rerun,default,none,,,,,,,,,{},{},{},,False,294,recorded_at_run_time,baseline
+clean-run-v1-validation-holdout,default,none,,,,,,,,,{},{},{},,False,126,recorded_at_run_time,baseline
+clean-run-v1-validation-holdout,fetch_large,fetch_size,,10000,,,,,,,{},"{""FETCH_COUNT"": ""10000""}","{""fetch_size"": ""10000""}",,False,6,recorded_at_run_time,"Should reduce fetch batching overhead for high remote-row-flow queries compared with fetch_small.
+"
+clean-run-v1-validation-holdout,fetch_small,fetch_size,,100,,,,,,,{},"{""FETCH_COUNT"": ""100""}","{""fetch_size"": ""100""}",,False,6,recorded_at_run_time,"Should affect FDW remote-row-flow or WAN-sensitive queries more than reduced/localized negative controls.
+"
+clean-run-v1-validation-holdout,wan_0ms,wan_latency,,,0.0,0.0,0.0,analytics_egress_to_region,ok,ok,{},{},{},one_way_analytics_egress_to_region_coordinator,False,12,recorded_at_run_time,"Control segment for the WAN companion corpus. It records/reset network state but should not introduce synthetic delay.
+"
+clean-run-v1-validation-holdout,wan_100ms,wan_latency,,,100.0,0.0,0.0,analytics_egress_to_region,ok,ok,{},{},{},one_way_analytics_egress_to_region_coordinator,False,15,recorded_at_run_time,"Strong synthetic WAN delay for FDW row-flow intervention validation.
+"
+clean-run-v1-validation-holdout,wan_40ms,wan_latency,,,40.0,0.0,0.0,analytics_egress_to_region,ok,ok,{},{},{},one_way_analytics_egress_to_region_coordinator,False,6,recorded_at_run_time,"Optional intermediate latency level for response-curve validation.
+"
+clean-run-v1-validation-holdout,work_mem_high,work_mem,256MB,,,,,,,,"{""work_mem"": ""256MB""}",{},{},,False,12,recorded_at_run_time,"Should reduce spill/blocking pressure relative to work_mem_low when the query is memory-sensitive.
+"
+clean-run-v1-validation-holdout,work_mem_low,work_mem,4MB,,,,,,,,"{""work_mem"": ""4MB""}",{},{},,False,12,recorded_at_run_time,"Should increase spill/blocking pressure for sort/hash/aggregate-heavy plans more than simple localized controls.
+"
+clean-run-v1-wan-latency,wan_0ms,wan_latency,,,0,0,0,analytics_egress_to_region,ok,ok,{},{},{},one_way_analytics_egress_to_region_coordinator,False,10,recorded_at_run_time,"Control segment for the WAN companion corpus. It records/reset network state but should not introduce synthetic delay.
+"
+clean-run-v1-wan-latency,wan_100ms,wan_latency,,,100,0,0,analytics_egress_to_region,ok,ok,{},{},{},one_way_analytics_egress_to_region_coordinator,False,10,recorded_at_run_time,"Strong synthetic WAN delay for FDW row-flow intervention validation.
+"
+repeatability-v1,default,none,,,,,,,,,{},{},{},,False,211,recorded_at_run_time,baseline
+repeatability-v1,fetch_large,fetch_size,,10000,,,,,,,{},"{""FETCH_COUNT"": ""10000""}","{""fetch_size"": ""10000""}",,False,18,recorded_at_run_time,"Should reduce fetch batching overhead for high remote-row-flow queries compared with fetch_small.
+"
+repeatability-v1,fetch_small,fetch_size,,100,,,,,,,{},"{""FETCH_COUNT"": ""100""}","{""fetch_size"": ""100""}",,False,18,recorded_at_run_time,"Should affect FDW remote-row-flow or WAN-sensitive queries more than reduced/localized negative controls.
+"
+repeatability-v1,wan_0ms,wan_latency,,,0.0,0.0,0.0,analytics_egress_to_region,ok,ok,{},{},{},one_way_analytics_egress_to_region_coordinator,False,21,recorded_at_run_time,"Control segment for the WAN companion corpus. It records/reset network state but should not introduce synthetic delay.
+"
+repeatability-v1,wan_100ms,wan_latency,,,100.0,0.0,0.0,analytics_egress_to_region,ok,ok,{},{},{},one_way_analytics_egress_to_region_coordinator,False,21,recorded_at_run_time,"Strong synthetic WAN delay for FDW row-flow intervention validation.
+"
+repeatability-v1,wan_40ms,wan_latency,,,40.0,0.0,0.0,analytics_egress_to_region,ok,ok,{},{},{},one_way_analytics_egress_to_region_coordinator,False,12,recorded_at_run_time,"Optional intermediate latency level for response-curve validation.
+"
+repeatability-v1,work_mem_high,work_mem,256MB,,,,,,,,"{""work_mem"": ""256MB""}",{},{},,False,15,recorded_at_run_time,"Should reduce spill/blocking pressure relative to work_mem_low when the query is memory-sensitive.
+"
+repeatability-v1,work_mem_low,work_mem,4MB,,,,,,,,"{""work_mem"": ""4MB""}",{},{},,False,12,recorded_at_run_time,"Should increase spill/blocking pressure for sort/hash/aggregate-heavy plans more than simple localized controls.
+"

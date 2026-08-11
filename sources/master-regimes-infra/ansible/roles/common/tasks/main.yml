@@ -1,0 +1,17 @@
+---
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Keep iperf3 daemon disabled by default
+  ansible.builtin.debconf:
+    name: iperf3
+    question: iperf3/start_daemon
+    value: "false"
+    vtype: boolean
+
+- name: Install base packages
+  ansible.builtin.apt:
+    name: "{{ common_base_packages + common_observability_packages + common_build_packages }}"
+    state: present

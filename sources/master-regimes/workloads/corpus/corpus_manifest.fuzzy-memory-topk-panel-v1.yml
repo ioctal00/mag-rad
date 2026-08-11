@@ -1,0 +1,184 @@
+corpus_id: fuzzy-memory-topk-panel-v1
+corpus_version: fuzzy-memory-topk-panel-v1
+batch_id: batch-fuzzy-memory-topk-panel-v1
+collection_contract_version: fuzzy-intervention-memory-v1
+description: >
+  Targeted cross-action panel around the observed GAC Top-K action-order
+  reversal. Every scenario has one shared stressed baseline and three
+  independently applied actions: regional Top-K candidates, improved remote
+  transport and increased GAC work_mem.
+query_groups: query-groups.yml
+runtime_catalog: runtime-configs.yml
+
+dataset_profiles:
+  raw-small-balanced-v1:
+    profile: ../../datasets/profiles/raw-small-balanced.yml
+    load_method: copy_pipe
+  raw-large-balanced-v1:
+    profile: ../../datasets/profiles/raw-large-balanced.yml
+    load_method: copy_pipe
+
+execution_budget:
+  hard_timeout_seconds: 1800
+  timeout_grace_seconds: 30
+
+execution_policy:
+  cache_policy: mixed_cache_fuzzy_memory_panel
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260804
+  repetitions_default: 3
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  fdw_auto_explain_regions: [active_regions]
+  os_sampler: true
+  os_sampler_node_groups: [active_regions]
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: true
+  remote_edge_context: true
+  group_runtime_configs_by_active_scope: true
+
+x-common: &common
+  dataset_profile_id: [raw-small-balanced-v1, raw-large-balanced-v1]
+  topology_id: eu_us_gac
+  execution_strategy: multiregion_union
+  execution_scope: gac_multi_edge
+  intervention_role: calibration
+  intervention_axis: combined_pressure
+  pressure_axis: cross_action_response
+  target_scope: global_query
+  target_metric: global_gac_mitigation_gain_log2
+  dataset_role: fuzzy_memory_gate
+  logical_question_id: event_raw_wide_sample
+  parameters: &parameters
+    cutoff_ts:
+      - "2026-06-24 00:00:00+00"
+      - "2026-06-29 00:00:00+00"
+    limit_k: [100, 10000]
+
+cells:
+  # Profile A reuses the severe transport baseline that exposed the original
+  # small/large Top-K rank reversal.
+  - <<: *common
+    corpus_cell_id: fuzzy_topk_transport_baseline
+    component_match_id: fuzzy_topk_transport_severe
+    template_id: gac_fdw_coordinator_raw_event_topk
+    runtime_config_id: cross_action_stressed
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: fuzzy_topk_transport__baseline
+    physical_strategy_id: gac_raw_topk
+  - <<: *common
+    corpus_cell_id: fuzzy_topk_transport_regional
+    component_match_id: fuzzy_topk_transport_severe
+    template_id: gac_fdw_coordinator_regional_event_topk
+    runtime_config_id: cross_action_stressed
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: fuzzy_topk_transport__regional
+    physical_strategy_id: regional_topk_candidates
+    mitigation_action: regional_topk_candidates
+  - <<: *common
+    corpus_cell_id: fuzzy_topk_transport_remote
+    component_match_id: fuzzy_topk_transport_severe
+    template_id: gac_fdw_coordinator_raw_event_topk
+    runtime_config_id: cross_action_remote_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: fuzzy_topk_transport__remote
+    physical_strategy_id: gac_raw_topk
+    mitigation_action: mitigate_remote_path_bundle
+  - <<: *common
+    corpus_cell_id: fuzzy_topk_transport_memory
+    component_match_id: fuzzy_topk_transport_severe
+    template_id: gac_fdw_coordinator_raw_event_topk
+    runtime_config_id: cross_action_gac_memory_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: fuzzy_topk_transport__memory
+    physical_strategy_id: gac_raw_topk
+    mitigation_action: increase_gac_work_mem
+
+  # Profile B weakens transport stress so that GAC memory and rewrite effects
+  # can become visible instead of being hidden by the remote path.
+  - <<: *common
+    corpus_cell_id: fuzzy_topk_memory_baseline
+    component_match_id: fuzzy_topk_memory_severe
+    template_id: gac_fdw_coordinator_raw_event_topk
+    runtime_config_id: fuzzy_memory_topk_memory_stressed
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: fuzzy_topk_memory__baseline
+    physical_strategy_id: gac_raw_topk
+  - <<: *common
+    corpus_cell_id: fuzzy_topk_memory_regional
+    component_match_id: fuzzy_topk_memory_severe
+    template_id: gac_fdw_coordinator_regional_event_topk
+    runtime_config_id: fuzzy_memory_topk_memory_stressed
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: fuzzy_topk_memory__regional
+    physical_strategy_id: regional_topk_candidates
+    mitigation_action: regional_topk_candidates
+  - <<: *common
+    corpus_cell_id: fuzzy_topk_memory_remote
+    component_match_id: fuzzy_topk_memory_severe
+    template_id: gac_fdw_coordinator_raw_event_topk
+    runtime_config_id: fuzzy_memory_topk_memory_remote_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: fuzzy_topk_memory__remote
+    physical_strategy_id: gac_raw_topk
+    mitigation_action: mitigate_remote_path_bundle
+  - <<: *common
+    corpus_cell_id: fuzzy_topk_memory_memory
+    component_match_id: fuzzy_topk_memory_severe
+    template_id: gac_fdw_coordinator_raw_event_topk
+    runtime_config_id: fuzzy_memory_topk_memory_gac_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: fuzzy_topk_memory__memory
+    physical_strategy_id: gac_raw_topk
+    mitigation_action: increase_gac_work_mem
+
+  # Profile C samples the mixed region between profiles A and B.
+  - <<: *common
+    corpus_cell_id: fuzzy_topk_balanced_baseline
+    component_match_id: fuzzy_topk_balanced
+    template_id: gac_fdw_coordinator_raw_event_topk
+    runtime_config_id: fuzzy_memory_topk_balanced_stressed
+    pressure_level: stressed
+    variant: stressed
+    pressure_pair_key: fuzzy_topk_balanced__baseline
+    physical_strategy_id: gac_raw_topk
+  - <<: *common
+    corpus_cell_id: fuzzy_topk_balanced_regional
+    component_match_id: fuzzy_topk_balanced
+    template_id: gac_fdw_coordinator_regional_event_topk
+    runtime_config_id: fuzzy_memory_topk_balanced_stressed
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: fuzzy_topk_balanced__regional
+    physical_strategy_id: regional_topk_candidates
+    mitigation_action: regional_topk_candidates
+  - <<: *common
+    corpus_cell_id: fuzzy_topk_balanced_remote
+    component_match_id: fuzzy_topk_balanced
+    template_id: gac_fdw_coordinator_raw_event_topk
+    runtime_config_id: fuzzy_memory_topk_balanced_remote_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: fuzzy_topk_balanced__remote
+    physical_strategy_id: gac_raw_topk
+    mitigation_action: mitigate_remote_path_bundle
+  - <<: *common
+    corpus_cell_id: fuzzy_topk_balanced_memory
+    component_match_id: fuzzy_topk_balanced
+    template_id: gac_fdw_coordinator_raw_event_topk
+    runtime_config_id: fuzzy_memory_topk_balanced_gac_mitigated
+    pressure_level: mitigated
+    variant: mitigated
+    pressure_pair_key: fuzzy_topk_balanced__memory
+    physical_strategy_id: gac_raw_topk
+    mitigation_action: increase_gac_work_mem

@@ -1,0 +1,12 @@
+select count(*) as result_count
+FROM {{ schema_name }}.postHistory AS ph,
+  {{ schema_name }}.posts AS p,
+  {{ schema_name }}.votes AS v,
+  {{ schema_name }}.users AS u
+WHERE p.Id = ph.PostId
+  AND u.Id = p.OwnerUserId
+  AND p.Id = v.PostId
+  AND p.PostTypeId = 1
+  AND p.Score >= -1
+  AND p.CommentCount >= 0
+  AND p.CommentCount <= 11

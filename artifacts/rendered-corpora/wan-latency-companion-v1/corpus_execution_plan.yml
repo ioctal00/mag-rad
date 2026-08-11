@@ -1,0 +1,112 @@
+corpus_id: clean-run-eu-us-gac-wan-latency-v1
+source_manifest: master-regimes/workloads/corpus/corpus_manifest.wan-latency-companion-v1.yml
+rendered_corpus_manifest: master-regimes/generated/corpus/wan-latency-companion-v1/corpus_manifest.yml
+corpus_cells: master-regimes/generated/corpus/wan-latency-companion-v1/corpus_cells.csv
+region: eu
+max_instances_per_cell: null
+execution_budget:
+  hard_timeout_seconds: 300
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  repetitions_default: 1
+  cache_features_in_default_model: false
+  order_policy: deterministic_shuffle
+  shuffle_seed: 20260627
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  gac_etl_bootstrap_lookback_days: 1
+  gac_etl_bootstrap_timeout_seconds: 300
+execution_backend: master-regimes-infra.database_sweep
+included_execution_classes:
+- pilot
+source_cell_count: 5
+manifest_cell_count: 14
+excluded_cell_count: 0
+group_count: 4
+groups:
+- group_id: clean-run-eu-us-gac-wan-latency-v1__pilot-balanced-v1__wan_0ms__analytics_clients
+  sweep_id: clean-run-eu-us-gac-wan-latency-v1__pilot-balanced-v1__wan_0ms__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: wan_0ms
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - fdw_raw
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Control segment for the WAN companion corpus. It records/reset
+    network state but should not introduce synthetic delay.
+
+    '
+  network_profile_id: wan_0ms
+  cell_count: 4
+  instance_count: 4
+  instance_manifest: master-regimes/generated/corpus/wan-latency-companion-v1/groups/clean-run-eu-us-gac-wan-latency-v1__pilot-balanced-v1__wan_0ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/wan-latency-companion-v1/sweeps/clean-run-eu-us-gac-wan-latency-v1__pilot-balanced-v1__wan_0ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+- group_id: clean-run-eu-us-gac-wan-latency-v1__pilot-balanced-v1__wan_100ms__analytics_clients
+  sweep_id: clean-run-eu-us-gac-wan-latency-v1__pilot-balanced-v1__wan_100ms__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: wan_100ms
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - fdw_raw
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Strong synthetic WAN delay for FDW row-flow intervention
+    validation.
+
+    '
+  network_profile_id: wan_100ms
+  cell_count: 4
+  instance_count: 4
+  instance_manifest: master-regimes/generated/corpus/wan-latency-companion-v1/groups/clean-run-eu-us-gac-wan-latency-v1__pilot-balanced-v1__wan_100ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/wan-latency-companion-v1/sweeps/clean-run-eu-us-gac-wan-latency-v1__pilot-balanced-v1__wan_100ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+- group_id: clean-run-eu-us-gac-wan-latency-v1__pilot-skew-heavy-v1__wan_0ms__analytics_clients
+  sweep_id: clean-run-eu-us-gac-wan-latency-v1__pilot-skew-heavy-v1__wan_0ms__analytics_clients
+  dataset_profile_id: pilot-skew-heavy-v1
+  runtime_config_id: wan_0ms
+  target_group: analytics_clients
+  strategies:
+  - fdw_raw
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Control segment for the WAN companion corpus. It records/reset
+    network state but should not introduce synthetic delay.
+
+    '
+  network_profile_id: wan_0ms
+  cell_count: 3
+  instance_count: 6
+  instance_manifest: master-regimes/generated/corpus/wan-latency-companion-v1/groups/clean-run-eu-us-gac-wan-latency-v1__pilot-skew-heavy-v1__wan_0ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/wan-latency-companion-v1/sweeps/clean-run-eu-us-gac-wan-latency-v1__pilot-skew-heavy-v1__wan_0ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-wan-latency-v1__pilot-skew-heavy-v1__wan_100ms__analytics_clients
+  sweep_id: clean-run-eu-us-gac-wan-latency-v1__pilot-skew-heavy-v1__wan_100ms__analytics_clients
+  dataset_profile_id: pilot-skew-heavy-v1
+  runtime_config_id: wan_100ms
+  target_group: analytics_clients
+  strategies:
+  - fdw_raw
+  - multiregion_union
+  runtime_intervention_axis: wan_latency
+  runtime_expected_effect: 'Strong synthetic WAN delay for FDW row-flow intervention
+    validation.
+
+    '
+  network_profile_id: wan_100ms
+  cell_count: 3
+  instance_count: 6
+  instance_manifest: master-regimes/generated/corpus/wan-latency-companion-v1/groups/clean-run-eu-us-gac-wan-latency-v1__pilot-skew-heavy-v1__wan_100ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/wan-latency-companion-v1/sweeps/clean-run-eu-us-gac-wan-latency-v1__pilot-skew-heavy-v1__wan_100ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false

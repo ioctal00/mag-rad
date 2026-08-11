@@ -1,0 +1,60 @@
+batch_id: batch-000-collection-smoke
+corpus_version: pressure-raw-corpus-v1
+collection_contract_version: pressure-raw-v1
+status: ready_after_render
+description: >
+  One stressed/mitigated pair for each pressure axis with three repetitions.
+  The smoke validates collection completeness only and is never a model input.
+pair_selection:
+  gac_finalization:
+    source_batch: batch-100-gac
+    pressure_pair_key: gac__memory_response
+    dataset_profile_id: raw-small-balanced-v1
+    parameter_selector:
+      cutoff_ts: "2026-06-01 00:00:00+00"
+      tenant_modulus: 1
+      limit_k: 5000
+    variants: [mitigated, stressed]
+  remote_path:
+    source_batch: batch-110-remote
+    pressure_pair_key: remote_cal_bandwidth__rollup
+    dataset_profile_id: raw-small-balanced-v1
+    parameter_selector: {lookback_days: 30}
+    variants: [mitigated, stressed]
+  worker_data_skew:
+    source_batch: batch-120-skew
+    dataset_profile_id: raw-small-skew-heavy-v1
+    query_condition_id: hot_worker_probe_low_cpu
+    variants: [mitigated, stressed]
+  repartition_join:
+    source_batch: batch-130-repartition
+    pressure_pair_key: repartition__segment_aggregate__sparse
+    dataset_profile_id: raw-small-balanced-v1
+    parameter_selector:
+      lookback_days: 1
+      limit_k: 50
+      tenant_id_filter: 0
+      tenant_modulus: 16
+      user_id_max: 5
+    variants: [mitigated, stressed]
+  regional_finalization:
+    source_batch: batch-140-regional
+    pressure_pair_key: regional__single_edge_user_topk
+    dataset_profile_id: raw-small-balanced-v1
+    parameter_selector:
+      cutoff_ts: "2026-06-01 00:00:00+00"
+      limit_k: 50000
+      tenant_modulus: 1
+    variants: [mitigated, stressed]
+repetitions: 3
+expected_execution_count: 30
+gate:
+  require_pair_resolution: true
+  require_result_hash_equality: true
+  require_intervention_apply_reset: true
+  require_main_plan: true
+  require_regional_and_worker_evidence_when_applicable: true
+  require_network_telemetry_for_remote_pair: true
+  require_system_telemetry: true
+  require_effective_runtime_values: true
+  require_raw_index_without_manual_edits: true

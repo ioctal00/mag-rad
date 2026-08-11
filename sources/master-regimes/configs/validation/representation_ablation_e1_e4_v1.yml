@@ -1,0 +1,67 @@
+contract_version: representation-ablation-e1-e4-v1
+experiment_id: representation-ablation-e1-e4-v1
+research_question: >
+  Da li puna viseslojna post-execution fizicka reprezentacija daje korisniji
+  cross-query intervencijski transfer od SQL-strukturne ili pojednostavljene
+  coordinator fizicke reprezentacije?
+
+inputs:
+  base_ablation_contract: configs/validation/representation_value_ablation_v1.yml
+  development_report: analysis/reports/fuzzy-intervention-memory-v1
+  development_state_contract: configs/models/fuzzy_intervention_memory_v1.yml
+  final_panel_contract: configs/validation/dba_local_memory_panel_v1.yml
+  final_panel_report: analysis/reports/dba-local-memory-panel-v1
+  final_panel_index: ../master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/dba-local-memory-panel-v1/_index
+  archived_ablation_release: releases/representation-value-ablation-v1
+  topology_contract: configs/validation/n3_topology_memory_experiment_v1.yml
+  topology_work_dir: generated/corpus/n3-topology-memory-v1
+  topology_report: analysis/reports/n3-topology-memory-v1
+  frozen_full_model: analysis/reports/n3-topology-memory-v1/model_freeze_recomputed.json
+
+policy:
+  actions:
+    - increase_gac_work_mem
+    - regional_topk_candidates
+    - mitigate_remote_path_bundle
+  neighbors: 5
+  distance_metric: euclidean
+  distance_epsilon: 0.000001
+  coverage_quantile: 0.99
+  minimum_history_for_available: 2
+  exclude_same_query_id: true
+  exclude_same_logical_identity: true
+
+evaluations:
+  E1:
+    description: Prvo pojavljivanje svakog od 15 SQL oblika zavrsnog panela.
+    memory: development_reference_plus_earlier_final_episodes
+  E2:
+    description: Svih 45 zavrsnih epizoda uz vremenski uredjenu cross-query memoriju.
+    memory: development_reference_plus_earlier_final_episodes
+  E3:
+    description: N3 faza A uz razvojnu i N2-control memoriju zamrznutu prije N3 akcija.
+    memory: development_reference_plus_n2_control
+  E4:
+    description: N3 faza B nakon dodavanja samo N3 stanja i njihovih akcijskih ishoda iz faze A.
+    memory: development_reference_plus_n2_control_plus_phase_a
+
+bootstrap:
+  cluster_key: query_id
+  samples: 10000
+  random_seed: 20260807
+  confidence_level: 0.95
+
+expected:
+  development_states: 26
+  final_queries: 15
+  final_episodes: 45
+  final_action_outcomes: 135
+  topology_rounds:
+    n2_control: 15
+    phase_a: 15
+    phase_b: 15
+  topology_action_outcomes: 135
+  full_candidate_features: 93
+  full_active_features: 64
+  full_components: 6
+  full_coverage_threshold: 1.9533554892194174

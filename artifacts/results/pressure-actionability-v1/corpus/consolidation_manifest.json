@@ -1,0 +1,55 @@
+{
+  "allow_incomplete": false,
+  "attempt_candidate_count": 3027,
+  "consolidation_contract": "pressure_raw_program_consolidation_v1",
+  "duplicate_issue_count": 0,
+  "excluded_execution_count": 420,
+  "expected_primary_slot_count": 2607,
+  "fatal_issues": [],
+  "gate": "GO",
+  "identity_alias_count": 420,
+  "identity_alias_policy": "placement_aware_worker aliases are accepted only when slot and batch identities match, repeat suffixes are valid, and pair mapping is bijective",
+  "missing_primary_slot_count": 0,
+  "program_id": "pressure-raw-v1",
+  "resolved_execution_count_by_role": {
+    "primary": 2607
+  },
+  "resolved_primary_slot_count": 2607,
+  "training_index_dir": "master-regimes/generated/pressure-raw-runs/_program/pressure-raw-v1/_index",
+  "training_index_table_counts": {
+    "corpus_cells": 482,
+    "dataset_capability_audits": 48,
+    "dataset_runs": 48,
+    "execution_features": 2607,
+    "fdw_remote_plans": 4458,
+    "feature_overview": 2187,
+    "global_snapshots": 0,
+    "hardware_nodes": 336,
+    "instance_summary_features": 729,
+    "node_artifacts": 10008,
+    "plan_edges": 30206,
+    "plan_files": 98302,
+    "plan_nodes": 128508,
+    "plan_structure_features": 2607,
+    "program_hardware_nodes": 35,
+    "query_bindings": 15204,
+    "query_nodes": 2607,
+    "query_runs": 2607,
+    "region_fragments": 4458,
+    "remote_edge_observations": 4143,
+    "result_validations": 0,
+    "runtime_sweeps": 48,
+    "worker_task_fragments": 128985
+  },
+  "training_policy": {
+    "attempt_resolution": "latest_successful_program_attempt",
+    "calibration_in_training": false,
+    "eligible_roles": [
+      "primary"
+    ],
+    "holdout_in_training": false,
+    "sentinel_in_training": false,
+    "smoke_in_training": false
+  },
+  "unexpected_primary_slot_count": 0
+}

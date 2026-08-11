@@ -1,0 +1,12 @@
+select count(*) as result_count
+FROM {{ schema_name }}.votes AS v,
+  {{ schema_name }}.posts AS p,
+  {{ schema_name }}.badges AS b,
+  {{ schema_name }}.users AS u
+WHERE u.Id = b.UserId
+  AND u.Id = p.OwnerUserId
+  AND p.Id = v.PostId
+  AND p.AnswerCount >= 0
+  AND p.AnswerCount <= 7
+  AND p.CreationDate <= CAST('2014-09-12 00:03:32' AS timestamp)
+  AND b.Date <= CAST('2014-09-11 07:27:36' AS timestamp)

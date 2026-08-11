@@ -1,0 +1,35 @@
+{
+  "contract_hashes": {
+    "FEEDBACK_LOOP_PROTOCOL.md": "afb81fd9c032386e765602086ff6ed20da73d4318a5ca871e00033a6e2af0d4f",
+    "RQ_H_MAPPING.md": "acd74d010f415a8e8e8b0b1359fad028dc411a1c0654e897e459d931e9ba6d7e",
+    "intervention_catalog.yaml": "ab3f491b73d351c0c81771d1996cbdc82b120a78fa2f4457002cff2de82c02fc",
+    "pressure_domain_manifest.yaml": "3fc36feb9f9117f9cc2641ecaee968de7a024549281797820b41c3c6faa6fe1e",
+    "query_trajectory_manifest.yaml": "0b192f5c81db3b8537d7726507a2ba132cbaf672c78f24d978439f00fcc19cc8",
+    "rollback_checklist.md": "bea601a1573afd3d01d8162fe4d2bb0acf2e818c79f56a7b1cbcfbba5d4c413b",
+    "schemas/decision_log.schema.json": "1dd0a624e33b43e0e04724bf9b8b8c4a0d58b15ef778bd25b286a6ef16265860"
+  },
+  "contract_version": "pressure-feedback-loop-live-v1",
+  "created_at_utc": "2026-08-07T12:37:24.393146Z",
+  "repositories": [
+    {
+      "branch": "pivot/fcm-results-rework",
+      "commit": "e92399c66580e3abb2d1de443501431904e4a6fc",
+      "dirty": true,
+      "path": "master-regimes"
+    },
+    {
+      "branch": "pivot/fcm-results-rework",
+      "commit": "a554d83d5bdf854ae6f0e40762f03aaa4cf08c88",
+      "dirty": false,
+      "path": "master-regimes-infra"
+    },
+    {
+      "branch": "pivot/fcm-results-rework",
+      "commit": "95d8693da7b3a108752153d7aa3bf3eae1088237",
+      "dirty": true,
+      "path": "master-regimes-thesis"
+    }
+  ],
+  "run_root": "master-regimes/generated/feedback-loop-runs/20260807T123708Z-pressure-feedback-loop-v1",
+  "source_experiment_dir": "master-regimes/experiments/feedback-loop-v1"
+}

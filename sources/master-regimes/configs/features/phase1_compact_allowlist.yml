@@ -1,0 +1,309 @@
+allowlist_id: phase1_compact_v1
+description: >
+  Compact, interpretable feature allowlist for the first regime-clustering
+  analytics phase. M0 is behavioral and excludes direct experiment/context
+  knobs. M1 adds a small interpretable plan-structure layer for ablation.
+source_features_dir: analysis/features/clean-run-v1
+principles:
+  - Keep IDs, labels, fingerprints, runtime_config_id, dataset_id, template_id,
+    pressure tags and intervention knobs out of clustering inputs.
+  - Keep intervention knobs such as fetch_size, configured_latency_ms, jitter
+    and loss in context/validation tables, not M0/M1 inputs.
+  - Prefer one to three representatives per feature family instead of every
+    correlated proxy variant.
+  - Preserve NULL semantics through imputation plus explicit missingness audit;
+    never encode missing as zero.
+  - Use companion corpora for validation/membership shifts, not as direct
+    labels inside the default model matrix.
+
+m0_compact:
+  description: Behavioral core features only.
+  feature_groups:
+    runtime:
+      - execution_time_seconds
+    root_size:
+      - main_root_actual_rows
+      - main_root_plan_rows
+    remote_fanin_fetch:
+      - remote_path_share
+      - fdw_remote_sql_count
+      - remote_region_actual_rows_sum
+      - remote_region_tuple_bytes_sum
+      - remote_actual_rows_sum
+      - global_fanin_ratio
+      - remote_to_final_rows_ratio
+    regional_imbalance:
+      - remote_region_actual_rows_cv
+      - remote_region_actual_rows_max_share
+    estimate_error:
+      - foreign_scan_rows_estimate_error_log
+      - aggregate_rows_estimate_error_log
+      - join_rows_estimate_error_log
+      - remote_root_rows_estimate_error_log
+    memory_spill:
+      - temp_blocks_sum
+      - spill_flag
+    citus_task:
+      - task_count
+      - citus_repartition_query
+    worker_skew:
+      - worker_task_scan_actual_rows_cv
+      - worker_task_scan_actual_rows_max_share
+      - worker_task_within_region_scan_rows_cv_max
+    worker_access_path:
+      - worker_task_seq_scan_share
+
+m1_extra_compact:
+  description: Interpretable plan-structure features added to M0 for ablation.
+  feature_groups:
+    shape_complexity:
+      - main_plan_node_count
+      - main_plan_avg_branching_factor
+    operator_depth:
+      - aggregate_min_depth
+      - sort_min_depth
+      - join_min_depth
+      - foreign_scan_min_depth
+    remote_boundary:
+      - aggregate_above_foreign_scan
+      - sort_above_foreign_scan
+      - limit_above_foreign_scan
+      - join_above_foreign_scan
+      - remote_aggregate_present
+      - remote_sort_present
+      - remote_join_present
+    blocking_placement:
+      - blocking_operator_count
+      - blocking_operator_above_remote_count
+      - blocking_operator_below_remote_count
+    critical_path_proxy:
+      - dominant_time_node_actual_time_share
+      - dominant_rows_node_row_share
+    plan_transition_counts:
+      - parent_child_type_count_Aggregate_ForeignScan
+      - parent_child_type_count_Sort_ForeignScan
+      - parent_child_type_count_HashJoin_ForeignScan
+      - parent_child_type_count_Limit_Sort
+      - parent_child_type_count_HashJoin_SeqScan
+      - parent_child_type_count_Aggregate_HashJoin
+
+reduced_variants:
+  m0_reduced:
+    description: >
+      First clustering candidate after removing sparse join-only diagnostics
+      and the most direct redundant proxies from M0.
+    based_on: m0_compact
+    drop_features:
+      - join_rows_estimate_error_log
+      - spill_flag
+      - remote_region_actual_rows_sum
+  m1_reduced:
+    description: >
+      First plan-structure ablation candidate after removing sparse join-only
+      diagnostics and redundant remote/blocking proxies from M1.
+    based_on: m1_compact
+    drop_features:
+      - join_rows_estimate_error_log
+      - join_min_depth
+      - spill_flag
+      - remote_region_actual_rows_sum
+      - fdw_remote_sql_count
+      - blocking_operator_below_remote_count
+
+custom_matrices:
+  m0_flow_no_runtime_v2:
+    description: >
+      Primary flow-oriented candidate that excludes direct execution time and
+      uses interpretable WAN output, regional reduction, skew/imbalance,
+      memory pressure and Citus locality proxies.
+    source: m0
+    feature_groups:
+      root_size:
+        - main_root_actual_rows
+        - main_root_plan_rows
+      remote_fanin_fetch:
+        - wan_output_rows
+        - wan_output_bytes_proxy
+        - drf_rows_proxy
+        - drf_bytes_proxy
+        - fetch_batch_pressure_proxy
+        - remote_path_share
+        - fdw_remote_sql_count
+        - remote_to_final_rows_ratio
+      regional_reduction:
+        - regional_reduction_input_rows_proxy
+        - regional_reduction_input_bytes_proxy
+        - global_group_merge_ratio
+      global_finalization:
+        - global_group_count_proxy
+        - global_group_density
+        - temp_blocks_sum
+        - external_sort_count
+        - hash_batches_max
+        - gac_input_bytes_to_work_mem_ratio
+      skew_imbalance:
+        - remote_region_rows_isf
+        - remote_region_bytes_isf
+        - worker_task_scan_rows_isf
+        - worker_task_root_rows_isf
+        - worker_task_within_region_scan_rows_isf_max
+        - worker_task_scan_actual_rows_cv
+        - worker_task_scan_actual_rows_max_share
+      citus_locality:
+        - task_count
+        - citus_repartition_query
+        - citus_map_merge_job_count
+        - worker_task_seq_scan_share
+      estimate_error:
+        - root_rows_estimate_error_log
+        - foreign_scan_rows_estimate_error_log
+        - aggregate_rows_estimate_error_log
+        - remote_root_rows_estimate_error_log
+  m0_flow_no_runtime_v2_reduced:
+    description: >
+      Reduced primary flow candidate for clustering. It removes direct runtime,
+      sparse runtime-knob proxies and near-duplicate DRF/ISF variants while
+      keeping the core WAN-output, reduction, finalization and skew signals.
+    source: m0
+    feature_groups:
+      root_size:
+        - main_root_plan_rows
+      remote_fanin_fetch:
+        - wan_output_rows
+        - wan_output_bytes_proxy
+        - drf_bytes_proxy
+        - remote_path_share
+        - fdw_remote_sql_count
+        - remote_to_final_rows_ratio
+      regional_reduction:
+        - regional_reduction_input_rows_proxy
+        - global_group_merge_ratio
+      global_finalization:
+        - global_group_count_proxy
+        - global_group_density
+        - temp_blocks_sum
+        - external_sort_count
+        - hash_batches_max
+      skew_imbalance:
+        - remote_region_rows_isf
+        - worker_task_scan_rows_isf
+        - worker_task_within_region_scan_rows_isf_max
+        - worker_task_scan_actual_rows_cv
+        - worker_task_scan_actual_rows_max_share
+      citus_locality:
+        - task_count
+        - citus_repartition_query
+        - worker_task_seq_scan_share
+      estimate_error:
+        - root_rows_estimate_error_log
+        - foreign_scan_rows_estimate_error_log
+        - aggregate_rows_estimate_error_log
+        - remote_root_rows_estimate_error_log
+  m0_flow_ratio_v3:
+    description: >
+      Ratio-first flow candidate. Raw volumes such as task_count,
+      temp_blocks_sum, WAN rows/bytes and group counts are treated as
+      audit/severity context, while clustering input uses topology-normalized
+      task factors, reduction ratios, skew factors and normalized spill
+      intensity.
+    source: m0
+    feature_groups:
+      remote_fanin_fetch:
+        - remote_path_share
+        - remote_to_final_rows_ratio
+        - wan_output_to_final_rows_ratio
+        - drf_bytes_proxy
+      regional_reduction:
+        - global_group_density
+        - global_group_merge_ratio
+      normalized_spill_pressure:
+        - temp_bytes_to_wan_bytes_ratio
+        - temp_blocks_per_wan_row
+        - temp_blocks_per_final_row
+        - temp_blocks_per_regional_input_row
+        - spill_per_wan_mb
+        - external_sort_count
+        - hash_batches_max
+      skew_imbalance:
+        - remote_region_rows_isf
+        - worker_task_scan_rows_isf
+        - worker_task_within_region_scan_rows_isf_max
+        - worker_task_scan_actual_rows_cv
+        - worker_task_scan_actual_rows_max_share
+      citus_topology_normalized:
+        - task_count_to_shard_count_ratio
+        - active_task_share
+        - tasks_per_worker_ratio
+        - citus_repartition_query
+        - worker_task_seq_scan_share
+      estimate_error:
+        - root_rows_estimate_error_log
+        - foreign_scan_rows_estimate_error_log
+        - aggregate_rows_estimate_error_log
+        - remote_root_rows_estimate_error_log
+  m0_flow_ratio_v3_reduced:
+    description: >
+      Reduced ratio-first candidate for clustering. This keeps one or two
+      interpretable representatives per regime family and removes ratio
+      features that were nearly duplicate in the v3 compact audit.
+    source: m0
+    feature_groups:
+      remote_fanin_fetch:
+        - remote_path_share
+        - remote_to_final_rows_ratio
+        - wan_output_to_final_rows_ratio
+        - drf_bytes_proxy
+      regional_reduction:
+        - global_group_merge_ratio
+      normalized_spill_pressure:
+        - temp_bytes_to_wan_bytes_ratio
+        - temp_blocks_per_wan_row
+        - temp_blocks_per_final_row
+        - spill_per_wan_mb
+        - hash_batches_max
+      skew_imbalance:
+        - remote_region_rows_isf
+        - worker_task_scan_rows_isf
+        - worker_task_scan_actual_rows_max_share
+      citus_topology_normalized:
+        - task_count_to_shard_count_ratio
+        - active_task_share
+        - citus_repartition_query
+        - worker_task_seq_scan_share
+      estimate_error:
+        - root_rows_estimate_error_log
+        - foreign_scan_rows_estimate_error_log
+        - aggregate_rows_estimate_error_log
+        - remote_root_rows_estimate_error_log
+
+context_columns:
+  - query_run_id
+  - database_sweep_id
+  - dataset_id
+  - dataset_profile_id
+  - runtime_config_id
+  - runtime_intervention_axis
+  - corpus_cell_id
+  - logical_question_id
+  - execution_strategy
+  - instance_id
+  - template_id
+  - execution_status
+  - timed_out
+  - collection_error_count
+  - remote_error_count
+  - intervention_role
+  - intervention_axis
+  - network_profile_id
+  - configured_latency_ms
+  - configured_jitter_ms
+  - configured_loss_percent
+  - fetch_size
+  - work_mem
+  - configured_shard_count
+  - configured_region_count
+  - configured_worker_count_per_region
+  - configured_worker_count_total
+  - observed_region_count_for_task_scope
+  - configured_region_shard_slots
+  - observed_region_shard_slots

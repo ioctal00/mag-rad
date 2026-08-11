@@ -1,0 +1,124 @@
+{
+  "checks": {
+    "actual_order_matches_locked_williams_schedule": true,
+    "all_300_completed": true,
+    "all_n3": true,
+    "network_apply_and_reset_ok": true,
+    "no_collection_errors": true,
+    "node_artifacts_complete": true,
+    "one_hardware_snapshot_per_attempt_with_stable_ten_nodes": true,
+    "one_signature_per_condition": true,
+    "ordered_and_multiset_results_equivalent": true,
+    "required_telemetry_complete": true,
+    "runtime_profile_matches_every_treatment": true,
+    "sixty_conditions_five_repetitions": true,
+    "ten_aligned_os_nodes_per_execution": true,
+    "three_edges_per_execution": true,
+    "three_regions_per_execution": true,
+    "uniform_zero_warmup_contract": true,
+    "worker_task_evidence_for_every_execution": true
+  },
+  "counts": {
+    "edges": 900,
+    "executions": 300,
+    "hardware_snapshots": 2,
+    "node_artifacts": 3000,
+    "regions": 900,
+    "signatures": 60,
+    "worker_task_fragments": 57600
+  },
+  "signature_equivalence": [
+    {
+      "multiset_equivalent": true,
+      "ordered_equivalent": true,
+      "query_id": "q16_event_value_squared",
+      "signature_count": 4
+    },
+    {
+      "multiset_equivalent": true,
+      "ordered_equivalent": true,
+      "query_id": "q17_event_log_value",
+      "signature_count": 4
+    },
+    {
+      "multiset_equivalent": true,
+      "ordered_equivalent": true,
+      "query_id": "q18_event_recent_high_value",
+      "signature_count": 4
+    },
+    {
+      "multiset_equivalent": true,
+      "ordered_equivalent": true,
+      "query_id": "q19_event_old_low_value",
+      "signature_count": 4
+    },
+    {
+      "multiset_equivalent": true,
+      "ordered_equivalent": true,
+      "query_id": "q20_event_tenant_weighted",
+      "signature_count": 4
+    },
+    {
+      "multiset_equivalent": true,
+      "ordered_equivalent": true,
+      "query_id": "q21_tenant_value_range",
+      "signature_count": 4
+    },
+    {
+      "multiset_equivalent": true,
+      "ordered_equivalent": true,
+      "query_id": "q22_tenant_distinct_users",
+      "signature_count": 4
+    },
+    {
+      "multiset_equivalent": true,
+      "ordered_equivalent": true,
+      "query_id": "q23_tenant_even_user_count",
+      "signature_count": 4
+    },
+    {
+      "multiset_equivalent": true,
+      "ordered_equivalent": true,
+      "query_id": "q24_tenant_midband_sum",
+      "signature_count": 4
+    },
+    {
+      "multiset_equivalent": true,
+      "ordered_equivalent": true,
+      "query_id": "q25_tenant_day_avg",
+      "signature_count": 4
+    },
+    {
+      "multiset_equivalent": true,
+      "ordered_equivalent": true,
+      "query_id": "q26_tenant_hour_count",
+      "signature_count": 4
+    },
+    {
+      "multiset_equivalent": true,
+      "ordered_equivalent": true,
+      "query_id": "q27_user_sum",
+      "signature_count": 4
+    },
+    {
+      "multiset_equivalent": true,
+      "ordered_equivalent": true,
+      "query_id": "q28_user_count",
+      "signature_count": 4
+    },
+    {
+      "multiset_equivalent": true,
+      "ordered_equivalent": true,
+      "query_id": "q29_user_value_range",
+      "signature_count": 4
+    },
+    {
+      "multiset_equivalent": true,
+      "ordered_equivalent": true,
+      "query_id": "q30_user_day_sum",
+      "signature_count": 4
+    }
+  ],
+  "status": "PASS",
+  "warmup_contract": "zero explicit warm-up executions for every condition"
+}

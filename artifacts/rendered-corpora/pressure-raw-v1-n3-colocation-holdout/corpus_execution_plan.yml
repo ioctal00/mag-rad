@@ -1,0 +1,117 @@
+corpus_id: pressure-raw-v1-n3-colocation-holdout
+source_manifest: master-regimes/workloads/corpus/pressure-raw-v1/batch-300-n3-colocation-holdout.yml
+rendered_corpus_manifest: master-regimes/generated/corpus/pressure-raw-v1-n3-colocation-holdout/corpus_manifest.yml
+corpus_cells: master-regimes/generated/corpus/pressure-raw-v1-n3-colocation-holdout/corpus_cells.csv
+region: eu
+max_instances_per_cell: null
+execution_budget:
+  hard_timeout_seconds: 1800
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260802
+  repetitions_default: 3
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  fdw_auto_explain_regions:
+  - eu
+  - us
+  - apac
+  os_sampler: true
+  os_sampler_node_groups:
+  - db_nodes
+  - analytics_clients
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: true
+  remote_edge_context: true
+execution_backend: master-regimes-infra.database_sweep
+included_execution_classes:
+- pilot
+source_cell_count: 8
+manifest_cell_count: 32
+excluded_cell_count: 0
+group_count: 4
+groups:
+- group_id: pressure-raw-v1-n3-colocation-holdout__n3-large-apac-dominant-wide-global-dim-v1__gac_force_remote_join__analytics_clients
+  sweep_id: pressure-raw-v1-n3-colocation-holdout__n3-large-apac-dominant-wide-global-dim-v1__gac_force_remote_join__analytics_clients
+  dataset_profile_id: n3-large-apac-dominant-wide-global-dim-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: gac_force_remote_join
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: join_strategy
+  runtime_expected_effect: 'Each region receives one joined remote SQL statement,
+    allowing auto_explain to expose the regional collocated or MapMerge Citus plan.
+
+    '
+  network_profile_id: ''
+  cell_count: 8
+  instance_count: 24
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1-n3-colocation-holdout/groups/pressure-raw-v1-n3-colocation-holdout__n3-large-apac-dominant-wide-global-dim-v1__gac_force_remote_join__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1-n3-colocation-holdout/sweeps/pressure-raw-v1-n3-colocation-holdout__n3-large-apac-dominant-wide-global-dim-v1__gac_force_remote_join__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-n3-colocation-holdout__n3-large-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients
+  sweep_id: pressure-raw-v1-n3-colocation-holdout__n3-large-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients
+  dataset_profile_id: n3-large-balanced-wide-global-dim-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: gac_force_remote_join
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: join_strategy
+  runtime_expected_effect: 'Each region receives one joined remote SQL statement,
+    allowing auto_explain to expose the regional collocated or MapMerge Citus plan.
+
+    '
+  network_profile_id: ''
+  cell_count: 8
+  instance_count: 24
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1-n3-colocation-holdout/groups/pressure-raw-v1-n3-colocation-holdout__n3-large-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1-n3-colocation-holdout/sweeps/pressure-raw-v1-n3-colocation-holdout__n3-large-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-n3-colocation-holdout__n3-medium-apac-dominant-wide-global-dim-v1__gac_force_remote_join__analytics_clients
+  sweep_id: pressure-raw-v1-n3-colocation-holdout__n3-medium-apac-dominant-wide-global-dim-v1__gac_force_remote_join__analytics_clients
+  dataset_profile_id: n3-medium-apac-dominant-wide-global-dim-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: gac_force_remote_join
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: join_strategy
+  runtime_expected_effect: 'Each region receives one joined remote SQL statement,
+    allowing auto_explain to expose the regional collocated or MapMerge Citus plan.
+
+    '
+  network_profile_id: ''
+  cell_count: 8
+  instance_count: 24
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1-n3-colocation-holdout/groups/pressure-raw-v1-n3-colocation-holdout__n3-medium-apac-dominant-wide-global-dim-v1__gac_force_remote_join__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1-n3-colocation-holdout/sweeps/pressure-raw-v1-n3-colocation-holdout__n3-medium-apac-dominant-wide-global-dim-v1__gac_force_remote_join__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-n3-colocation-holdout__n3-medium-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients
+  sweep_id: pressure-raw-v1-n3-colocation-holdout__n3-medium-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients
+  dataset_profile_id: n3-medium-balanced-wide-global-dim-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: gac_force_remote_join
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: join_strategy
+  runtime_expected_effect: 'Each region receives one joined remote SQL statement,
+    allowing auto_explain to expose the regional collocated or MapMerge Citus plan.
+
+    '
+  network_profile_id: ''
+  cell_count: 8
+  instance_count: 24
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1-n3-colocation-holdout/groups/pressure-raw-v1-n3-colocation-holdout__n3-medium-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1-n3-colocation-holdout/sweeps/pressure-raw-v1-n3-colocation-holdout__n3-medium-balanced-wide-global-dim-v1__gac_force_remote_join__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false

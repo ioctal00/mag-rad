@@ -1,0 +1,72 @@
+sweep_id: pressure-raw-v1-regional__raw-large-balanced-v1__pressure_regional_memory_stressed__analytics_clients
+region: eu
+datasets:
+- id: raw-large-balanced-v1
+  profile: master-regimes/datasets/profiles/raw-large-balanced.yml
+  load_method: copy_pipe
+  adapter: citus_datagen
+runtime_configs:
+- id: pressure_regional_memory_stressed
+  pg_options: {}
+  regional_pg_options:
+    work_mem: 64kB
+  psql_variables: {}
+  fdw_server_options: {}
+  network_profile: {}
+  intervention_axis: regional_finalization
+  expected_effect: 'Regional sort/hash/aggregate operators should spill while GAC
+    session memory remains unchanged.
+
+    '
+workload:
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-140-regional/rendered/groups/pressure-raw-v1-regional__raw-large-balanced-v1__pressure_regional_memory_stressed__analytics_clients/instance_manifest.csv
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260730
+collection:
+  global_stats_scope: none
+  target_group: analytics_clients
+  citus_explain_all_tasks: true
+  hard_timeout_seconds: 1800
+  timeout_grace_seconds: 30
+  cache_policy: mixed_cache_first_observed
+  record_run_order: true
+  record_buffer_features: true
+  os_sampler: true
+  os_sampler_node_groups: &id001
+  - eu
+  - analytics_clients
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: false
+  remote_edge_context: false
+  fdw_auto_explain: true
+  fdw_auto_explain_regions: &id002
+  - eu
+  fdw_bootstrap:
+    enabled: true
+    region: eu
+    adapter: citus_datagen
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  measurement_lane: global_gac_serial
+  query_concurrency: 1
+  representative_region: ''
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  repetitions_default: 3
+  sentinel_repetitions: 3
+  cache_features_in_default_model: false
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260730
+  record_run_order: true
+  record_buffer_features: true
+  os_sampler: true
+  os_sampler_node_groups: *id001
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: false
+  remote_edge_context: false
+  remote_edge_context_requested: false
+  fdw_auto_explain: true
+  fdw_auto_explain_regions: *id002
+  fdw_auto_explain_requested: true

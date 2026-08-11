@@ -1,0 +1,22 @@
+[databases]
+{{ analytics_node_postgresql_app_db }} = host=127.0.0.1 port=5432 dbname={{ analytics_node_postgresql_app_db }}
+
+[pgbouncer]
+listen_addr = {{ analytics_node_pgbouncer_listen_addr }}
+listen_port = {{ analytics_node_pgbouncer_listen_port }}
+auth_type = {{ analytics_node_pgbouncer_auth_type }}
+auth_file = /etc/pgbouncer/userlist.txt
+pool_mode = {{ analytics_node_pgbouncer_pool_mode }}
+default_pool_size = {{ analytics_node_pgbouncer_default_pool_size }}
+max_client_conn = {{ analytics_node_pgbouncer_max_client_conn }}
+admin_users = postgres,{{ analytics_node_postgresql_app_user }}
+stats_users = postgres,{{ analytics_node_postgresql_app_user }}
+server_reset_query = DISCARD ALL
+ignore_startup_parameters = extra_float_digits,options
+pidfile = /var/run/postgresql/pgbouncer.pid
+logfile = /var/log/postgresql/pgbouncer.log
+client_tls_sslmode = {{ analytics_node_pgbouncer_client_tls_sslmode }}
+client_tls_key_file = {{ analytics_node_tls_dir }}/{{ analytics_node_tls_server_key_filename }}
+client_tls_cert_file = {{ analytics_node_tls_dir }}/{{ analytics_node_tls_server_cert_filename }}
+client_tls_ca_file = {{ analytics_node_tls_dir }}/{{ analytics_node_tls_ca_filename }}
+client_tls_protocols = {{ analytics_node_pgbouncer_client_tls_protocols }}

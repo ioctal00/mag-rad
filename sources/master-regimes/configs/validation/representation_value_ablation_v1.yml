@@ -1,0 +1,122 @@
+contract_version: representation-value-ablation-v1
+experiment_id: representation-value-ablation-v1
+research_question: >
+  Da li višeslojno post-execution fizičko stanje daje bolji cross-query
+  intervencijski transfer od jednostavne strukturne sličnosti SQL-a i
+  jednostavnijih lokalnih pokazatelja?
+
+inputs:
+  development_report: analysis/reports/fuzzy-intervention-memory-v1
+  development_state_contract: configs/models/fuzzy_intervention_memory_v1.yml
+  final_panel_contract: configs/validation/dba_local_memory_panel_v1.yml
+  final_panel_report: analysis/reports/dba-local-memory-panel-v1
+  final_panel_index: ../master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/dba-local-memory-panel-v1/_index
+
+decision_policy:
+  memory_mode: warm_start
+  exclude_same_query_id: true
+  exclude_same_normalized_sql: true
+  distance_metric: euclidean
+  neighbors: 5
+  distance_epsilon: 0.000001
+  coverage_quantile: 0.99
+  minimum_history_for_available: 2
+  actions:
+    - increase_gac_work_mem
+    - regional_topk_candidates
+    - mitigate_remote_path_bundle
+
+evaluations:
+  - id: first_occurrence
+    description: Prvo vremensko pojavljivanje svakog query_id.
+  - id: same_query_excluded
+    description: Svih 45 stanja uz zabranu istog query_id i SQL hash susjeda.
+
+representations:
+  sql_structural:
+    description: >
+      Leksicka struktura normalizovanog SQL-a i osnovne porodice operatora
+      glavnog GAC plana. Ne koristi query_id, hash, runtime profil, dataset,
+      topologiju ni akcijske ishode.
+    reduction: none
+    features:
+      sql_select_count: {family: sql_structure, transform: log1p}
+      sql_join_count: {family: sql_structure, transform: log1p}
+      sql_selection_predicate_count: {family: sql_structure, transform: log1p}
+      sql_equality_predicate_count: {family: sql_structure, transform: log1p}
+      sql_non_equality_predicate_count: {family: sql_structure, transform: log1p}
+      sql_aggregate_function_count: {family: sql_structure, transform: log1p}
+      sql_nested_query_count: {family: sql_structure, transform: log1p}
+      sql_cte_count: {family: sql_structure, transform: log1p}
+      sql_table_reference_count: {family: sql_structure, transform: log1p}
+      sql_group_by_present: {family: sql_structure, transform: identity}
+      sql_group_expression_count: {family: sql_structure, transform: log1p}
+      sql_distinct_present: {family: sql_structure, transform: identity}
+      sql_order_by_present: {family: sql_structure, transform: identity}
+      sql_order_expression_count: {family: sql_structure, transform: log1p}
+      sql_limit_present: {family: sql_structure, transform: identity}
+      sql_topk_present: {family: sql_structure, transform: identity}
+      sql_set_operation_count: {family: sql_structure, transform: log1p}
+      sql_window_function_count: {family: sql_structure, transform: log1p}
+      plan_main_node_count: {family: basic_plan, transform: log1p}
+      plan_blocking_operator_count: {family: basic_plan, transform: log1p}
+      plan_sort_operator_count: {family: basic_plan, transform: log1p}
+      plan_aggregate_operator_count: {family: basic_plan, transform: log1p}
+      plan_join_operator_count: {family: basic_plan, transform: log1p}
+      plan_window_operator_count: {family: basic_plan, transform: log1p}
+      plan_limit_operator_count: {family: basic_plan, transform: log1p}
+
+  coordinator_physical:
+    description: >
+      Standardni wall-clock, rezultat, buffer i glavni coordinator EXPLAIN
+      pokazatelji. Iskljucuje regionalne Citus fragmente, worker/task dokaz,
+      edge telemetriju, OS telemetriju i topoloske agregacije.
+    pca_components: 6
+    minimum_active_features: 8
+    included_features:
+      - elapsed_seconds
+      - result_row_count
+      - result_output_byte_count
+      - shared_blks_hit_sum
+      - shared_blks_read_sum
+      - temp_blks_written_sum
+      - coordinator_main_plan_total_time_ms
+      - coordinator_foreign_scan_time_ms_sum
+      - coordinator_non_foreign_time_share_proxy
+      - coordinator_fanin_rows
+      - coordinator_fanin_bytes_estimated
+      - coordinator_final_rows
+      - coordinator_final_bytes_estimated
+      - coordinator_blocking_input_rows_sum
+      - coordinator_temp_written_blocks
+      - coordinator_hash_batches_max
+      - coordinator_sort_input_rows_sum
+      - coordinator_sort_time_ms_max
+      - coordinator_aggregate_input_rows_sum
+      - coordinator_aggregate_time_ms_max
+      - coordinator_join_input_rows_sum
+      - coordinator_join_time_ms_max
+
+  full_multilayer:
+    description: Postojeci, neizmijenjeni tok 93 kandidata, 64 aktivna pokazatelja i 6 PCA komponenti.
+    expected_candidate_features: 93
+    expected_active_features: 64
+    expected_pca_components: 6
+    expected_reference_coverage_threshold: 1.9533554892194174
+
+bootstrap:
+  cluster_key: query_id
+  samples: 10000
+  random_seed: 20260806
+  confidence_level: 0.95
+
+expected_panel:
+  query_count: 15
+  episode_count: 45
+  action_outcome_count: 135
+  observed_occurrences_per_query_distribution:
+    1: 3
+    2: 3
+    3: 3
+    4: 3
+    5: 3

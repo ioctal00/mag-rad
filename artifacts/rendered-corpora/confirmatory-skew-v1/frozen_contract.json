@@ -1,0 +1,58 @@
+{
+  "artifacts": {
+    "candidate_config": {
+      "path": "master-regimes/configs/features/phase1_flow_ratio_candidate.yml",
+      "sha256": "7eb3be81d8efd38fee0a2e743b15ab98924450e9fab0b596d757376b1e17999e"
+    },
+    "centers": {
+      "path": "master-regimes/analysis/reports/clean-run-v1-m0-flow-ratio-v3-reduced-fuzzy/cluster_centers_representative_by_k.csv",
+      "sha256": "125ea475b76df1b8594fb0e8555983df3613a8aac7a88a0c7b7be2e693dfe217"
+    },
+    "manifest": {
+      "path": "master-regimes/analysis/reports/clean-run-v1-final-model/final_model_manifest.yml",
+      "sha256": "f3bd1230d55040b12f3b6f1b645179c7972c9594e77eae3cb74b7ff6d6a0be79"
+    },
+    "raw_matrix": {
+      "path": "master-regimes/analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_m0_flow_ratio_v3_reduced_raw.csv",
+      "sha256": "628b3640be447b187740e469a9eee5cf5bf8f0acb2dd61e9c660e0f2058fd32d"
+    },
+    "scaled_matrix": {
+      "path": "master-regimes/analysis/features/clean-run-v1-flow-ratio-v3/phase1_compact/compact_m0_flow_ratio_v3_reduced_scaled.csv",
+      "sha256": "252abb5d02a8bd4b00fde3dedc1b3bd9ee26c2e9cd72b35290761e85c60c4ceb"
+    }
+  },
+  "feature_count": 21,
+  "features": [
+    "remote_path_share",
+    "remote_to_final_rows_ratio",
+    "wan_output_to_final_rows_ratio",
+    "drf_bytes_proxy",
+    "global_group_merge_ratio",
+    "temp_bytes_to_wan_bytes_ratio",
+    "temp_blocks_per_wan_row",
+    "temp_blocks_per_final_row",
+    "spill_per_wan_mb",
+    "hash_batches_max",
+    "remote_region_rows_isf",
+    "worker_task_scan_rows_isf",
+    "worker_task_scan_actual_rows_max_share",
+    "task_count_to_shard_count_ratio",
+    "active_task_share",
+    "citus_repartition_query",
+    "worker_task_seq_scan_share",
+    "root_rows_estimate_error_log",
+    "foreign_scan_rows_estimate_error_log",
+    "aggregate_rows_estimate_error_log",
+    "remote_root_rows_estimate_error_log"
+  ],
+  "manifest_feature_count": 21,
+  "manifest_model_id": "clean-run-v1-m0_flow_ratio_v3_reduced-fcm-k4",
+  "model_id": "clean-run-v1-m0_flow_ratio_v3_reduced-fcm-k4",
+  "primary_model": {
+    "algorithm": "fuzzy_c_means",
+    "fuzzifier": 1.7,
+    "k": 4
+  },
+  "retrain": false,
+  "training_rows_include_confirmatory": false
+}

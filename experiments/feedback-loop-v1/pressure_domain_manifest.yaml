@@ -1,0 +1,276 @@
+contract_version: pressure-relative-profile-v1
+profile_name: local_six_domain_pressure_evidence
+profile_notation: R_t=(p_t,1,...,p_t,6)
+coordinate_semantics: relative_expression_of_pressure_evidence
+causal_root_cause_claim: false
+cross_domain_magnitude_comparison_allowed: false
+universal_high_low_thresholds: false
+raw_feature_values_preserved: true
+
+relative_references:
+  - trajectory_origin
+  - previous_accepted_state
+  - prior_logical_question_history
+
+repetition_contract:
+  repetitions_per_state: 3
+  center: median_of_available_repetitions
+  uncertainty: local_mad_and_resampling_interval
+  insufficient_rule: preserve_raw_values_and_emit_insufficient_evidence
+
+relative_coordinate:
+  component_formula: >-
+    direction * 2 * (current_median - reference_median) /
+    (abs(current_median) + abs(reference_median) + local_mad_scale)
+  domain_aggregation: weighted_median_of_available_directed_components
+  contextual_components: retained_but_not_aggregated
+  conflict_output:
+    - component_relative_changes
+    - positive_component_count
+    - negative_component_count
+    - conflicting_component_signs
+    - availability_status
+  active_domain_count: descriptive_only_after_local_noise_resolution
+
+missingness_contract:
+  observed_zero: retained_as_zero
+  not_applicable: retained_as_na_with_reason
+  unavailable: retained_as_na_with_missing_evidence_reason
+  partial: use_only_documented_submeasure_and_mark_partial
+  imputation_for_profile: forbidden
+
+domains:
+  - id: remote_fdw_path
+    display_name: Udaljena FDW putanja
+    minimum_aggregated_components: 2
+    rationale: >-
+      Domena opisuje opaženi tok i čekanje na granici između regionalnih
+      izvora i GAC-a. Ne razlikuje sama mrežni transport od regionalnog rada.
+    features:
+      - id: foreign_scan_time_share
+        source: execution_features.coordinator_foreign_scan_time_ms_sum / execution_features.coordinator_main_plan_total_time_ms
+        direction: increase_more_pressure_evidence
+        na_rule: NA kada GAC plan nema mjerljiv Foreign Scan ili root vrijeme
+        relative_comparison: medijana ponavljanja prema svakoj lokalnoj referenci
+        rationale: Veći udio znači da je više root putanje opaženo unutar FDW granice.
+      - id: edge_remote_bytes_sum
+        source: sum(remote_edge_observations.remote_bytes_proxy) po query_run_id
+        direction: increase_more_pressure_evidence
+        na_rule: NA kada edge red nije povezan; nije nula
+        relative_comparison: simetrična promjena logičkih edge bajtova
+        rationale: Veći udaljeni payload povećava fizički dokaz toka preko edgea.
+      - id: edge_boundary_wait_share
+        source: >-
+          sum(remote_edge_observations.foreign_scan_minus_regional_time_ms_proxy) /
+          execution_features.coordinator_main_plan_total_time_ms
+        direction: increase_more_pressure_evidence
+        na_rule: NA kada regionalno vrijeme ili FDW vrijeme nije dostupno
+        relative_comparison: lokalna promjena udjela bez globalnog praga
+        rationale: Izoluje rezidual na FDW granici, ali ostaje proxy a ne čista mrežna latencija.
+      - id: edge_rtt_context_median_ms_max
+        source: max(remote_edge_observations.rtt_context_median_ms) po query_run_id
+        direction: increase_more_pressure_evidence
+        na_rule: NA kada RTT probe nije dostupan
+        relative_comparison: promjena prema istom edge kontekstu
+        rationale: RTT je direktni kontekst ciklusa udaljenog dohvata.
+      - id: edge_source_tx_bps_hmean
+        source: harmonijska sredina remote_edge_observations.query_window_source_tx_bps
+        direction: decrease_more_pressure_evidence
+        na_rule: NA za shared ili nekvalitetan traffic-counter scope
+        relative_comparison: niža ostvarena propusnost znači više relativnog transportnog dokaza
+        rationale: Propusnost dopunjava volumen i čekanje bez proglašavanja osnovnog uzroka.
+
+  - id: regional_reduction
+    display_name: Regionalna redukcija
+    minimum_aggregated_components: 2
+    rationale: >-
+      Domena opisuje koliko se regionalno obrađenog toka nalazi iza rezultata
+      koji napušta region. Velika vrijednost može značiti koristan pushdown ili
+      skup skriveni regionalni rad i zato se uvijek prikazuju komponente.
+    features:
+      - id: regional_input_to_remote_rows_ratio
+        source: execution_features.worker_task_scan_actual_rows_sum / execution_features.remote_region_actual_rows_sum
+        direction: increase_more_pressure_evidence
+        na_rule: NA kada task scan redovi ili remote root redovi nisu dostupni
+        relative_comparison: promjena rednog DRF proxyja u istoj analitičkoj namjeri
+        rationale: Pokazuje koliko regionalno skeniranih redova stoji iza remote izlaza.
+      - id: regional_input_to_remote_bytes_ratio
+        source: execution_features.worker_task_tuple_bytes_sum / execution_features.remote_region_tuple_bytes_sum
+        direction: increase_more_pressure_evidence
+        na_rule: NA kada tuple-byte dokaz nije podržan
+        relative_comparison: promjena bajtovnog DRF proxyja
+        rationale: Bajtovni odnos dopunjava redni odnos kod različitih širina redova.
+      - id: regional_actual_time_per_remote_row
+        source: execution_features.remote_region_actual_time_sum / execution_features.remote_region_actual_rows_sum
+        direction: increase_more_pressure_evidence
+        na_rule: NA kada regionalno vrijeme ili remote redovi nisu dostupni
+        relative_comparison: promjena vremena regionalnog plana po emitovanom redu
+        rationale: Veže regionalni rad za količinu koju region emituje prema GAC-u.
+      - id: remote_region_has_aggregate_share
+        source: share(region_fragments.remote_has_aggregate=true) po query_run_id
+        direction: contextual_not_aggregated
+        aggregate: false
+        na_rule: NA kada regionalni plan nije uhvaćen
+        relative_comparison: prikazuje se promjena prisustva regionalne agregacije
+        rationale: Potvrđuje lokaciju redukcije, ali prisustvo operatora nije kontinuirana izraženost.
+
+  - id: gac_finalization
+    display_name: GAC finalizacija
+    minimum_aggregated_components: 2
+    rationale: >-
+      Domena opisuje redove, blokirajuće operatore i vrijeme koje ostaje na
+      GAC-u nakon udaljenog dohvata. Spill se čuva u odvojenom domenu.
+    features:
+      - id: gac_fanin_to_final_rows_ratio
+        source: execution_features.coordinator_fanin_rows / execution_features.coordinator_final_rows
+        direction: increase_more_pressure_evidence
+        na_rule: NA kada fan-in ili finalni redovi nisu mjerljivi
+        relative_comparison: promjena GAC priliva prema finalnom rezultatu
+        rationale: Više ulaznih redova po finalnom redu znači više opaženog globalnog rada.
+      - id: gac_blocking_input_to_final_rows_ratio
+        source: execution_features.coordinator_blocking_input_rows_sum / execution_features.coordinator_final_rows
+        direction: increase_more_pressure_evidence
+        na_rule: NA kada blokirajući operatori nisu instrumentovani
+        relative_comparison: promjena blokirajućeg inputa prema finalnom izlazu
+        rationale: Obuhvata rad sort, aggregate, join, unique i window operatora na GAC-u.
+      - id: coordinator_non_foreign_time_share_proxy
+        source: execution_features.coordinator_non_foreign_time_share_proxy
+        direction: increase_more_pressure_evidence
+        na_rule: NA kada root ili FDW timing nije dostupan
+        relative_comparison: promjena rezidualnog GAC udjela
+        rationale: Aproksimira dio root vremena izvan glavnih Foreign Scan grana.
+      - id: gac_sort_time_share
+        source: execution_features.coordinator_sort_time_ms_max / execution_features.coordinator_main_plan_total_time_ms
+        direction: increase_more_pressure_evidence
+        na_rule: not_applicable bez GAC sort operatora; NA bez timinga
+        relative_comparison: promjena sort vremena prema root vremenu
+        rationale: Lokalizuje relativni doprinos GAC sortiranja.
+      - id: gac_aggregate_time_share
+        source: execution_features.coordinator_aggregate_time_ms_max / execution_features.coordinator_main_plan_total_time_ms
+        direction: increase_more_pressure_evidence
+        na_rule: not_applicable bez GAC aggregate operatora; NA bez timinga
+        relative_comparison: promjena aggregate vremena prema root vremenu
+        rationale: Lokalizuje relativni doprinos globalne agregacije.
+
+  - id: imbalance
+    display_name: Neravnomjernost
+    minimum_aggregated_components: 2
+    rationale: >-
+      Domena opisuje koncentraciju usporedivog rada između regiona, radnih
+      čvorova i poslova. Ne izjednačava data skew sa performansnim uzrokom.
+    features:
+      - id: remote_region_actual_time_cv
+        source: execution_features.remote_region_actual_time_cv
+        direction: increase_more_pressure_evidence
+        na_rule: not_applicable sa manje od dva aktivna regiona; NA bez timinga
+        relative_comparison: promjena CV-a među istim aktivnim regionima
+        rationale: Mjeri regionalnu vremensku neravnomjernost nezavisno od redoslijeda regiona.
+      - id: remote_region_actual_rows_max_share
+        source: execution_features.remote_region_actual_rows_max_share
+        direction: increase_more_pressure_evidence
+        na_rule: not_applicable sa manje od dva aktivna regiona
+        relative_comparison: promjena udjela dominantnog regiona
+        rationale: Pokazuje koncentraciju regionalnog outputa.
+      - id: worker_task_scan_actual_rows_cv
+        source: execution_features.worker_task_scan_actual_rows_cv
+        direction: increase_more_pressure_evidence
+        na_rule: NA kada fragmenti poslova nisu dostupni; ne imputira se nula
+        relative_comparison: promjena CV-a scan redova između poslova
+        rationale: Mjeri neravnomjernost opaženog scan rada.
+      - id: worker_task_scan_actual_rows_max_share
+        source: execution_features.worker_task_scan_actual_rows_max_share
+        direction: increase_more_pressure_evidence
+        na_rule: NA kada je aktivan samo jedan primjenjivi posao ili nema task dokaza
+        relative_comparison: promjena udjela najvećeg posla
+        rationale: Dopunjava CV robusnim prikazom dominantnog posla.
+      - id: worker_time_cv
+        source: execution_features.worker_time_cv
+        direction: increase_more_pressure_evidence
+        na_rule: NA kada task timing nije podržan
+        relative_comparison: promjena vremenske disperzije radnih čvorova
+        rationale: Razdvaja neravnomjernost vremena od same neravnomjernosti redova.
+
+  - id: disk_spill
+    display_name: Preljev na disk
+    minimum_aggregated_components: 2
+    rationale: >-
+      Domena opisuje normalizovane temp, sort i hash-batch dokaze na GAC,
+      regionalnom i dostupnom worker/task sloju. Nestanak spill-a ne znači
+      automatski kraće end-to-end izvršenje.
+    features:
+      - id: gac_temp_written_per_final_row
+        source: execution_features.coordinator_temp_written_blocks / execution_features.coordinator_final_rows
+        direction: increase_more_pressure_evidence
+        na_rule: observed zero samo kada GAC buffer dokaz potvrđuje nulu; inače NA
+        relative_comparison: promjena GAC temp blokova po finalnom redu
+        rationale: Normalizuje GAC spill prema korisničkom izlazu.
+      - id: gac_hash_batch_excess
+        source: max(execution_features.coordinator_hash_batches_max - 1, 0)
+        direction: increase_more_pressure_evidence
+        na_rule: not_applicable bez hash operatora; NA bez batch dokaza
+        relative_comparison: promjena broja batch-eva iznad memorijskog slučaja
+        rationale: Više batch-eva je direktan dokaz particioniranja hash rada.
+      - id: regional_temp_written_per_remote_row
+        source: execution_features.regional_temp_written_blocks_sum / execution_features.remote_region_actual_rows_sum
+        direction: increase_more_pressure_evidence
+        na_rule: NA bez regionalnog temp ili remote-row dokaza
+        relative_comparison: promjena regionalnih temp blokova po emitovanom redu
+        rationale: Lokalizuje preljev iza FDW granice.
+      - id: worker_task_temp_written_per_scan_row
+        source: execution_features.worker_task_temp_written_sum / execution_features.worker_task_scan_actual_rows_sum
+        direction: increase_more_pressure_evidence
+        na_rule: NA kada fragmenti poslova ne nose temp brojače
+        relative_comparison: promjena task temp blokova po scan redu
+        rationale: Čuva raspoloživi worker/task spill dokaz odvojeno od GAC-a.
+      - id: spill_location_count
+        source: count of observed spill locations from execution, region and worker/task evidence
+        direction: contextual_not_aggregated
+        aggregate: false
+        na_rule: NA ako bilo koji primjenjivi sloj nema dokaz
+        relative_comparison: prikazuje se promjena lokacija bez severity tumačenja
+        rationale: Jedan agregat ne smije sakriti premještanje spill-a između slojeva.
+
+  - id: repartition_locality
+    display_name: Reparticionisanje i lokalnost
+    minimum_aggregated_components: 2
+    rationale: >-
+      Domena opisuje opaženi Citus MapMerge/repartition rad, fan-out i lokalnost
+      plana. Ne mijenja kolokaciju niti shard placement u ovom eksperimentu.
+    features:
+      - id: citus_repartition_observed_v2
+        source: execution_features.citus_repartition_observed_v2
+        direction: presence_more_pressure_evidence
+        na_rule: NA kada regionalni Citus plan nije dostupan; nije nula
+        relative_comparison: promjena direktno opaženog repartition statusa
+        rationale: Direktno označava opaženi MapMerge/repartition potpis.
+      - id: remote_citus_repartition_mapmerge_count
+        source: execution_features.remote_citus_repartition_mapmerge_count
+        direction: increase_more_pressure_evidence
+        na_rule: NA kada Citus task metadata nije prikazana
+        relative_comparison: promjena broja MapMerge poslova
+        rationale: Kvantifikuje broj opaženih repartition poslova.
+      - id: remote_citus_dependent_map_task_count_sum
+        source: execution_features.remote_citus_dependent_map_task_count_sum
+        direction: increase_more_pressure_evidence
+        na_rule: NA kada zavisni poslovi nisu prikazani
+        relative_comparison: promjena broja zavisnih map poslova
+        rationale: Prikazuje obim map faze preraspodjele.
+      - id: remote_citus_dependent_merge_task_count_sum
+        source: execution_features.remote_citus_dependent_merge_task_count_sum
+        direction: increase_more_pressure_evidence
+        na_rule: NA kada zavisni poslovi nisu prikazani
+        relative_comparison: promjena broja zavisnih merge poslova
+        rationale: Prikazuje obim merge faze preraspodjele.
+      - id: remote_citus_repartition_fanout_ratio_max
+        source: execution_features.remote_citus_repartition_fanout_ratio_max
+        direction: increase_more_pressure_evidence
+        na_rule: NA bez task count i fan-out dokaza
+        relative_comparison: promjena maksimalnog fan-out omjera
+        rationale: Normalizuje repartition rad prema opaženom task prostoru.
+      - id: remote_citus_plan_locality_class
+        source: execution_features.remote_citus_dominant_plan_locality_class
+        direction: contextual_not_aggregated
+        aggregate: false
+        na_rule: NA kada locality klasa nije izvediva
+        relative_comparison: kategorička before/after promjena klase
+        rationale: Čuva arhitektonsko tumačenje bez nametanja numeričkog redoslijeda klasama.

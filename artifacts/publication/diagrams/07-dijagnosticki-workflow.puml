@@ -1,0 +1,55 @@
+@startuml
+title Tok interpretabilne post-execution karakterizacije
+
+skinparam shadowing false
+skinparam defaultFontName DejaVu Sans
+skinparam defaultFontSize 10
+skinparam ArrowColor #4f585b
+skinparam component {
+  BackgroundColor #f3f5f5
+  BorderColor #263238
+  FontColor #182024
+}
+skinparam database {
+  BackgroundColor #dfeceb
+  BorderColor #176b61
+  FontColor #182024
+}
+skinparam note {
+  BackgroundColor #f7f8f8
+  BorderColor #899194
+  FontColor #182024
+}
+
+database "jedan query_run_id" as Q
+component "1. Potpunost dokaza\nprimjenjivost, nedostajuće vrijednosti,\nprovjera udaljenih kandidata" as C
+component "2. Zaključana reprezentacija\n19 semantičkih pokazatelja\n+ porodične težine" as X
+component "3. FCM projekcija\nčetiri operativna prototipa\n+ fuzzy članstva" as F
+component "4. Geometrijsko objašnjenje\nodstupanja pokazatelja\nod centara" as D
+component "5. Fizička provjera\nGAC, region i worker/task\nplanovi i omjeri" as E
+component "Karakterizacijski izlaz\nprototipska sličnost + dominantni\nizmjereni signali + granica pouzdanosti" as O
+
+Q --> C
+C --> X
+X --> F
+F --> D
+D --> E
+E --> O
+
+note bottom of F
+Članstvo nije vjerovatnoća uzroka
+niti procenat vremena ili pritiska.
+end note
+
+note bottom of D
+Odstupanje pokazatelja objašnjava
+geometriju, ne kauzalni uticaj.
+end note
+
+note bottom of O
+Mješovita granica i slaba pokrivenost
+ostaju eksplicitni izlazi, a ne
+prisilne sigurne dijagnoze.
+end note
+
+@enduml

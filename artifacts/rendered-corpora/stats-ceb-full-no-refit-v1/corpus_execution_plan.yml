@@ -1,0 +1,46 @@
+corpus_id: stats-ceb-full-no-refit-v1
+source_manifest: master-regimes/workloads/corpus/corpus_manifest.stats-ceb-full-no-refit-v1.yml
+rendered_corpus_manifest: master-regimes/generated/corpus/stats-ceb-full-no-refit-v1/corpus_manifest.yml
+corpus_cells: master-regimes/generated/corpus/stats-ceb-full-no-refit-v1/corpus_cells.csv
+region: eu
+max_instances_per_cell: null
+execution_budget:
+  hard_timeout_seconds: 300
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  repetitions_default: 1
+  cache_features_in_default_model: false
+  order_policy: manifest_order
+  shuffle_seed: 20260727
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  correctness_filter_workload_to_passed: true
+execution_backend: master-regimes-infra.database_sweep
+included_execution_classes:
+- pilot
+source_cell_count: 1
+manifest_cell_count: 1
+excluded_cell_count: 0
+group_count: 1
+groups:
+- group_id: stats-ceb-full-no-refit-v1__stats-ceb-full-no-refit-v1__default__analytics_clients
+  sweep_id: stats-ceb-full-no-refit-v1__stats-ceb-full-no-refit-v1__default__analytics_clients
+  dataset_profile_id: stats-ceb-full-no-refit-v1
+  dataset_adapter: stats_ceb
+  runtime_config_id: default
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  network_profile_id: ''
+  cell_count: 1
+  instance_count: 146
+  instance_manifest: master-regimes/generated/corpus/stats-ceb-full-no-refit-v1/groups/stats-ceb-full-no-refit-v1__stats-ceb-full-no-refit-v1__default__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/stats-ceb-full-no-refit-v1/sweeps/stats-ceb-full-no-refit-v1__stats-ceb-full-no-refit-v1__default__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false

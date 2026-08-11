@@ -1,0 +1,185 @@
+contract_version: feedback-loop-query-trajectories-v1
+protocol: FEEDBACK_LOOP_PROTOCOL.md
+pressure_domain_manifest: pressure_domain_manifest.yaml
+intervention_catalog: intervention_catalog.yaml
+decision_log_schema: schemas/decision_log.schema.json
+
+automatic_sql_semantic_similarity: false
+dataset_time_contract:
+  base_time_unix: 1782864000
+  base_time_utc: "2026-07-01 00:00:00+00"
+  generated_lookback_days: 30
+  allowed_cutoff_offsets_days: [1, 2, 3, 4, 7, 14, 21, 30, 60]
+  wall_clock_functions_allowed_in_measured_sql: false
+  binding: >-
+    Svi vremenski predikati mjerenih SQL instanci izvode se kao cjelobrojni
+    odmak od zamrznutog base_time_unix profila skupa podataka. Kalendarski
+    literal u renderovanom SQL-u nije datum pokretanja eksperimenta. Odmak
+    koji je jednak ili veći od generisanog lookback prozora namjerno obuhvata
+    cijeli generisani vremenski raspon i zato nije nevažeći.
+identity_modes:
+  - same_normalized_sql
+  - same_sql_declared_intervention
+  - manual_logical_question_link
+
+identity_contracts:
+  same_normalized_sql:
+    required_equal_fields: [sql_normalized_hash, topology_id, dataset_snapshot_id]
+    purpose: Ponavljanje istog renderovanog i normalizovanog SQL oblika.
+  same_sql_declared_intervention:
+    required_equal_fields: [sql_normalized_hash, logical_question_id, dataset_snapshot_id]
+    required_link_fields: [pair_id, action_id]
+    purpose: Isti SQL prije i poslije deklarisane konfiguracijske ili mrežne intervencije.
+  manual_logical_question_link:
+    required_equal_fields: [logical_question_id, dataset_snapshot_id]
+    required_link_fields: [pair_id, result_contract_id]
+    purpose: Ručno povezane SQL varijante iste analitičke namjere.
+    automatic_inference: forbidden
+
+experiment:
+  experiment_id: pressure-feedback-loop-v1
+  mode: offline_dry_run_only
+  repetitions_per_state: 3
+  expected_adaptive_steps: 3
+  maximum_adaptive_steps: 4
+  hard_timeout_seconds_per_execution: 900
+  expected_execution_count: 36
+  maximum_execution_count: 45
+  maximum_query_runtime_budget_seconds: 40500
+  maximum_total_wall_clock_budget_seconds: 50400
+  dataset_reload_allowed: false
+  colocation_change_allowed: false
+  shard_placement_change_allowed: false
+  index_change_allowed: false
+  concurrent_query_execution_allowed: false
+  state_acceptance_requires:
+    - result_contract_pass
+    - complete_pre_outcome_decision
+    - intervention_apply_verification_pass
+    - rollback_verification_pass
+    - no_future_outcome_in_state
+
+history_contract:
+  allowed_rows: accepted states and outcomes with recorded_at_utc <= history_cutoff_utc
+  same_logical_question_history_only: true
+  current_or_future_outcomes_allowed: false
+  minimum_history_for_history_view: 3 accepted prior states
+  no_history_status: insufficient_history
+
+outcome_contract:
+  elapsed_effect: log2(median_before_seconds / median_after_seconds)
+  noise_source:
+    - within_state_repetition_mad
+    - prior_compatible_sentinel_variability_when_available
+  labels: [positive, negative, mixed, indeterminate]
+  tie_or_noise_rule: interval crossing zero is not a directional elapsed outcome
+  mixed_rule: >-
+    A clear elapsed improvement with one or more locally resolved adverse domain
+    movements, or conflicting resolved domain components, remains mixed.
+
+trajectories:
+  - id: trajectory_aggregate_full_flow
+    physical_shape: aggregate_full_flow
+    analytical_intent: >-
+      Obraditi puni relevantni skup događaja i vratiti globalni count, sum,
+      average i vremenske granice; SUM nije centralna tema nego predstavnik
+      upita koji ne smije preskočiti relevantne redove.
+    logical_question_id: event_full_scan_summary
+    baseline_template_id: gac_fdw_multiregion_event_full_scan_summary
+    suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+    parameter_bindings: {}
+    dataset_binding: inherit_current_locked_compatible_dataset
+    topology_binding: existing_eu_us_gac_no_change
+    result_contract_id: full_flow_summary_v1
+    result_contract:
+      mode: ordered_sequence_hash
+      deterministic_order: single_result_row
+      numeric_policy: PostgreSQL-rendered values must be identical for GUC-only actions
+    allowed_identity_modes:
+      - same_normalized_sql
+      - same_sql_declared_intervention
+    allowed_actions:
+      - regional_work_mem_64mb
+      - jit_off
+      - fdw_use_remote_estimate_on
+      - fdw_async_capable_on
+      - wan_delay_10ms_probe
+    selection_note: Akcija se bira adaptivno tek nakon pregleda trenutnog profila i planskog dokaza.
+    required_dataset_capabilities:
+      - supports_region_partitioning
+      - supports_large_scan
+
+  - id: trajectory_join_pushdown
+    physical_shape: join_pushdown
+    analytical_intent: >-
+      Grupisati događaje po segmentu i statusu korisnika uz isti uređeni
+      rezultat, poredeći GAC-local i regionalno potisnut join/agregaciju.
+    logical_question_id: user_segment_topk
+    baseline_template_id: gac_fdw_coordinator_local_user_join
+    reviewed_equivalent_template_ids:
+      - gac_fdw_coordinator_regional_user_join
+    suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+    parameter_bindings:
+      cutoff_ts: "2026-06-01 00:00:00+00"
+      tenant_modulus: 1
+    dataset_binding: inherit_current_locked_compatible_dataset
+    topology_binding: existing_eu_us_gac_no_change
+    result_contract_id: user_segment_join_ordered_v1
+    result_contract:
+      mode: ordered_sequence_hash
+      deterministic_order: total_value DESC, user_segment, user_status
+      rewrite_acceptance: both multiset and ordered hashes must match
+    allowed_identity_modes:
+      - same_normalized_sql
+      - same_sql_declared_intervention
+      - manual_logical_question_link
+    allowed_actions:
+      - strict_explicit_join_order
+      - fdw_use_remote_estimate_on
+      - fdw_async_capable_on
+      - regional_pushdown_rewrite
+      - cte_not_materialized_rewrite
+      - pushdown_type_correction_rewrite
+    selection_note: Rewrite akcija je primjenjiva samo kada je konkretna varijanta unaprijed pregledana i result contract prolazi.
+    required_dataset_capabilities:
+      - supports_region_partitioning
+      - supports_colocated_user_join
+
+  - id: trajectory_sort_order_topk
+    physical_shape: sort_order_topk_window
+    analytical_intent: >-
+      Vratiti globalni uređeni Top-K korisnika po ukupnoj vrijednosti sa
+      determinističkim tie-breakerom; ovaj oblik je samo jedan od tri slučaja.
+    logical_question_id: user_value_topk
+    baseline_template_id: gac_fdw_coordinator_raw_user_topk
+    reviewed_equivalent_template_ids:
+      - gac_fdw_coordinator_partial_user_topk
+    suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+    parameter_bindings:
+      cutoff_ts: "2026-06-01 00:00:00+00"
+      tenant_modulus: 1
+      limit_k: 100000
+    dataset_binding: inherit_current_locked_compatible_dataset
+    topology_binding: existing_eu_us_gac_no_change
+    result_contract_id: user_value_topk_ordered_v1
+    result_contract:
+      mode: ordered_sequence_hash
+      deterministic_order: total_value DESC, tenant_id, user_id
+      rewrite_acceptance: both multiset and ordered hashes must match
+    allowed_identity_modes:
+      - same_normalized_sql
+      - same_sql_declared_intervention
+      - manual_logical_question_link
+    allowed_actions:
+      - gac_work_mem_64mb
+      - fdw_fetch_size_10000
+      - disable_hashagg_probe
+      - gac_parallel_workers_zero
+      - fdw_async_capable_on
+      - regional_pushdown_rewrite
+      - wan_delay_10ms_probe
+      - wan_bandwidth_50mbit_probe
+    selection_note: Top-K rewrite nije primjenjiv na SUM ili zahtjev za svim redovima.
+    required_dataset_capabilities:
+      - supports_region_partitioning
+      - supports_high_group_cardinality

@@ -1,0 +1,69 @@
+sweep_id: repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_100ms__analytics_clients
+region: eu
+datasets:
+- id: pilot-region-local-skew-asymmetric-medium-v1
+  profile: master-regimes/datasets/profiles/pilot-region-local-skew-asymmetric-medium.yml
+  load_method: copy_pipe
+  regions:
+  - eu
+  - us
+runtime_configs:
+- id: wan_100ms
+  pg_options: {}
+  psql_variables: {}
+  fdw_server_options: {}
+  network_profile:
+    id: wan_100ms
+    enabled: true
+    scope: analytics_egress_to_region
+    target_region_ids:
+    - eu
+    - us
+    configured_delay_ms: 100
+    configured_jitter_ms: 0
+    configured_loss_percent: 0
+  intervention_axis: wan_latency
+  expected_effect: 'Strong synthetic WAN delay for FDW row-flow intervention validation.
+
+    '
+workload:
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__pilot-region-local-skew-asymmetric-medium-v1__wan_100ms__analytics_clients/instance_manifest.csv
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260724
+collection:
+  global_stats_scope: none
+  target_group: analytics_clients
+  citus_explain_all_tasks: true
+  hard_timeout_seconds: 300
+  timeout_grace_seconds: 30
+  cache_policy: mixed_cache_repeatability_audit
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  fdw_bootstrap:
+    enabled: true
+    regions:
+    - eu
+    - us
+  gac_etl_bootstrap:
+    enabled: true
+    region: eu
+    lookback_days: 1
+    timeout_seconds: 300
+  database_result_rows_stored: false
+execution_policy:
+  cache_policy: mixed_cache_repeatability_audit
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260724
+  repetitions_default: 3
+  sentinel_repetitions: 5
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  cache_features_in_default_model: false
+repeatability:
+  enabled: true
+  condition_count: 2
+  execution_count: 6

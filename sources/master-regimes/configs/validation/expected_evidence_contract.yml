@@ -1,0 +1,69 @@
+contract_id: collector-evidence-v2
+version: 2
+description: >
+  Applicability and expected-child-evidence rules for query-level collector
+  auditing. A missing non-applicable layer is not an error.
+
+strategies:
+  multiregion_union:
+    remote_region_evidence: required
+    expected_regions: [eu, us]
+    expected_remote_fragment_count_source: fdw_remote_sql_count
+    worker_task_evidence: when_remote_task_list_available
+
+  fdw_raw:
+    remote_region_evidence: required
+    expected_regions: [eu]
+    expected_remote_fragment_count_source: fdw_remote_sql_count
+    worker_task_evidence: when_remote_task_list_available
+
+  etl_materialized:
+    remote_region_evidence: not_applicable
+    expected_regions: []
+    expected_remote_fragment_count_source: none
+    worker_task_evidence: not_applicable
+
+  single_region_citus:
+    remote_region_evidence: not_applicable
+    expected_regions: []
+    expected_remote_fragment_count_source: none
+    worker_task_evidence: not_applicable
+
+unknown_strategy_policy: fail
+
+identity:
+  logical_instance_key:
+    [logical_run_id, dataset_id, runtime_config_id, target_group,
+     corpus_cell_id, instance_id, condition_id, repetition_index]
+  query_observation_key: [logical_run_id, query_run_id]
+  main_plan_key: [logical_run_id, query_run_id, plan_scope]
+  remote_fragment_key: [logical_run_id, query_run_id, region_id, remote_plan_id]
+  remote_sql_slot_key: [logical_run_id, query_run_id, region_id, remote_sql_id]
+  worker_task_key:
+    [logical_run_id, query_run_id, fdw_region, plan_id, task_index]
+  feature_row_key: [logical_run_id, query_run_id]
+
+consistency_fields:
+  - database_sweep_id
+  - dataset_id
+  - runtime_config_id
+  - network_profile_id
+  - query_sweep_id
+  - instance_id
+  - template_id
+
+# Feature rows in older logical indices do not duplicate every intervention
+# field. Their parent relation is query_run_id; these shared fields are the
+# additional context consistency check. Network context remains on query_runs.
+feature_consistency_fields:
+  - database_sweep_id
+  - dataset_id
+  - runtime_config_id
+  - query_sweep_id
+  - instance_id
+  - template_id
+
+worker_count_rule:
+  expected_count_column: remote_citus_task_count
+  availability_column: remote_citus_task_list_available
+  unavailable_is_missing: false

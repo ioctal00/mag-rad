@@ -1,0 +1,264 @@
+corpus_id: clean-run-eu-us-gac-region-imbalance-v1
+vocabulary: ../../docs/corpus-vocabulary.md
+query_groups: query-groups.yml
+runtime_catalog: runtime-configs.yml
+topology_id: eu_us_gac
+topology_scope: eu_us_gac
+description: >
+  Targeted companion corpus for regional imbalance and first-order
+  region-asymmetry evidence. This is not a baseline replacement. It contrasts a
+  balanced EU/US profile with a deliberately EU-heavy profile across several
+  multiregion FDW query shapes so that remote_region_* and worker_task_region_*
+  imbalance signals can be observed without repeating the full clean-run.
+execution_budget:
+  hard_timeout_seconds: 300
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  repetitions_default: 1
+  cache_features_in_default_model: false
+  order_policy: deterministic_shuffle
+  shuffle_seed: 20260627
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  gac_etl_bootstrap_lookback_days: 1
+  gac_etl_bootstrap_timeout_seconds: 300
+
+dataset_profiles:
+  pilot-balanced-v1:
+    profile: ../../datasets/profiles/pilot-balanced.yml
+    load_method: copy_pipe
+  pilot-region-imbalanced-v1:
+    profile: ../../datasets/profiles/pilot-region-imbalanced.yml
+    load_method: copy_pipe
+  pilot-region-local-skew-asymmetric-v1:
+    profile: ../../datasets/profiles/pilot-region-local-skew-asymmetric.yml
+    load_method: copy_pipe
+
+cells:
+  - corpus_cell_id: region_balance_mr_daily_rollup_control
+    logical_question_id: daily_tenant_rollup
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_daily_tenant_rollup
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: dataset_skew
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [7]
+      min_value: [0, 500]
+      limit_k: [100]
+
+  - corpus_cell_id: region_imbalance_mr_daily_rollup_positive
+    logical_question_id: daily_tenant_rollup
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_daily_tenant_rollup
+    dataset_profile_id: pilot-region-imbalanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: dataset_skew
+    expected_regime_targets: [skew_imbalance, gac_finalization_heavy]
+    parameters:
+      lookback_days: [7]
+      min_value: [0, 500]
+      limit_k: [100]
+
+  - corpus_cell_id: region_imbalance_mr_multi_dimension_positive
+    logical_question_id: multi_dimension_rollup
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_multi_dimension_rollup
+    dataset_profile_id: pilot-region-imbalanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: dataset_skew
+    expected_regime_targets: [skew_imbalance, join_movement, gac_finalization_heavy]
+    parameters:
+      lookback_days: [7]
+      limit_k: [100]
+
+  - corpus_cell_id: region_balance_mr_top_tenants_control
+    logical_question_id: top_tenants
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_top_tenants
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: dataset_skew
+    expected_regime_targets: [remote_fetch_heavy, gac_finalization_heavy]
+    parameters:
+      lookback_days: [7]
+      limit_k: [50, 100]
+
+  - corpus_cell_id: region_imbalance_mr_top_tenants_positive
+    logical_question_id: top_tenants
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_top_tenants
+    dataset_profile_id: pilot-region-imbalanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: dataset_skew
+    expected_regime_targets: [remote_fetch_heavy, gac_finalization_heavy]
+    parameters:
+      lookback_days: [7]
+      limit_k: [50, 100]
+
+  - corpus_cell_id: region_balance_mr_event_filter_control
+    logical_question_id: event_filter_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_filter_summary
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: dataset_skew
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      lookback_days: [7]
+      min_value: [100, 500]
+
+  - corpus_cell_id: region_imbalance_mr_event_filter_positive
+    logical_question_id: event_filter_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_filter_summary
+    dataset_profile_id: pilot-region-imbalanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: dataset_skew
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      lookback_days: [7]
+      min_value: [100, 500]
+
+  - corpus_cell_id: region_balance_mr_event_full_scan_control
+    logical_question_id: event_full_scan_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_full_scan_summary
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: dataset_skew
+    expected_regime_targets: [remote_fetch_heavy]
+
+  - corpus_cell_id: region_imbalance_mr_event_full_scan_positive
+    logical_question_id: event_full_scan_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_full_scan_summary
+    dataset_profile_id: pilot-region-imbalanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: dataset_skew
+    expected_regime_targets: [remote_fetch_heavy]
+
+  - corpus_cell_id: region_balance_mr_raw_region_rollup_control
+    logical_question_id: event_full_scan_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_raw_region_rollup
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: dataset_skew
+    expected_regime_targets: [remote_fetch_heavy]
+    parameters:
+      lookback_days: [1]
+
+  - corpus_cell_id: region_imbalance_mr_raw_region_rollup_positive
+    logical_question_id: event_full_scan_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_raw_region_rollup
+    dataset_profile_id: pilot-region-imbalanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: dataset_skew
+    expected_regime_targets: [remote_fetch_heavy]
+    parameters:
+      lookback_days: [1]
+
+  - corpus_cell_id: region_balance_mr_raw_wide_control
+    logical_question_id: event_raw_wide_sample
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_raw_wide_sample
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: dataset_skew
+    expected_regime_targets: [remote_fetch_heavy]
+    parameters:
+      lookback_days: [7]
+      min_value: [500]
+      limit_k: [100]
+      payload_repeat: [16]
+      payload_width: [512]
+
+  - corpus_cell_id: region_imbalance_mr_raw_wide_positive
+    logical_question_id: event_raw_wide_sample
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_raw_wide_sample
+    dataset_profile_id: pilot-region-imbalanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: dataset_skew
+    expected_regime_targets: [remote_fetch_heavy]
+    parameters:
+      lookback_days: [7]
+      min_value: [500]
+      limit_k: [100]
+      payload_repeat: [16]
+      payload_width: [512]
+
+  - corpus_cell_id: region_imbalance_mr_tenant_point_negative
+    logical_question_id: tenant_point_rollup
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_tenant_point_rollup
+    dataset_profile_id: pilot-region-imbalanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: dataset_skew
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      eu_tenant_id: [1]
+      us_tenant_id: [10001]
+      lookback_days: [7]
+
+  - corpus_cell_id: region_local_skew_mr_top_tenants_positive
+    logical_question_id: top_tenants
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_top_tenants
+    dataset_profile_id: pilot-region-local-skew-asymmetric-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: dataset_region_local_skew
+    expected_regime_targets: [skew_imbalance, remote_fetch_heavy]
+    parameters:
+      lookback_days: [7]
+      limit_k: [50]
+
+  - corpus_cell_id: region_local_skew_mr_raw_region_rollup_positive
+    logical_question_id: event_full_scan_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_raw_region_rollup
+    dataset_profile_id: pilot-region-local-skew-asymmetric-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: dataset_region_local_skew
+    expected_regime_targets: [skew_imbalance, remote_fetch_heavy]
+    parameters:
+      lookback_days: [1]

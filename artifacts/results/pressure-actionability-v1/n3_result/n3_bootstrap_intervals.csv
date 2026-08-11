@@ -1,0 +1,3 @@
+metric,estimate,lower,upper,confidence,valid_resamples,planned_resamples,seed,method
+spearman,0.8441176470588234,0.5395655206776288,0.9613670133729569,0.95,10000,10000,41003,placement_stratified_pair_bootstrap_percentile
+ndcg_at_5,0.9904801687742326,0.9380712187545207,1.0,0.95,10000,10000,41003,placement_stratified_pair_bootstrap_percentile

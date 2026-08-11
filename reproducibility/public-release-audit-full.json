@@ -1,0 +1,13 @@
+{
+  "archives_scanned": true,
+  "files_scanned": 6382,
+  "finding_counts": {},
+  "findings": [],
+  "git_history": {
+    "historical_commits_with_local_identifiers": 4,
+    "history_rewrite_performed": false,
+    "note": "Current release files are sanitized. Removing old local-path references from already published commits requires an explicit history rewrite."
+  },
+  "schema_version": 1,
+  "status": "PASS"
+}

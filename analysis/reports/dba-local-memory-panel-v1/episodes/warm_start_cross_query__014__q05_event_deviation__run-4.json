@@ -1,0 +1,146 @@
+{
+  "episode": {
+    "actual_best_action": "regional_topk_candidates",
+    "actual_gain__increase_gac_work_mem": 0.048606130428050905,
+    "actual_gain__mitigate_remote_path_bundle": 1.1748579673493134,
+    "actual_gain__regional_topk_candidates": 1.6292173868977764,
+    "applicability_source": "explicit_panel_contract_and_result_equivalence",
+    "baseline_elapsed_seconds": 2.102356,
+    "candidate_action": "regional_topk_candidates",
+    "candidate_regret_log2": 0.0,
+    "candidate_top1_correct": true,
+    "coverage_threshold": 1.9533554892194174,
+    "dataset_profile_id": "raw-large-balanced-v1",
+    "decision_status": "available",
+    "distance_metric": "euclidean",
+    "eligible_history_state_count_before": 36,
+    "episode_id": "q05_event_deviation::run-4",
+    "episode_order": 14,
+    "evidence_cpu_busy_max_pct": 19.92,
+    "evidence_gac_fanin_rows": 128605.0,
+    "evidence_gac_temp_blocks": 910.0,
+    "evidence_remote_boundary_wait_ms": 1253.9769999999999,
+    "evidence_remote_bytes": 9259560.0,
+    "evidence_remote_rtt_ms": 5.4575000000000005,
+    "history_state_count_before": 39,
+    "memory_mode": "warm_start_cross_query",
+    "nearest_distance": 0.7533894798899466,
+    "normalized_sql_hash": "bd5d33dbf428b5dfe5fde653651a56bf4036327ea0a4ea3cb42a933b2a2200b1",
+    "planned_query_occurrences": 5,
+    "predicted_action": "regional_topk_candidates",
+    "predicted_gain__increase_gac_work_mem": 0.029519859150616497,
+    "predicted_gain__mitigate_remote_path_bundle": 1.76639690268971,
+    "predicted_gain__regional_topk_candidates": 2.377316020015898,
+    "profile": "memory",
+    "query_id": "q05_event_deviation",
+    "query_occurrence": 4,
+    "query_shape": "event_deviation",
+    "region_count": 2,
+    "regret_log2": 0.0,
+    "same_query_history_count_before": 3,
+    "top1_correct": true,
+    "topology_id": "eu_us_gac"
+  },
+  "memory_mode": "warm_start_cross_query",
+  "memory_state_count_after": 40,
+  "neighbors_used_before_decision": [
+    {
+      "action_gains": {
+        "increase_gac_work_mem": 0.0274589574398124,
+        "mitigate_remote_path_bundle": 1.3346582999179395,
+        "regional_topk_candidates": 2.0868568298219983
+      },
+      "distance": 0.7533894798899466,
+      "episode_id": "reference::fuzzy-memory-topk-panel-v1::fuzzy_topk_memory_severe::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":100}",
+      "normalized_sql_hash": "nan",
+      "query_id": "fuzzy-memory-topk-panel-v1::fuzzy_topk_memory_severe::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":100}",
+      "topology_id": "eu_us_gac",
+      "weight": 1.327332939150064
+    },
+    {
+      "action_gains": {
+        "increase_gac_work_mem": 0.0072951999589837,
+        "mitigate_remote_path_bundle": 2.646928961962837,
+        "regional_topk_candidates": 2.9074514602042885
+      },
+      "distance": 1.3899294810470921,
+      "episode_id": "reference::fuzzy-memory-topk-panel-v1::fuzzy_topk_balanced::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":100}",
+      "normalized_sql_hash": "nan",
+      "query_id": "fuzzy-memory-topk-panel-v1::fuzzy_topk_balanced::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":100}",
+      "topology_id": "eu_us_gac",
+      "weight": 0.7194604432637945
+    },
+    {
+      "action_gains": {
+        "increase_gac_work_mem": 0.0078718370666349,
+        "mitigate_remote_path_bundle": 1.4283978240698936,
+        "regional_topk_candidates": 3.251278574713406
+      },
+      "distance": 1.5799785810567604,
+      "episode_id": "reference::fuzzy-memory-topk-panel-v1::fuzzy_topk_memory_severe::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-24 00:00:00+00\",\"limit_k\":100}",
+      "normalized_sql_hash": "nan",
+      "query_id": "fuzzy-memory-topk-panel-v1::fuzzy_topk_memory_severe::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-24 00:00:00+00\",\"limit_k\":100}",
+      "topology_id": "eu_us_gac",
+      "weight": 0.6329195718663375
+    },
+    {
+      "action_gains": {
+        "increase_gac_work_mem": 0.10933387522275,
+        "mitigate_remote_path_bundle": 1.1917524448684171,
+        "regional_topk_candidates": 1.3679764624529054
+      },
+      "distance": 1.9465328104572284,
+      "episode_id": "reference::fuzzy-memory-topk-panel-v1::fuzzy_topk_memory_severe::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":10000}",
+      "normalized_sql_hash": "nan",
+      "query_id": "fuzzy-memory-topk-panel-v1::fuzzy_topk_memory_severe::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":10000}",
+      "topology_id": "eu_us_gac",
+      "weight": 0.513733691461083
+    },
+    {
+      "action_gains": {
+        "increase_gac_work_mem": 0.0128070569269704,
+        "mitigate_remote_path_bundle": 2.640761425802023,
+        "regional_topk_candidates": 2.3178971333467917
+      },
+      "distance": 1.948689692747574,
+      "episode_id": "reference::fuzzy-memory-topk-panel-v1::fuzzy_topk_balanced::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":10000}",
+      "normalized_sql_hash": "nan",
+      "query_id": "fuzzy-memory-topk-panel-v1::fuzzy_topk_balanced::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":10000}",
+      "topology_id": "eu_us_gac",
+      "weight": 0.5131650721798445
+    }
+  ],
+  "observed_action_outcomes": [
+    {
+      "action_elapsed_seconds": 2.032705,
+      "mitigation_action": "increase_gac_work_mem",
+      "result_equal": true,
+      "target_log2_gain": 0.048606130428050905
+    },
+    {
+      "action_elapsed_seconds": 0.679615,
+      "mitigation_action": "regional_topk_candidates",
+      "result_equal": true,
+      "target_log2_gain": 1.6292173868977764
+    },
+    {
+      "action_elapsed_seconds": 0.931191,
+      "mitigation_action": "mitigate_remote_path_bundle",
+      "result_equal": true,
+      "target_log2_gain": 1.1748579673493134
+    }
+  ],
+  "state_evidence": {
+    "cpu_busy_max_pct": 19.92,
+    "elapsed_seconds": 2.102356,
+    "gac_fanin_rows": 128605.0,
+    "gac_non_foreign_time_share": 0.0438379376654036,
+    "gac_temp_blocks": 910.0,
+    "regional_rows_cv": 0.001656234205513,
+    "remote_boundary_wait_ms": 1253.9769999999999,
+    "remote_bytes": 9259560.0,
+    "remote_edge_count": 2,
+    "remote_rtt_ms": 5.4575000000000005,
+    "worker_rows_cv": 0.1806232735399734
+  }
+}

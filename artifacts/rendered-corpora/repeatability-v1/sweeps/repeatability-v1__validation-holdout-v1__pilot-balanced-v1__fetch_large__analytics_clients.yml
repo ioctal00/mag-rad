@@ -1,0 +1,58 @@
+sweep_id: repeatability-v1__validation-holdout-v1__pilot-balanced-v1__fetch_large__analytics_clients
+region: eu
+datasets:
+- id: pilot-balanced-v1
+  profile: master-regimes/datasets/profiles/pilot-balanced.yml
+  load_method: copy_pipe
+  regions:
+  - eu
+  - us
+runtime_configs:
+- id: fetch_large
+  pg_options: {}
+  psql_variables:
+    FETCH_COUNT: '10000'
+  fdw_server_options:
+    fetch_size: '10000'
+  network_profile: {}
+  intervention_axis: fetch_size
+  expected_effect: 'Should reduce fetch batching overhead for high remote-row-flow
+    queries compared with fetch_small.
+
+    '
+workload:
+  instance_manifest: master-regimes/generated/corpus/repeatability-v1/groups/repeatability-v1__validation-holdout-v1__pilot-balanced-v1__fetch_large__analytics_clients/instance_manifest.csv
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260724
+collection:
+  global_stats_scope: none
+  target_group: analytics_clients
+  citus_explain_all_tasks: true
+  hard_timeout_seconds: 300
+  timeout_grace_seconds: 30
+  cache_policy: mixed_cache_repeatability_audit
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  fdw_bootstrap:
+    enabled: true
+    regions:
+    - eu
+    - us
+  database_result_rows_stored: false
+execution_policy:
+  cache_policy: mixed_cache_repeatability_audit
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260724
+  repetitions_default: 3
+  sentinel_repetitions: 5
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  cache_features_in_default_model: false
+repeatability:
+  enabled: true
+  condition_count: 1
+  execution_count: 3

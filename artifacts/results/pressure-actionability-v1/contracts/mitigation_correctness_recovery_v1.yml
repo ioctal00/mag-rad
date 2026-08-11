@@ -1,0 +1,54 @@
+contract_version: mitigation-correctness-recovery-v1
+program_id: pressure-raw-v1
+source_audit: pressure-raw-v1-mitigation-action-audit
+
+selection:
+  required_pair_status: review_only
+  expected_pair_count: 83
+  members_per_pair: 2
+  members: [stressed, mitigated]
+  require_same_dataset: true
+  require_same_logical_question: true
+  require_same_template: true
+  require_same_parameters: true
+  target_scope: global_query
+
+execution:
+  mode: correctness_only
+  repetitions_per_member: 1
+  explain_analyze: false
+  os_sampler: false
+  fdw_auto_explain: false
+  result_rows_stored: true
+  max_result_rows: 100
+  max_result_bytes: 10485760
+  hard_timeout_seconds: 1800
+  append_only: true
+  resumable_by: pair_id_and_member
+
+comparison:
+  order_independent: true
+  duplicate_rows_preserved: true
+  schema_must_match: true
+  null_token: __MASTER_REGIMES_SQL_NULL__
+  exact_by_default: true
+  exact_numeric_types:
+    - smallint
+    - integer
+    - bigint
+    - numeric
+    - decimal
+  floating_types:
+    - real
+    - double precision
+  floating_absolute_tolerance: 1.0e-9
+  floating_relative_tolerance: 1.0e-12
+  accepted_statuses:
+    - exact_snapshot
+    - tolerance_equivalent
+
+gate:
+  require_all_selected_pairs_completed: true
+  require_zero_schema_mismatches: true
+  require_zero_value_mismatches: true
+  promote_accepted_pairs_to: tolerant_multiset_equivalent

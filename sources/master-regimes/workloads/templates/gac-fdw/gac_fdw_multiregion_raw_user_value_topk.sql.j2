@@ -1,0 +1,24 @@
+with events_all as (
+  select
+    e.tenant_id,
+    e.user_id,
+    e.value,
+    e.created_at
+  from fdw_eu.events e
+  union all
+  select
+    e.tenant_id,
+    e.user_id,
+    e.value,
+    e.created_at
+  from fdw_us.events e
+)
+select
+  tenant_id,
+  user_id,
+  sum(value) as total_value
+from events_all
+where created_at >= now() - make_interval(days => {{ lookback_days }}::int)
+group by tenant_id, user_id
+order by total_value desc, tenant_id, user_id
+limit {{ limit_k }};

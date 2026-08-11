@@ -1,0 +1,21 @@
+state,role,repetitions,metric,median,unit,meaning
+coordinator_join,before,5,elapsed_seconds,18.55146,s,End-to-end trajanje
+coordinator_join,before,5,edge_remote_bytes_sum,229801264,bytes,Procijenjeni udaljeni obim prema GAC-u
+coordinator_join,before,5,edge_boundary_wait_share,0.266250619806,ratio,Udio čekanja na FDW granici
+coordinator_join,before,5,edge_rtt_context_median_ms_max,0.43,ms,Najveći medijan RTT konteksta
+coordinator_join,before,5,regional_input_to_remote_rows_ratio,1,ratio,Regionalni ulaz po redu vraćenom GAC-u
+coordinator_join,before,5,remote_region_has_aggregate_share,0,ratio,Udio udaljenih grana sa regionalnom agregacijom
+coordinator_join,before,5,gac_fanin_to_final_rows_ratio,318508.545455,ratio,Broj GAC ulaznih redova po finalnom redu
+coordinator_join,before,5,gac_temp_written_per_final_row,6672.54545455,blocks/row,Privremeni blokovi zapisani po finalnom redu
+coordinator_join,before,5,gac_hash_batch_excess,31,count,Dodatne hash serije na GAC-u
+coordinator_join,before,5,spill_location_count,2,count,Broj slojeva sa opaženim preljevom
+regional_join,after,3,elapsed_seconds,3.318885,s,End-to-end trajanje
+regional_join,after,3,edge_remote_bytes_sum,2288,bytes,Procijenjeni udaljeni obim prema GAC-u
+regional_join,after,3,edge_boundary_wait_share,0.0053016893461,ratio,Udio čekanja na FDW granici
+regional_join,after,3,edge_rtt_context_median_ms_max,0.42,ms,Najveći medijan RTT konteksta
+regional_join,after,3,regional_input_to_remote_rows_ratio,159254.272727,ratio,Regionalni ulaz po redu vraćenom GAC-u
+regional_join,after,3,remote_region_has_aggregate_share,1,ratio,Udio udaljenih grana sa regionalnom agregacijom
+regional_join,after,3,gac_fanin_to_final_rows_ratio,2,ratio,Broj GAC ulaznih redova po finalnom redu
+regional_join,after,3,gac_temp_written_per_final_row,0,blocks/row,Privremeni blokovi zapisani po finalnom redu
+regional_join,after,3,gac_hash_batch_excess,NA,count,Dodatne hash serije na GAC-u
+regional_join,after,3,spill_location_count,0,count,Broj slojeva sa opaženim preljevom

@@ -1,0 +1,600 @@
+{
+  "checks": [
+    {
+      "evidence": [
+        "master-thesis-final/reproducibility/source-provenance.csv:1"
+      ],
+      "id": "source-snapshots",
+      "status": "PASS",
+      "summary": "8 collector/indexer source files and repository provenance entries checked."
+    },
+    {
+      "evidence": [
+        "master-thesis-final/artifacts/release-manifest.json:1"
+      ],
+      "id": "release-hashes",
+      "status": "PASS",
+      "summary": "6474 files verified (all scope)."
+    },
+    {
+      "evidence": [
+        "master-thesis-final/artifacts/logical-indexes/:1"
+      ],
+      "id": "logical-index-graph",
+      "status": "PASS",
+      "summary": "9 logical archives checked; 3185 query rows inspected."
+    },
+    {
+      "evidence": [
+        "master-thesis-final/artifacts/raw-attempts/:1"
+      ],
+      "id": "raw-artifact-presence",
+      "status": "PASS",
+      "summary": "9 raw archives checked; 3145 query directories inspected."
+    },
+    {
+      "evidence": [
+        "master-thesis-final/artifacts/results/collector-correctness-v2/collector_correctness_summary.json:1"
+      ],
+      "id": "published-correctness-gate",
+      "status": "PASS",
+      "summary": "Published gate reports 2603/2603 complete queries and 2 resolved retries."
+    },
+    {
+      "evidence": [
+        "master-thesis-final/releases/feedback-loop-execution-v1/main/result_equivalence_audit.csv:1"
+      ],
+      "id": "equivalence-table-consistency",
+      "status": "PASS",
+      "summary": "13 feedback-loop equivalence rows and 16 N3 pairs checked."
+    },
+    {
+      "evidence": [
+        "master-regimes-infra/common-scripts/run_query_collection.py:892",
+        "master-regimes/src/master_regimes/extract/query_sweep_index.py:505"
+      ],
+      "id": "correlation-concurrency-boundary",
+      "status": "WARN",
+      "summary": "Unique FDW application names are configured, but the indexer does not filter parsed log documents by that identity."
+    },
+    {
+      "evidence": [
+        "psql-benchmarks/src/psql_benchmarks/os_sampler.py:301"
+      ],
+      "id": "host-attribution-boundary",
+      "status": "WARN",
+      "summary": "CPU, steal, interface, TCP, disk, and qdisc evidence is host/window scoped, not query-process scoped."
+    }
+  ],
+  "findings": [
+    {
+      "disposition": "verified",
+      "evidence": [
+        "master-regimes/src/master_regimes/extract/query_sweep_index.py:487",
+        "master-thesis-final/artifacts/results/collector-correctness-v2/collector_correctness_summary.json:1"
+      ],
+      "id": "COL-001",
+      "impact": "Across standard logical archives, query IDs are unique, features are one-to-one, each query has one main plan, and worker plan IDs resolve to regional plan IDs.",
+      "recommendation": "Retain these checks as release gates.",
+      "severity": "positive",
+      "title": "The packaged canonical indexes preserve the query-to-plan-to-region-to-worker graph"
+    },
+    {
+      "disposition": "verified",
+      "evidence": [
+        "master-regimes/src/master_regimes/extract/query_sweep_index.py:2178",
+        "master-regimes/src/master_regimes/extract/query_sweep_index.py:2189"
+      ],
+      "id": "COL-002",
+      "impact": "The index can distinguish absence caused by execution structure from an unexpected collector gap.",
+      "recommendation": "Keep status columns alongside all derived numeric features.",
+      "severity": "positive",
+      "title": "Missing, unavailable, and not-applicable evidence are not collapsed into numeric zero"
+    },
+    {
+      "disposition": "verified",
+      "evidence": [
+        "master-regimes/src/master_regimes/corpus_adapter.py:554",
+        "master-regimes-infra/common-scripts/run_query_collection_sweep.py:471",
+        "master-regimes-infra/common-scripts/index_corpus_run_attempts.py:508"
+      ],
+      "id": "COL-003",
+      "impact": "Completed attempts outrank failed or missing attempts, while physical attempts remain auditable.",
+      "recommendation": "Preserve both query_attempts.csv and resolved_query_status.csv in every public logical run.",
+      "severity": "positive",
+      "title": "Attempt and slot identities support crash-safe resume and deterministic consolidation"
+    },
+    {
+      "disposition": "open limitation",
+      "evidence": [
+        "master-regimes-infra/common-scripts/run_query_collection.py:892",
+        "master-regimes-infra/common-scripts/run_query_collection.py:1077",
+        "master-regimes/src/master_regimes/extract/query_sweep_index.py:505"
+      ],
+      "id": "COL-004",
+      "impact": "The runner creates a unique FDW application name, but the indexer ingests every auto_explain document in the captured log suffix. The link is strong only under the declared serial, controlled workload; concurrent regional statements could be misattributed.",
+      "recommendation": "Persist the PostgreSQL log prefix fields and filter documents by application_name, backend PID, or a query marker before claiming production-grade correlation.",
+      "severity": "medium",
+      "title": "Regional auto_explain attribution is window-scoped but not parser-enforced by application name"
+    },
+    {
+      "disposition": "open limitation",
+      "evidence": [
+        "master-regimes-infra/common-scripts/run_query_collection.py:1834",
+        "psql-benchmarks/src/psql_benchmarks/psql.py:138",
+        "master-thesis-final/releases/feedback-loop-execution-v1/main/result_equivalence_audit.csv:1"
+      ],
+      "id": "COL-005",
+      "impact": "The published equality hashes are internally consistent, but they are produced by a second execution after EXPLAIN ANALYZE. Most raw-attempt archives contain neither signature artifacts nor result rows, so an external reader cannot recompute those hashes from the release alone.",
+      "recommendation": "Describe this as same-SQL/same-context follow-up validation, and package signature JSON or bounded typed result snapshots for representative cases.",
+      "severity": "medium",
+      "title": "Result equivalence uses a follow-up SQL execution and the package exposes hashes, not raw rows"
+    },
+    {
+      "disposition": "accepted limitation",
+      "evidence": [
+        "psql-benchmarks/src/psql_benchmarks/os_sampler.py:20",
+        "psql-benchmarks/src/psql_benchmarks/os_sampler.py:301",
+        "master-regimes/src/master_regimes/extract/query_sweep_index.py:1639"
+      ],
+      "id": "COL-006",
+      "impact": "Query-window alignment narrows time, but counters still include PostgreSQL background work, other processes, shared interfaces, and hypervisor scheduling. cpu_steal_pct is denied guest CPU time, not SQL CPU consumption.",
+      "recommendation": "Use these fields only as ambient infrastructure context unless future collection adds PID/cgroup/eBPF attribution.",
+      "severity": "medium",
+      "title": "OS, network, disk, and VPS steal samples are host-level ambient context"
+    },
+    {
+      "disposition": "open gap",
+      "evidence": [
+        "master-regimes/src/master_regimes/extract/query_sweep_index.py:459"
+      ],
+      "id": "COL-007",
+      "impact": "Expected-region checks may reveal a missing required plan, but malformed extra/internal documents disappear without a parse-failure row or source offset.",
+      "recommendation": "Emit a parse-error record with host, log path, line range, and document hash.",
+      "severity": "low",
+      "title": "Malformed regional auto_explain JSON is silently discarded"
+    },
+    {
+      "disposition": "contract assumption",
+      "evidence": [
+        "master-regimes-infra/common-scripts/index_corpus_run_attempts.py:168"
+      ],
+      "id": "COL-008",
+      "impact": "The key includes target_group, condition, instance, and repetition but not target_host/coordinator. Intended manifests keep the host stable, yet an accidental rerun on another coordinator in the same group could be merged.",
+      "recommendation": "Add target_host or a topology/coordinator identity to the logical key, or validate it as an immutable context field before resolution.",
+      "severity": "low",
+      "title": "Logical retry identity omits the concrete target host"
+    },
+    {
+      "disposition": "open provenance gap",
+      "evidence": [
+        "master-thesis-final/reproducibility/source-provenance.csv:1",
+        "master-thesis-final/artifacts/results/experimental-reproducibility-v2/source_manifest.json:1",
+        "master-thesis-final/artifacts/results/experimental-reproducibility-v2/collection_protocol.csv:1"
+      ],
+      "id": "COL-009",
+      "impact": "The package is sufficient to inspect current/snapshotted implementation and recorded indexes, but several protocol values are reconstructed_from_versioned_config and the run-time commit policy says not_recorded unless explicitly persisted.",
+      "recommendation": "Do not describe the package as bit-identical run provenance. Persist repository commits and dirty-state patches in every future execution manifest.",
+      "severity": "medium",
+      "title": "The release snapshots implementation code but does not prove the exact run-time commit"
+    },
+    {
+      "disposition": "explicit packaging gap",
+      "evidence": [
+        "master-thesis-final/artifacts/logical-indexes/pressure-raw-v1-n3-colocation-holdout.tar.gz:1"
+      ],
+      "id": "COL-010",
+      "impact": "The pressure N3 holdout archive has query/features/region/worker tables but no plan_files, query_attempts, or resolved_query_status tables. It supports downstream feature audit, not a complete retry/main-plan audit by itself.",
+      "recommendation": "Label specialized derived indexes explicitly and provide a manifest linking them to their raw-attempt source archive and canonical logical run.",
+      "severity": "low",
+      "title": "One specialized logical archive is not a full collector index"
+    }
+  ],
+  "generated_from": "packaged offline evidence; deterministic output",
+  "metrics": {
+    "code_contract": {
+      "indexer_filters_auto_explain_by_application_name": false,
+      "indexer_has_typed_missing_statuses": true,
+      "indexer_silently_skips_malformed_auto_explain_json": true,
+      "os_sampler_reads_cpu_steal": true,
+      "os_sampler_reads_host_network_counters": false,
+      "resolver_key_contains_target_host": false,
+      "result_signature_is_follow_up_execution": true,
+      "runner_captures_log_suffix_from_start_line": true,
+      "runner_sets_unique_fdw_application_name": true
+    },
+    "correctness_summary": {
+      "fully_complete_query_count": 2603,
+      "main_corpus_query_count": 1964,
+      "main_corpus_worker_fragment_count": 67976,
+      "manual_reviewed_count": 24,
+      "manual_sampling_design": "deterministic_stratified_not_probability_sample",
+      "ok": true,
+      "query_count": 2603,
+      "unexpected_nonzero_failures": {},
+      "validation_attempt_count": 641,
+      "validation_resolved_after_retry_count": 2,
+      "validation_resolved_count": 639,
+      "validation_retried_instance_count": 2,
+      "worker_task_list_unavailable_plan_count": 396
+    },
+    "equivalence": {
+      "feedback_equivalent_rows": 13,
+      "feedback_hash_mismatch_rows": [],
+      "feedback_missing_hash_rows": [],
+      "feedback_rows": 15,
+      "n3_failed_pair_ids": [],
+      "n3_pair_count": 16,
+      "ok": true
+    },
+    "logical_archives": [
+      {
+        "archive": "clean-run-v1-region-asymmetry-skew-rerun.tar.gz",
+        "checks": {
+          "exactly_one_main_plan": true,
+          "query_feature_one_to_one": true,
+          "query_ids_unique": true,
+          "region_children_linked": true,
+          "resolved_completed_matches_index": true,
+          "worker_children_linked": true,
+          "worker_plans_linked_to_regions": true
+        },
+        "feature_count": 294,
+        "logical_status_count": 294,
+        "physical_attempt_count": 294,
+        "plan_file_count": 4936,
+        "query_count": 294,
+        "region_fragment_count": 666,
+        "region_rows_with_unavailable_task_list": 0,
+        "retried_logical_slot_count": 0,
+        "specialized_partial_index": false,
+        "worker_fragment_count": 11082
+      },
+      {
+        "archive": "clean-run-v1-region-asymmetry.tar.gz",
+        "checks": {
+          "exactly_one_main_plan": true,
+          "query_feature_one_to_one": true,
+          "query_ids_unique": true,
+          "region_children_linked": true,
+          "resolved_completed_matches_index": true,
+          "worker_children_linked": true,
+          "worker_plans_linked_to_regions": true
+        },
+        "feature_count": 150,
+        "logical_status_count": 150,
+        "physical_attempt_count": 150,
+        "plan_file_count": 2960,
+        "query_count": 150,
+        "region_fragment_count": 378,
+        "region_rows_with_unavailable_task_list": 0,
+        "retried_logical_slot_count": 0,
+        "specialized_partial_index": false,
+        "worker_fragment_count": 10794
+      },
+      {
+        "archive": "clean-run-v1-validation-holdout.tar.gz",
+        "checks": {
+          "exactly_one_main_plan": true,
+          "query_feature_one_to_one": true,
+          "query_ids_unique": true,
+          "region_children_linked": true,
+          "resolved_completed_matches_index": true,
+          "worker_children_linked": true,
+          "worker_plans_linked_to_regions": true
+        },
+        "feature_count": 195,
+        "logical_status_count": 195,
+        "physical_attempt_count": 197,
+        "plan_file_count": 5868,
+        "query_count": 195,
+        "region_fragment_count": 426,
+        "region_rows_with_unavailable_task_list": 0,
+        "retried_logical_slot_count": 2,
+        "specialized_partial_index": false,
+        "worker_fragment_count": 8610
+      },
+      {
+        "archive": "clean-run-v1-wan-latency.tar.gz",
+        "checks": {
+          "exactly_one_main_plan": true,
+          "query_feature_one_to_one": true,
+          "query_ids_unique": true,
+          "region_children_linked": true,
+          "resolved_completed_matches_index": true,
+          "worker_children_linked": true,
+          "worker_plans_linked_to_regions": true
+        },
+        "feature_count": 16,
+        "logical_status_count": 20,
+        "physical_attempt_count": 20,
+        "plan_file_count": 618,
+        "query_count": 16,
+        "region_fragment_count": 24,
+        "region_rows_with_unavailable_task_list": 0,
+        "retried_logical_slot_count": 0,
+        "specialized_partial_index": false,
+        "worker_fragment_count": 644
+      },
+      {
+        "archive": "clean-run-v1.tar.gz",
+        "checks": {
+          "exactly_one_main_plan": true,
+          "query_feature_one_to_one": true,
+          "query_ids_unique": true,
+          "region_children_linked": true,
+          "resolved_completed_matches_index": true,
+          "worker_children_linked": true,
+          "worker_plans_linked_to_regions": true
+        },
+        "feature_count": 1964,
+        "logical_status_count": 1964,
+        "physical_attempt_count": 1964,
+        "plan_file_count": 56045,
+        "query_count": 1964,
+        "region_fragment_count": 2938,
+        "region_rows_with_unavailable_task_list": 0,
+        "retried_logical_slot_count": 0,
+        "specialized_partial_index": false,
+        "worker_fragment_count": 67976
+      },
+      {
+        "archive": "pressure-raw-v1-n3-colocation-holdout.tar.gz",
+        "checks": {
+          "exactly_one_main_plan": null,
+          "query_feature_one_to_one": true,
+          "query_ids_unique": true,
+          "region_children_linked": true,
+          "resolved_completed_matches_index": null,
+          "worker_children_linked": true,
+          "worker_plans_linked_to_regions": true
+        },
+        "feature_count": 96,
+        "logical_status_count": 0,
+        "physical_attempt_count": 0,
+        "plan_file_count": 0,
+        "query_count": 96,
+        "region_fragment_count": 432,
+        "region_rows_with_unavailable_task_list": 144,
+        "retried_logical_slot_count": 0,
+        "specialized_partial_index": true,
+        "worker_fragment_count": 7056
+      },
+      {
+        "archive": "repeatability-v1.tar.gz",
+        "checks": {
+          "exactly_one_main_plan": true,
+          "query_feature_one_to_one": true,
+          "query_ids_unique": true,
+          "region_children_linked": true,
+          "resolved_completed_matches_index": true,
+          "worker_children_linked": true,
+          "worker_plans_linked_to_regions": true
+        },
+        "feature_count": 328,
+        "logical_status_count": 328,
+        "physical_attempt_count": 328,
+        "plan_file_count": 13684,
+        "query_count": 328,
+        "region_fragment_count": 588,
+        "region_rows_with_unavailable_task_list": 0,
+        "retried_logical_slot_count": 0,
+        "specialized_partial_index": false,
+        "worker_fragment_count": 15654
+      },
+      {
+        "archive": "stats-ceb-full-no-refit-v1.tar.gz",
+        "checks": {
+          "exactly_one_main_plan": true,
+          "query_feature_one_to_one": true,
+          "query_ids_unique": true,
+          "region_children_linked": true,
+          "resolved_completed_matches_index": true,
+          "worker_children_linked": true,
+          "worker_plans_linked_to_regions": true
+        },
+        "feature_count": 130,
+        "logical_status_count": 146,
+        "physical_attempt_count": 292,
+        "plan_file_count": 12564,
+        "query_count": 130,
+        "region_fragment_count": 498,
+        "region_rows_with_unavailable_task_list": 124,
+        "retried_logical_slot_count": 146,
+        "specialized_partial_index": false,
+        "worker_fragment_count": 9302
+      },
+      {
+        "archive": "stats-ceb-semantic-v2b-holdout.tar.gz",
+        "checks": {
+          "exactly_one_main_plan": true,
+          "query_feature_one_to_one": true,
+          "query_ids_unique": true,
+          "region_children_linked": true,
+          "resolved_completed_matches_index": true,
+          "worker_children_linked": true,
+          "worker_plans_linked_to_regions": true
+        },
+        "feature_count": 12,
+        "logical_status_count": 12,
+        "physical_attempt_count": 12,
+        "plan_file_count": 828,
+        "query_count": 12,
+        "region_fragment_count": 48,
+        "region_rows_with_unavailable_task_list": 12,
+        "retried_logical_slot_count": 0,
+        "specialized_partial_index": false,
+        "worker_fragment_count": 966
+      }
+    ],
+    "logical_errors": [],
+    "raw_archives": [
+      {
+        "archive": "clean-run-v1-region-asymmetry-skew-rerun.tar.gz",
+        "completed_main_plan_query_count": 294,
+        "completed_query_collection_count": 294,
+        "errors": [],
+        "execution_manifest_count": 294,
+        "execution_status_count": 294,
+        "incomplete_query_collection_count": 0,
+        "main_plan_query_count": 294,
+        "os_summary_artifact_count": 0,
+        "query_collection_count": 294,
+        "regional_log_query_count": 294,
+        "result_rows_artifact_count": 0,
+        "result_signature_artifact_count": 0
+      },
+      {
+        "archive": "clean-run-v1-region-asymmetry.tar.gz",
+        "completed_main_plan_query_count": 150,
+        "completed_query_collection_count": 150,
+        "errors": [],
+        "execution_manifest_count": 150,
+        "execution_status_count": 150,
+        "incomplete_query_collection_count": 0,
+        "main_plan_query_count": 150,
+        "os_summary_artifact_count": 0,
+        "query_collection_count": 150,
+        "regional_log_query_count": 150,
+        "result_rows_artifact_count": 0,
+        "result_signature_artifact_count": 0
+      },
+      {
+        "archive": "clean-run-v1-validation-holdout.tar.gz",
+        "completed_main_plan_query_count": 195,
+        "completed_query_collection_count": 195,
+        "errors": [],
+        "execution_manifest_count": 195,
+        "execution_status_count": 196,
+        "incomplete_query_collection_count": 1,
+        "main_plan_query_count": 195,
+        "os_summary_artifact_count": 0,
+        "query_collection_count": 196,
+        "regional_log_query_count": 195,
+        "result_rows_artifact_count": 0,
+        "result_signature_artifact_count": 0
+      },
+      {
+        "archive": "clean-run-v1-wan-latency.tar.gz",
+        "completed_main_plan_query_count": 16,
+        "completed_query_collection_count": 16,
+        "errors": [],
+        "execution_manifest_count": 20,
+        "execution_status_count": 20,
+        "incomplete_query_collection_count": 4,
+        "main_plan_query_count": 16,
+        "os_summary_artifact_count": 0,
+        "query_collection_count": 20,
+        "regional_log_query_count": 20,
+        "result_rows_artifact_count": 0,
+        "result_signature_artifact_count": 0
+      },
+      {
+        "archive": "clean-run-v1.tar.gz",
+        "completed_main_plan_query_count": 1964,
+        "completed_query_collection_count": 1964,
+        "errors": [],
+        "execution_manifest_count": 1964,
+        "execution_status_count": 1964,
+        "incomplete_query_collection_count": 0,
+        "main_plan_query_count": 1964,
+        "os_summary_artifact_count": 0,
+        "query_collection_count": 1964,
+        "regional_log_query_count": 1964,
+        "result_rows_artifact_count": 0,
+        "result_signature_artifact_count": 0
+      },
+      {
+        "archive": "confirmatory-skew-v1.tar.gz",
+        "completed_main_plan_query_count": 48,
+        "completed_query_collection_count": 48,
+        "errors": [],
+        "execution_manifest_count": 48,
+        "execution_status_count": 48,
+        "incomplete_query_collection_count": 0,
+        "main_plan_query_count": 48,
+        "os_summary_artifact_count": 0,
+        "query_collection_count": 48,
+        "regional_log_query_count": 48,
+        "result_rows_artifact_count": 0,
+        "result_signature_artifact_count": 0
+      },
+      {
+        "archive": "repeatability-v1.tar.gz",
+        "completed_main_plan_query_count": 328,
+        "completed_query_collection_count": 328,
+        "errors": [],
+        "execution_manifest_count": 328,
+        "execution_status_count": 328,
+        "incomplete_query_collection_count": 0,
+        "main_plan_query_count": 328,
+        "os_summary_artifact_count": 0,
+        "query_collection_count": 328,
+        "regional_log_query_count": 328,
+        "result_rows_artifact_count": 0,
+        "result_signature_artifact_count": 0
+      },
+      {
+        "archive": "stats-ceb-full-no-refit-v1.tar.gz",
+        "completed_main_plan_query_count": 130,
+        "completed_query_collection_count": 130,
+        "errors": [],
+        "execution_manifest_count": 132,
+        "execution_status_count": 133,
+        "incomplete_query_collection_count": 3,
+        "main_plan_query_count": 130,
+        "os_summary_artifact_count": 0,
+        "query_collection_count": 133,
+        "regional_log_query_count": 132,
+        "result_rows_artifact_count": 0,
+        "result_signature_artifact_count": 0
+      },
+      {
+        "archive": "stats-ceb-semantic-v2b-holdout.tar.gz",
+        "completed_main_plan_query_count": 12,
+        "completed_query_collection_count": 12,
+        "errors": [],
+        "execution_manifest_count": 12,
+        "execution_status_count": 12,
+        "incomplete_query_collection_count": 0,
+        "main_plan_query_count": 12,
+        "os_summary_artifact_count": 0,
+        "query_collection_count": 12,
+        "regional_log_query_count": 12,
+        "result_rows_artifact_count": 0,
+        "result_signature_artifact_count": 0
+      }
+    ],
+    "raw_errors": [],
+    "release_manifest": {
+      "declared_file_count": 6474,
+      "hash_mismatches": [],
+      "manifest_entry_count": 6474,
+      "missing_files": [],
+      "missing_manifest_entries": [],
+      "ok": true,
+      "size_mismatches": [],
+      "verification_scope": "all",
+      "verified_file_count": 6474
+    },
+    "source_snapshots": {
+      "expected_snapshot_file_count": 8,
+      "missing_provenance_repositories": [],
+      "missing_snapshot_files": [],
+      "ok": true,
+      "provenance_repository_count": 5
+    }
+  },
+  "schema_version": "collector-offline-audit-v1",
+  "scope": {
+    "mode": "offline_read_only",
+    "network_or_sql_execution": false,
+    "repositories": [
+      "psql-benchmarks",
+      "master-regimes-infra",
+      "master-regimes",
+      "master-thesis-final"
+    ]
+  },
+  "verdict": "pass_with_limitations"
+}

@@ -1,0 +1,283 @@
+backlog_id: pre-us-corpus-backlog-v1
+depends_on: query-groups-v1
+topology_scope: eu_gac
+purpose: >
+  Operational backlog for finishing the regime corpus around the EU+GAC and
+  EU+US+GAC transition. This file separates what can be mini-tested now from
+  what needs an ETL view, a regional-partial strategy design, or a stronger
+  dataset profile.
+
+principles:
+  - Do not add US just to fill strategy slots.
+  - Do not generate instances before the logical-question and strategy matrix is clear.
+  - Prefer paired logical questions over isolated templates.
+  - Treat runtime changes as selective interventions, not a Cartesian product.
+
+priority_levels:
+  P0: Run/verify with templates already available on the current EU+GAC topology.
+  P1: Add missing templates or ETL views that unlock stronger paired comparisons before US.
+  P2: Design-only work that should be specified before US but does not block the next pilot.
+  P3: Multi-region topology/final validation phase. US is now available for smoke-level checks.
+
+current_runnable_mini_test:
+  description: >
+    Minimal coverage set for checking whether existing EU+GAC templates activate
+    expected signals before new template work.
+  dataset_profiles:
+    - smoke-balanced
+    - smoke-skew
+  runtime_configs:
+    - default
+  templates:
+    - logical_question_id: daily_tenant_rollup
+      strategies:
+        - single_region_citus:q01_tenant_rollup
+        - fdw_raw:gac_fdw_daily_rollup
+        - etl_materialized:gac_etl_local_rollup
+    - logical_question_id: top_tenants
+      strategies:
+        - single_region_citus:q10_top_tenants
+        - fdw_raw:gac_fdw_top_tenants
+        - etl_materialized:gac_etl_top_tenants
+    - logical_question_id: tenant_point_rollup
+      strategies:
+        - single_region_citus:q04_tenant_point_rollup
+        - fdw_raw:gac_fdw_tenant_point_rollup
+        - etl_materialized:gac_etl_tenant_point_rollup
+    - logical_question_id: tenant_tier_daily_join
+      strategies:
+        - single_region_citus:q05_tenant_tier_daily_join
+        - fdw_raw:gac_fdw_tenant_tier_join
+        - etl_materialized:gac_etl_tenant_tier_daily_rollup
+    - logical_question_id: user_segment_topk
+      strategies:
+        - single_region_citus:q06_user_segment_join
+        - fdw_raw:gac_fdw_user_segment_join
+        - etl_materialized:gac_etl_user_segment_topk
+    - logical_question_id: user_value_topk
+      strategies:
+        - single_region_citus:q02_global_user_topk
+        - fdw_raw:gac_fdw_user_value_topk
+    - logical_question_id: global_user_topk
+      strategies:
+        - single_region_citus:q07_global_user_segment_join
+        - fdw_raw:gac_fdw_global_user_join
+        - etl_materialized:gac_etl_global_user_topk
+    - logical_question_id: multi_dimension_rollup
+      strategies:
+        - single_region_citus:q08_multi_dimension_rollup
+        - fdw_raw:gac_fdw_multi_dimension_rollup
+        - etl_materialized:gac_etl_multi_dimension_rollup
+    - logical_question_id: event_filter_summary
+      strategies:
+        - single_region_citus:q03_event_filter_summary
+        - fdw_raw:gac_fdw_event_filter_summary
+    - logical_question_id: event_full_scan_summary
+      strategies:
+        - single_region_citus:q09_event_full_scan_summary
+        - fdw_raw:gac_fdw_event_full_scan_summary
+
+completed_p1_items:
+  - priority: P1
+    logical_question_id: top_tenants
+    strategy: single_region_citus
+    status_now: runnable_now
+    action: add_single_region_template
+    template_id: q10_top_tenants
+    why: >
+      Completes the single-region/FDW/ETL comparison for a central top-k
+      logical question without needing US.
+
+  - priority: P1
+    logical_question_id: tenant_tier_daily_join
+    strategy: etl_materialized
+    status_now: runnable_now
+    action: add_tier_aware_daily_rollup
+    template_id: gac_etl_tenant_tier_daily_rollup
+    materialized_object: etl.daily_tenant_tier_rollup
+    why: >
+      Provides an ETL/materialized counterpart for an FDW reference-join query.
+
+  - priority: P1
+    logical_question_id: user_segment_topk
+    strategy: etl_materialized
+    status_now: runnable_now
+    action: add_segment_topk_rollup
+    template_id: gac_etl_user_segment_topk
+    materialized_object: etl.user_segment_topk_rollup
+    why: >
+      Provides a localized/materialized counterpart for a colocated join shape.
+
+  - priority: P1
+    logical_question_id: global_user_topk
+    strategy: etl_materialized
+    status_now: runnable_now
+    action: add_global_user_topk_rollup
+    template_id: gac_etl_global_user_topk
+    materialized_object: etl.global_user_topk_rollup
+    why: >
+      Gives a materialized contrast for the non-colocated/global-user movement
+      case. Useful before US because the join-movement signal already exists on
+      the EU Citus cluster.
+
+  - priority: P1
+    logical_question_id: multi_dimension_rollup
+    strategy: etl_materialized
+    status_now: runnable_now
+    action: add_multi_dimension_rollup
+    template_id: gac_etl_multi_dimension_rollup
+    materialized_object: etl.multi_dimension_rollup
+    why: >
+      Adds a materialized contrast for the broadest current FDW join/fan-in
+      shape.
+
+  - priority: P1
+    logical_question_id: user_value_topk
+    strategy: fdw_raw
+    status_now: runnable_now
+    action: add_fdw_user_value_topk_pair
+    template_id: gac_fdw_user_value_topk
+    why: >
+      Completes the no-dimension user Top-K single-region/FDW pair and keeps it
+      distinct from global_user_topk, which is a dimension join/movement family.
+
+pre_us_template_backlog:
+  - priority: P2
+    logical_question_id: daily_tenant_rollup
+    strategy: regional_partial
+    status_now: needs_strategy_design
+    action: define_regional_partial_contract
+    why: >
+      The intent is clear, but the pipeline needs a first-class definition of
+      whether regional_partial means remote aggregate probe, staged regional
+      table, or a dedicated partial-result API.
+
+  - priority: P2
+    logical_question_id: top_tenants
+    strategy: regional_partial
+    status_now: needs_template
+    action: define_and_add_regional_topk_partial
+    why: >
+      Top-k is a high-value logical question for showing the difference between
+      raw remote fetch and regional reduction, but the regional-partial
+      execution contract should be defined first.
+
+  - priority: P2
+    logical_question_id: tenant_tier_daily_join
+    strategy: regional_partial
+    status_now: needs_strategy_design
+    action: define_reference_join_partial_shape
+    why: >
+      Needed only after the simpler aggregate/top-k regional partial shapes are
+      clear.
+
+  - priority: P2
+    logical_question_id: user_segment_topk
+    strategy: regional_partial
+    status_now: needs_strategy_design
+    action: define_colocated_join_partial_shape
+    why: >
+      Useful for explaining colocated remote reduction, but not a blocker for
+      the next EU+GAC pilot.
+
+  - priority: P2
+    logical_question_id: event_filter_summary
+    strategy: etl_materialized
+    status_now: needs_etl_view
+    action: keep_as_optional_negative_control
+    why: >
+      A raw selective filter often does not have a natural ETL counterpart.
+      Add only if a materialized filter-specific object is intentionally useful.
+
+  - priority: P2
+    logical_question_id: event_full_scan_summary
+    strategy: etl_materialized
+    status_now: needs_etl_view
+    action: keep_as_optional_negative_control
+    why: >
+      This query is mainly a scan/fan-in boundary probe; forcing an ETL pair may
+      weaken the experimental meaning.
+
+us_or_later_backlog:
+  - priority: P3
+    resolved_by: plan_c_template_expansion
+    note: US/fdw_us is active; this entry is now a runnable multiregion smoke candidate.
+    logical_question_id: daily_tenant_rollup
+    strategy: multiregion_union
+    template_id: gac_fdw_multiregion_daily_tenant_rollup
+    status_now: runnable_now
+  - priority: P3
+    resolved_by: plan_c_template_expansion
+    logical_question_id: top_tenants
+    strategy: multiregion_union
+    template_id: gac_fdw_multiregion_top_tenants
+    status_now: runnable_now
+  - priority: P3
+    resolved_by: plan_c_template_expansion
+    logical_question_id: tenant_point_rollup
+    strategy: multiregion_union
+    template_id: gac_fdw_multiregion_tenant_point_rollup
+    status_now: runnable_now
+  - priority: P3
+    resolved_by: plan_c_template_expansion
+    logical_question_id: event_filter_summary
+    strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_filter_summary
+    status_now: runnable_now
+  - priority: P3
+    resolved_by: plan_c_template_expansion
+    logical_question_id: event_full_scan_summary
+    strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_full_scan_summary
+    status_now: runnable_now
+  - priority: P3
+    resolved_by: plan_c_template_expansion
+    logical_question_id: tenant_tier_daily_join
+    strategy: multiregion_union
+    template_id: gac_fdw_multiregion_tenant_tier_join
+    status_now: runnable_now
+  - priority: P3
+    resolved_by: plan_c_template_expansion
+    logical_question_id: user_segment_topk
+    strategy: multiregion_union
+    template_id: gac_fdw_multiregion_user_segment_join
+    status_now: runnable_now
+  - priority: P3
+    resolved_by: plan_c_template_expansion
+    logical_question_id: user_value_topk
+    strategy: multiregion_union
+    template_id: gac_fdw_multiregion_user_value_topk
+    status_now: runnable_now
+  - priority: P3
+    resolved_by: plan_c_template_expansion
+    logical_question_id: global_user_topk
+    strategy: multiregion_union
+    template_id: gac_fdw_multiregion_global_user_join
+    status_now: runnable_now
+  - priority: P3
+    resolved_by: plan_c_template_expansion
+    logical_question_id: multi_dimension_rollup
+    strategy: multiregion_union
+    template_id: gac_fdw_multiregion_multi_dimension_rollup
+    status_now: runnable_now
+  - priority: P3
+    resolved_by: plan_c_template_expansion
+    logical_question_id: daily_kpi
+    strategy: multiregion_union
+    template_id: gac_fdw_multiregion_daily_kpi
+    status_now: runnable_now
+  - priority: P3
+    resolved_by: plan_c_template_expansion
+    logical_question_id: region_daily_join
+    strategy: multiregion_union
+    template_id: gac_fdw_multiregion_region_daily_join
+    status_now: runnable_now
+
+next_decision_gate:
+  name: pre_us_corpus_pilot_ready
+  required_before_us:
+    - current_runnable_mini_test passes on at least two dataset profiles.
+    - query_runs and feature_overview preserve logical_question_id and execution_strategy.
+    - At least two paired families have FDW and ETL/materialized strategies.
+    - At least one join-movement family has single_region_citus and fdw_raw evidence.
+    - Runtime intervention catalog exists, but only default is required for this gate.

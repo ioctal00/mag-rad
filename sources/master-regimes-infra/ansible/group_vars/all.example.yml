@@ -1,0 +1,227 @@
+---
+ansible_user: root
+ansible_become: true
+
+# SSH pristup mašinama koje konfiguriše Ansible.
+# U renderovanom `ssh_authorized_keys` zavrse JAVNI kljucevi razrijeseni iz
+# env varijabli, npr. `MASTER_REGIMES_SSH_PUBLIC_KEY`. Ne upisivati privatne
+# kljuceve.
+# Ako se koristi drugi administrativni korisnik umjesto `root`, promijeniti
+# `ssh_access_user`; u tom slučaju role dodaje sudo pristup tom korisniku.
+ssh_access_user: root
+ssh_authorized_keys:
+  - "ssh-ed25519 AAAA... prvi-javni-kljuc"
+  - "ssh-ed25519 AAAA... drugi-javni-kljuc"
+
+ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+
+postgresql_version: "18"
+citus_package: "postgresql-18-citus-14.0"
+postgresql_admin_password: "replace-with-strong-password"
+postgresql_app_db: "app"
+postgresql_app_user: "app"
+postgresql_app_password: "replace-with-strong-password"
+postgresql_listen_addresses: "*"
+postgresql_max_connections: 300
+postgresql_shared_preload_libraries: "citus,pg_stat_statements"
+postgresql_pg_stat_statements_max: 10000
+postgresql_pg_stat_statements_track: all
+postgresql_password_encryption: "scram-sha-256"
+postgresql_data_checksums: true
+citus_shard_count: 32
+citus_enable_stat_counters: true
+citus_stat_statements_track: "all"
+citus_stat_tenants_track: "none"
+citus_enable_repartition_joins: true
+postgresql_tls_enabled: true
+postgresql_tls_ca_common_name: "Master Thesis Dev Root CA"
+pgbouncer_client_tls_enabled: true
+pgbouncer_client_tls_sslmode: allow
+
+# Optional read-only Git credential for Ansible git clone fallback on remote
+# hosts. Leave empty when code is synced locally. For GitHub PAT over HTTPS,
+# username should usually stay `x-access-token`.
+master_regimes_git_pat: "{{ lookup('env', 'MASTER_REGIMES_GIT_PAT') }}"
+master_regimes_git_username: "{{ lookup('env', 'MASTER_REGIMES_GIT_USERNAME') | default('x-access-token', true) }}"
+
+# Dodatna CIDR allowlista za PostgreSQL/PgBouncer na REGIONALNIM Citus
+# čvorovima. Ovo nisu SSH pravila; SSH pristup se kontroliše preko
+# `ssh_authorized_keys` iznad.
+#
+# Role automatski dodaje:
+# - loopback adrese,
+# - privatne IP adrese Citus čvorova unutar iste regije,
+# - privatni VPC CIDR, ako ga Terraform izloži kroz inventory.
+#
+# Ovdje se dodaju samo vanjski klijenti koji moraju pristupiti regionalnoj
+# bazi preko javne mreže i TLS-a, npr. laptop/VPN IP ili javna adresa
+# GAC/analytics čvora ako nije u istoj privatnoj mreži.
+postgresql_allowed_cidrs:
+  - "127.0.0.1/32"       # lokalni PostgreSQL/PgBouncer pristup na samoj mašini
+  - "::1/128"            # IPv6 loopback
+  - "203.0.113.0/24"     # primjer: javni IP/CIDR laptopa, lab mreže ili VPN-a
+  - "95.179.184.0/23"    # primjer: javni IPv4 subnet GAC/analytics čvora izvan VPC-a
+  - "2001:db8::1234/128" # primjer: javna IPv6 adresa GAC/analytics čvora izvan VPC-a
+
+pgbouncer_listen_port: 6432
+pgbouncer_pool_mode: transaction
+pgbouncer_default_pool_size: 100
+pgbouncer_max_client_conn: 1000
+pgbouncer_auth_type: scram-sha-256
+
+ebpf_tools_packages:
+  - bpftrace
+  - bpfcc-tools
+  - python3-bpfcc
+  - linux-tools-common
+  - linux-tools-generic
+  - bpftool
+
+common_observability_packages:
+  - htop
+  - iftop
+  - iperf3
+  - iotop
+  - mtr-tiny
+  - net-tools
+  - slurm
+  - sysstat
+  - traceroute
+common_build_packages:
+  - build-essential
+  - g++
+  - make
+
+citus_datagen_enabled: false
+citus_datagen_repo_dir: /opt/citus-datagen
+# Paket za ponavljanje eksperimenata ne zahtijeva privatni git URL. Kod se prenosi iz
+# lokalnog sibling direktorija komandom `make repo-sync-datagen`.
+citus_datagen_local_source_hint: "../citus-datagen"
+citus_datagen_tenant_ranges:
+  eu:
+    start: 1
+    end: 10000
+  us:
+    start: 10001
+    end: 20000
+citus_datagen_random_seed: 42
+citus_datagen_events_per_tenant: 1000
+citus_datagen_users_per_tenant: 500
+citus_datagen_global_users_per_tenant: 500
+citus_datagen_enable_global_users: true
+citus_datagen_lookback_days: 30
+citus_datagen_progress_every_tenants: 1000
+citus_datagen_load_method: copy_pipe
+citus_datagen_sql_batch_tenants: 1000
+citus_datagen_copy_generator_path: tools/cpp/citus_datagen
+citus_datagen_distribution: uniform
+citus_datagen_hot_tenant_pct: 1
+citus_datagen_hot_event_pct: 50
+citus_datagen_base_time_unix: 0
+
+psql_benchmarks_enabled: false
+psql_benchmarks_repo_dir: /opt/psql-benchmarks
+# Kod se prenosi iz lokalnog sibling direktorija komandom
+# `make repo-sync-psql-benchmarks`; privatni git URL nije potreban.
+psql_benchmarks_local_source_hint: "../psql-benchmarks"
+psql_benchmarks_sample_interval_seconds: 1
+psql_benchmarks_capture_duration_seconds: 30
+psql_benchmarks_warmup_iterations: 1
+psql_benchmarks_measurement_iterations: 3
+
+analytics_node_enabled: false
+analytics_node_repo_dir: /opt/analytics-client
+# Kod se prenosi iz lokalnog sibling direktorija komandom
+# `make repo-sync-analytics-client`; privatni git URL nije potreban.
+analytics_node_local_source_hint: "../analytics-client"
+analytics_node_run_root: /var/lib/analytics-client/runs
+analytics_node_log_dir: /var/log/analytics-client
+analytics_node_postgresql_enabled: true
+analytics_node_postgresql_version: "{{ postgresql_version }}"
+analytics_node_postgresql_app_db: analytics
+analytics_node_postgresql_app_user: analytics
+analytics_node_postgresql_app_password: "replace-with-strong-password"
+# Eksperimentalni pipeline koristi PostgreSQL superusera (`postgres`) da bi
+# FDW bootstrap, regional auto_explain i Citus task evidence imali jednake
+# privilegije na svim čvorovima. Aplikacijski korisnici ostaju kao odvojeni
+# kontekst, ali nisu default za master-regimes eksperimente.
+analytics_node_postgresql_admin_password: "{{ postgresql_admin_password }}"
+analytics_node_postgresql_experiment_user: postgres
+analytics_node_postgresql_experiment_password: "{{ analytics_node_postgresql_admin_password }}"
+analytics_node_postgresql_listen_addresses: "127.0.0.1,::1"
+
+# Lokalni PostgreSQL na GAC/analytics čvoru sluša samo lokalne adrese. Zato su
+# ovdje dozvoljeni samo loopback CIDR-ovi. Vanjski pristup GAC-u ide preko
+# njegovog PgBouncer allowlista ispod.
+analytics_node_postgresql_allowed_cidrs:
+  - "127.0.0.1/32" # lokalni pristup na GAC-u
+  - "::1/128"      # IPv6 loopback na GAC-u
+analytics_node_postgresql_extensions:
+  - pg_stat_statements
+  - postgres_fdw
+
+# Regionalni PostgreSQL izvori koje GAC koristi za postgres_fdw. Host vrijednosti
+# se automatski izvlače iz Terraform inventoryja za regionalne koordinatore.
+# Ako se pokreće drugačiji layout, ovdje se mogu ručno upisati IP adrese
+# regionalnih coordinator čvorova.
+analytics_node_remote_regions:
+  eu:
+    host: "{{ hostvars[groups['coordinators'] | select('match', '^eu-') | first].ansible_host if (groups.get('coordinators', []) | select('match', '^eu-') | list | length) > 0 else '' }}"
+    port: 5432
+    db: "{{ postgresql_app_db }}"
+    user: "{{ postgresql_admin_user | default('postgres') }}"
+    password: "{{ postgresql_admin_password }}"
+    sslmode: verify-ca
+  us:
+    host: "{{ hostvars[groups['coordinators'] | select('match', '^us-') | first].ansible_host if (groups.get('coordinators', []) | select('match', '^us-') | list | length) > 0 else '' }}"
+    port: 5432
+    db: "{{ postgresql_app_db }}"
+    user: "{{ postgresql_admin_user | default('postgres') }}"
+    password: "{{ postgresql_admin_password }}"
+    sslmode: verify-ca
+  apac:
+    host: "{{ hostvars[groups['coordinators'] | select('match', '^apac-') | first].ansible_host if (groups.get('coordinators', []) | select('match', '^apac-') | list | length) > 0 else '' }}"
+    port: 5432
+    db: "{{ postgresql_app_db }}"
+    user: "{{ postgresql_admin_user | default('postgres') }}"
+    password: "{{ postgresql_admin_password }}"
+    sslmode: verify-ca
+analytics_node_pgbouncer_enabled: true
+analytics_node_pgbouncer_client_tls_sslmode: require
+
+# CIDR allowlista za pristup PgBounceru na GAC/analytics čvoru. Ovdje staviti
+# javni IP/CIDR mašine s koje se spaja korisnik ili alat za analitiku
+# (npr. laptop, VPN ili laboratorijska mreža). Ovo ne utiče na regionalne
+# PostgreSQL allowliste iznad.
+analytics_node_pgbouncer_allowed_cidrs:
+  - "203.0.113.0/24" # primjer: javni IP/CIDR korisnika ili VPN-a
+
+web_portal_enabled: false
+web_portal_anchor_region: eu
+web_portal_allowed_cidrs:
+  - "203.0.113.0/24" # primjer: javni IP/CIDR korisnika ili VPN-a
+web_portal_server_name: "thesis-demo.example.org"
+web_portal_tls_enabled: true
+web_portal_tls_domain: "thesis-demo.example.org"
+web_portal_tls_provider: cloudflare_origin # letsencrypt | cloudflare_origin
+web_portal_tls_cloudflare_proxy: true
+web_portal_tls_origin_cert_local_path: "pki/cloudflare/origin.pem"
+web_portal_tls_origin_key_local_path: "pki/cloudflare/origin.key"
+web_portal_tls_force_https: true
+web_portal_db_readonly_user: prof_demo
+web_portal_db_readonly_password: "replace-with-demo-password"
+web_portal_pgweb_query_timeout_seconds: 20
+web_portal_basic_auth_users: "mentor:replace-me,profesor1:replace-me,profesor2:replace-me"
+web_portal_viewer_auth_users: "mentor:replace-me,profesor1:replace-me,profesor2:replace-me"
+web_portal_viewer_auth_disabled: false
+web_portal_app_source_mode: git # git | local
+web_portal_apps_repo: "https://github.com/PTF-Projects/master-regimes-apps.git"
+web_portal_apps_branch: main
+web_portal_apps_repo_dir: /opt/master-regimes-apps
+web_portal_master_regimes_branch: main
+web_portal_master_regimes_infra_branch: main
+web_portal_apps_cloudb_subdir: apps/cloudb-web
+web_portal_apps_viewer_subdir: apps/regime-diagnosis-viewer
+web_portal_cloudb_web_local_source_hint: "../master-regimes-apps/apps/cloudb-web"
+web_portal_viewer_local_source_hint: "../master-regimes-apps/apps/regime-diagnosis-viewer"
+web_portal_viewer_snapshot_local_path: "../master-regimes-apps/apps/regime-diagnosis-viewer/public/diagnosis-data.json"

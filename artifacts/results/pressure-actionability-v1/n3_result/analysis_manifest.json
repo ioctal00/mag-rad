@@ -1,0 +1,99 @@
+{
+  "bootstrap": {
+    "confidence": 0.95,
+    "intervals": [
+      {
+        "confidence": 0.95,
+        "estimate": 0.8441176470588234,
+        "lower": 0.5395655206776288,
+        "method": "placement_stratified_pair_bootstrap_percentile",
+        "metric": "spearman",
+        "planned_resamples": 10000,
+        "seed": 41003,
+        "upper": 0.9613670133729569,
+        "valid_resamples": 10000
+      },
+      {
+        "confidence": 0.95,
+        "estimate": 0.9904801687742326,
+        "lower": 0.9380712187545207,
+        "method": "placement_stratified_pair_bootstrap_percentile",
+        "metric": "ndcg_at_5",
+        "planned_resamples": 10000,
+        "seed": 41003,
+        "upper": 1.0,
+        "valid_resamples": 10000
+      }
+    ],
+    "method": "placement_stratified_pair_bootstrap_percentile",
+    "resamples": 10000,
+    "seed": 41003
+  },
+  "condition_count": 32,
+  "contract": "n3-colocation-no-refit-v1",
+  "coverage_threshold_p99": 1.8694068247510753,
+  "execution_count": 96,
+  "freeze_manifest_sha256": "2ca1e25c7da3a225f8d1b975ba0469fe86773e071bc84432ff46cdfe4d0abe86",
+  "interpretation_scope": "descriptive_ranking_on_16_out_of_coverage_n3_pairs_not_production_generalization",
+  "model_sha256_after": "6ea08e6f1903c78d073f1c026f16ce05079b268fc4635540bb12e48a36fb4dce",
+  "model_sha256_before": "6ea08e6f1903c78d073f1c026f16ce05079b268fc4635540bb12e48a36fb4dce",
+  "no_refit_verified": true,
+  "outside_training_p99_count": 16,
+  "pair_count": 16,
+  "placement_metrics": [
+    {
+      "kendall": 0.6428571428571428,
+      "mae": 2.3619151323738654,
+      "mean_bias": -2.3619151323738654,
+      "ndcg_at_5": 0.9872293077711247,
+      "pair_count": 8.0,
+      "placement_profile": "apac_dominant",
+      "r2": -32.556252312354104,
+      "rmse": 2.371146968623015,
+      "spearman": 0.8333333333333335,
+      "top3_recall": 1.0,
+      "top5_recall": 0.8
+    },
+    {
+      "kendall": 0.7142857142857142,
+      "mae": 2.5053811194340425,
+      "mean_bias": -2.5053811194340425,
+      "ndcg_at_5": 0.9801962999216929,
+      "pair_count": 8.0,
+      "placement_profile": "balanced",
+      "r2": -42.94548551143114,
+      "rmse": 2.5149722352317787,
+      "spearman": 0.8333333333333335,
+      "top3_recall": 1.0,
+      "top5_recall": 0.8
+    }
+  ],
+  "ranking_metrics": {
+    "kendall": 0.6833333333333333,
+    "mae": 2.4336481259039537,
+    "mean_bias": -2.4336481259039537,
+    "ndcg_at_5": 0.9904801687742326,
+    "pair_count": 16.0,
+    "r2": -37.356357951883346,
+    "rmse": 2.4441177642246332,
+    "spearman": 0.8441176470588234,
+    "top3_recall": 0.6666666666666666,
+    "top5_recall": 1.0
+  },
+  "ranking_support": "SUPPORTED",
+  "ranking_support_failures": [],
+  "ranking_support_rule": {
+    "calibration_metrics_are_secondary": true,
+    "coverage_is_warning_only": true,
+    "minimum_kendall": 0.35,
+    "minimum_ndcg_at_5": 0.8,
+    "minimum_spearman": 0.5,
+    "minimum_top5_recall": 0.6
+  },
+  "regions": [
+    "apac",
+    "eu",
+    "us"
+  ],
+  "technical_gate": "GO"
+}

@@ -1,0 +1,18 @@
+select
+  e.tenant_id,
+  e.user_id,
+  e.user_segment,
+  e.user_status,
+  count(*) as events_count,
+  round(sum(e.value::numeric), 6) as total_value
+from fdw_eu.mr_joined_events_colocated e
+where e.created_at >= coalesce(
+  to_timestamp(nullif({{ as_of_unix | default(0) }}, 0)),
+  now()
+) - make_interval(days => {{ lookback_days }}::int)
+  and ({{ tenant_id_filter | default(0) }}::bigint = 0 or e.tenant_id = {{ tenant_id_filter | default(0) }}::bigint)
+  and mod(e.tenant_id, {{ tenant_modulus | default(1) }}::bigint) = 0
+  and e.user_id <= {{ user_id_max | default(2147483647) }}::bigint
+group by e.tenant_id, e.user_id, e.user_segment, e.user_status
+order by total_value desc, e.tenant_id, e.user_id
+limit {{ limit_k }};

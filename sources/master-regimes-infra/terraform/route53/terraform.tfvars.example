@@ -1,0 +1,12 @@
+aws_region  = "us-east-1"
+zone_id     = "Z1234567890ABC"
+root_domain = "example.com"
+record_name = "api"
+
+eu_lb_ip = "203.0.113.20"
+us_lb_ip = "198.51.100.20"
+
+ttl               = 30
+eu_latency_region = "eu-west-1"
+us_latency_region = "us-east-1"
+

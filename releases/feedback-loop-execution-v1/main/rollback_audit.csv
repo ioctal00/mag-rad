@@ -1,0 +1,8 @@
+decision_id,trajectory_id,action_id,rollback_status,recorded_at_utc
+trajectory_join_pushdown-step-01,trajectory_join_pushdown,regional_pushdown_rewrite,verified,2026-08-07T13:05:30.101094Z
+trajectory_sort_order_topk-step-01,trajectory_sort_order_topk,gac_work_mem_64mb,verified,2026-08-07T13:05:30.335884Z
+trajectory_join_pushdown-step-02,trajectory_join_pushdown,fdw_async_capable_on,verified,2026-08-07T13:12:45.138145Z
+trajectory_sort_order_topk-step-02,trajectory_sort_order_topk,regional_pushdown_rewrite,verified,2026-08-07T13:12:50.898118Z
+trajectory_sort_order_topk-step-03,trajectory_sort_order_topk,wan_delay_10ms_probe,verified,2026-08-07T13:19:23.548553Z
+phase-d-final,all,restore_initial_infrastructure_state,verified,2026-08-07T14:29:07.385275Z
+phase-e-post-replay,all,restore_initial_infrastructure_state,verified,2026-08-07T14:29:07.385291Z

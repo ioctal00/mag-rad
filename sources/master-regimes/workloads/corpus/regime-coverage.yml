@@ -1,0 +1,623 @@
+coverage_id: regime-coverage-v1
+depends_on:
+  query_groups: query-groups-v1
+  workload_coverage: ../coverage/workload-coverage.yml
+vocabulary: ../../docs/corpus-vocabulary.md
+purpose: >
+  Regime-level coverage matrix for the pre-clustering phase. This file answers
+  whether each target regime has a planned or runnable evidence path before
+  expanding template counts, dataset profiles or runtime interventions.
+
+status_values:
+  covered: >
+    Runnable/current artifacts are expected to produce direct evidence for the
+    regime on the current EU+GAC topology.
+  weak: >
+    Runnable/current artifacts exist, but previous smoke/pilot output showed
+    weak, proxy-only or low-contrast evidence.
+  missing: >
+    No adequate template/corpus cell exists yet for this regime or evidence
+    dimension.
+  requires_dataset_change: >
+    Template shape exists, but the current dataset profile/generator must expose
+    a stronger capability before the evidence can be trusted.
+  requires_us_region: >
+    The regime/evidence path requires EU+US or true multi-region topology.
+
+gate_rule: >
+  Do not run a larger corpus while any primary target regime is only missing.
+  A weak status can proceed to a pilot only if its next_action is explicit and
+  the pilot is designed to test that exact gap. requires_us_region is acceptable
+  before US only when the regime also has a weaker EU+GAC proxy path.
+
+regime_targets:
+  - regime_target: remote_fetch_heavy
+    desired_pre_us_status: weak
+    primary_evidence:
+      - global_fanin_rows
+      - estimated_fanin_bytes
+      - estimated_remote_output_bytes
+      - remote_path_share
+      - fdw_remote_plan_count
+    validation_axes:
+      - fetch_size
+      - wan_latency
+      - row_width
+
+  - regime_target: gac_finalization_heavy
+    desired_pre_us_status: covered
+    primary_evidence:
+      - aggregate_above_foreign_scan
+      - sort_above_foreign_scan
+      - blocking_operator_above_remote_count
+      - finalize_share
+      - temp_blocks_sum
+      - memory_pressure_score_v1
+    validation_axes:
+      - work_mem
+      - regional_preaggregation
+
+  - regime_target: skew_imbalance
+    desired_pre_us_status: weak
+    primary_evidence:
+      - task_rows_cv
+      - task_time_cv
+      - worker_rows_cv
+      - worker_time_cv
+      - tenant_row_cv
+      - shard_row_cv
+    validation_axes:
+      - dataset_skew
+
+  - regime_target: join_movement
+    desired_pre_us_status: covered
+    primary_evidence:
+      - citus_repartition_query
+      - citus_map_merge_job_count
+      - join_above_foreign_scan
+      - remote_join_present
+      - non_colocated_join_candidate
+    validation_axes:
+      - join_locality
+      - work_mem
+
+  - regime_target: well_reduced_localized
+    desired_pre_us_status: covered
+    primary_evidence:
+      - tenant_filter_present
+      - single_tenant_scope
+      - filter_uses_distribution_key
+      - global_fanin_rows
+      - estimated_fanin_bytes
+      - remote_path_share
+    validation_axes:
+      - fetch_size_negative_control
+      - wan_latency_negative_control
+
+  - regime_target: mixed_or_unknown
+    desired_pre_us_status: covered
+    primary_evidence:
+      - low_confidence_membership
+      - conflicting_feature_profile
+      - out_of_distribution_flag
+    validation_axes:
+      - posthoc_annotation
+
+coverage_cells:
+  - coverage_cell_id: rf_fdw_top_tenants
+    regime_target: remote_fetch_heavy
+    logical_question_id: top_tenants
+    execution_strategies:
+      - fdw_raw
+    representative_templates:
+      - gac_fdw_top_tenants
+    required_dataset_capabilities:
+      - supports_hot_tenants
+      - supports_high_group_cardinality
+    runtime_axes:
+      - fetch_size
+      - wan_latency_later
+    expected_primary_evidence:
+      - remote_path_share
+      - global_fanin_rows
+      - estimated_fanin_bytes
+      - fdw_remote_plan_count
+    current_status: weak
+    reason: >
+      Current FDW top-tenants query has remote path evidence, but smoke/pilot
+      runs did not yet produce strong fan-in contrast. It remains the best
+      pre-US positive case for fetch_size sensitivity.
+    next_action: >
+      Use a larger/hotter tenant distribution and add 1-3 wider/top-k instances
+      before relying on this as final remote_fetch evidence.
+
+  - coverage_cell_id: rf_fdw_full_scan_wide_payload
+    regime_target: remote_fetch_heavy
+    logical_question_id: event_full_scan_summary
+    execution_strategies:
+      - fdw_raw
+    representative_templates:
+      - gac_fdw_event_full_scan_summary
+    required_dataset_capabilities:
+      - supports_wide_payload
+      - supports_large_scan
+    runtime_axes:
+      - fetch_size
+      - row_width
+      - wan_latency_later
+    expected_primary_evidence:
+      - estimated_remote_output_bytes
+      - estimated_fanin_bytes
+      - result_width_class
+    current_status: requires_dataset_change
+    reason: >
+      The template exists, but remote-row-flow by bytes is not trustworthy until
+      the dataset can vary row width/payload size.
+    next_action: >
+      Decide whether to add a wide payload field/profile to citus-datagen or keep
+      remote_fetch evidence row-count based only.
+
+  - coverage_cell_id: rf_fdw_raw_synthetic_wide_sample
+    regime_target: remote_fetch_heavy
+    logical_question_id: event_raw_wide_sample
+    execution_strategies:
+      - fdw_raw
+      - multiregion_union
+    representative_templates:
+      - gac_fdw_event_raw_wide_sample
+      - gac_fdw_multiregion_event_raw_wide_sample
+    required_dataset_capabilities:
+      - supports_large_scan
+      - supports_selective_filters
+      - supports_region_partitioning
+    runtime_axes:
+      - fetch_size
+      - row_width
+      - wan_latency_later
+    expected_primary_evidence:
+      - estimated_remote_output_bytes
+      - estimated_fanin_bytes
+      - result_width_class
+      - remote_region_tuple_bytes_sum
+      - remote_region_tuple_bytes_max_share
+    current_status: weak
+    reason: >
+      This adds a bounded row-width/fetch probe through a synthetic payload
+      expression, so it can test the FDW transfer path without changing schema.
+      It is not a replacement for native wide-payload dataset capability.
+    next_action: >
+      Include one EU-only default, one EU-only fetch_size intervention, and one
+      multiregion default instance in Plan C. If these still show low fan-in by
+      bytes, revisit the citus-datagen schema extension.
+
+  - coverage_cell_id: gf_fdw_daily_rollup
+    regime_target: gac_finalization_heavy
+    logical_question_id: daily_tenant_rollup
+    execution_strategies:
+      - fdw_raw
+    representative_templates:
+      - gac_fdw_daily_rollup
+    required_dataset_capabilities:
+      - supports_high_group_cardinality
+      - supports_hot_time_windows
+    runtime_axes:
+      - work_mem
+    expected_primary_evidence:
+      - aggregate_above_foreign_scan
+      - blocking_operator_above_remote_count
+      - finalize_share
+      - temp_blocks_sum
+    current_status: covered
+    reason: >
+      Current plan/parser output can distinguish remote boundary plus local
+      aggregate/sort placement. Work_mem intervention remains targeted, not
+      default for every query.
+    next_action: >
+      Add high-cardinality parameter instances and compare default vs work_mem
+      only for aggregate/sort-heavy cells.
+
+  - coverage_cell_id: gf_fdw_tenant_tier_join
+    regime_target: gac_finalization_heavy
+    logical_question_id: tenant_tier_daily_join
+    execution_strategies:
+      - fdw_raw
+      - etl_materialized
+      - multiregion_union
+    representative_templates:
+      - gac_fdw_tenant_tier_join
+      - gac_fdw_tenant_tier_left_join
+      - gac_etl_tenant_tier_daily_rollup
+      - gac_fdw_multiregion_tenant_tier_join
+      - gac_fdw_multiregion_tenant_tier_left_join
+    required_dataset_capabilities:
+      - supports_tenant_tiers
+      - supports_high_group_cardinality
+    runtime_axes:
+      - work_mem
+    expected_primary_evidence:
+      - join_above_foreign_scan
+      - blocking_operator_count
+      - remote_join_present
+      - memory_pressure_score_v1
+    current_status: covered
+    reason: >
+      This is a good paired FDW/ETL family for separating GAC finalization from
+      materialized local reads. INNER and LEFT JOIN variants add controlled
+      join-shape contrast without changing the logical question.
+    next_action: >
+      Keep as P1/P2 pilot family; use LEFT JOIN only as a baseline/default
+      shape contrast and do not multiply all runtime configs here.
+
+  - coverage_cell_id: skew_hot_tenants_topk
+    regime_target: skew_imbalance
+    logical_question_id: top_tenants
+    execution_strategies:
+      - single_region_citus
+      - fdw_raw
+    representative_templates:
+      - q10_top_tenants
+      - gac_fdw_top_tenants
+    required_dataset_capabilities:
+      - supports_hot_tenants
+      - supports_hot_tenant_skew
+    runtime_axes:
+      - dataset_skew
+    expected_primary_evidence:
+      - task_rows_cv
+      - worker_rows_cv
+      - tenant_row_cv
+      - shard_row_cv
+    current_status: weak
+    reason: >
+      Previous smoke/skew profiles did not move task row CV strongly enough.
+      The template path is valid, but dataset capability must be more visible.
+    next_action: >
+      Strengthen geo-skew-heavy or add a hot-tenant-v2 profile and require audit
+      evidence before using skew as a final regime.
+
+  - coverage_cell_id: skew_hot_window_rollup
+    regime_target: skew_imbalance
+    logical_question_id: daily_tenant_rollup
+    execution_strategies:
+      - single_region_citus
+      - fdw_raw
+    representative_templates:
+      - q01_tenant_rollup
+      - gac_fdw_daily_rollup
+    required_dataset_capabilities:
+      - supports_hot_time_windows
+      - supports_hot_tenant_skew
+    runtime_axes:
+      - dataset_skew
+    expected_primary_evidence:
+      - task_time_cv
+      - worker_time_cv
+      - shard_row_cv
+    current_status: requires_dataset_change
+    reason: >
+      Need a profile where a time window visibly concentrates data on a small
+      shard/tenant subset.
+    next_action: >
+      Add audit thresholds for hot windows and verify query parameters are drawn
+      from dataset_parameter_values.json.
+
+  - coverage_cell_id: regional_output_imbalance_companion
+    regime_target: skew_imbalance
+    logical_question_id: daily_tenant_rollup
+    execution_strategies:
+      - multiregion_union
+    representative_templates:
+      - gac_fdw_multiregion_daily_tenant_rollup
+      - gac_fdw_multiregion_multi_dimension_rollup
+      - gac_fdw_multiregion_top_tenants
+      - gac_fdw_multiregion_event_filter_summary
+      - gac_fdw_multiregion_event_full_scan_summary
+      - gac_fdw_multiregion_raw_region_rollup
+      - gac_fdw_multiregion_event_raw_wide_sample
+    required_dataset_capabilities:
+      - supports_region_partitioning
+      - supports_region_imbalance
+      - supports_high_group_cardinality
+    runtime_axes:
+      - dataset_skew
+    expected_primary_evidence:
+      - remote_region_actual_rows_max_share
+      - remote_region_actual_rows_imbalance_ratio
+      - worker_task_region_rows_max_share
+      - worker_task_region_rows_imbalance_ratio
+    current_status: covered
+    reason: >
+      Added `pilot-region-imbalanced-v1` and
+      `corpus_manifest.regional-imbalance-companion-v1.yml`. The companion now
+      exercises the same EU-heavy profile across multiple multiregion query
+      shapes, not only daily rollup. Smoke output for
+      `gac_fdw_multiregion_daily_tenant_rollup` previously produced
+      `remote_region_actual_rows_max_share=0.9`, matching the intended 90/10
+      regional volume split. The companion also includes
+      `gac_fdw_multiregion_raw_region_rollup` as an explicit raw fan-in/global
+      finalization shape for manual SQL cases where many remote rows are fetched
+      before a very small final grouped result is produced.
+    next_action: >
+      Use this as the targeted companion path for regional volume imbalance.
+      Keep true per-region hot-tenant/hot-window skew as a separate datagen
+      enhancement; do not claim it is covered by the 90/10 volume profile.
+
+  - coverage_cell_id: regional_local_skew_asymmetry_future
+    regime_target: skew_imbalance
+    logical_question_id: top_tenants
+    execution_strategies:
+      - multiregion_union
+    representative_templates:
+      - gac_fdw_multiregion_top_tenants
+      - gac_fdw_multiregion_daily_tenant_rollup
+      - gac_fdw_multiregion_raw_region_rollup
+    required_dataset_capabilities:
+      - supports_region_partitioning
+      - supports_region_local_skew_asymmetry
+      - supports_hot_tenant_skew
+    runtime_axes:
+      - dataset_skew
+    expected_primary_evidence:
+      - worker_task_within_region_scan_rows_cv_max
+      - worker_task_scan_actual_rows_max_share
+      - remote_region_actual_rows_max_share
+      - region_fragments.csv
+      - worker_task_fragments.csv
+    current_status: probe_ready
+    reason: >
+      `pilot-region-local-skew-asymmetric-v1` now declares EU
+      heavy/hot_tenants and US balanced/uniform through
+      `regions.<region>.distribution`. This is a targeted feature-excitation
+      probe, not a baseline replacement.
+    next_action: >
+      Run a bounded probe and verify that EU tenant-skew audit is high while US
+      tenant-skew audit remains low, then inspect worker_task/region fragments
+      for query-visible imbalance.
+
+  - coverage_cell_id: jm_single_region_repartition
+    regime_target: join_movement
+    logical_question_id: global_user_topk
+    execution_strategies:
+      - single_region_citus
+    representative_templates:
+      - q07_global_user_segment_join
+    required_dataset_capabilities:
+      - supports_non_colocated_join
+      - supports_global_user_dimension
+    runtime_axes:
+      - join_locality
+    expected_primary_evidence:
+      - citus_repartition_query
+      - citus_map_merge_job_count
+      - citus_tasks_shown_none
+    current_status: covered
+    reason: >
+      P0 mini-test already showed MapMergeJob/repartition evidence in textual
+      EXPLAIN. This is the strongest current join_movement signal.
+    next_action: >
+      Keep as canonical pre-US join movement positive case.
+
+  - coverage_cell_id: jm_fdw_global_user_join
+    regime_target: join_movement
+    logical_question_id: global_user_topk
+    execution_strategies:
+      - fdw_raw
+      - etl_materialized
+    representative_templates:
+      - gac_fdw_global_user_join
+      - gac_etl_global_user_topk
+    required_dataset_capabilities:
+      - supports_non_colocated_join
+      - supports_global_user_dimension
+    runtime_axes:
+      - join_locality
+      - work_mem
+    expected_primary_evidence:
+      - join_above_foreign_scan
+      - remote_join_present
+      - estimated_fanin_bytes
+    current_status: covered
+    reason: >
+      FDW/ETL pair exists and can separate raw join path from materialized
+      reduced output.
+    next_action: >
+      Use in the next pre-US pilot with default runtime first.
+
+  - coverage_cell_id: wl_tenant_point_rollup
+    regime_target: well_reduced_localized
+    logical_question_id: tenant_point_rollup
+    execution_strategies:
+      - single_region_citus
+      - fdw_raw
+      - etl_materialized
+    representative_templates:
+      - q04_tenant_point_rollup
+      - gac_fdw_tenant_point_rollup
+      - gac_etl_tenant_point_rollup
+    required_dataset_capabilities:
+      - supports_hot_tenants
+      - supports_distribution_key_filter
+    runtime_axes:
+      - fetch_size_negative_control
+      - wan_latency_negative_control
+    expected_primary_evidence:
+      - single_tenant_scope
+      - filter_uses_distribution_key
+      - global_fanin_rows
+      - estimated_fanin_bytes
+    current_status: covered
+    reason: >
+      This is the main negative-control/localized family. Fetch_size and WAN
+      changes should not dominate it if reduction/locality works.
+    next_action: >
+      Keep in every pilot as a control, but do not oversample it.
+
+  - coverage_cell_id: wl_etl_materialized_rollups
+    regime_target: well_reduced_localized
+    logical_question_id: top_tenants
+    execution_strategies:
+      - etl_materialized
+    representative_templates:
+      - gac_etl_top_tenants
+    required_dataset_capabilities:
+      - supports_etl_rollups
+    runtime_axes:
+      - fetch_size_negative_control
+    expected_primary_evidence:
+      - main_plan_node_count
+      - remote_path_share
+      - fdw_remote_plan_count
+    current_status: covered
+    reason: >
+      ETL/materialized read is a useful local/reduced contrast for raw FDW top-k.
+    next_action: >
+      Keep as negative control for fetch_size and remote-row-flow.
+
+  - coverage_cell_id: mu_eu_us_top_tenants
+    regime_target: remote_fetch_heavy
+    logical_question_id: top_tenants
+    execution_strategies:
+      - multiregion_union
+    representative_templates:
+      - gac_fdw_multiregion_top_tenants
+    required_dataset_capabilities:
+      - supports_region_partitioning
+      - supports_hot_tenants
+    runtime_axes:
+      - wan_latency
+      - fetch_size
+    expected_primary_evidence:
+      - estimated_fanin_bytes
+      - regions_touched
+      - remote_plan_fingerprint
+    current_status: weak
+    reason: >
+      US/fdw_us is now available and the multiregion template is runnable. This
+      is still weak until a larger paired corpus verifies WAN/fetch contrast
+      against EU-only FDW and ETL controls.
+    next_action: >
+      Include in the first Plan C multiregion smoke and inspect remote plan
+      probes, regions_touched, fan-in bytes and timeout status.
+
+  - coverage_cell_id: mu_eu_us_daily_tenant_rollup
+    regime_target: gac_finalization_heavy
+    logical_question_id: daily_tenant_rollup
+    execution_strategies:
+      - multiregion_union
+    representative_templates:
+      - gac_fdw_multiregion_daily_tenant_rollup
+    required_dataset_capabilities:
+      - supports_region_partitioning
+      - supports_high_group_cardinality
+    runtime_axes:
+      - wan_latency
+      - work_mem
+    expected_primary_evidence:
+      - regions_touched
+      - aggregate_above_foreign_scan
+      - blocking_operator_above_remote_count
+      - estimated_fanin_bytes
+    current_status: weak
+    reason: >
+      Template and topology now exist, but it still needs smoke validation over
+      both FDW branches and comparison with single-region/ETL rollup variants.
+    next_action: >
+      Run as part of Plan C smoke before multiplying instance counts.
+
+  - coverage_cell_id: mu_eu_us_daily_kpi_legacy
+    regime_target: gac_finalization_heavy
+    logical_question_id: daily_kpi
+    execution_strategies:
+      - multiregion_union
+    representative_templates:
+      - gac_fdw_multiregion_daily_kpi
+    required_dataset_capabilities:
+      - supports_region_partitioning
+      - supports_high_group_cardinality
+    runtime_axes:
+      - wan_latency
+      - work_mem
+    expected_primary_evidence:
+      - regions_touched
+      - aggregate_above_foreign_scan
+      - blocking_operator_above_remote_count
+      - estimated_fanin_bytes
+    current_status: weak
+    reason: >
+      This legacy analytics-client shape is runnable, but it has no paired
+      single-region FDW or ETL variant yet. It is useful as an exploratory
+      multiregion aggregate/finalization probe, not as a primary paired
+      evidence family.
+    next_action: >
+      Keep in Plan C as long-budget exploratory coverage. Do not multiply it
+      across runtime configs until the paired daily_tenant_rollup family is
+      stable.
+
+  - coverage_cell_id: mu_eu_us_region_daily_join
+    regime_target: gac_finalization_heavy
+    logical_question_id: region_daily_join
+    execution_strategies:
+      - multiregion_union
+    representative_templates:
+      - gac_fdw_multiregion_region_daily_join
+    required_dataset_capabilities:
+      - supports_region_partitioning
+      - supports_tenant_tiers
+    runtime_axes:
+      - wan_latency
+      - work_mem
+    expected_primary_evidence:
+      - regions_touched
+      - aggregate_above_foreign_scan
+      - join_above_foreign_scan
+      - blocking_operator_above_remote_count
+    current_status: weak
+    reason: >
+      US/fdw_us is now available and the template is runnable. It remains weak
+      until a Plan C run verifies both remote branches, join placement and GAC
+      finalization evidence.
+    next_action: >
+      Use as a small multi-region join/finalization smoke before larger corpus
+      expansion.
+
+  - coverage_cell_id: unknown_low_confidence_bucket
+    regime_target: mixed_or_unknown
+    logical_question_id: event_filter_summary
+    execution_strategies:
+      - single_region_citus
+      - fdw_raw
+      - multiregion_union
+    representative_templates:
+      - q03_event_filter_summary
+      - gac_fdw_event_filter_summary
+      - gac_fdw_multiregion_event_filter_summary
+    required_dataset_capabilities:
+      - supports_selective_filters
+    runtime_axes:
+      - posthoc_annotation
+    expected_primary_evidence:
+      - low_confidence_membership
+      - conflicting_feature_profile
+      - out_of_distribution_flag
+    current_status: covered
+    reason: >
+      mixed_or_unknown is not a target to force through one query. It is a
+      post-hoc fallback when a run does not match known regimes confidently.
+      Selective filters provide a reasonable low-pressure sanity case. The
+      multiregion variant is a negative/control case for GAC fan-in: both
+      regions may be touched, but each branch should remain well reduced.
+    next_action: >
+      Implement only at clustering/annotation time; do not use it as a model
+      input label.
+
+pre_us_gate_summary:
+  can_run_next_pilot: true
+  caveats:
+    - remote_fetch_heavy is only weak until fan-in/width evidence becomes stronger.
+    - skew_imbalance requires stronger dataset capability audit before final claims.
+    - true WAN/multi-region evidence now has runnable templates, but still needs
+      Plan C smoke validation and larger paired corpus evidence.
+  must_not_do_next:
+    - Do not run all templates through all runtime configs.
+    - Do not treat weak multiregion smoke as final WAN evidence.
+    - Do not use expected_regime_targets as model input.

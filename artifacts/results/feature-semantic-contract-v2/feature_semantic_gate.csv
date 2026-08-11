@@ -1,0 +1,9 @@
+gate,status,evidence
+legacy_21_classified,PASS,21/21
+semantic_output_finite_and_bounded,PASS,19 v2 model features
+algebraic_redundancy_confirmed,PASS,3 deterministic checks
+raw_artifact_recomputation,PASS,23756/23756
+boundary_and_invariance,PASS,15 tests
+controlled_intervention_response,PASS,2 positive/negative controls
+regional_repartition_reaches_v2,PASS,3/3 regional MapMerge rows
+holdout_not_observed,PASS,stats-ceb-semantic-v2b-holdout

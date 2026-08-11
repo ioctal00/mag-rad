@@ -1,0 +1,168 @@
+corpus_id: clean-run-eu-us-gac-v1
+source_manifest: master-regimes/workloads/corpus/corpus_manifest.clean-run-v1.yml
+rendered_corpus_manifest: master-regimes/generated/corpus/clean-run-v1/corpus_manifest.yml
+corpus_cells: master-regimes/generated/corpus/clean-run-v1/corpus_cells.csv
+region: eu
+max_instances_per_cell: null
+execution_budget:
+  hard_timeout_seconds: 900
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  repetitions_default: 1
+  cache_features_in_default_model: false
+  order_policy: deterministic_shuffle
+  shuffle_seed: 20260626
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  gac_etl_bootstrap_lookback_days: 1
+  gac_etl_bootstrap_timeout_seconds: 600
+execution_backend: master-regimes-infra.database_sweep
+included_execution_classes:
+- pilot
+source_cell_count: 50
+manifest_cell_count: 98
+excluded_cell_count: 2
+group_count: 8
+groups:
+- group_id: clean-run-eu-us-gac-v1__pilot-balanced-v1__default__analytics_clients
+  sweep_id: clean-run-eu-us-gac-v1__pilot-balanced-v1__default__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: default
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - fdw_raw
+  - multiregion_union
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  cell_count: 31
+  instance_count: 689
+  instance_manifest: master-regimes/generated/corpus/clean-run-v1/groups/clean-run-eu-us-gac-v1__pilot-balanced-v1__default__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/clean-run-v1/sweeps/clean-run-eu-us-gac-v1__pilot-balanced-v1__default__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+- group_id: clean-run-eu-us-gac-v1__pilot-balanced-v1__default__coordinators
+  sweep_id: clean-run-eu-us-gac-v1__pilot-balanced-v1__default__coordinators
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: default
+  target_group: coordinators
+  strategies:
+  - single_region_citus
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  cell_count: 10
+  instance_count: 176
+  instance_manifest: master-regimes/generated/corpus/clean-run-v1/groups/clean-run-eu-us-gac-v1__pilot-balanced-v1__default__coordinators/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/clean-run-v1/sweeps/clean-run-eu-us-gac-v1__pilot-balanced-v1__default__coordinators.yml
+  fdw_bootstrap_required: false
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-v1__pilot-balanced-v1__work_mem_high__analytics_clients
+  sweep_id: clean-run-eu-us-gac-v1__pilot-balanced-v1__work_mem_high__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: work_mem_high
+  target_group: analytics_clients
+  strategies:
+  - fdw_raw
+  runtime_intervention_axis: work_mem
+  runtime_expected_effect: 'Should reduce spill/blocking pressure relative to work_mem_low
+    when the query is memory-sensitive.
+
+    '
+  cell_count: 3
+  instance_count: 45
+  instance_manifest: master-regimes/generated/corpus/clean-run-v1/groups/clean-run-eu-us-gac-v1__pilot-balanced-v1__work_mem_high__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/clean-run-v1/sweeps/clean-run-eu-us-gac-v1__pilot-balanced-v1__work_mem_high__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-v1__pilot-balanced-v1__work_mem_low__analytics_clients
+  sweep_id: clean-run-eu-us-gac-v1__pilot-balanced-v1__work_mem_low__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  runtime_config_id: work_mem_low
+  target_group: analytics_clients
+  strategies:
+  - fdw_raw
+  runtime_intervention_axis: work_mem
+  runtime_expected_effect: 'Should increase spill/blocking pressure for sort/hash/aggregate-heavy
+    plans more than simple localized controls.
+
+    '
+  cell_count: 3
+  instance_count: 45
+  instance_manifest: master-regimes/generated/corpus/clean-run-v1/groups/clean-run-eu-us-gac-v1__pilot-balanced-v1__work_mem_low__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/clean-run-v1/sweeps/clean-run-eu-us-gac-v1__pilot-balanced-v1__work_mem_low__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__default__analytics_clients
+  sweep_id: clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__default__analytics_clients
+  dataset_profile_id: pilot-skew-heavy-v1
+  runtime_config_id: default
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - fdw_raw
+  - multiregion_union
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  cell_count: 31
+  instance_count: 689
+  instance_manifest: master-regimes/generated/corpus/clean-run-v1/groups/clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__default__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/clean-run-v1/sweeps/clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__default__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+- group_id: clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__default__coordinators
+  sweep_id: clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__default__coordinators
+  dataset_profile_id: pilot-skew-heavy-v1
+  runtime_config_id: default
+  target_group: coordinators
+  strategies:
+  - single_region_citus
+  runtime_intervention_axis: none
+  runtime_expected_effect: baseline
+  cell_count: 10
+  instance_count: 176
+  instance_manifest: master-regimes/generated/corpus/clean-run-v1/groups/clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__default__coordinators/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/clean-run-v1/sweeps/clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__default__coordinators.yml
+  fdw_bootstrap_required: false
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__fetch_large__analytics_clients
+  sweep_id: clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__fetch_large__analytics_clients
+  dataset_profile_id: pilot-skew-heavy-v1
+  runtime_config_id: fetch_large
+  target_group: analytics_clients
+  strategies:
+  - fdw_raw
+  - multiregion_union
+  runtime_intervention_axis: fetch_size
+  runtime_expected_effect: 'Should reduce fetch batching overhead for high remote-row-flow
+    queries compared with fetch_small.
+
+    '
+  cell_count: 4
+  instance_count: 72
+  instance_manifest: master-regimes/generated/corpus/clean-run-v1/groups/clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__fetch_large__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/clean-run-v1/sweeps/clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__fetch_large__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__fetch_small__analytics_clients
+  sweep_id: clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__fetch_small__analytics_clients
+  dataset_profile_id: pilot-skew-heavy-v1
+  runtime_config_id: fetch_small
+  target_group: analytics_clients
+  strategies:
+  - fdw_raw
+  - multiregion_union
+  runtime_intervention_axis: fetch_size
+  runtime_expected_effect: 'Should affect FDW remote-row-flow or WAN-sensitive queries
+    more than reduced/localized negative controls.
+
+    '
+  cell_count: 4
+  instance_count: 72
+  instance_manifest: master-regimes/generated/corpus/clean-run-v1/groups/clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__fetch_small__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/clean-run-v1/sweeps/clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__fetch_small__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false

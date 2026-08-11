@@ -1,0 +1,55 @@
+experiment_environment_id: clean-run-v1-environment
+logical_run_id: clean-run-v1
+description: >
+  Frozen environment descriptor for the June 2026 clean-run-v1 corpus. Runtime
+  hardware snapshots remain authoritative for observed resources.
+
+software:
+  postgresql_version: "18"
+  citus_version: "14.0"
+  source: master-regimes-infra configuration
+
+topology:
+  logical_topology_id: eu_us_gac
+  node_count: 7
+  nodes:
+    - role: global_analytics
+      logical_region: gac
+      expected_node_names: [eu-analytics-1]
+      physical_provider_region: cdg
+    - role: regional_coordinator
+      logical_region: eu
+      expected_node_names: [eu-coord-1]
+      physical_provider_region: ams
+    - role: regional_worker
+      logical_region: eu
+      expected_node_names: [eu-worker-1, eu-worker-2]
+      physical_provider_region: ams
+    - role: regional_coordinator
+      logical_region: us
+      expected_node_names: [us-coord-1]
+      physical_provider_region: ewr
+    - role: regional_worker
+      logical_region: us
+      expected_node_names: [us-worker-1, us-worker-2]
+      physical_provider_region: ewr
+  physical_location_source:
+    repository: master-regimes-infra
+    commit: eb15b8e97112c0eadc31b80005e96c784f914d66
+    path: configs/systems/eu-us-gac.example.yml
+  caveat: >
+    Provider region is configuration provenance. CPU, RAM and storage values
+    are taken from run-time hardware snapshots rather than provider plan names.
+
+distribution:
+  distribution_key: tenant_id
+  shard_count: 32
+  shard_replication_factor: null
+  shard_replication_note: not explicitly recorded in the run index
+
+network:
+  baseline_mode: provider_network
+  controlled_interventions: tc_netem
+  logical_region_note: >
+    EU and US are logical database regions. Physical provider location and
+    configured tc/netem delay are reported separately.

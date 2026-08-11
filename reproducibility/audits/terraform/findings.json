@@ -1,0 +1,313 @@
+{
+  "audit": "terraform_reproducibility",
+  "findings": [
+    {
+      "evidence": [
+        "sources/master-regimes-infra/configs/systems/eu-us-gac-vps.yml:56",
+        "sources/master-regimes-infra/configs/systems/eu-us-gac-vps.yml:60",
+        "sources/master-regimes-infra/configs/systems/eu-us-apac-gac-vps.yml:67",
+        "sources/master-regimes-infra/configs/systems/eu-us-apac-gac-vps.yml:61"
+      ],
+      "finding_id": "TF-001",
+      "remediation": "No action required for the declarative topology description.",
+      "severity": "info",
+      "status": "pass",
+      "summary": "N2 declares EU and US Citus clusters plus one GAC (7 VPS nodes). N3 adds APAC coordinator plus two workers (10 VPS nodes). All logical regions and the GAC use Vultr ams and the active plan is vhf-1c-2gb.",
+      "title": "Current N2/N3 topology is statically reconstructable"
+    },
+    {
+      "evidence": [
+        "sources/master-regimes-infra/terraform/modules/region/main.tf:14",
+        "sources/master-regimes-infra/common-scripts/up_eu_us_gac_vhp_shared_vpc.sh:208",
+        "sources/master-regimes-infra/common-scripts/up_eu_us_gac_vhp_shared_vpc.sh:216",
+        "sources/master-regimes-infra/common-scripts/extend_eu_us_gac_with_apac.sh:132"
+      ],
+      "finding_id": "TF-002",
+      "remediation": "Keep physical location and emulated WAN terminology separate in documentation.",
+      "severity": "info",
+      "status": "pass",
+      "summary": "The EU anchor creates the VPC. The lifecycle script reads its ID/CIDR from Terraform outputs and injects them into US; the N3 extension does the same for APAC. The logical region labels therefore do not imply real WAN geography.",
+      "title": "Shared-VPC relationship is explicit"
+    },
+    {
+      "evidence": [
+        "sources/master-regimes-infra/.gitignore:14",
+        "sources/master-regimes-infra/terraform/envs/eu/.terraform.lock.hcl:5",
+        "sources/master-regimes-infra/terraform/envs/apac/.terraform.lock.hcl:5",
+        "sources/master-regimes-infra/terraform/envs/eu/versions.tf:7"
+      ],
+      "finding_id": "TF-003",
+      "remediation": "Keep the lock files in every tagged release and update them only through an explicit provider upgrade.",
+      "severity": "info",
+      "status": "pass",
+      "summary": "The package contains all three provider lock files. EU/US resolve Vultr 2.31.2, while APAC resolves 2.32.0; this difference is now explicit rather than delegated to a future provider resolution.",
+      "title": "Provider lock files are included in the release candidate"
+    },
+    {
+      "evidence": [
+        "artifacts/results/experimental-reproducibility-v2/source_manifest.json:73",
+        "config/release-spec.json:5",
+        "docs/05-provenance-and-limits.md:11"
+      ],
+      "finding_id": "TF-004",
+      "remediation": "Archive sanitized plan JSON/text and the exact non-secret rendered variables for each experimental topology, or vendor the historical source commits as immutable snapshots.",
+      "severity": "high",
+      "status": "fail",
+      "summary": "The package pins the curated infrastructure source at the current release commit, while the reproducibility audit explicitly says run-time commits were not recorded unless a run manifest persisted them. Recorded tables reference older infrastructure commits, but their full source trees and applied plan/state are not included. The package can reproduce a current recipe, not prove the exact historical Terraform plan.",
+      "title": "Current source snapshot is not an exact historical infrastructure snapshot"
+    },
+    {
+      "evidence": [
+        "Makefile:151",
+        "sources/master-regimes-infra/Makefile:231",
+        "sources/master-regimes-infra/common-scripts/up_eu_us_gac_vhp_shared_vpc.sh:219"
+      ],
+      "finding_id": "TF-005",
+      "remediation": "Add read-only complete N2 and N3 plan targets that stop before apply.",
+      "severity": "medium",
+      "status": "fail",
+      "summary": "The package delegates infra-plan to eu-us-gac-vps-plan, but that target invokes the generic single-EU plan path. The complete EU+US shared-VPC workflow plans both stacks only inside the destructive/apply-oriented infra-up lifecycle.",
+      "title": "Public infra-plan target does not plan the complete N2 topology"
+    },
+    {
+      "evidence": [
+        "sources/master-regimes-infra/common-scripts/extend_eu_us_gac_with_apac.sh:119",
+        "sources/master-regimes-infra/common-scripts/extend_eu_us_gac_with_apac.sh:132",
+        "sources/master-regimes-infra/common-scripts/extend_eu_us_gac_with_apac.sh:145"
+      ],
+      "finding_id": "TF-006",
+      "remediation": "Provide a non-applying N3 plan command and a documented placeholder contract for VPC ID/CIDR.",
+      "severity": "medium",
+      "status": "fail",
+      "summary": "The APAC extension requires existing EU state, reads the live shared VPC outputs, then plans and applies APAC in one script. This is operationally valid but prevents a clean offline all-stack N3 plan and makes the exact N3 graph dependent on provider outputs.",
+      "title": "N3 topology planning is coupled to live N2 state and immediate apply"
+    },
+    {
+      "evidence": [
+        "sources/master-regimes-infra/terraform/envs/us/terraform.tfvars.example:10",
+        "sources/master-regimes-infra/terraform/envs/eu/terraform.tfvars.example:36",
+        "sources/master-regimes-infra/configs/systems/eu-us-gac-vps.yml:60"
+      ],
+      "finding_id": "TF-007",
+      "remediation": "Generate examples from the authoritative YAML or label/remove legacy examples.",
+      "severity": "medium",
+      "status": "fail",
+      "summary": "The YAML renderer declares the current colocated ams/vhf topology, but the checked-in US example still says ewr and the EU example names cdg plus older vc2 plans. A reader who bypasses the renderer will provision a materially different physical experiment.",
+      "title": "Direct tfvars examples conflict with the authoritative topology"
+    },
+    {
+      "evidence": [
+        "sources/master-regimes-infra/terraform/envs/eu/versions.tf:2",
+        "sources/master-regimes-infra/terraform/envs/eu/versions.tf:7",
+        "sources/master-regimes-infra/configs/systems/eu-us-gac-vps.yml:23",
+        "sources/master-regimes-infra/ansible/requirements.yml:2"
+      ],
+      "finding_id": "TF-008",
+      "remediation": "Record the tested Terraform/Ansible versions, commit locks, pin the Ansible collection, and archive installed package versions from accepted runs.",
+      "severity": "medium",
+      "status": "fail",
+      "summary": "PostgreSQL 18, the Citus 14.0 package name, os_id 1743 and VPS plan IDs are explicit. Terraform itself has only a lower bound, provider constraints are ranges, and the Ansible collection has no version. Repository-backed apt installation also does not archive exact Debian package builds.",
+      "title": "Toolchain and package resolution are only partially pinned"
+    },
+    {
+      "evidence": [
+        "sources/master-regimes-infra/ansible/inventory/terraform_inventory.py:29",
+        "sources/master-regimes-infra/ansible/inventory/terraform_inventory.py:94",
+        "sources/master-regimes-infra/ansible/inventory/terraform_inventory.py:111"
+      ],
+      "finding_id": "TF-009",
+      "remediation": "Archive a sanitized inventory topology (without routable addresses) for each accepted run.",
+      "severity": "info",
+      "status": "pass",
+      "summary": "Ansible inventory is not a static hidden input: it is rebuilt from terraform output -json for every available environment stack. Exact host addresses therefore require live/local Terraform state, while role/group construction remains reproducible from source.",
+      "title": "Generated inventory dependency is explicit"
+    },
+    {
+      "evidence": [
+        "reproducibility/source-provenance.csv:3"
+      ],
+      "finding_id": "TF-010",
+      "remediation": "Regenerate the source snapshot whenever the pinned upstream commit changes.",
+      "severity": "info",
+      "status": "pass",
+      "summary": "When the sibling upstream repository is available, critical topology, module, renderer, and inventory files are byte-identical. This check is optional and does not replace the release commit provenance.",
+      "title": "Curated critical source files match the local upstream checkout"
+    }
+  ],
+  "schema_version": 1,
+  "scope": {
+    "infra_snapshot": "sources/master-regimes-infra",
+    "network_access": false,
+    "package_root": ".",
+    "private_tfvars_or_state_read": false,
+    "terraform_invoked": false
+  },
+  "source_snapshot_parity": {
+    "checked": false,
+    "files": []
+  },
+  "status": "gaps_found",
+  "summary": {
+    "all": {
+      "high": 1,
+      "info": 5,
+      "medium": 4
+    },
+    "failed": {
+      "high": 1,
+      "medium": 4
+    }
+  },
+  "topology": {
+    "historical_record": {
+      "available": true,
+      "runs": {
+        "clean-run-v1": {
+          "logical_regions": [
+            "eu",
+            "gac",
+            "us"
+          ],
+          "nodes": 7,
+          "physical_regions": [
+            "ams",
+            "cdg",
+            "ewr"
+          ],
+          "source_commits": [
+            "eb15b8e97112c0eadc31b80005e96c784f914d66"
+          ]
+        },
+        "clean-run-v1-region-asymmetry": {
+          "logical_regions": [
+            "eu",
+            "gac",
+            "us"
+          ],
+          "nodes": 7,
+          "physical_regions": [
+            "ams"
+          ],
+          "source_commits": [
+            "36276016a062e98c70750072942074592242d1a3"
+          ]
+        },
+        "clean-run-v1-region-asymmetry-skew-rerun": {
+          "logical_regions": [
+            "eu",
+            "gac",
+            "us"
+          ],
+          "nodes": 7,
+          "physical_regions": [
+            "ams"
+          ],
+          "source_commits": [
+            "36276016a062e98c70750072942074592242d1a3"
+          ]
+        },
+        "clean-run-v1-validation-holdout": {
+          "logical_regions": [
+            "eu",
+            "gac",
+            "us"
+          ],
+          "nodes": 7,
+          "physical_regions": [
+            "ams"
+          ],
+          "source_commits": [
+            "36276016a062e98c70750072942074592242d1a3"
+          ]
+        },
+        "clean-run-v1-wan-latency": {
+          "logical_regions": [
+            "eu",
+            "gac",
+            "us"
+          ],
+          "nodes": 7,
+          "physical_regions": [
+            "ams",
+            "cdg",
+            "ewr"
+          ],
+          "source_commits": [
+            "eb15b8e97112c0eadc31b80005e96c784f914d66"
+          ]
+        },
+        "repeatability-v1": {
+          "logical_regions": [
+            "eu",
+            "gac",
+            "us"
+          ],
+          "nodes": 7,
+          "physical_regions": [
+            "ams"
+          ],
+          "source_commits": [
+            "8794985db540aac4e80f2bc91b99ed49e37ff340"
+          ]
+        }
+      }
+    },
+    "n2": {
+      "active_profile": "vps",
+      "gac_nodes": 1,
+      "logical_regions": [
+        "eu",
+        "us"
+      ],
+      "physical_provider_regions": [
+        "ams"
+      ],
+      "plan": "vhf-1c-2gb",
+      "regional_nodes": 6,
+      "system_id": "eu-us-gac-vps",
+      "total_nodes": 7
+    },
+    "n3": {
+      "active_profile": "vps",
+      "gac_nodes": 1,
+      "logical_regions": [
+        "apac",
+        "eu",
+        "us"
+      ],
+      "physical_provider_regions": [
+        "ams"
+      ],
+      "plan": "vhf-1c-2gb",
+      "regional_nodes": 9,
+      "system_id": "eu-us-apac-gac-vps",
+      "total_nodes": 10
+    }
+  },
+  "version_resolution": {
+    "citus_package": "postgresql-18-citus-14.0",
+    "local_lock_files": [
+      {
+        "exists_locally": true,
+        "path": "sources/master-regimes-infra/terraform/envs/eu/.terraform.lock.hcl",
+        "provider_version": "2.31.2",
+        "release_candidate_present": true
+      },
+      {
+        "exists_locally": true,
+        "path": "sources/master-regimes-infra/terraform/envs/us/.terraform.lock.hcl",
+        "provider_version": "2.31.2",
+        "release_candidate_present": true
+      },
+      {
+        "exists_locally": true,
+        "path": "sources/master-regimes-infra/terraform/envs/apac/.terraform.lock.hcl",
+        "provider_version": "2.32.0",
+        "release_candidate_present": true
+      }
+    ],
+    "postgresql_major": "18",
+    "provider_constraint": "~> 2.30",
+    "terraform_constraint": ">= 1.5.0"
+  }
+}

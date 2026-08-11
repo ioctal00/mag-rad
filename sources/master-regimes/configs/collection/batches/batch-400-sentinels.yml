@@ -1,0 +1,32 @@
+batch_id: batch-400-sentinels
+corpus_version: pressure-raw-corpus-v1
+collection_contract_version: pressure-raw-v1
+status: prepared_not_executed
+description: >
+  Small repeated sentinel set used to detect collector or infrastructure
+  drift across manually executed batches. It does not enlarge condition
+  diversity.
+repetitions: 3
+planned_conditions: 10
+planned_execution_count: 30
+sentinels:
+  - pressure_axis: gac_finalization
+    source_batch: batch-100-gac
+    pressure_pair_key: gac__memory_response
+  - pressure_axis: remote_path
+    source_batch: batch-110-remote
+    pressure_pair_key: remote_main__raw_region_rollup
+  - pressure_axis: worker_data_skew
+    source_batch: batch-120-skew
+    query_condition_id: hot_worker_probe_low_cpu
+  - pressure_axis: repartition_join
+    source_batch: batch-130-repartition
+    pressure_pair_key: repartition__segment_aggregate__sparse
+  - pressure_axis: regional_finalization
+    source_batch: batch-140-regional
+    pressure_pair_key: regional__single_edge_user_topk
+policy:
+  same_condition_ids_across_batches: true
+  compare_raw_contract_completeness: true
+  compare_plan_fingerprint_and_result_hash: true
+  do_not_refit_or_select_features: true

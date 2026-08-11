@@ -1,0 +1,22 @@
+feature,minimum_evidence_layer,available_in_gac_only,additional_value
+remote_path_share,gac_top_level_explain,True,top-level FDW/finalization signal
+remote_to_final_rows_ratio,gac_top_level_explain,True,top-level FDW/finalization signal
+wan_output_to_final_rows_ratio,gac_top_level_explain,True,top-level FDW/finalization signal
+global_group_merge_ratio,gac_top_level_explain,True,top-level FDW/finalization signal
+temp_bytes_to_wan_bytes_ratio,gac_top_level_explain,True,top-level FDW/finalization signal
+temp_blocks_per_wan_row,gac_top_level_explain,True,top-level FDW/finalization signal
+temp_blocks_per_final_row,gac_top_level_explain,True,top-level FDW/finalization signal
+spill_per_wan_mb,gac_top_level_explain,True,top-level FDW/finalization signal
+hash_batches_max,gac_top_level_explain,True,top-level FDW/finalization signal
+root_rows_estimate_error_log,gac_top_level_explain,True,top-level FDW/finalization signal
+foreign_scan_rows_estimate_error_log,gac_top_level_explain,True,top-level FDW/finalization signal
+aggregate_rows_estimate_error_log,gac_top_level_explain,True,top-level FDW/finalization signal
+drf_bytes_proxy,regional_or_worker_child_evidence,False,"regional reduction, imbalance or Citus task evidence"
+remote_region_rows_isf,regional_or_worker_child_evidence,False,"regional reduction, imbalance or Citus task evidence"
+worker_task_scan_rows_isf,regional_or_worker_child_evidence,False,"regional reduction, imbalance or Citus task evidence"
+worker_task_scan_actual_rows_max_share,regional_or_worker_child_evidence,False,"regional reduction, imbalance or Citus task evidence"
+task_count_to_shard_count_ratio,regional_or_worker_child_evidence,False,"regional reduction, imbalance or Citus task evidence"
+active_task_share,regional_or_worker_child_evidence,False,"regional reduction, imbalance or Citus task evidence"
+citus_repartition_query,regional_or_worker_child_evidence,False,"regional reduction, imbalance or Citus task evidence"
+worker_task_seq_scan_share,regional_or_worker_child_evidence,False,"regional reduction, imbalance or Citus task evidence"
+remote_root_rows_estimate_error_log,regional_or_worker_child_evidence,False,"regional reduction, imbalance or Citus task evidence"

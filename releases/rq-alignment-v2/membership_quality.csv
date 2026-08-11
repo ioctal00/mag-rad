@@ -1,0 +1,4 @@
+category,count,share,rule
+clear,1847,0.9404276985743381,max>=0.50 and margin>=0.15 and entropy<1.05
+mixed,69,0.03513238289205703,all remaining combinations
+weak,48,0.024439918533604887,max<0.50 and margin<0.15 and entropy>=1.05

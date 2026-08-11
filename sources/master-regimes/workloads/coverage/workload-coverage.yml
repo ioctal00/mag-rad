@@ -1,0 +1,235 @@
+coverage_id: workload-coverage-v1
+purpose: Map SQL templates to execution regimes before expanding instance counts.
+vocabulary: ../../docs/corpus-vocabulary.md
+
+current_topology:
+  available:
+    - single_region_citus_eu
+    - gac_analytics_node
+    - fdw_eu
+    - fdw_us
+    - true_multi_region_union
+    - etl_daily_tenant_rollup
+  todo:
+    - cross_region_wan_pressure
+
+dimensions:
+  execution_strategy:
+    - single_region_citus
+    - fdw_raw
+    - etl_materialized
+    - regional_partial
+    - multiregion_union
+  execution_surface:
+    - regional_direct
+    - gac_fdw
+    - gac_etl
+    - gac_multiregion
+  data_access:
+    - local_table
+    - foreign_table
+    - materialized_etl
+  query_family:
+    - full_scan_summary
+    - selective_filter
+    - tenant_local_pushdown
+    - aggregation
+    - topk
+    - reference_join
+    - colocated_join
+    - non_colocated_join
+    - multi_join
+  join_shape:
+    - none
+    - reference
+    - colocated
+    - non_colocated
+    - multi_join
+  expected_pressure:
+    - scan_pressure
+    - shard_pruning_candidate
+    - distributed_aggregate
+    - fdw_remote_scan
+    - fdw_remote_join
+    - remote_pushdown_candidate
+    - remote_aggregate_candidate
+    - repartition_candidate
+    - coordinator_fanin
+    - local_etl_read
+    - topk
+    - final_ordering
+  expected_regime_targets:
+    - remote_fetch_heavy
+    - gac_finalization_heavy
+    - skew_imbalance
+    - join_movement
+    - well_reduced_localized
+    - mixed_or_unknown
+
+runnable_suites:
+  single_region:
+    suite: workloads/suites/single-region-core.yml
+    target_group: db_nodes
+    purpose: Regional direct Citus plan/parser coverage.
+  gac_current:
+    suite: workloads/suites/gac-current-runnable.yml
+    target_group: analytics_clients
+    purpose: Current GAC FDW and local ETL coverage with fdw_eu only.
+  gac_multiregion:
+    suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+    target_group: analytics_clients
+    purpose: EU+US FDW union/finalization coverage with fdw_eu and fdw_us.
+
+coverage:
+  - regime_id: regional_filter_scan
+    status: runnable
+    execution_surface: regional_direct
+    data_access: local_table
+    query_family: selective_filter
+    join_shape: none
+    templates:
+      - q03_event_filter_summary
+    suite: workloads/suites/single-region-core.yml
+
+  - regime_id: regional_tenant_local
+    status: runnable
+    execution_surface: regional_direct
+    data_access: local_table
+    query_family: tenant_local_pushdown
+    join_shape: none
+    templates:
+      - q04_tenant_point_rollup
+    suite: workloads/suites/single-region-core.yml
+
+  - regime_id: regional_reference_join
+    status: runnable
+    execution_surface: regional_direct
+    data_access: local_table
+    query_family: reference_join
+    join_shape: reference
+    templates:
+      - q05_tenant_tier_daily_join
+    suite: workloads/suites/single-region-core.yml
+
+  - regime_id: regional_colocated_join
+    status: runnable
+    execution_surface: regional_direct
+    data_access: local_table
+    query_family: colocated_join
+    join_shape: colocated
+    templates:
+      - q06_user_segment_join
+    suite: workloads/suites/single-region-core.yml
+
+  - regime_id: regional_non_colocated_join
+    status: runnable
+    execution_surface: regional_direct
+    data_access: local_table
+    query_family: non_colocated_join
+    join_shape: non_colocated
+    templates:
+      - q07_global_user_segment_join
+    suite: workloads/suites/single-region-core.yml
+
+  - regime_id: regional_multi_join
+    status: runnable
+    execution_surface: regional_direct
+    data_access: local_table
+    query_family: multi_join
+    join_shape: multi_join
+    templates:
+      - q08_multi_dimension_rollup
+    suite: workloads/suites/single-region-core.yml
+
+  - regime_id: gac_fdw_filter_scan
+    status: runnable
+    execution_surface: gac_fdw
+    data_access: foreign_table
+    query_family: selective_filter
+    join_shape: none
+    templates:
+      - gac_fdw_event_filter_summary
+    suite: workloads/suites/gac-current-runnable.yml
+
+  - regime_id: gac_fdw_remote_aggregate
+    status: runnable
+    execution_surface: gac_fdw
+    data_access: foreign_table
+    query_family: aggregation
+    join_shape: none
+    templates:
+      - gac_fdw_daily_rollup
+      - gac_fdw_top_tenants
+    suite: workloads/suites/gac-current-runnable.yml
+
+  - regime_id: gac_fdw_remote_join
+    status: runnable
+    execution_surface: gac_fdw
+    data_access: foreign_table
+    query_family: reference_join
+    join_shape: reference
+    templates:
+      - gac_fdw_tenant_tier_join
+    suite: workloads/suites/gac-current-runnable.yml
+
+  - regime_id: gac_fdw_colocated_join
+    status: runnable
+    execution_surface: gac_fdw
+    data_access: foreign_table
+    query_family: colocated_join
+    join_shape: colocated
+    templates:
+      - gac_fdw_user_segment_join
+    suite: workloads/suites/gac-current-runnable.yml
+
+  - regime_id: gac_fdw_non_colocated_join
+    status: runnable
+    execution_surface: gac_fdw
+    data_access: foreign_table
+    query_family: non_colocated_join
+    join_shape: non_colocated
+    templates:
+      - gac_fdw_global_user_join
+    suite: workloads/suites/gac-current-runnable.yml
+
+  - regime_id: gac_etl_local_read
+    status: runnable
+    execution_surface: gac_etl
+    data_access: materialized_etl
+    query_family: aggregation
+    join_shape: none
+    templates:
+      - gac_etl_local_rollup
+      - gac_etl_tenant_point_rollup
+      - gac_etl_top_tenants
+    suite: workloads/suites/gac-current-runnable.yml
+
+  - regime_id: gac_multiregion_union
+    status: runnable_smoke_ready
+    execution_surface: gac_multiregion
+    data_access: foreign_table
+    query_family: aggregation
+    join_shape: none
+    templates:
+      - gac_fdw_multiregion_daily_tenant_rollup
+      - gac_fdw_multiregion_top_tenants
+      - gac_fdw_multiregion_tenant_point_rollup
+      - gac_fdw_multiregion_event_filter_summary
+      - gac_fdw_multiregion_event_full_scan_summary
+      - gac_fdw_multiregion_user_value_topk
+      - gac_fdw_multiregion_daily_kpi
+    suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml
+
+  - regime_id: gac_multiregion_join
+    status: runnable_smoke_ready
+    execution_surface: gac_multiregion
+    data_access: foreign_table
+    query_family: reference_join
+    join_shape: reference
+    templates:
+      - gac_fdw_multiregion_tenant_tier_join
+      - gac_fdw_multiregion_user_segment_join
+      - gac_fdw_multiregion_global_user_join
+      - gac_fdw_multiregion_multi_dimension_rollup
+      - gac_fdw_multiregion_region_daily_join
+    suite: workloads/suites/gac-fdw-multiregion-analytics-client.yml

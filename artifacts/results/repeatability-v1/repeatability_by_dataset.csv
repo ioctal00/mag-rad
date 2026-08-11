@@ -1,0 +1,5 @@
+dataset_profile_id,condition_count,repetition_count,plan_stable_condition_count,minimum_dominant_cluster_agreement,median_top_membership,median_top2_margin,median_mean_membership_l1,maximum_membership_l1,clear_prototype_condition_count,mixed_boundary_condition_count,weak_prototype_coverage_condition_count
+pilot-balanced-v1,40,144,40,1.0,0.6624590905904176,0.46614790074403056,0.00010127448784133056,0.05897142250493623,22,15,3
+pilot-region-imbalanced-v1,12,36,12,1.0,0.3344482934033118,0.05772544276410735,6.812988789191288e-05,0.0002963998957090097,0,4,8
+pilot-region-local-skew-asymmetric-medium-v1,13,41,13,1.0,0.6029004061283986,0.3561344625155326,6.849561520800203e-05,0.0007550157491144002,8,5,0
+pilot-skew-heavy-v1,31,107,31,1.0,0.4611549496188894,0.15650101272672562,6.558639723591719e-05,0.009080426813564857,12,10,9

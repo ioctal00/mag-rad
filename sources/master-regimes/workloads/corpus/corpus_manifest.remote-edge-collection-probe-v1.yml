@@ -1,0 +1,359 @@
+corpus_id: remote-edge-collection-probe-v1
+corpus_version: remote-edge-collection-probe-v1
+batch_id: remote-edge-collection-probe-v1
+collection_contract_version: pressure-raw-v1
+description: >
+  Bounded edge-localization probe for remote FDW collection. Logical EU and
+  US Citus clusters share one physical VPC; bandwidth, delay and combined
+  profiles are controlled interventions on individual region-to-GAC edges.
+parameter_defaults:
+  as_of_unix: [1782864000]
+query_groups: query-groups.yml
+runtime_catalog: runtime-configs.yml
+
+dataset_profiles:
+  pilot-balanced-v1:
+    profile: ../../datasets/profiles/pilot-balanced.yml
+    load_method: copy_pipe
+
+execution_budget:
+  hard_timeout_seconds: 600
+  timeout_grace_seconds: 30
+
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260731
+  repetitions_default: 1
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  os_sampler: true
+  os_sampler_node_groups: [db_nodes, analytics_clients]
+  result_signature: true
+  network_profile_probe: true
+  remote_edge_context: true
+
+cells:
+  - corpus_cell_id: edge_baseline_raw_wide_volume
+    logical_question_id: event_raw_wide_sample
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_raw_wide_sample
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: pressure_remote_bandwidth_unlimited
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    intervention_axis: remote_path
+    pressure_axis: remote_path
+    pressure_level: control
+    pressure_pair_key: edge_probe__raw_wide_volume
+    remote_shape_id: raw_wide
+    edge_stress_scope: none
+    transfer_volume_level: parameterized
+    network_subblock: transfer_volume
+    target_metric: edge_severity_vector
+    dataset_role: pressure_calibration
+    parameters:
+      lookback_days: [30]
+      min_value: [0]
+      limit_k: [500, 10000]
+      payload_repeat: [8]
+      payload_width: [256]
+
+  - corpus_cell_id: edge_baseline_selective_filter
+    logical_question_id: event_filter_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_filter_summary
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: pressure_remote_bandwidth_unlimited
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: remote_path
+    pressure_axis: remote_path
+    pressure_level: control
+    pressure_pair_key: edge_probe__selective_filter
+    remote_shape_id: selective_filter
+    edge_stress_scope: none
+    transfer_volume_level: low
+    network_subblock: negative_control
+    target_metric: edge_severity_vector
+    dataset_role: pressure_calibration
+    parameters: {lookback_days: [30], min_value: [950]}
+
+  - corpus_cell_id: edge_baseline_regional_aggregate
+    logical_question_id: event_full_scan_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_full_scan_summary
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: pressure_remote_bandwidth_unlimited
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: remote_path
+    pressure_axis: remote_path
+    pressure_level: control
+    pressure_pair_key: edge_probe__regional_aggregate
+    remote_shape_id: regional_aggregate
+    edge_stress_scope: none
+    transfer_volume_level: low
+    network_subblock: negative_control
+    target_metric: edge_severity_vector
+    dataset_role: pressure_calibration
+    parameters: {}
+
+  - corpus_cell_id: edge_baseline_join
+    logical_question_id: global_user_topk
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_global_user_join
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: pressure_remote_bandwidth_unlimited
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    intervention_axis: remote_path
+    pressure_axis: remote_path
+    pressure_level: control
+    pressure_pair_key: edge_probe__join
+    remote_shape_id: join_topk
+    edge_stress_scope: none
+    transfer_volume_level: medium
+    network_subblock: baseline
+    target_metric: edge_severity_vector
+    dataset_role: pressure_calibration
+    parameters: {lookback_days: [30], limit_k: [100]}
+
+  - &raw_wide_eu_bandwidth
+    corpus_cell_id: edge_eu_bandwidth_raw_wide
+    logical_question_id: event_raw_wide_sample
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_raw_wide_sample
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: pressure_remote_bandwidth_10mbit_eu
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    intervention_axis: remote_path
+    pressure_axis: remote_path
+    pressure_level: stressed
+    pressure_pair_key: edge_probe__raw_wide_bandwidth
+    remote_shape_id: raw_wide
+    edge_stress_scope: eu
+    transfer_volume_level: high
+    network_subblock: bandwidth_only
+    target_metric: edge_severity_vector
+    dataset_role: pressure_calibration
+    parameters:
+      lookback_days: [30]
+      min_value: [0]
+      limit_k: [10000]
+      payload_repeat: [8]
+      payload_width: [256]
+
+  - <<: *raw_wide_eu_bandwidth
+    corpus_cell_id: edge_us_bandwidth_raw_wide
+    runtime_config_id: pressure_remote_bandwidth_10mbit_us
+    edge_stress_scope: us
+
+  - <<: *raw_wide_eu_bandwidth
+    corpus_cell_id: edge_both_bandwidth_raw_wide
+    runtime_config_id: pressure_remote_bandwidth_10mbit
+    edge_stress_scope: both
+    transfer_volume_level: parameterized
+    parameters:
+      lookback_days: [30]
+      min_value: [0]
+      limit_k: [500, 10000]
+      payload_repeat: [8]
+      payload_width: [256]
+
+  - corpus_cell_id: edge_both_bandwidth_regional_aggregate
+    logical_question_id: event_full_scan_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_full_scan_summary
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: pressure_remote_bandwidth_10mbit
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: remote_path
+    pressure_axis: remote_path
+    pressure_level: stressed
+    pressure_pair_key: edge_probe__regional_aggregate_bandwidth
+    remote_shape_id: regional_aggregate
+    edge_stress_scope: both
+    transfer_volume_level: low
+    network_subblock: bandwidth_only
+    target_metric: edge_severity_vector
+    dataset_role: pressure_calibration
+    parameters: {}
+
+  - &raw_wide_eu_delay
+    corpus_cell_id: edge_eu_delay_raw_wide
+    logical_question_id: event_raw_wide_sample
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_raw_wide_sample
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: pressure_remote_delay_80ms_eu
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    intervention_axis: remote_path
+    pressure_axis: remote_path
+    pressure_level: stressed
+    pressure_pair_key: edge_probe__raw_wide_delay
+    remote_shape_id: raw_wide
+    edge_stress_scope: eu
+    transfer_volume_level: high
+    network_subblock: delay_only
+    target_metric: edge_severity_vector
+    dataset_role: pressure_calibration
+    parameters:
+      lookback_days: [30]
+      min_value: [0]
+      limit_k: [10000]
+      payload_repeat: [8]
+      payload_width: [256]
+
+  - <<: *raw_wide_eu_delay
+    corpus_cell_id: edge_us_delay_raw_wide
+    runtime_config_id: pressure_remote_delay_80ms_us
+    edge_stress_scope: us
+
+  - <<: *raw_wide_eu_delay
+    corpus_cell_id: edge_both_delay_raw_wide
+    runtime_config_id: pressure_remote_delay_80ms
+    edge_stress_scope: both
+
+  - corpus_cell_id: edge_both_delay_regional_aggregate
+    logical_question_id: event_full_scan_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_full_scan_summary
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: pressure_remote_delay_80ms
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: remote_path
+    pressure_axis: remote_path
+    pressure_level: stressed
+    pressure_pair_key: edge_probe__regional_aggregate_delay
+    remote_shape_id: regional_aggregate
+    edge_stress_scope: both
+    transfer_volume_level: low
+    network_subblock: delay_only
+    target_metric: edge_severity_vector
+    dataset_role: pressure_calibration
+    parameters: {}
+
+  - &fetch_large
+    corpus_cell_id: edge_fetch_large_raw_wide
+    logical_question_id: event_raw_wide_sample
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_raw_wide_sample
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: pressure_remote_fetch_10000
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    intervention_axis: remote_path
+    pressure_axis: remote_path
+    pressure_level: mitigated
+    pressure_pair_key: edge_probe__fetch_size_raw_wide
+    remote_shape_id: raw_wide
+    edge_stress_scope: none
+    transfer_volume_level: high
+    network_subblock: fetch_only
+    target_metric: edge_severity_vector
+    dataset_role: pressure_calibration
+    parameters:
+      lookback_days: [30]
+      min_value: [0]
+      limit_k: [10000]
+      payload_repeat: [8]
+      payload_width: [256]
+
+  - <<: *fetch_large
+    corpus_cell_id: edge_fetch_small_raw_wide
+    runtime_config_id: pressure_remote_fetch_100
+    pressure_level: stressed
+
+  - &fetch_aggregate
+    corpus_cell_id: edge_fetch_large_regional_aggregate
+    logical_question_id: event_full_scan_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_full_scan_summary
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: pressure_remote_fetch_10000
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: remote_path
+    pressure_axis: remote_path
+    pressure_level: mitigated
+    pressure_pair_key: edge_probe__fetch_size_aggregate
+    remote_shape_id: regional_aggregate
+    edge_stress_scope: none
+    transfer_volume_level: low
+    network_subblock: fetch_only
+    target_metric: edge_severity_vector
+    dataset_role: pressure_calibration
+    parameters: {}
+
+  - <<: *fetch_aggregate
+    corpus_cell_id: edge_fetch_small_regional_aggregate
+    runtime_config_id: pressure_remote_fetch_100
+    pressure_level: stressed
+
+  - &fetch_join
+    corpus_cell_id: edge_fetch_large_join
+    logical_question_id: global_user_topk
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_global_user_join
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: pressure_remote_fetch_10000
+    topology_id: eu_us_gac
+    intervention_role: calibration
+    intervention_axis: remote_path
+    pressure_axis: remote_path
+    pressure_level: mitigated
+    pressure_pair_key: edge_probe__fetch_size_join
+    remote_shape_id: join_topk
+    edge_stress_scope: none
+    transfer_volume_level: medium
+    network_subblock: fetch_only
+    target_metric: edge_severity_vector
+    dataset_role: pressure_calibration
+    parameters: {lookback_days: [30], limit_k: [100]}
+
+  - <<: *fetch_join
+    corpus_cell_id: edge_fetch_small_join
+    runtime_config_id: pressure_remote_fetch_100
+    pressure_level: stressed
+
+  - &combined_eu
+    corpus_cell_id: edge_eu_combined_raw_wide
+    logical_question_id: event_raw_wide_sample
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_raw_wide_sample
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: pressure_remote_combined_stressed_eu
+    topology_id: eu_us_gac
+    intervention_role: final_check
+    intervention_axis: remote_path
+    pressure_axis: remote_path
+    pressure_level: combined
+    pressure_pair_key: edge_probe__combined_raw_wide
+    remote_shape_id: raw_wide
+    edge_stress_scope: eu
+    transfer_volume_level: high
+    network_subblock: combined
+    target_metric: edge_severity_vector
+    dataset_role: pressure_calibration
+    parameters:
+      lookback_days: [30]
+      min_value: [0]
+      limit_k: [10000]
+      payload_repeat: [8]
+      payload_width: [256]
+
+  - <<: *combined_eu
+    corpus_cell_id: edge_us_combined_raw_wide
+    runtime_config_id: pressure_remote_combined_stressed_us
+    edge_stress_scope: us
+
+  - <<: *combined_eu
+    corpus_cell_id: edge_both_combined_raw_wide
+    runtime_config_id: pressure_remote_raw_stressed
+    edge_stress_scope: both

@@ -1,0 +1,17 @@
+{
+  "errors": [],
+  "isolated_configuration_count": 869,
+  "isolated_execution_count": 2607,
+  "manifest_coverage_audit_status": "ok",
+  "network_calibration_blocks": [
+    "bandwidth_only",
+    "delay_only",
+    "fetch_only"
+  ],
+  "planned_pair_count": 418,
+  "prepared_batch_count": 3,
+  "program_id": "pressure-raw-v1",
+  "rendered_batch_count": 5,
+  "smoke_execution_count": 30,
+  "status": "ok"
+}

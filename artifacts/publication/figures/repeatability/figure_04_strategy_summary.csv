@@ -1,0 +1,5 @@
+execution_strategy,condition_count,clear_prototype_condition_count,mixed_boundary_condition_count,weak_prototype_coverage_condition_count,median_top_membership,median_top2_margin,strategy_label
+etl_materialized,6,6,0,0,0.9983911740238347,0.9976156212121352,ETL / materijalizovano
+fdw_raw,22,16,6,0,0.8687121184026341,0.7970559076843657,FDW sirovi dohvat
+multiregion_union,60,56,2,2,0.951878557430631,0.9218954483436076,Multiregionalno
+single_region_citus,8,8,0,0,0.9391889812098905,0.8935283591973096,Jedan Citus region

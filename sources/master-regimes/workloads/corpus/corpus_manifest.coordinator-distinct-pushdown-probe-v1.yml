@@ -1,0 +1,76 @@
+corpus_id: coordinator-distinct-pushdown-probe-v1
+description: >
+  Corrective two-query probe that verifies regional GROUP BY pushdown as the
+  mitigation for GAC-side global DISTINCT.
+query_groups: query-groups.yml
+runtime_catalog: runtime-configs.yml
+parameter_defaults:
+  as_of_unix: [1782864000]
+
+dataset_profiles:
+  raw-small-balanced-v1:
+    profile: ../../datasets/profiles/raw-small-balanced.yml
+    load_method: copy_pipe
+
+execution_budget:
+  hard_timeout_seconds: 300
+  timeout_grace_seconds: 30
+
+execution_policy:
+  cache_policy: mixed_cache_coordinator_distinct_probe
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260730
+  repetitions_default: 1
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  os_sampler: true
+  os_sampler_node_groups:
+    - db_nodes
+    - analytics_clients
+  result_signature: true
+
+cells:
+  - corpus_cell_id: coordinator_distinct_mitigated
+    logical_question_id: distinct_active_users
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_coordinator_regional_distinct_users
+    dataset_profile_id: raw-small-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: gac_finalization
+    pressure_axis: gac_finalization
+    pressure_level: mitigated
+    pressure_pair_key: coordinator_probe__distinct
+    physical_strategy_id: regional_group_deduplication
+    coordinator_pressure_kind: [fanin, distinct_dedup]
+    coordinator_shape_id: global_distinct
+    mitigation_action: push_deduplication_to_regions
+    target_metric: paired_coordinator_severity_vector
+    dataset_role: coordinator_pressure_probe
+    parameters:
+      cutoff_ts: ["2026-06-01 00:00:00+00"]
+      user_id_max: [100]
+
+  - corpus_cell_id: coordinator_distinct_stressed
+    logical_question_id: distinct_active_users
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_coordinator_raw_distinct_users
+    dataset_profile_id: raw-small-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: gac_finalization
+    pressure_axis: gac_finalization
+    pressure_level: stressed
+    pressure_pair_key: coordinator_probe__distinct
+    physical_strategy_id: gac_raw_distinct
+    coordinator_pressure_kind: [fanin, distinct_dedup]
+    coordinator_shape_id: global_distinct
+    mitigation_action: push_deduplication_to_regions
+    target_metric: paired_coordinator_severity_vector
+    dataset_role: coordinator_pressure_probe
+    parameters:
+      cutoff_ts: ["2026-06-01 00:00:00+00"]
+      user_id_max: [100]

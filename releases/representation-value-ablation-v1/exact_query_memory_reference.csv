@@ -1,0 +1,3 @@
+reference_method,evaluation,episode_count,recommendation_count,coverage,correct_decision_count,top1_accuracy,mean_regret_log2
+exact_query_memory,first_occurrence,15,0,0.0,0,,
+exact_query_memory,all_episodes,45,30,0.6666666666666666,30,1.0,0.0

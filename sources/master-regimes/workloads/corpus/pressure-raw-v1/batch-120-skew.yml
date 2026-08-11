@@ -1,0 +1,127 @@
+batch_id: batch-120-skew
+corpus_version: pressure-raw-corpus-v1
+collection_contract_version: pressure-raw-v1
+parameter_defaults:
+  as_of_unix: 1782864000
+backend: placement_aware_worker
+description: >
+  Worker/data-skew batch. Each query condition is executed on the same skewed
+  snapshot with dispersed and concentrated hot-shard placement. Balanced,
+  moderate, heavy and region-asymmetric profiles remain separate provenance.
+pressure_axis: worker_data_skew
+variants:
+  mitigated:
+    placement_state_id: B
+    placement_policy: disperse_hot_shards_across_workers
+  stressed:
+    placement_state_id: C
+    placement_policy: concentrate_hot_shards_on_one_worker
+repetitions: 3
+datasets:
+  - raw-small-skew-moderate-v1
+  - raw-small-skew-heavy-v1
+  - raw-medium-skew-moderate-v1
+  - pilot-skew-heavy-v1
+  - raw-large-skew-moderate-v1
+  - raw-large-skew-heavy-v1
+  - pilot-region-local-skew-asymmetric-medium-v1
+query_conditions:
+  - id: hot_worker_probe_low_cpu
+    template_id: gac_fdw_multiregion_hot_worker_probe
+    activates_hot_data: true
+    task_skew_expected: true
+    worker_skew_placement_sensitive: true
+    shard_pruning_expected: false
+    skew_signature_role: task_and_worker_positive
+    parameters:
+      eu_hot_tenant_min: 1
+      eu_hot_tenant_max: 10
+      us_hot_tenant_min: 10001
+      us_hot_tenant_max: 10010
+      cpu_terms: 32
+  - id: hot_worker_probe_high_cpu
+    template_id: gac_fdw_multiregion_hot_worker_probe
+    activates_hot_data: true
+    task_skew_expected: true
+    worker_skew_placement_sensitive: true
+    shard_pruning_expected: false
+    skew_signature_role: task_and_worker_positive
+    parameters:
+      eu_hot_tenant_min: 1
+      eu_hot_tenant_max: 10
+      us_hot_tenant_min: 10001
+      us_hot_tenant_max: 10010
+      cpu_terms: 128
+  - id: top_tenants_short
+    template_id: gac_fdw_multiregion_top_tenants
+    activates_hot_data: true
+    task_skew_expected: true
+    worker_skew_placement_sensitive: true
+    shard_pruning_expected: false
+    skew_signature_role: task_and_worker_positive
+    parameters: {lookback_days: 7, limit_k: 50}
+  - id: top_tenants_full
+    template_id: gac_fdw_multiregion_top_tenants
+    activates_hot_data: true
+    task_skew_expected: true
+    worker_skew_placement_sensitive: true
+    shard_pruning_expected: false
+    skew_signature_role: task_and_worker_positive
+    parameters: {lookback_days: 30, limit_k: 100}
+  - id: top_tenants_medium
+    template_id: gac_fdw_multiregion_top_tenants
+    activates_hot_data: true
+    task_skew_expected: true
+    worker_skew_placement_sensitive: true
+    shard_pruning_expected: false
+    skew_signature_role: task_and_worker_positive
+    parameters: {lookback_days: 14, limit_k: 75}
+  - id: tenant_point_hot
+    template_id: gac_fdw_multiregion_tenant_point_rollup
+    activates_hot_data: true
+    task_skew_expected: false
+    worker_skew_placement_sensitive: false
+    shard_pruning_expected: true
+    skew_signature_role: hot_data_pruning_control
+    parameters: {eu_tenant_id: 1, us_tenant_id: 10001, lookback_days: 30}
+  - id: tenant_point_cold_control
+    template_id: gac_fdw_multiregion_tenant_point_rollup
+    activates_hot_data: false
+    task_skew_expected: false
+    worker_skew_placement_sensitive: false
+    shard_pruning_expected: true
+    skew_signature_role: cold_data_pruning_control
+    parameters: {eu_tenant_id: 100, us_tenant_id: 10100, lookback_days: 30}
+  - id: selective_filter_control
+    template_id: gac_fdw_multiregion_event_filter_summary
+    activates_hot_data: false
+    task_skew_expected: false
+    worker_skew_placement_sensitive: false
+    shard_pruning_expected: false
+    skew_signature_role: multishard_negative_control
+    parameters: {lookback_days: 1, min_value: 950}
+  - id: broad_filter_hot
+    template_id: gac_fdw_multiregion_event_filter_summary
+    activates_hot_data: true
+    task_skew_expected: true
+    worker_skew_placement_sensitive: true
+    shard_pruning_expected: false
+    skew_signature_role: task_and_worker_positive
+    parameters: {lookback_days: 30, min_value: 0}
+  - id: global_rollup
+    template_id: gac_fdw_multiregion_event_count_rollup
+    activates_hot_data: true
+    task_skew_expected: true
+    worker_skew_placement_sensitive: true
+    shard_pruning_expected: false
+    skew_signature_role: task_and_worker_positive
+    parameters: {lookback_days: 30, as_of_unix: 1782864000}
+execution_policy:
+  append_only: true
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  os_sampler: true
+  fdw_auto_explain: true
+  restore_placement_in_finally: true
+  hard_timeout_seconds: 1800
+  timeout_grace_seconds: 30

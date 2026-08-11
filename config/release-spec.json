@@ -1,0 +1,183 @@
+{
+  "schema_version": 4,
+  "source_snapshots": {
+    "master-regimes": "1892a85c0576017f898df9162c4c1b5ac21f1d03",
+    "master-regimes-infra": "1138de50262b36d86af17259c9fc87fb1fe3dede",
+    "citus-datagen": "cacbfdd7f7ac3f38d8e4f1e4469accae24aa6f53",
+    "psql-benchmarks": "98fa47e708c13de4257e3a804c10a395f069b93a",
+    "publication-assets-source": "6f54029edb36dc51d49f28b9dc1e7205d9804855"
+  },
+  "thesis_reference_artifacts": {
+    "source_repository": "master-regimes",
+    "source_commit": "1892a85c0576017f898df9162c4c1b5ac21f1d03",
+    "path_manifest": "config/thesis-paths.txt",
+    "sanitized_for_public_release": true
+  },
+  "release_state": {
+    "experiment_gate": "LONGITUDINAL_CORE_WITH_BOUNDED_RETRIEVAL",
+    "technical_release_gate": "GO",
+    "submission_state": "READY_FOR_VERSIONED_RELEASE",
+    "publication_assets_include_uncommitted_release_candidate_changes": false
+  },
+  "core_system": {
+    "primary_output": "verified_longitudinal_intervention_record",
+    "state_views": ["R6", "F19", "P64_to_6"],
+    "historical_development_views": ["F21-dev"],
+    "automatic_sql_semantic_similarity": false,
+    "direct_identity_requires_declared_contract": true,
+    "cross_query_retrieval_role": "secondary_bounded_analysis",
+    "unknown_action_outcome_is_never_imputed": true
+  },
+  "reproducibility_catalog": {
+    "query_catalog": "reproducibility/query-catalog.csv",
+    "dataset_catalog": "reproducibility/dataset-catalog.csv",
+    "source_provenance": "reproducibility/source-provenance.csv",
+    "evidence_blocks": "reproducibility/evidence-blocks.json",
+    "core_rendered_sql_counts": {
+      "pressure-raw-v1": 799,
+      "dba-local-memory-v1": 60,
+      "n3-topology-memory-v1": 180,
+      "confirmatory-action-replication-v1": 60,
+      "feedback-loop-v1": 9
+    },
+    "materialized_database_dump_included": false,
+    "deterministic_dataset_profiles_included": true
+  },
+  "offline_reproducibility_audit": {
+    "entrypoint": "scripts/run_reproducibility_audits.py",
+    "summary": "reproducibility/audits/summary.json",
+    "report": "reproducibility/audits/REPRODUCIBILITY_AUDIT.md",
+    "domains": ["terraform", "ansible", "datasets", "sweeps", "collector"],
+    "live_actions_performed": false
+  },
+  "retrieval_density_audit": {
+    "release": "releases/retrieval-density-geometry-audit-v1",
+    "role": "posthoc_sensitivity_not_new_holdout",
+    "sql_executions_performed": 0,
+    "representation_refit": false,
+    "complete_state_count": 131,
+    "complete_action_outcome_count": 393,
+    "prior_state_count": 116,
+    "confirmatory_target_count": 15,
+    "all_prior_coverage_count": 15,
+    "all_prior_candidate_correct_count": 7
+  },
+  "action_selection_sample_size_audit": {
+    "release": "releases/action-selection-sample-size-audit-v1",
+    "role": "offline_denominator_and_uncertainty_audit",
+    "sql_executions_performed": 0,
+    "confirmatory_physical_execution_count": 300,
+    "confirmatory_sql_decision_count": 15,
+    "prequential_recommendation_count": 14,
+    "prequential_correct_count": 8
+  },
+  "public_navigation": {
+    "start_here": "START_HERE.md",
+    "query_index": "queries/thesis-query-index.csv",
+    "template_index": "queries/template-index.csv",
+    "dataset_index": "datasets/dataset-index.csv",
+    "corpus_index": "corpora/corpus-index.csv",
+    "curated_query_instances": 90,
+    "public_release_audit": "reproducibility/public-release-audit.json",
+    "public_release_audit_full": "reproducibility/public-release-audit-full.json"
+  },
+  "logical_runs": {
+    "clean-run-v1": {
+      "query_runs": 1964,
+      "execution_features": 1964,
+      "region_fragments": 2938,
+      "worker_task_fragments": 67976
+    },
+    "clean-run-v1-wan-latency": {
+      "query_runs": 16,
+      "execution_features": 16,
+      "region_fragments": 24,
+      "worker_task_fragments": 644
+    },
+    "clean-run-v1-region-asymmetry": {
+      "query_runs": 150,
+      "execution_features": 150,
+      "region_fragments": 378,
+      "worker_task_fragments": 10794
+    },
+    "clean-run-v1-region-asymmetry-skew-rerun": {
+      "query_runs": 294,
+      "execution_features": 294,
+      "region_fragments": 666,
+      "worker_task_fragments": 11082
+    },
+    "clean-run-v1-validation-holdout": {
+      "query_runs": 195,
+      "execution_features": 195,
+      "region_fragments": 426,
+      "worker_task_fragments": 8610
+    },
+    "repeatability-v1": {
+      "query_runs": 328,
+      "execution_features": 328,
+      "region_fragments": 588,
+      "worker_task_fragments": 15654
+    },
+    "stats-ceb-semantic-v2b-holdout": {
+      "query_runs": 12,
+      "execution_features": 12,
+      "region_fragments": 48,
+      "worker_task_fragments": 966
+    },
+    "stats-ceb-full-no-refit-v1": {
+      "query_runs": 130,
+      "execution_features": 130,
+      "region_fragments": 498,
+      "worker_task_fragments": 9302
+    },
+    "pressure-raw-v1-n3-colocation-holdout": {
+      "query_runs": 96,
+      "execution_features": 192,
+      "region_fragments": 432,
+      "remote_edge_observations": 288,
+      "worker_task_fragments": 7056
+    }
+  },
+  "primary_actionability_model": {
+    "role": "historical_secondary_comparator",
+    "model_id": "colocation-ranking-v1",
+    "mitigation_action": "use_colocated_distribution",
+    "estimator": "ridge",
+    "training_pairs": 75,
+    "feature_count": 19,
+    "feature_view": "extended",
+    "primary_output": "ranking",
+    "secondary_output": "estimated_log2_gain",
+    "model_gate": "MIXED_MODEL_EVIDENCE"
+  },
+  "comparative_fcm": {
+    "model_id": "semantic-v2-transfer-oriented-fcm",
+    "training_rows": 1964,
+    "feature_count": 19,
+    "primary_k": 4,
+    "macro_k": 3
+  },
+  "actionability_evidence": {
+    "execution_count": 2607,
+    "condition_count": 869,
+    "counterfactual_pair_count": 418,
+    "strict_pair_count": 418,
+    "n3_execution_count": 96,
+    "n3_pair_count": 16,
+    "n3_no_refit": true,
+    "n3_outside_training_p99_count": 16,
+    "n3_interpretation_scope": "descriptive_ranking_on_16_out_of_coverage_n3_pairs_not_production_generalization"
+  },
+  "excluded_categories": [
+    "smoke_and_probe_runs",
+    "abandoned_model_candidates",
+    "llm_planning_context",
+    "interactive_notebooks",
+    "viewer_application",
+    "markdown_generating_validation_scripts",
+    "thesis_manuscript_and_latex",
+    "pdf_renders",
+    "source_repository_narrative_docs",
+    "database_result_rows"
+  ]
+}

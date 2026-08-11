@@ -1,0 +1,706 @@
+suite_id: gac-current-runnable
+scope: gac_fdw_etl_single_region
+description: All workload instances currently runnable on the GAC analytics node with fdw_eu and etl.daily_tenant_rollup.
+target_group: analytics_clients
+required_topology_capabilities:
+  - fdw_eu
+  - etl_daily_tenant_rollup
+  - etl_daily_tenant_tier_rollup
+  - etl_user_segment_topk_rollup
+  - etl_global_user_topk_rollup
+  - etl_multi_dimension_rollup
+
+templates:
+  gac_fdw_daily_rollup:
+    file: templates/gac-fdw/gac_fdw_daily_rollup.sql.j2
+    family: fdw_aggregation
+    logical_question_id: daily_tenant_rollup
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - gac_finalization_heavy
+    runtime_sensitivity:
+      fetch_size: high
+      work_mem: low
+      wan_latency: high
+    description: Daily aggregation over EU events read through GAC postgres_fdw.
+    expected_pressure_tags:
+      - fdw_remote_scan
+      - remote_aggregate_candidate
+      - coordinator_fanin
+    parameters:
+      lookback_days: [1, 7, 30]
+      min_value: [0, 500, 900]
+
+  gac_fdw_event_filter_summary:
+    file: templates/gac-fdw/gac_fdw_event_filter_summary.sql.j2
+    family: fdw_selective_filter
+    logical_question_id: event_filter_summary
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: low
+      work_mem: none
+      wan_latency: low
+    description: Selective value/time filter over EU events through FDW.
+    expected_pressure_tags:
+      - fdw_remote_scan
+      - selective_filter
+      - remote_aggregate_candidate
+    parameters:
+      lookback_days: [1, 7, 30]
+      min_value: [0, 500, 900]
+
+  gac_fdw_tenant_point_rollup:
+    file: templates/gac-fdw/gac_fdw_tenant_point_rollup.sql.j2
+    family: fdw_tenant_local_pushdown
+    logical_question_id: tenant_point_rollup
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - well_reduced_localized
+      - remote_fetch_heavy
+    runtime_sensitivity:
+      fetch_size: low
+      work_mem: none
+      wan_latency: low
+    description: Tenant-filtered FDW aggregate over EU events.
+    expected_pressure_tags:
+      - fdw_remote_scan
+      - tenant_filter
+      - remote_pushdown_candidate
+    parameters:
+      tenant_id: [1, 5]
+      lookback_days: [7, 30]
+
+  gac_fdw_tenant_tier_join:
+    file: templates/gac-fdw/gac_fdw_tenant_tier_join.sql.j2
+    family: fdw_dimension_join
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - gac_finalization_heavy
+    runtime_sensitivity:
+      fetch_size: high
+      work_mem: high
+      wan_latency: high
+    description: FDW event-to-tenant join grouped by tenant tier and day.
+    expected_pressure_tags:
+      - fdw_remote_join
+      - reference_join
+      - group_by
+    parameters:
+      lookback_days: [7, 30]
+
+  gac_fdw_tenant_tier_left_join:
+    file: templates/gac-fdw/gac_fdw_tenant_tier_left_join.sql.j2
+    family: fdw_dimension_left_join
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - gac_finalization_heavy
+    runtime_sensitivity:
+      fetch_size: high
+      work_mem: high
+      wan_latency: high
+    description: FDW event-to-tenant LEFT JOIN grouped by tenant tier and day.
+    expected_pressure_tags:
+      - fdw_remote_join
+      - reference_join
+      - outer_join
+      - group_by
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [50]
+    required_dataset_capabilities:
+      - supports_tenant_tiers
+      - supports_reference_join
+    distribution_key_usage:
+      filter_uses_distribution_key: false
+      join_uses_distribution_key: true
+      group_by_uses_distribution_key: false
+      order_by_uses_distribution_key: false
+      tenant_filter_present: false
+      single_tenant_scope: false
+      multi_tenant_scope: true
+
+  gac_fdw_user_segment_join:
+    file: templates/gac-fdw/gac_fdw_user_segment_join.sql.j2
+    family: fdw_colocated_join
+    logical_question_id: user_segment_topk
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - gac_finalization_heavy
+    runtime_sensitivity:
+      fetch_size: high
+      work_mem: high
+      wan_latency: high
+    description: FDW event-to-user join over colocated remote tables.
+    expected_pressure_tags:
+      - fdw_remote_join
+      - colocated_join
+      - high_group_cardinality
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [10, 50]
+
+  gac_fdw_global_user_join:
+    file: templates/gac-fdw/gac_fdw_global_user_join.sql.j2
+    family: fdw_non_colocated_join
+    logical_question_id: global_user_topk
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - join_movement
+      - gac_finalization_heavy
+    runtime_sensitivity:
+      fetch_size: high
+      work_mem: high
+      wan_latency: high
+    description: FDW event-to-global-user join stress.
+    expected_pressure_tags:
+      - fdw_remote_join
+      - non_colocated_join
+      - repartition_candidate
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [10, 50]
+
+  gac_fdw_user_value_topk:
+    file: templates/gac-fdw/gac_fdw_user_value_topk.sql.j2
+    family: fdw_user_value_topk
+    logical_question_id: user_value_topk
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - gac_finalization_heavy
+    runtime_sensitivity:
+      fetch_size: high
+      work_mem: high
+      wan_latency: high
+    description: FDW user-level Top-K over EU events without a dimension join.
+    expected_pressure_tags:
+      - fdw_remote_scan
+      - high_group_cardinality
+      - topk
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [10, 50]
+    required_dataset_capabilities:
+      - supports_high_group_cardinality
+    distribution_key_usage:
+      filter_uses_distribution_key: false
+      join_uses_distribution_key: false
+      group_by_uses_distribution_key: true
+      order_by_uses_distribution_key: true
+      tenant_filter_present: false
+      single_tenant_scope: false
+      multi_tenant_scope: true
+
+  gac_fdw_single_edge_colocated_user_join_pair:
+    file: templates/gac-fdw/gac_fdw_single_edge_colocated_user_join_pair.sql.j2
+    family: fdw_single_edge_colocated_join
+    logical_question_id: user_segment_topk
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: low
+      work_mem: high
+      wan_latency: low
+      join_strategy: high
+    description: >
+      One-edge GAC wrapper whose complete colocated join is intended to be
+      shipped to the EU Citus coordinator.
+    expected_pressure_tags:
+      - fdw_remote_join
+      - colocated_join
+      - single_edge_equivalence
+    parameters:
+      lookback_days: [1, 7, 30]
+      limit_k: [50]
+      tenant_id_filter: [0]
+      tenant_modulus: [1]
+      user_id_max: [2147483647]
+    required_dataset_capabilities:
+      - supports_colocated_user_join
+
+  gac_fdw_single_edge_repartition_user_join_pair:
+    file: templates/gac-fdw/gac_fdw_single_edge_repartition_user_join_pair.sql.j2
+    family: fdw_single_edge_repartition_join
+    logical_question_id: user_segment_topk
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - join_movement
+      - remote_fetch_heavy
+    runtime_sensitivity:
+      fetch_size: low
+      work_mem: high
+      wan_latency: low
+      join_strategy: high
+    description: >
+      One-edge GAC wrapper whose complete non-colocated join is intended to be
+      shipped to the EU Citus coordinator and expose MapMerge evidence.
+    expected_pressure_tags:
+      - fdw_remote_join
+      - non_colocated_join
+      - repartition_candidate
+      - single_edge_equivalence
+    parameters:
+      lookback_days: [1, 7, 30]
+      limit_k: [50]
+      tenant_id_filter: [0]
+      tenant_modulus: [1]
+      user_id_max: [2147483647]
+    required_dataset_capabilities:
+      - supports_global_users
+
+  gac_fdw_single_edge_colocated_user_value_topk_pair:
+    file: templates/gac-fdw/gac_fdw_single_edge_colocated_user_value_topk_pair.sql.j2
+    family: fdw_single_edge_colocated_join
+    logical_question_id: joined_user_value_topk
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: low
+      work_mem: high
+      wan_latency: low
+      join_strategy: high
+    description: >
+      One-edge GAC wrapper for a colocated regional join followed by a
+      high-cardinality user-level Top-K.
+    expected_pressure_tags:
+      - fdw_remote_join
+      - colocated_join
+      - single_edge_equivalence
+    parameters: &single_edge_join_parameters
+      lookback_days: [1, 7, 30]
+      limit_k: [100]
+      tenant_id_filter: [0]
+      tenant_modulus: [1, 4, 16]
+      user_id_max: [5, 25, 2147483647]
+    required_dataset_capabilities:
+      - supports_colocated_user_join
+
+  gac_fdw_single_edge_repartition_user_value_topk_pair:
+    file: templates/gac-fdw/gac_fdw_single_edge_repartition_user_value_topk_pair.sql.j2
+    family: fdw_single_edge_repartition_join
+    logical_question_id: joined_user_value_topk
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - join_movement
+      - remote_fetch_heavy
+    runtime_sensitivity:
+      fetch_size: low
+      work_mem: high
+      wan_latency: low
+      join_strategy: high
+    description: >
+      One-edge GAC wrapper for a regional repartition join followed by a
+      high-cardinality user-level Top-K.
+    expected_pressure_tags:
+      - fdw_remote_join
+      - non_colocated_join
+      - repartition_candidate
+      - single_edge_equivalence
+    parameters: *single_edge_join_parameters
+    required_dataset_capabilities:
+      - supports_global_users
+
+  gac_fdw_single_edge_colocated_joined_event_sample_pair:
+    file: templates/gac-fdw/gac_fdw_single_edge_colocated_joined_event_sample_pair.sql.j2
+    family: fdw_single_edge_colocated_join
+    logical_question_id: joined_event_sample
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: high
+      work_mem: low
+      wan_latency: high
+      join_strategy: high
+    description: >
+      One-edge GAC wrapper for an ordered sample produced by a colocated
+      regional event/user join.
+    expected_pressure_tags:
+      - fdw_remote_join
+      - colocated_join
+      - remote_row_sample
+      - single_edge_equivalence
+    parameters: *single_edge_join_parameters
+    required_dataset_capabilities:
+      - supports_colocated_user_join
+
+  gac_fdw_single_edge_repartition_joined_event_sample_pair:
+    file: templates/gac-fdw/gac_fdw_single_edge_repartition_joined_event_sample_pair.sql.j2
+    family: fdw_single_edge_repartition_join
+    logical_question_id: joined_event_sample
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - join_movement
+      - remote_fetch_heavy
+    runtime_sensitivity:
+      fetch_size: high
+      work_mem: low
+      wan_latency: high
+      join_strategy: high
+    description: >
+      One-edge GAC wrapper for an ordered sample produced by a regional
+      repartition event/global-user join.
+    expected_pressure_tags:
+      - fdw_remote_join
+      - non_colocated_join
+      - repartition_candidate
+      - remote_row_sample
+      - single_edge_equivalence
+    parameters: *single_edge_join_parameters
+    required_dataset_capabilities:
+      - supports_global_users
+
+  gac_fdw_single_edge_colocated_join_summary_pair:
+    file: templates/gac-fdw/gac_fdw_single_edge_colocated_join_summary_pair.sql.j2
+    family: fdw_single_edge_colocated_join
+    logical_question_id: joined_event_summary
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: low
+      work_mem: high
+      wan_latency: low
+      join_strategy: high
+    description: >
+      One-edge GAC wrapper for a scalar summary after a colocated regional
+      event/user join.
+    expected_pressure_tags:
+      - fdw_remote_join
+      - colocated_join
+      - scalar_summary
+      - single_edge_equivalence
+    parameters:
+      lookback_days: [1, 7, 30]
+      tenant_id_filter: [0]
+      tenant_modulus: [1, 4, 16]
+      user_id_max: [5, 25, 2147483647]
+    required_dataset_capabilities:
+      - supports_colocated_user_join
+
+  gac_fdw_single_edge_repartition_join_summary_pair:
+    file: templates/gac-fdw/gac_fdw_single_edge_repartition_join_summary_pair.sql.j2
+    family: fdw_single_edge_repartition_join
+    logical_question_id: joined_event_summary
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - join_movement
+      - remote_fetch_heavy
+    runtime_sensitivity:
+      fetch_size: low
+      work_mem: high
+      wan_latency: low
+      join_strategy: high
+    description: >
+      One-edge GAC wrapper for a scalar summary after a regional repartition
+      event/global-user join.
+    expected_pressure_tags:
+      - fdw_remote_join
+      - non_colocated_join
+      - repartition_candidate
+      - scalar_summary
+      - single_edge_equivalence
+    parameters:
+      lookback_days: [1, 7, 30]
+      tenant_id_filter: [0]
+      tenant_modulus: [1, 4, 16]
+      user_id_max: [5, 25, 2147483647]
+    required_dataset_capabilities:
+      - supports_global_users
+
+  gac_fdw_single_edge_regional_user_value_topk:
+    file: templates/gac-fdw/gac_fdw_single_edge_regional_user_value_topk.sql.j2
+    family: fdw_single_edge_regional_finalization
+    logical_question_id: user_value_topk
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - remote_fetch_heavy
+    runtime_sensitivity:
+      fetch_size: low
+      work_mem: high
+      wan_latency: low
+    description: >
+      One-edge GAC wrapper whose grouping, ordering and Top-K are intended to
+      remain on the EU Citus coordinator.
+    expected_pressure_tags:
+      - fdw_remote_scan
+      - remote_aggregate
+      - regional_sort
+      - regional_spill_candidate
+      - single_edge_equivalence
+    parameters:
+      cutoff_ts: ["2026-06-01 00:00:00+00"]
+      limit_k: [50000]
+      tenant_modulus: [1, 2, 4]
+    required_dataset_capabilities:
+      - supports_high_group_cardinality
+    distribution_key_usage:
+      filter_uses_distribution_key: false
+      join_uses_distribution_key: false
+      group_by_uses_distribution_key: true
+      order_by_uses_distribution_key: true
+      tenant_filter_present: false
+      single_tenant_scope: false
+      multi_tenant_scope: true
+
+  gac_fdw_multi_dimension_rollup:
+    file: templates/gac-fdw/gac_fdw_multi_dimension_rollup.sql.j2
+    family: fdw_multi_join
+    logical_question_id: multi_dimension_rollup
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - join_movement
+      - gac_finalization_heavy
+    runtime_sensitivity:
+      fetch_size: high
+      work_mem: high
+      wan_latency: high
+    description: FDW events joined with tenant and user dimensions.
+    expected_pressure_tags:
+      - fdw_remote_join
+      - multi_join
+      - daily_group_by
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [10, 50]
+
+  gac_fdw_top_tenants:
+    file: templates/gac-fdw/gac_fdw_top_tenants.sql.j2
+    family: fdw_topk
+    logical_question_id: top_tenants
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - remote_fetch_heavy
+      - gac_finalization_heavy
+      - skew_imbalance
+    runtime_sensitivity:
+      fetch_size: high
+      work_mem: high
+      wan_latency: high
+    description: Top tenants by remote event value through FDW.
+    expected_pressure_tags:
+      - fdw_remote_scan
+      - topk
+      - final_ordering
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [10, 50]
+
+  gac_fdw_event_full_scan_summary:
+    file: templates/gac-fdw/gac_fdw_event_full_scan_summary.sql.j2
+    family: fdw_full_scan_summary
+    logical_question_id: event_full_scan_summary
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - well_reduced_localized
+      - remote_fetch_heavy
+    runtime_sensitivity:
+      fetch_size: low
+      work_mem: none
+      wan_latency: low
+    description: Full remote EU event-table summary through FDW.
+    expected_pressure_tags:
+      - fdw_remote_scan
+      - full_scan
+      - aggregate
+    parameters: {}
+
+  gac_fdw_event_raw_wide_sample:
+    file: templates/gac-fdw/gac_fdw_event_raw_wide_sample.sql.j2
+    family: fdw_raw_wide_sample
+    logical_question_id: event_raw_wide_sample
+    execution_strategy: fdw_raw
+    expected_regime_targets:
+      - remote_fetch_heavy
+    runtime_sensitivity:
+      fetch_size: high
+      work_mem: none
+      wan_latency: high
+    description: >
+      Bounded EU FDW raw-row sample with a synthetic payload expression. This
+      probes row-width/fetch pressure without requiring a dataset schema change.
+    expected_pressure_tags:
+      - fdw_remote_scan
+      - raw_row_fetch
+      - wide_payload_expression
+    parameters:
+      lookback_days: [1, 7]
+      min_value: [500, 900]
+      limit_k: [100, 250]
+      payload_repeat: [16]
+      payload_width: [512]
+    required_dataset_capabilities:
+      - supports_large_scan
+      - supports_selective_filters
+    distribution_key_usage:
+      filter_uses_distribution_key: false
+      join_uses_distribution_key: false
+      group_by_uses_distribution_key: false
+      order_by_uses_distribution_key: true
+      tenant_filter_present: false
+      single_tenant_scope: false
+      multi_tenant_scope: true
+
+  gac_etl_local_rollup:
+    file: templates/gac-etl/gac_etl_local_rollup.sql.j2
+    family: local_etl_aggregate
+    logical_question_id: daily_tenant_rollup
+    execution_strategy: etl_materialized
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: low
+      wan_latency: none
+    description: Local GAC query over ETL daily tenant rollup.
+    expected_pressure_tags:
+      - local_etl_read
+      - low_remote_pressure
+      - aggregate
+    parameters:
+      lookback_days: [7, 30]
+
+  gac_etl_tenant_point_rollup:
+    file: templates/gac-etl/gac_etl_tenant_point_rollup.sql.j2
+    family: local_etl_tenant_lookup
+    logical_question_id: tenant_point_rollup
+    execution_strategy: etl_materialized
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: none
+      wan_latency: none
+    description: Tenant-filtered local read over ETL daily tenant rollup.
+    expected_pressure_tags:
+      - local_etl_read
+      - tenant_filter
+      - low_remote_pressure
+    parameters:
+      tenant_id: [1, 5]
+      lookback_days: [7, 30]
+
+  gac_etl_top_tenants:
+    file: templates/gac-etl/gac_etl_top_tenants.sql.j2
+    family: local_etl_topk
+    logical_question_id: top_tenants
+    execution_strategy: etl_materialized
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: low
+      wan_latency: none
+    description: Top tenants from local ETL daily tenant rollup.
+    expected_pressure_tags:
+      - local_etl_read
+      - topk
+      - low_remote_pressure
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [10, 50]
+
+  gac_etl_tenant_tier_daily_rollup:
+    file: templates/gac-etl/gac_etl_tenant_tier_daily_rollup.sql.j2
+    family: local_etl_dimension_rollup
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: etl_materialized
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: low
+      wan_latency: none
+    description: Local GAC tenant-tier daily rollup materialized from FDW source.
+    expected_pressure_tags:
+      - local_etl_read
+      - reference_join_materialized
+      - low_remote_pressure
+    parameters:
+      lookback_days: [7, 30]
+    required_dataset_capabilities:
+      - supports_reference_join
+    intervention_roles:
+      - baseline
+      - negative_control
+
+  gac_etl_user_segment_topk:
+    file: templates/gac-etl/gac_etl_user_segment_topk.sql.j2
+    family: local_etl_colocated_join_rollup
+    logical_question_id: user_segment_topk
+    execution_strategy: etl_materialized
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: low
+      wan_latency: none
+    description: Local GAC user-segment Top-K rollup materialized from colocated regional join.
+    expected_pressure_tags:
+      - local_etl_read
+      - colocated_join_materialized
+      - topk
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [10, 50]
+    required_dataset_capabilities:
+      - supports_colocated_user_join
+    intervention_roles:
+      - baseline
+      - negative_control
+
+  gac_etl_global_user_topk:
+    file: templates/gac-etl/gac_etl_global_user_topk.sql.j2
+    family: local_etl_non_colocated_join_rollup
+    logical_question_id: global_user_topk
+    execution_strategy: etl_materialized
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: low
+      wan_latency: none
+    description: Local GAC global-user Top-K rollup materialized after regional non-colocated join work.
+    expected_pressure_tags:
+      - local_etl_read
+      - non_colocated_join_materialized
+      - topk
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [10, 50]
+    required_dataset_capabilities:
+      - supports_global_users
+    intervention_roles:
+      - baseline
+      - negative_control
+
+  gac_etl_multi_dimension_rollup:
+    file: templates/gac-etl/gac_etl_multi_dimension_rollup.sql.j2
+    family: local_etl_multi_join_rollup
+    logical_question_id: multi_dimension_rollup
+    execution_strategy: etl_materialized
+    expected_regime_targets:
+      - well_reduced_localized
+    runtime_sensitivity:
+      fetch_size: none
+      work_mem: low
+      wan_latency: none
+    description: Local GAC multi-dimension rollup materialized from tenant and user dimensions.
+    expected_pressure_tags:
+      - local_etl_read
+      - multi_join_materialized
+      - daily_group_by
+    parameters:
+      lookback_days: [7, 30]
+      limit_k: [10, 50]
+    required_dataset_capabilities:
+      - supports_reference_join
+      - supports_colocated_user_join
+    intervention_roles:
+      - baseline
+      - negative_control

@@ -1,0 +1,146 @@
+{
+  "episode": {
+    "actual_best_action": "regional_topk_candidates",
+    "actual_gain__increase_gac_work_mem": 0.07358514860770565,
+    "actual_gain__mitigate_remote_path_bundle": 1.1931412104635313,
+    "actual_gain__regional_topk_candidates": 4.607859831466466,
+    "applicability_source": "explicit_panel_contract_and_result_equivalence",
+    "baseline_elapsed_seconds": 23.704148,
+    "candidate_action": "regional_topk_candidates",
+    "candidate_regret_log2": 0.0,
+    "candidate_top1_correct": true,
+    "coverage_threshold": 1.9533554892194174,
+    "dataset_profile_id": "raw-large-balanced-v1",
+    "decision_status": "available",
+    "distance_metric": "euclidean",
+    "eligible_history_state_count_before": 45,
+    "episode_id": "q08_tenant_avg::run-2",
+    "episode_order": 20,
+    "evidence_cpu_busy_max_pct": 19.874,
+    "evidence_gac_fanin_rows": 1804933.0,
+    "evidence_gac_temp_blocks": 31388.0,
+    "evidence_remote_boundary_wait_ms": 17416.571,
+    "evidence_remote_bytes": 129955176.0,
+    "evidence_remote_rtt_ms": 5.4325,
+    "history_state_count_before": 45,
+    "memory_mode": "warm_start",
+    "nearest_distance": 0.7287829472436067,
+    "normalized_sql_hash": "8e8d2f98539f4a009d76e2bafa2994da93c550be0df9a6a7019b81cb79140fb8",
+    "planned_query_occurrences": 3,
+    "predicted_action": "regional_topk_candidates",
+    "predicted_gain__increase_gac_work_mem": 0.03776859169858417,
+    "predicted_gain__mitigate_remote_path_bundle": 1.7928689221731902,
+    "predicted_gain__regional_topk_candidates": 3.6030673084302216,
+    "profile": "memory",
+    "query_id": "q08_tenant_avg",
+    "query_occurrence": 2,
+    "query_shape": "tenant_avg",
+    "region_count": 2,
+    "regret_log2": 0.0,
+    "same_query_history_count_before": 1,
+    "top1_correct": true,
+    "topology_id": "eu_us_gac"
+  },
+  "memory_mode": "warm_start",
+  "memory_state_count_after": 46,
+  "neighbors_used_before_decision": [
+    {
+      "action_gains": {
+        "increase_gac_work_mem": 0.020663943507838577,
+        "mitigate_remote_path_bundle": 1.3965019409035597,
+        "regional_topk_candidates": 4.495349709290721
+      },
+      "distance": 0.7287829472436067,
+      "episode_id": "q08_tenant_avg::run-1",
+      "normalized_sql_hash": "8e8d2f98539f4a009d76e2bafa2994da93c550be0df9a6a7019b81cb79140fb8",
+      "query_id": "q08_tenant_avg",
+      "topology_id": "eu_us_gac",
+      "weight": 1.372148774382561
+    },
+    {
+      "action_gains": {
+        "increase_gac_work_mem": 0.1519052149533546,
+        "mitigate_remote_path_bundle": 1.2917196971971587,
+        "regional_topk_candidates": 1.8696813627440243
+      },
+      "distance": 1.580261682715497,
+      "episode_id": "reference::fuzzy-memory-topk-panel-v1::fuzzy_topk_memory_severe::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-24 00:00:00+00\",\"limit_k\":10000}",
+      "normalized_sql_hash": "nan",
+      "query_id": "fuzzy-memory-topk-panel-v1::fuzzy_topk_memory_severe::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-24 00:00:00+00\",\"limit_k\":10000}",
+      "topology_id": "eu_us_gac",
+      "weight": 0.6328061852866239
+    },
+    {
+      "action_gains": {
+        "increase_gac_work_mem": 0.033912495820706,
+        "mitigate_remote_path_bundle": 2.685723352383513,
+        "regional_topk_candidates": 2.983182859705127
+      },
+      "distance": 1.798819217871472,
+      "episode_id": "reference::fuzzy-memory-topk-panel-v1::fuzzy_topk_balanced::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-24 00:00:00+00\",\"limit_k\":10000}",
+      "normalized_sql_hash": "nan",
+      "query_id": "fuzzy-memory-topk-panel-v1::fuzzy_topk_balanced::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-24 00:00:00+00\",\"limit_k\":10000}",
+      "topology_id": "eu_us_gac",
+      "weight": 0.5559199246622274
+    },
+    {
+      "action_gains": {
+        "increase_gac_work_mem": 0.0078718370666349,
+        "mitigate_remote_path_bundle": 1.4283978240698936,
+        "regional_topk_candidates": 3.251278574713406
+      },
+      "distance": 1.8374648674997296,
+      "episode_id": "reference::fuzzy-memory-topk-panel-v1::fuzzy_topk_memory_severe::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-24 00:00:00+00\",\"limit_k\":100}",
+      "normalized_sql_hash": "nan",
+      "query_id": "fuzzy-memory-topk-panel-v1::fuzzy_topk_memory_severe::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-24 00:00:00+00\",\"limit_k\":100}",
+      "topology_id": "eu_us_gac",
+      "weight": 0.5442277963838951
+    },
+    {
+      "action_gains": {
+        "increase_gac_work_mem": -0.0218364506141406,
+        "mitigate_remote_path_bundle": 2.898860761936939,
+        "regional_topk_candidates": 4.405764321102397
+      },
+      "distance": 1.9644447143325874,
+      "episode_id": "reference::fuzzy-memory-topk-panel-v1::fuzzy_topk_balanced::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-24 00:00:00+00\",\"limit_k\":100}",
+      "normalized_sql_hash": "nan",
+      "query_id": "fuzzy-memory-topk-panel-v1::fuzzy_topk_balanced::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-24 00:00:00+00\",\"limit_k\":100}",
+      "topology_id": "eu_us_gac",
+      "weight": 0.5090494446876309
+    }
+  ],
+  "observed_action_outcomes": [
+    {
+      "action_elapsed_seconds": 22.525426,
+      "mitigation_action": "increase_gac_work_mem",
+      "result_equal": true,
+      "target_log2_gain": 0.07358514860770565
+    },
+    {
+      "action_elapsed_seconds": 0.972121,
+      "mitigation_action": "regional_topk_candidates",
+      "result_equal": true,
+      "target_log2_gain": 4.607859831466466
+    },
+    {
+      "action_elapsed_seconds": 10.366999,
+      "mitigation_action": "mitigate_remote_path_bundle",
+      "result_equal": true,
+      "target_log2_gain": 1.1931412104635313
+    }
+  ],
+  "state_evidence": {
+    "cpu_busy_max_pct": 19.874,
+    "elapsed_seconds": 23.704148,
+    "gac_fanin_rows": 1804933.0,
+    "gac_non_foreign_time_share": 0.0728798299685432,
+    "gac_temp_blocks": 31388.0,
+    "regional_rows_cv": 1.1634780903224663e-05,
+    "remote_boundary_wait_ms": 17416.571,
+    "remote_bytes": 129955176.0,
+    "remote_edge_count": 2,
+    "remote_rtt_ms": 5.4325,
+    "worker_rows_cv": 0.1761676360289259
+  }
+}

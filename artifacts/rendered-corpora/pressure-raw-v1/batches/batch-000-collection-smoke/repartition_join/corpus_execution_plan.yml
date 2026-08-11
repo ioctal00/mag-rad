@@ -1,0 +1,27 @@
+corpus_id: batch-000-collection-smoke-repartition_join
+source_manifest: master-regimes/configs/collection/batches/batch-000-collection-smoke.yml
+corpus_version: pressure-raw-corpus-v1
+collection_contract_version: pressure-raw-v1
+execution_backend: master-regimes-infra.database_sweep
+group_count: 1
+groups:
+- group_id: batch-000-collection-smoke__repartition_join__pressure-raw-v1-repartition__raw-small-balanced-v1__gac_force_remote_join__analytics_clients
+  sweep_id: batch-000-collection-smoke__repartition_join__pressure-raw-v1-repartition__raw-small-balanced-v1__gac_force_remote_join__analytics_clients
+  dataset_profile_id: raw-small-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: gac_force_remote_join
+  target_group: analytics_clients
+  strategies:
+  - fdw_raw
+  runtime_intervention_axis: join_strategy
+  runtime_expected_effect: 'Each region receives one joined remote SQL statement,
+    allowing auto_explain to expose the regional collocated or MapMerge Citus plan.
+
+    '
+  network_profile_id: ''
+  cell_count: 30
+  instance_count: 6
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/repartition_join/pressure-raw-v1-repartition__raw-small-balanced-v1__gac_force_remote_join__analytics_clients.instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-000-collection-smoke/repartition_join/pressure-raw-v1-repartition__raw-small-balanced-v1__gac_force_remote_join__analytics_clients.sweep.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false

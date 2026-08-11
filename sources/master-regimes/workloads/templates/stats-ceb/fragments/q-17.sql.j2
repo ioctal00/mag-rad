@@ -1,0 +1,5 @@
+select count(*) as result_count
+FROM {{ schema_name }}.posts AS p, {{ schema_name }}.tags AS t, {{ schema_name }}.votes AS v
+WHERE p.Id = t.ExcerptPostId
+  AND p.OwnerUserId = v.UserId
+  AND p.CreationDate >= CAST('2010-07-20 02:01:05' AS timestamp)

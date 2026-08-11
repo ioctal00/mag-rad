@@ -1,0 +1,212 @@
+corpus_id: plan-c-eu-us-gac-smoke-v1
+vocabulary: ../../docs/corpus-vocabulary.md
+query_groups: query-groups.yml
+runtime_catalog: runtime-configs.yml
+topology_id: eu_us_gac
+topology_scope: eu_us_gac
+description: >
+  Small Plan C smoke corpus for validating canonical paired templates after the
+  US region and fdw_us are available. This is not the final regime corpus; it
+  checks that EU-only, ETL and EU+US multiregion strategies render and can be
+  routed through the same corpus execution backend.
+execution_budget:
+  hard_timeout_seconds: 300
+  timeout_grace_seconds: 20
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  repetitions_default: 1
+  cache_features_in_default_model: false
+  order_policy: deterministic_shuffle
+  shuffle_seed: 20260625
+  record_run_order: true
+  record_buffer_features: true
+
+dataset_profiles:
+  smoke-v1:
+    profile: ../../datasets/profiles/smoke.yml
+    load_method: sql
+
+cells:
+  - corpus_cell_id: tenant_point_single_smoke_default
+    logical_question_id: tenant_point_rollup
+    execution_strategy: single_region_citus
+    template_id: q04_tenant_point_rollup
+    dataset_profile_id: smoke-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets:
+      - well_reduced_localized
+
+  - corpus_cell_id: tenant_point_fdw_smoke_default
+    logical_question_id: tenant_point_rollup
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_tenant_point_rollup
+    dataset_profile_id: smoke-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets:
+      - well_reduced_localized
+
+  - corpus_cell_id: tenant_point_etl_smoke_default
+    logical_question_id: tenant_point_rollup
+    execution_strategy: etl_materialized
+    template_id: gac_etl_tenant_point_rollup
+    dataset_profile_id: smoke-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    expected_regime_targets:
+      - well_reduced_localized
+
+  - corpus_cell_id: tenant_point_multiregion_smoke_default
+    logical_question_id: tenant_point_rollup
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_tenant_point_rollup
+    dataset_profile_id: smoke-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    expected_regime_targets:
+      - well_reduced_localized
+    parameters:
+      eu_tenant_id: [1]
+      us_tenant_id: [11]
+      lookback_days: [7]
+
+  - corpus_cell_id: tenant_tier_fdw_smoke_default
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_tenant_tier_join
+    dataset_profile_id: smoke-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets:
+      - gac_finalization_heavy
+
+  - corpus_cell_id: tenant_tier_etl_smoke_default
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: etl_materialized
+    template_id: gac_etl_tenant_tier_daily_rollup
+    dataset_profile_id: smoke-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    expected_regime_targets:
+      - well_reduced_localized
+
+  - corpus_cell_id: tenant_tier_multiregion_smoke_default
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_tenant_tier_join
+    dataset_profile_id: smoke-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets:
+      - gac_finalization_heavy
+
+  - corpus_cell_id: user_segment_fdw_smoke_default
+    logical_question_id: user_segment_topk
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_user_segment_join
+    dataset_profile_id: smoke-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets:
+      - gac_finalization_heavy
+
+  - corpus_cell_id: user_segment_etl_smoke_default
+    logical_question_id: user_segment_topk
+    execution_strategy: etl_materialized
+    template_id: gac_etl_user_segment_topk
+    dataset_profile_id: smoke-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    expected_regime_targets:
+      - well_reduced_localized
+
+  - corpus_cell_id: user_segment_multiregion_smoke_default
+    logical_question_id: user_segment_topk
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_user_segment_join
+    dataset_profile_id: smoke-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets:
+      - gac_finalization_heavy
+
+  - corpus_cell_id: global_user_fdw_smoke_default
+    logical_question_id: global_user_topk
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_global_user_join
+    dataset_profile_id: smoke-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets:
+      - join_movement
+      - gac_finalization_heavy
+
+  - corpus_cell_id: global_user_etl_smoke_default
+    logical_question_id: global_user_topk
+    execution_strategy: etl_materialized
+    template_id: gac_etl_global_user_topk
+    dataset_profile_id: smoke-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    expected_regime_targets:
+      - well_reduced_localized
+
+  - corpus_cell_id: global_user_multiregion_smoke_default
+    logical_question_id: global_user_topk
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_global_user_join
+    dataset_profile_id: smoke-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets:
+      - join_movement
+      - gac_finalization_heavy
+
+  - corpus_cell_id: event_filter_single_smoke_default
+    logical_question_id: event_filter_summary
+    execution_strategy: single_region_citus
+    template_id: q03_event_filter_summary
+    dataset_profile_id: smoke-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets:
+      - well_reduced_localized
+
+  - corpus_cell_id: event_filter_fdw_smoke_default
+    logical_question_id: event_filter_summary
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_event_filter_summary
+    dataset_profile_id: smoke-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets:
+      - well_reduced_localized
+
+  - corpus_cell_id: event_filter_multiregion_smoke_default
+    logical_question_id: event_filter_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_filter_summary
+    dataset_profile_id: smoke-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets:
+      - well_reduced_localized

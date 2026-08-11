@@ -1,0 +1,365 @@
+corpus_id: pressure-raw-v1-gac
+corpus_version: pressure-raw-corpus-v1
+batch_id: batch-100-gac
+collection_contract_version: pressure-raw-v1
+description: >
+  GAC/coordinator pressure collection with 75 positive counterfactual pairs
+  across five physical mechanisms and 24 negative-control pairs. Strategy
+  evidence and observed severity remain separate.
+query_groups: ../query-groups.yml
+runtime_catalog: ../runtime-configs.yml
+parameter_defaults:
+  as_of_unix: [1782864000]
+
+dataset_profiles:
+  raw-small-balanced-v1:
+    profile: ../../../datasets/profiles/raw-small-balanced.yml
+    load_method: copy_pipe
+  pilot-balanced-v1:
+    profile: ../../../datasets/profiles/pilot-balanced.yml
+    load_method: copy_pipe
+  raw-large-balanced-v1:
+    profile: ../../../datasets/profiles/raw-large-balanced.yml
+    load_method: copy_pipe
+
+execution_budget: {hard_timeout_seconds: 1800, timeout_grace_seconds: 30}
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260730
+  repetitions_default: 3
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  os_sampler: true
+  os_sampler_node_groups: [db_nodes, analytics_clients]
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: false
+
+cells:
+  # 15 raw-fan-in versus regional-partial aggregation pairs.
+  - corpus_cell_id: gac_group_merge_mitigated
+    logical_question_id: user_value_topk
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_coordinator_partial_user_topk
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: gac_finalization
+    pressure_axis: gac_finalization
+    pressure_level: mitigated
+    pressure_pair_key: gac__group_merge_fanin
+    physical_strategy_id: regional_partial_aggregate
+    scenario_level: parameterized
+    coordinator_pressure_kind: [fanin, group_merge, sort_topk]
+    coordinator_shape_id: user_group_topk
+    mitigation_action: regional_partial_aggregation
+    target_metric: paired_coordinator_severity_vector
+    dataset_role: pressure_isolated
+    parameters:
+      cutoff_ts: ["2026-06-01 00:00:00+00"]
+      tenant_modulus: [16, 8, 4, 2, 1]
+      limit_k: [100]
+
+  - corpus_cell_id: gac_group_merge_stressed
+    logical_question_id: user_value_topk
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_coordinator_raw_user_topk
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: gac_finalization
+    pressure_axis: gac_finalization
+    pressure_level: stressed
+    pressure_pair_key: gac__group_merge_fanin
+    physical_strategy_id: gac_raw_aggregate
+    scenario_level: parameterized
+    coordinator_pressure_kind: [fanin, group_merge, sort_topk]
+    coordinator_shape_id: user_group_topk
+    mitigation_action: regional_partial_aggregation
+    target_metric: paired_coordinator_severity_vector
+    dataset_role: pressure_isolated
+    parameters:
+      cutoff_ts: ["2026-06-01 00:00:00+00"]
+      tenant_modulus: [16, 8, 4, 2, 1]
+      limit_k: [100]
+
+  # 15 global Top-K versus per-region candidate Top-K pairs.
+  - corpus_cell_id: gac_topk_candidates_mitigated
+    logical_question_id: event_raw_wide_sample
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_coordinator_regional_event_topk
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: gac_finalization
+    pressure_axis: gac_finalization
+    pressure_level: mitigated
+    pressure_pair_key: gac__global_topk
+    physical_strategy_id: regional_topk_candidates
+    scenario_level: parameterized
+    coordinator_pressure_kind: [fanin, sort_topk]
+    coordinator_shape_id: event_topk
+    mitigation_action: regional_topk_candidates
+    target_metric: paired_coordinator_severity_vector
+    dataset_role: pressure_isolated
+    parameters:
+      cutoff_ts: ["2026-06-01 00:00:00+00"]
+      limit_k: [10, 100, 500, 2000, 5000]
+
+  - corpus_cell_id: gac_topk_raw_stressed
+    logical_question_id: event_raw_wide_sample
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_coordinator_raw_event_topk
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: gac_finalization
+    pressure_axis: gac_finalization
+    pressure_level: stressed
+    pressure_pair_key: gac__global_topk
+    physical_strategy_id: gac_raw_topk
+    scenario_level: parameterized
+    coordinator_pressure_kind: [fanin, sort_topk]
+    coordinator_shape_id: event_topk
+    mitigation_action: regional_topk_candidates
+    target_metric: paired_coordinator_severity_vector
+    dataset_role: pressure_isolated
+    parameters:
+      cutoff_ts: ["2026-06-01 00:00:00+00"]
+      limit_k: [10, 100, 500, 2000, 5000]
+
+  # 15 global DISTINCT versus regional pre-deduplication pairs.
+  - corpus_cell_id: gac_distinct_regional_mitigated
+    logical_question_id: distinct_active_users
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_coordinator_regional_distinct_users
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: gac_finalization
+    pressure_axis: gac_finalization
+    pressure_level: mitigated
+    pressure_pair_key: gac__global_distinct
+    physical_strategy_id: regional_distinct
+    scenario_level: parameterized
+    coordinator_pressure_kind: [fanin, distinct_dedup]
+    coordinator_shape_id: active_user_distinct
+    mitigation_action: regional_prededuplication
+    target_metric: paired_coordinator_severity_vector
+    dataset_role: pressure_isolated
+    parameters:
+      cutoff_ts: ["2026-06-01 00:00:00+00"]
+      user_id_max: [5, 10, 25, 50, 100]
+
+  - corpus_cell_id: gac_distinct_raw_stressed
+    logical_question_id: distinct_active_users
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_coordinator_raw_distinct_users
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: gac_finalization
+    pressure_axis: gac_finalization
+    pressure_level: stressed
+    pressure_pair_key: gac__global_distinct
+    physical_strategy_id: gac_raw_distinct
+    scenario_level: parameterized
+    coordinator_pressure_kind: [fanin, distinct_dedup]
+    coordinator_shape_id: active_user_distinct
+    mitigation_action: regional_prededuplication
+    target_metric: paired_coordinator_severity_vector
+    dataset_role: pressure_isolated
+    parameters:
+      cutoff_ts: ["2026-06-01 00:00:00+00"]
+      user_id_max: [5, 10, 25, 50, 100]
+
+  # 15 GAC-local join versus regionally executed colocated join pairs.
+  - corpus_cell_id: gac_local_join_regional_mitigated
+    logical_question_id: user_segment_topk
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_coordinator_regional_user_join
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: gac_finalization
+    pressure_axis: gac_finalization
+    pressure_level: mitigated
+    pressure_pair_key: gac__local_join
+    physical_strategy_id: regional_colocated_join
+    scenario_level: parameterized
+    coordinator_pressure_kind: [fanin, local_join, group_merge]
+    coordinator_shape_id: user_segment_join
+    mitigation_action: regional_join_pushdown
+    target_metric: paired_coordinator_severity_vector
+    dataset_role: pressure_isolated
+    parameters:
+      cutoff_ts: ["2026-06-01 00:00:00+00"]
+      tenant_modulus: [16, 8, 4, 2, 1]
+
+  - corpus_cell_id: gac_local_join_stressed
+    logical_question_id: user_segment_topk
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_coordinator_local_user_join
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: gac_finalization
+    pressure_axis: gac_finalization
+    pressure_level: stressed
+    pressure_pair_key: gac__local_join
+    physical_strategy_id: gac_local_hash_join
+    scenario_level: parameterized
+    coordinator_pressure_kind: [fanin, local_join, group_merge]
+    coordinator_shape_id: user_segment_join
+    mitigation_action: regional_join_pushdown
+    target_metric: paired_coordinator_severity_vector
+    dataset_role: pressure_isolated
+    parameters:
+      cutoff_ts: ["2026-06-01 00:00:00+00"]
+      tenant_modulus: [16, 8, 4, 2, 1]
+
+  # 15 same-SQL memory response pairs.
+  - corpus_cell_id: gac_memory_mitigated
+    logical_question_id: user_value_topk
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_coordinator_raw_user_topk
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: pressure_gac_memory_mitigated
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: gac_finalization
+    pressure_axis: gac_finalization
+    pressure_level: mitigated
+    pressure_pair_key: gac__memory_response
+    physical_strategy_id: gac_raw_aggregate
+    scenario_level: parameterized
+    coordinator_pressure_kind: [group_merge, sort_topk, memory_spill]
+    coordinator_shape_id: user_group_topk_memory
+    mitigation_action: increase_gac_work_mem
+    target_metric: paired_coordinator_severity_vector
+    dataset_role: pressure_isolated
+    parameters:
+      cutoff_ts: ["2026-06-01 00:00:00+00"]
+      tenant_modulus: [16, 8, 4, 2, 1]
+      limit_k: [5000]
+
+  - corpus_cell_id: gac_memory_stressed
+    logical_question_id: user_value_topk
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_coordinator_raw_user_topk
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: pressure_gac_memory_stressed
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: gac_finalization
+    pressure_axis: gac_finalization
+    pressure_level: stressed
+    pressure_pair_key: gac__memory_response
+    physical_strategy_id: gac_raw_aggregate
+    scenario_level: parameterized
+    coordinator_pressure_kind: [group_merge, sort_topk, memory_spill]
+    coordinator_shape_id: user_group_topk_memory
+    mitigation_action: increase_gac_work_mem
+    target_metric: paired_coordinator_severity_vector
+    dataset_role: pressure_isolated
+    parameters:
+      cutoff_ts: ["2026-06-01 00:00:00+00"]
+      tenant_modulus: [16, 8, 4, 2, 1]
+      limit_k: [5000]
+
+  # 24 same-SQL negative-control pairs for work_mem background variation.
+  - corpus_cell_id: gac_point_control_mitigated
+    logical_question_id: tenant_point_rollup
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_tenant_point_raw_finalize
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: pressure_gac_memory_mitigated
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: gac_finalization
+    pressure_axis: gac_finalization
+    pressure_level: mitigated
+    pressure_pair_key: gac__tenant_point_control
+    coordinator_pressure_kind: [negative_control]
+    coordinator_shape_id: tenant_point
+    mitigation_action: increase_gac_work_mem
+    target_metric: paired_coordinator_severity_vector
+    dataset_role: pressure_negative_control
+    parameters:
+      eu_tenant_id: [1]
+      us_tenant_id: [10001]
+      lookback_days: [1, 7, 14, 30]
+
+  - corpus_cell_id: gac_point_control_stressed
+    logical_question_id: tenant_point_rollup
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_tenant_point_raw_finalize
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: pressure_gac_memory_stressed
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: gac_finalization
+    pressure_axis: gac_finalization
+    pressure_level: stressed
+    pressure_pair_key: gac__tenant_point_control
+    coordinator_pressure_kind: [negative_control]
+    coordinator_shape_id: tenant_point
+    mitigation_action: increase_gac_work_mem
+    target_metric: paired_coordinator_severity_vector
+    dataset_role: pressure_negative_control
+    parameters:
+      eu_tenant_id: [1]
+      us_tenant_id: [10001]
+      lookback_days: [1, 7, 14, 30]
+
+  - corpus_cell_id: gac_filter_control_mitigated
+    logical_question_id: event_filter_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_filter_summary
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: pressure_gac_memory_mitigated
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: gac_finalization
+    pressure_axis: gac_finalization
+    pressure_level: mitigated
+    pressure_pair_key: gac__selective_filter_control
+    coordinator_pressure_kind: [negative_control]
+    coordinator_shape_id: selective_summary
+    mitigation_action: increase_gac_work_mem
+    target_metric: paired_coordinator_severity_vector
+    dataset_role: pressure_negative_control
+    parameters:
+      lookback_days: [30]
+      min_value: [500, 900, 950, 990]
+
+  - corpus_cell_id: gac_filter_control_stressed
+    logical_question_id: event_filter_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_filter_summary
+    dataset_profile_id: [raw-small-balanced-v1, pilot-balanced-v1, raw-large-balanced-v1]
+    runtime_config_id: pressure_gac_memory_stressed
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    intervention_axis: gac_finalization
+    pressure_axis: gac_finalization
+    pressure_level: stressed
+    pressure_pair_key: gac__selective_filter_control
+    coordinator_pressure_kind: [negative_control]
+    coordinator_shape_id: selective_summary
+    mitigation_action: increase_gac_work_mem
+    target_metric: paired_coordinator_severity_vector
+    dataset_role: pressure_negative_control
+    parameters:
+      lookback_days: [30]
+      min_value: [500, 900, 950, 990]

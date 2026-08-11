@@ -1,0 +1,146 @@
+{
+  "episode": {
+    "actual_best_action": "mitigate_remote_path_bundle",
+    "actual_gain__increase_gac_work_mem": -0.009809921986075838,
+    "actual_gain__mitigate_remote_path_bundle": 1.9934248277080215,
+    "actual_gain__regional_topk_candidates": 0.6178171990686502,
+    "applicability_source": "explicit_panel_contract_and_result_equivalence",
+    "baseline_elapsed_seconds": 1.5832,
+    "candidate_action": "regional_topk_candidates",
+    "candidate_regret_log2": 1.3756076286393712,
+    "candidate_top1_correct": false,
+    "coverage_threshold": 1.9533554892194174,
+    "dataset_profile_id": "n3-medium-balanced-wide-global-dim-v1",
+    "decision_status": "outside_reference_coverage",
+    "distance_metric": "euclidean",
+    "eligible_history_state_count_before": 47,
+    "episode_id": "q09_tenant_max::run-1",
+    "episode_order": 22,
+    "evidence_cpu_busy_max_pct": 13.218,
+    "evidence_gac_fanin_rows": 19350.0,
+    "evidence_gac_temp_blocks": 136.0,
+    "evidence_remote_boundary_wait_ms": 675.923,
+    "evidence_remote_bytes": 1393200.0,
+    "evidence_remote_rtt_ms": 15.466666666666667,
+    "history_state_count_before": 47,
+    "memory_mode": "warm_start",
+    "nearest_distance": 8.336840192339928,
+    "normalized_sql_hash": "0a1845d5eee8a966fc7841a83bbfa0c28f21ecba6942182b9a8b2e287f92f63b",
+    "planned_query_occurrences": 4,
+    "predicted_action": "",
+    "predicted_gain__increase_gac_work_mem": 0.016031483123668498,
+    "predicted_gain__mitigate_remote_path_bundle": 2.453113924530898,
+    "predicted_gain__regional_topk_candidates": 2.7588425023733367,
+    "profile": "balanced",
+    "query_id": "q09_tenant_max",
+    "query_occurrence": 1,
+    "query_shape": "tenant_max",
+    "region_count": 3,
+    "regret_log2": NaN,
+    "same_query_history_count_before": 0,
+    "top1_correct": false,
+    "topology_id": "eu_us_apac_gac"
+  },
+  "memory_mode": "warm_start",
+  "memory_state_count_after": 48,
+  "neighbors_used_before_decision": [
+    {
+      "action_gains": {
+        "increase_gac_work_mem": 0.0072951999589837,
+        "mitigate_remote_path_bundle": 2.646928961962837,
+        "regional_topk_candidates": 2.9074514602042885
+      },
+      "distance": 8.336840192339928,
+      "episode_id": "reference::fuzzy-memory-topk-panel-v1::fuzzy_topk_balanced::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":100}",
+      "normalized_sql_hash": "nan",
+      "query_id": "fuzzy-memory-topk-panel-v1::fuzzy_topk_balanced::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":100}",
+      "topology_id": "eu_us_gac",
+      "weight": 0.1199495080845275
+    },
+    {
+      "action_gains": {
+        "increase_gac_work_mem": 0.0274589574398124,
+        "mitigate_remote_path_bundle": 1.3346582999179395,
+        "regional_topk_candidates": 2.0868568298219983
+      },
+      "distance": 8.402571996528959,
+      "episode_id": "reference::fuzzy-memory-topk-panel-v1::fuzzy_topk_memory_severe::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":100}",
+      "normalized_sql_hash": "nan",
+      "query_id": "fuzzy-memory-topk-panel-v1::fuzzy_topk_memory_severe::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":100}",
+      "topology_id": "eu_us_gac",
+      "weight": 0.1190111648435655
+    },
+    {
+      "action_gains": {
+        "increase_gac_work_mem": -0.011327452404822864,
+        "mitigate_remote_path_bundle": 2.755693328342921,
+        "regional_topk_candidates": 3.047649640005925
+      },
+      "distance": 8.42291626865697,
+      "episode_id": "q06_tenant_sum::run-1",
+      "normalized_sql_hash": "82a4b1652b8883fb8dad714052530b1788280c0ae3dd3cb8823fe3b0d8dea3ac",
+      "query_id": "q06_tenant_sum",
+      "topology_id": "eu_us_gac",
+      "weight": 0.1187237115246473
+    },
+    {
+      "action_gains": {
+        "increase_gac_work_mem": 0.048606130428050905,
+        "mitigate_remote_path_bundle": 1.1748579673493134,
+        "regional_topk_candidates": 1.6292173868977764
+      },
+      "distance": 8.430356532298203,
+      "episode_id": "q05_event_deviation::run-4",
+      "normalized_sql_hash": "bd5d33dbf428b5dfe5fde653651a56bf4036327ea0a4ea3cb42a933b2a2200b1",
+      "query_id": "q05_event_deviation",
+      "topology_id": "eu_us_gac",
+      "weight": 0.11861893118634906
+    },
+    {
+      "action_gains": {
+        "increase_gac_work_mem": 0.0081868930148983,
+        "mitigate_remote_path_bundle": 4.360051703774939,
+        "regional_topk_candidates": 4.127185858907333
+      },
+      "distance": 8.454135392907018,
+      "episode_id": "reference::fuzzy-memory-topk-panel-v1::fuzzy_topk_transport_severe::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":100}",
+      "normalized_sql_hash": "nan",
+      "query_id": "fuzzy-memory-topk-panel-v1::fuzzy_topk_transport_severe::raw-large-balanced-v1::{\"cutoff_ts\":\"2026-06-29 00:00:00+00\",\"limit_k\":100}",
+      "topology_id": "eu_us_gac",
+      "weight": 0.11828529296487286
+    }
+  ],
+  "observed_action_outcomes": [
+    {
+      "action_elapsed_seconds": 1.594002,
+      "mitigation_action": "increase_gac_work_mem",
+      "result_equal": true,
+      "target_log2_gain": -0.009809921986075838
+    },
+    {
+      "action_elapsed_seconds": 1.031702,
+      "mitigation_action": "regional_topk_candidates",
+      "result_equal": true,
+      "target_log2_gain": 0.6178171990686502
+    },
+    {
+      "action_elapsed_seconds": 0.397608,
+      "mitigation_action": "mitigate_remote_path_bundle",
+      "result_equal": true,
+      "target_log2_gain": 1.9934248277080215
+    }
+  ],
+  "state_evidence": {
+    "cpu_busy_max_pct": 13.218,
+    "elapsed_seconds": 1.5832,
+    "gac_fanin_rows": 19350.0,
+    "gac_non_foreign_time_share": 0.0144768150145252,
+    "gac_temp_blocks": 136.0,
+    "regional_rows_cv": 0.0151732181453139,
+    "remote_boundary_wait_ms": 675.923,
+    "remote_bytes": 1393200.0,
+    "remote_edge_count": 3,
+    "remote_rtt_ms": 15.466666666666667,
+    "worker_rows_cv": 0.1943989868486334
+  }
+}

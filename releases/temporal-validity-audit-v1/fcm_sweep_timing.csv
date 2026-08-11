@@ -1,0 +1,9 @@
+database_sweep_id,dataset_id,query_count,minimum_lag_hours,median_lag_hours,p95_lag_hours,maximum_lag_hours
+20260626T113538Z-clean-run-eu-us-gac-v1__pilot-balanced-v1__default__analytics_clients,pilot-balanced-v1,689,0.032080644170443214,1.8372738650110032,3.497842841333813,3.6860938869582283
+20260626T151902Z-clean-run-eu-us-gac-v1__pilot-balanced-v1__default__coordinators,pilot-balanced-v1,176,0.011603159705797832,0.34688977625634937,0.6465294841428597,0.6794382730457518
+20260626T160048Z-clean-run-eu-us-gac-v1__pilot-balanced-v1__work_mem_high__analytics_clients,pilot-balanced-v1,45,0.015417724450429281,0.13127995332082112,0.23462874703937106,0.24661157276895312
+20260626T161551Z-clean-run-eu-us-gac-v1__pilot-balanced-v1__work_mem_low__analytics_clients,pilot-balanced-v1,45,0.014851062496503194,0.1300924430290858,0.23442166576120588,0.24603535446855757
+20260626T163056Z-clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__default__analytics_clients,pilot-skew-heavy-v1,689,0.029640090001953973,1.8009702250030306,3.4565948821173778,3.6350555600060357
+20260626T201106Z-clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__default__coordinators,pilot-skew-heavy-v1,176,0.01111617194281684,0.3435261438952552,0.6420181390477552,0.6753576664129893
+20260626T205232Z-clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__fetch_large__analytics_clients,pilot-skew-heavy-v1,72,0.02698233942190806,0.192354682220353,0.33923979831404155,0.35473950386047365
+20260626T211407Z-clean-run-eu-us-gac-v1__pilot-skew-heavy-v1__fetch_small__analytics_clients,pilot-skew-heavy-v1,72,0.026685487230618796,0.20504306819703844,0.3763128851022985,0.39431276169088153

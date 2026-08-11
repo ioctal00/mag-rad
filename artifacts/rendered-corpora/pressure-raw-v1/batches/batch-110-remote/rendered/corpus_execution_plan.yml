@@ -1,0 +1,459 @@
+corpus_id: pressure-raw-v1-remote
+source_manifest: master-regimes/workloads/corpus/pressure-raw-v1/batch-110-remote.yml
+rendered_corpus_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/corpus_manifest.yml
+corpus_cells: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/corpus_cells.csv
+region: eu
+max_instances_per_cell: null
+execution_budget:
+  hard_timeout_seconds: 1800
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260730
+  repetitions_default: 3
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  os_sampler: true
+  result_signature: true
+  result_signature_scope: first_repetition_per_condition
+  network_profile_probe: true
+  remote_edge_context: true
+execution_backend: master-regimes-infra.database_sweep
+included_execution_classes:
+- pilot
+source_cell_count: 48
+manifest_cell_count: 108
+excluded_cell_count: 0
+group_count: 24
+groups:
+- group_id: pressure-raw-v1-remote__pilot-balanced-v1__pressure_remote_mitigated__analytics_clients
+  sweep_id: pressure-raw-v1-remote__pilot-balanced-v1__pressure_remote_mitigated__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_mitigated
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: 'Control state for a high-volume regional-to-GAC FDW transfer.
+
+    '
+  network_profile_id: pressure_remote_mitigated
+  cell_count: 6
+  instance_count: 51
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__pilot-balanced-v1__pressure_remote_mitigated__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__pilot-balanced-v1__pressure_remote_mitigated__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+- group_id: pressure-raw-v1-remote__pilot-balanced-v1__pressure_remote_raw_stressed__analytics_clients
+  sweep_id: pressure-raw-v1-remote__pilot-balanced-v1__pressure_remote_raw_stressed__analytics_clients
+  dataset_profile_id: pilot-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_raw_stressed
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: 'Bounded combined remote stress that preserves enough successful
+    runs for raw telemetry while activating several remote-path mechanisms.
+
+    '
+  network_profile_id: pressure_remote_raw_stressed
+  cell_count: 6
+  instance_count: 51
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__pilot-balanced-v1__pressure_remote_raw_stressed__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__pilot-balanced-v1__pressure_remote_raw_stressed__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+- group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_bandwidth_10mbit__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_bandwidth_10mbit__analytics_clients
+  dataset_profile_id: raw-large-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_bandwidth_10mbit
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Isolate a strong bandwidth ceiling.
+  network_profile_id: pressure_remote_bandwidth_10mbit
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_bandwidth_10mbit__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_bandwidth_10mbit__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_bandwidth_50mbit__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_bandwidth_50mbit__analytics_clients
+  dataset_profile_id: raw-large-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_bandwidth_50mbit
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Isolate a moderate bandwidth ceiling.
+  network_profile_id: pressure_remote_bandwidth_50mbit
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_bandwidth_50mbit__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_bandwidth_50mbit__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_bandwidth_unlimited__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_bandwidth_unlimited__analytics_clients
+  dataset_profile_id: raw-large-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_bandwidth_unlimited
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Bandwidth-only calibration baseline.
+  network_profile_id: pressure_remote_bandwidth_unlimited
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_bandwidth_unlimited__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_bandwidth_unlimited__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_delay_0ms__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_delay_0ms__analytics_clients
+  dataset_profile_id: raw-large-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_delay_0ms
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Delay-only calibration baseline.
+  network_profile_id: pressure_remote_delay_0ms
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_delay_0ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_delay_0ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_delay_20ms__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_delay_20ms__analytics_clients
+  dataset_profile_id: raw-large-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_delay_20ms
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Isolate moderate added egress delay.
+  network_profile_id: pressure_remote_delay_20ms
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_delay_20ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_delay_20ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_delay_80ms__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_delay_80ms__analytics_clients
+  dataset_profile_id: raw-large-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_delay_80ms
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Isolate strong added egress delay.
+  network_profile_id: pressure_remote_delay_80ms
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_delay_80ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_delay_80ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_fetch_10000__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_fetch_10000__analytics_clients
+  dataset_profile_id: raw-large-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_fetch_10000
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Fetch-size-only calibration baseline.
+  network_profile_id: pressure_remote_fetch_10000
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_fetch_10000__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_fetch_10000__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_fetch_100__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_fetch_100__analytics_clients
+  dataset_profile_id: raw-large-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_fetch_100
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Isolate small FDW fetch batches.
+  network_profile_id: pressure_remote_fetch_100
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_fetch_100__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_fetch_100__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_fetch_2000__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_fetch_2000__analytics_clients
+  dataset_profile_id: raw-large-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_fetch_2000
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Isolate an intermediate FDW fetch size.
+  network_profile_id: pressure_remote_fetch_2000
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_fetch_2000__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_fetch_2000__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_mitigated__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_mitigated__analytics_clients
+  dataset_profile_id: raw-large-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_mitigated
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: 'Control state for a high-volume regional-to-GAC FDW transfer.
+
+    '
+  network_profile_id: pressure_remote_mitigated
+  cell_count: 6
+  instance_count: 51
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_mitigated__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_mitigated__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+- group_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_raw_stressed__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_raw_stressed__analytics_clients
+  dataset_profile_id: raw-large-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_raw_stressed
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: 'Bounded combined remote stress that preserves enough successful
+    runs for raw telemetry while activating several remote-path mechanisms.
+
+    '
+  network_profile_id: pressure_remote_raw_stressed
+  cell_count: 6
+  instance_count: 51
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_raw_stressed__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-large-balanced-v1__pressure_remote_raw_stressed__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+- group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_10mbit__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_10mbit__analytics_clients
+  dataset_profile_id: raw-small-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_bandwidth_10mbit
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Isolate a strong bandwidth ceiling.
+  network_profile_id: pressure_remote_bandwidth_10mbit
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_10mbit__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_10mbit__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_50mbit__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_50mbit__analytics_clients
+  dataset_profile_id: raw-small-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_bandwidth_50mbit
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Isolate a moderate bandwidth ceiling.
+  network_profile_id: pressure_remote_bandwidth_50mbit
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_50mbit__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_50mbit__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_unlimited__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_unlimited__analytics_clients
+  dataset_profile_id: raw-small-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_bandwidth_unlimited
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Bandwidth-only calibration baseline.
+  network_profile_id: pressure_remote_bandwidth_unlimited
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_unlimited__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_bandwidth_unlimited__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_delay_0ms__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_delay_0ms__analytics_clients
+  dataset_profile_id: raw-small-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_delay_0ms
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Delay-only calibration baseline.
+  network_profile_id: pressure_remote_delay_0ms
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_delay_0ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_delay_0ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_delay_20ms__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_delay_20ms__analytics_clients
+  dataset_profile_id: raw-small-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_delay_20ms
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Isolate moderate added egress delay.
+  network_profile_id: pressure_remote_delay_20ms
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_delay_20ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_delay_20ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_delay_80ms__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_delay_80ms__analytics_clients
+  dataset_profile_id: raw-small-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_delay_80ms
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Isolate strong added egress delay.
+  network_profile_id: pressure_remote_delay_80ms
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_delay_80ms__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_delay_80ms__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_fetch_10000__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_fetch_10000__analytics_clients
+  dataset_profile_id: raw-small-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_fetch_10000
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Fetch-size-only calibration baseline.
+  network_profile_id: pressure_remote_fetch_10000
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_fetch_10000__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_fetch_10000__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_fetch_100__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_fetch_100__analytics_clients
+  dataset_profile_id: raw-small-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_fetch_100
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Isolate small FDW fetch batches.
+  network_profile_id: pressure_remote_fetch_100
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_fetch_100__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_fetch_100__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_fetch_2000__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_fetch_2000__analytics_clients
+  dataset_profile_id: raw-small-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_fetch_2000
+  target_group: analytics_clients
+  strategies:
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: Isolate an intermediate FDW fetch size.
+  network_profile_id: pressure_remote_fetch_2000
+  cell_count: 4
+  instance_count: 12
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_fetch_2000__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_fetch_2000__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: false
+- group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_mitigated__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_mitigated__analytics_clients
+  dataset_profile_id: raw-small-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_mitigated
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: 'Control state for a high-volume regional-to-GAC FDW transfer.
+
+    '
+  network_profile_id: pressure_remote_mitigated
+  cell_count: 6
+  instance_count: 51
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_mitigated__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_mitigated__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true
+- group_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_raw_stressed__analytics_clients
+  sweep_id: pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_raw_stressed__analytics_clients
+  dataset_profile_id: raw-small-balanced-v1
+  dataset_adapter: citus_datagen
+  runtime_config_id: pressure_remote_raw_stressed
+  target_group: analytics_clients
+  strategies:
+  - etl_materialized
+  - multiregion_union
+  runtime_intervention_axis: remote_path
+  runtime_expected_effect: 'Bounded combined remote stress that preserves enough successful
+    runs for raw telemetry while activating several remote-path mechanisms.
+
+    '
+  network_profile_id: pressure_remote_raw_stressed
+  cell_count: 6
+  instance_count: 51
+  instance_manifest: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/groups/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_raw_stressed__analytics_clients/instance_manifest.csv
+  sweep_config: master-regimes/generated/corpus/pressure-raw-v1/batches/batch-110-remote/rendered/sweeps/pressure-raw-v1-remote__raw-small-balanced-v1__pressure_remote_raw_stressed__analytics_clients.yml
+  fdw_bootstrap_required: true
+  gac_etl_bootstrap_required: true

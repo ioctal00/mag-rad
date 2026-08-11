@@ -1,0 +1,60 @@
+digraph G {
+  graph [
+    rankdir=TB,
+    bgcolor="white",
+    fontname="DejaVu Sans",
+    fontsize=13,
+    pad=0.20,
+    nodesep=0.34,
+    ranksep=0.52,
+    labelloc="t",
+    label="Faze razvoja eksperimentalnog korpusa i kapije kvaliteta"
+  ];
+
+  node [
+    shape=box,
+    style="filled",
+    fontname="DejaVu Sans",
+    fontsize=9.0,
+    color="#263238",
+    fillcolor="#f3f5f5",
+    margin="0.14,0.09",
+    width=2.15
+  ];
+
+  edge [
+    fontname="DejaVu Sans",
+    fontsize=8.0,
+    color="#4f585b",
+    arrowsize=0.72
+  ];
+
+  smoke [label="1  Collector smoke\ninfrastruktura i nekoliko\nreprezentativnih instanci"];
+  pilot [label="2  Pilot korpusa\nprimjenjivost, null semantika\ni curenje identiteta"];
+  main [label="3  Glavni dokazni skup\nglavni korpus, intervencije\ni holdout projekcija", fillcolor="#dfeceb", color="#176b61"];
+  repeatability [label="4  Ponovljivost\n96 uslova sa 3/5\nponavljanja"];
+  audit [label="5  Završni audit\ngranice tvrdnji, tabele,\nfigure i studije slučaja", fillcolor="#dfeceb", color="#176b61"];
+
+  { rank=same; smoke; pilot; main; repeatability; audit; }
+  smoke -> pilot -> main -> repeatability -> audit;
+
+  gate1 [shape=note, label="Kapija:\npotpuni višeslojni dokazi"];
+  gate2 [shape=note, label="Kapija:\nodbranjiv ugovor pokazatelja"];
+  gate3 [shape=note, label="Kapija:\nzaključani model i tvrdnje"];
+  gate4 [shape=note, label="Kapija:\nstabilan mjerni i\nkarakterizacijski izlaz"];
+
+  { rank=same; gate1; gate2; gate3; gate4; }
+  smoke -> gate1 [style=dotted, arrowhead=none];
+  pilot -> gate2 [style=dotted, arrowhead=none];
+  main -> gate3 [style=dotted, arrowhead=none];
+  repeatability -> gate4 [style=dotted, arrowhead=none];
+
+  stop [
+    shape=note,
+    label="Ako kapija ne prođe:\nzaustaviti, ispraviti ugovor\nili oslabiti tvrdnju.",
+    fillcolor="#f7f8f8",
+    color="#899194"
+  ];
+  gate2 -> stop [style=dashed];
+  gate3 -> stop [style=dashed];
+}

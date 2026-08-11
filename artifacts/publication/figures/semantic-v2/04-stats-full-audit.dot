@@ -1,0 +1,79 @@
+digraph stats_full_audit {
+  graph [
+    rankdir=TB
+    bgcolor="white"
+    pad="0.18"
+    nodesep="0.35"
+    ranksep="0.42"
+    fontname="DejaVu Sans"
+  ]
+  node [
+    shape=box
+    style="filled"
+    color="#32444a"
+    fillcolor="#f4f6f6"
+    fontcolor="#172126"
+    fontname="DejaVu Sans"
+    fontsize=10
+    margin="0.14,0.10"
+    penwidth=1.0
+  ]
+  edge [
+    color="#5f7076"
+    fontcolor="#34454b"
+    fontname="DejaVu Sans"
+    fontsize=9
+    arrowsize=0.7
+    penwidth=1.0
+  ]
+
+  attempted [
+    label=<<B>146/146 pokušano</B><BR/><FONT POINT-SIZE="9">bez odabira prema ishodu</FONT>>
+    fillcolor="#e7eeee"
+  ]
+  correctness_timeout [
+    label=<<B>14 timeouta</B><BR/><FONT POINT-SIZE="9">poređenje nije završeno</FONT>>
+    fillcolor="#f3ece8"
+  ]
+  compared [
+    label=<<B>132 poređenja završena</B><BR/><FONT POINT-SIZE="9">0/132 neslaganja rezultata</FONT>>
+    fillcolor="#e9f1ed"
+  ]
+  instrumentation_timeout [
+    label=<<B>2 timeouta instrumentovanja</B><BR/><FONT POINT-SIZE="9">q68 i q106</FONT>>
+    fillcolor="#f3ece8"
+  ]
+  complete [
+    label=<<B>130 potpunih opservacija</B><BR/><FONT POINT-SIZE="9">prikupljanje, 19 pokazatelja i projekcija</FONT>>
+    fillcolor="#e4efeb"
+  ]
+  coverage [
+    label=<<B>Finalna P99 pokrivenost</B><BR/><FONT POINT-SIZE="9">130/130 semantičkih vektora</FONT>>
+  ]
+  repartition [
+    label=<<B>Regionalni MapMerge</B><BR/>62/130 opservacija>
+  ]
+  evidence [
+    label=<<B>Plan artefakti</B><BR ALIGN="LEFT"/>128 glavnih otisaka<BR ALIGN="LEFT"/>103 udaljena otiska>
+  ]
+  vectors [
+    label=<<B>19-dimenzionalni vektori</B><BR/>79 grupa na šest decimala>
+  ]
+  prototypes [
+    label=<<B>Četiri fuzzy prototipa</B><BR/><FONT POINT-SIZE="9">medijana max članstva 0,365</FONT>>
+  ]
+
+  attempted -> correctness_timeout [label="tehničko isključenje"]
+  attempted -> compared
+  compared -> instrumentation_timeout [label="granica instrumentovanja"]
+  compared -> complete
+  complete -> coverage
+  complete -> repartition
+  complete -> evidence
+  evidence -> vectors [label="selekcija pokazatelja"]
+  vectors -> prototypes [label="prototipsko sažimanje"]
+
+  { rank=same correctness_timeout compared }
+  { rank=same instrumentation_timeout complete }
+  { rank=same coverage repartition evidence }
+}

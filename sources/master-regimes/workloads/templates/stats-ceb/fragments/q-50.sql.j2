@@ -1,0 +1,20 @@
+select count(*) as result_count
+FROM {{ schema_name }}.comments AS c,
+  {{ schema_name }}.posts AS p,
+  {{ schema_name }}.votes AS v,
+  {{ schema_name }}.badges AS b,
+  {{ schema_name }}.users AS u
+WHERE u.Id = c.UserId
+  AND c.UserId = p.OwnerUserId
+  AND p.OwnerUserId = v.UserId
+  AND v.UserId = b.UserId
+  AND c.Score = 1
+  AND p.Score >= -2
+  AND p.Score <= 23
+  AND p.ViewCount <= 2432
+  AND p.CommentCount = 0
+  AND p.FavoriteCount >= 0
+  AND u.Reputation >= 1
+  AND u.Reputation <= 113
+  AND u.Views >= 0
+  AND u.Views <= 51

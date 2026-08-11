@@ -1,0 +1,9 @@
+contrast,query_condition_id,pair_count,primary_metric,state_x_median,state_y_median,paired_delta_median,positive_zero_negative,gac_visible_rms_delta_median,topology_only_rms_delta_median,membership_l1_median,dominant_regime_change_count
+B--C,tenant_point__raw_gac_finalize,3,worker_rows_cv,0.0,0.0,0.0,0/3/0,0.0026747483986098502,0.0,0.0008969335923780242,0
+B--C,tenant_point__regional_reduced,3,worker_rows_cv,0.0,0.0,0.0,0/3/0,0.0004088116902775088,0.0,0.0001406665357975012,0
+B--C,top_tenants__raw_gac_finalize,3,worker_rows_cv,0.0743099458349957,0.6225413186688896,0.5482313728338939,3/0/0,0.0027505064218431552,0.0,0.0003163095551944571,0
+B--C,top_tenants__regional_reduced,3,worker_rows_cv,0.0743099458349957,0.6225413186688896,0.5482313728338939,3/0/0,0.0004061166541531367,0.0,6.459663012316208e-05,0
+A--D,tenant_point__raw_gac_finalize,3,remote_region_rows_isf,1.0,1.0,0.0,0/3/0,0.0005835981958592749,0.4657978427243411,0.004792813476430814,0
+A--D,tenant_point__regional_reduced,3,remote_region_rows_isf,1.0,1.0,0.0,0/3/0,0.00012917312211293929,0.4657978427243411,0.0008033672311948269,0
+A--D,top_tenants__raw_gac_finalize,3,remote_region_rows_isf,1.0,1.8,0.8,3/0/0,0.11411938918954445,1.7744289470832932,0.8599217695867369,0
+A--D,top_tenants__regional_reduced,3,remote_region_rows_isf,1.0,1.8,0.8,3/0/0,0.11575997708830388,1.7744289470832932,0.9785869296989188,0

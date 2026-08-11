@@ -1,0 +1,84 @@
+digraph G {
+  graph [
+    rankdir=LR,
+    bgcolor="white",
+    fontname="DejaVu Sans",
+    fontsize=13,
+    pad=0.18,
+    nodesep=0.42,
+    ranksep=0.72,
+    labelloc="t",
+    label="Eksperimentalna topologija: dva logička Citus regiona i globalni analitički čvor"
+  ];
+
+  node [
+    shape=box,
+    style="filled",
+    fontname="DejaVu Sans",
+    fontsize=9.5,
+    color="#263238",
+    fillcolor="#f3f5f5",
+    margin="0.14,0.09"
+  ];
+
+  edge [
+    fontname="DejaVu Sans",
+    fontsize=8.5,
+    color="#4f585b",
+    arrowsize=0.72
+  ];
+
+  client [label="SQL izvršilac\nšablon + parametri", fillcolor="#dfeceb"];
+
+  subgraph cluster_gac {
+    label="Globalni analitički sloj";
+    fontname="DejaVu Sans";
+    fontsize=10;
+    color="#176b61";
+    penwidth=1.3;
+    gac [label="GAC\nPostgreSQL 18 + postgres_fdw", fillcolor="#dfeceb"];
+    final [label="Globalna finalizacija\njoin / aggregate / sort / Top-K"];
+    staged [label="Materijalizovani\nETL rezultat"];
+    gac -> final [label="FDW putanja"];
+    staged -> final [label="lokalna putanja"];
+  }
+
+  subgraph cluster_eu {
+    label="Logički region EU";
+    fontname="DejaVu Sans";
+    fontsize=10;
+    color="#899194";
+    coord_eu [label="Citus coordinator\nPostgreSQL 18 + Citus 14"];
+    worker_eu_1 [label="Worker 1\nshardovi"];
+    worker_eu_2 [label="Worker 2\nshardovi"];
+    coord_eu -> worker_eu_1 [label="taskovi"];
+    coord_eu -> worker_eu_2 [label="taskovi"];
+  }
+
+  subgraph cluster_us {
+    label="Logički region US";
+    fontname="DejaVu Sans";
+    fontsize=10;
+    color="#899194";
+    coord_us [label="Citus coordinator\nPostgreSQL 18 + Citus 14"];
+    worker_us_1 [label="Worker 1\nshardovi"];
+    worker_us_2 [label="Worker 2\nshardovi"];
+    coord_us -> worker_us_1 [label="taskovi"];
+    coord_us -> worker_us_2 [label="taskovi"];
+  }
+
+  client -> gac [label="globalni SQL"];
+  gac -> coord_eu [label="FDW / kontrolisani WAN"];
+  gac -> coord_us [label="FDW / kontrolisani WAN"];
+  coord_eu -> staged [style=dashed, label="ETL osvježavanje"];
+  coord_us -> staged [style=dashed, label="ETL osvježavanje"];
+
+  note [
+    shape=note,
+    label="EU i US su logičke oznake.\nLatencija, jitter i gubitak paketa\nuvode se kontrolisanim tc/netem profilom.",
+    fillcolor="#f7f8f8",
+    color="#899194",
+    fontsize=8.5
+  ];
+  note -> gac [style=dotted, arrowhead=none];
+}

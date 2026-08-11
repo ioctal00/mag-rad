@@ -1,0 +1,65 @@
+digraph RepeatabilityProtocol {
+  graph [
+    rankdir=TB,
+    bgcolor="white",
+    pad=0.12,
+    nodesep=0.38,
+    ranksep=0.52,
+    splines=ortho,
+    fontname="DejaVu Sans",
+    fontsize=11,
+    newrank=true,
+    labelloc="t",
+    label="Provjera ponovljivosti opisnog modela F19"
+  ];
+
+  node [
+    shape=box,
+    style="filled",
+    fillcolor="#F3F5F5",
+    color="#263238",
+    penwidth=0.9,
+    fontname="DejaVu Sans",
+    fontsize=11,
+    width=2.35,
+    height=0.72,
+    margin="0.14,0.10"
+  ];
+
+  edge [
+    color="#566164",
+    penwidth=1.0,
+    arrowsize=0.7,
+    fontname="DejaVu Sans",
+    fontsize=9
+  ];
+
+  condition [
+    label="Zaključani uslov\nSQL + dataset + runtime + mreža",
+    fillcolor="#DFECEB",
+    color="#176B61",
+    group="g1"
+  ];
+  repetitions [label="3 ponavljanja\n5 za sentinel uslove", group="g2"];
+  evidence [label="Višeslojni dokaz\nGAC + region + poslovi na radnim čvorovima", group="g3"];
+  features [label="Isti ugovor F19\n19 semantičkih pokazatelja", group="g3"];
+  projection [label="Zaključana predobrada\ni projekcija modelom F19", group="g2"];
+  comparison [
+    label="Vanmrežno poređenje\notisak plana · L2 F19 vektora · L1 F19 članstava · vodeći opisni prototip",
+    fillcolor="#E9EEEE",
+    color="#176B61",
+    group="g1"
+  ];
+
+  {
+    rank=same;
+    condition -> repetitions -> evidence;
+  }
+  {
+    rank=same;
+    comparison -> projection -> features [style=invis, weight=100];
+  }
+  evidence -> features;
+  features -> projection [constraint=false];
+  projection -> comparison [constraint=false];
+}

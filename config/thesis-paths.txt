@@ -1,0 +1,21 @@
+# Putanje obuhvacene mapom dodatnih artefakata S1-S6 u rukopisu.
+analysis/reports/fuzzy-intervention-memory-v1/feature_selection_audit.csv
+analysis/reports/pressure-raw-v1-mitigation-action-audit/
+analysis/reports/dba-local-memory-panel-v1/
+configs/models/fuzzy_intervention_memory_v1.yml
+experiments/feedback-loop-v1/
+reproducibility/
+releases/feedback-loop-execution-v1/
+releases/feedback-loop-analysis-v1/
+releases/rq-alignment-v2/
+releases/fcm-f21-development-v1/
+releases/model-lineage-audit-v1/
+releases/representation-ablation-e1-e4-v1/
+releases/representation-value-ablation-v1/
+releases/confirmatory-action-replication-v1/
+releases/action-selection-sample-size-audit-v1/
+releases/retrieval-density-geometry-audit-v1/
+releases/consolidated-evaluation-v1/
+releases/temporal-validity-audit-v1/
+examples/
+artifacts/release-manifest.json

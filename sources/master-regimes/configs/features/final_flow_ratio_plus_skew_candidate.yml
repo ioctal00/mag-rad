@@ -1,0 +1,101 @@
+candidate_id: clean_run_v1_flow_ratio_v3_plus_skew_rerun_fcm_k4
+status: locked_validation_candidate
+description: >
+  Locked thesis-facing validation candidate after additive skew/asymmetry
+  rerun. This candidate keeps the original clean-run-v1 baseline rows and adds
+  the targeted region-local skew/asymmetry rerun rows as extra evidence. It is
+  the model to use for validation-holdout inference checks, not a request to
+  rerun or refit the historical clean-run-v1 baseline.
+
+lineage:
+  baseline_logical_run_id: clean-run-v1
+  baseline_row_count: 1964
+  additive_logical_run_id: clean-run-v1-region-asymmetry-skew-rerun
+  additive_row_count: 294
+  combined_row_count: 2258
+  combination_policy: append_valid_evidence_rows
+  replacement_policy: >
+    No baseline rows are deleted. The skew rerun rows are appended because the
+    older baseline rows are not invalid; the new rows add stronger evidence for
+    region-local skew and worker/task imbalance.
+
+inputs:
+  matrix: analysis/features/clean-run-v1-flow-ratio-v3-plus-skew-rerun/phase1_compact/compact_m0_flow_ratio_v3_reduced_scaled.csv
+  raw_matrix: analysis/features/clean-run-v1-flow-ratio-v3-plus-skew-rerun/phase1_compact/compact_m0_flow_ratio_v3_reduced_raw.csv
+  context: analysis/features/clean-run-v1-flow-ratio-v3-plus-skew-rerun/phase1_compact/compact_context.csv
+  severity: analysis/features/clean-run-v1-flow-ratio-v3-plus-skew-rerun/phase1_compact/execution_severity.csv
+  dataset_diagnosis: analysis/features/clean-run-v1-flow-ratio-v3-plus-skew-rerun/phase1_compact/dataset_diagnosis.csv
+  comparison_report: analysis/reports/clean-run-v1-flow-ratio-v3-plus-skew-rerun-comparison/README.md
+
+model_input_contract:
+  observation_id: query_run_id
+  matrix_role: model_input
+  context_role: posthoc_audit_only
+  context_columns_are_features: false
+  expected_feature_count: 21
+  forbidden_feature_columns:
+    - execution_time_seconds
+    - elapsed_seconds
+    - temp_blocks_sum
+    - task_count
+    - dataset_id
+    - dataset_profile_id
+    - runtime_config_id
+    - template_id
+    - instance_id
+    - corpus_cell_id
+    - logical_question_id
+    - execution_strategy
+    - intervention_axis
+    - expected_regime_targets
+    - pressure_tags
+
+primary_model:
+  algorithm: fuzzy_c_means
+  k: 4
+  fuzzifier: 1.7
+  output_dir: analysis/reports/clean-run-v1-flow-ratio-v3-plus-skew-rerun-m0-reduced-fuzzy
+  membership_file: analysis/reports/clean-run-v1-flow-ratio-v3-plus-skew-rerun-m0-reduced-fuzzy/memberships_representative_by_k.csv
+  center_file: analysis/reports/clean-run-v1-flow-ratio-v3-plus-skew-rerun-m0-reduced-fuzzy/cluster_centers_representative_by_k.csv
+  k_summary_file: analysis/reports/clean-run-v1-flow-ratio-v3-plus-skew-rerun-m0-reduced-fuzzy/k_summary.csv
+  seed_stability_file: analysis/reports/clean-run-v1-flow-ratio-v3-plus-skew-rerun-m0-reduced-fuzzy/seed_stability.csv
+  selected_k_reason: >
+    k=4 remains stable across seeds after adding skew rerun evidence
+    (ARI=1.0), while k=5 introduces lower stability. Use k=4 for validation
+    inference and keep k=5 as ablation only.
+
+validation_policy:
+  validation_holdout_manifest: workloads/corpus/corpus_manifest.validation-holdout-v1.yml
+  do_not_refit_on_holdout: true
+  allowed_holdout_use:
+    - run existing feature extractor on new executions
+    - project holdout rows into this locked feature space
+    - compute membership against locked k=4 centers
+    - compare expected intervention behavior post-hoc
+  forbidden_holdout_use:
+    - choosing new features because of holdout labels
+    - changing k after seeing holdout labels
+    - treating corpus metadata as model input
+
+features:
+  - remote_path_share
+  - remote_to_final_rows_ratio
+  - wan_output_to_final_rows_ratio
+  - drf_bytes_proxy
+  - global_group_merge_ratio
+  - temp_bytes_to_wan_bytes_ratio
+  - temp_blocks_per_wan_row
+  - temp_blocks_per_final_row
+  - spill_per_wan_mb
+  - hash_batches_max
+  - remote_region_rows_isf
+  - worker_task_scan_rows_isf
+  - worker_task_scan_actual_rows_max_share
+  - task_count_to_shard_count_ratio
+  - active_task_share
+  - citus_repartition_query
+  - worker_task_seq_scan_share
+  - root_rows_estimate_error_log
+  - foreign_scan_rows_estimate_error_log
+  - aggregate_rows_estimate_error_log
+  - remote_root_rows_estimate_error_log

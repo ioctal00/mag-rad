@@ -1,0 +1,125 @@
+contract: semantic_representation_audit_v1
+status: exploratory_not_final_model
+description: >
+  Semantically defined, corpus-independent feature normalization used with
+  corpus-conditioned exploratory FCM prototypes to test whether the frozen
+  StandardScaler geometry exaggerates STATS-CEB OOD distance. The frozen
+  thesis model is not changed.
+normalization_scope: corpus_independent_semantic_contract
+prototype_scope: corpus_conditioned_original_baseline
+fuzzifier: 1.7
+seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+holdout_seeds: [0, 1, 2]
+k_values: [3, 4]
+family_weighting: equal_squared_energy
+missing_policy: semantic_neutral_with_explicit_applicability_audit
+dropped_model_inputs:
+  wan_output_to_final_rows_ratio:
+    redundant_with: global_group_merge_ratio
+    reason: >
+      Both are currently computed as WAN output rows divided by final root
+      rows and are exactly equal, including missingness, in the baseline.
+  worker_task_scan_actual_rows_max_share:
+    redundant_with: worker_task_scan_rows_isf
+    reason: >
+      Given n worker task plans, ISF equals n times max_share. Their
+      topology-normalized excess-concentration forms are algebraically equal.
+features:
+  remote_path_share:
+    family: remote_fanin_fetch
+    transform: bounded_share
+    neutral: 0.0
+  remote_to_final_rows_ratio:
+    family: remote_fanin_fetch
+    transform: nonnegative_log_atan
+    neutral: 0.0
+  wan_output_to_final_rows_ratio:
+    family: remote_fanin_fetch
+    transform: nonnegative_log_atan
+    neutral: 0.0
+    drop_as_redundant: true
+    redundant_with: global_group_merge_ratio
+  drf_bytes_proxy:
+    family: remote_fanin_fetch
+    transform: nonnegative_log_atan
+    neutral: 0.0
+  global_group_merge_ratio:
+    family: regional_reduction
+    transform: nonnegative_log_atan
+    neutral: 0.0
+  temp_bytes_to_wan_bytes_ratio:
+    family: normalized_spill_pressure
+    transform: nonnegative_log_atan
+    neutral: 0.0
+  temp_blocks_per_wan_row:
+    family: normalized_spill_pressure
+    transform: nonnegative_log_atan
+    neutral: 0.0
+  temp_blocks_per_final_row:
+    family: normalized_spill_pressure
+    transform: nonnegative_log_atan
+    neutral: 0.0
+  spill_per_wan_mb:
+    family: normalized_spill_pressure
+    transform: nonnegative_log_atan
+    neutral: 0.0
+  hash_batches_max:
+    family: normalized_spill_pressure
+    transform: positive_baseline_log2_atan
+    neutral: 0.0
+  remote_region_rows_isf:
+    family: skew_imbalance
+    transform: isf_excess_share
+    support_columns:
+      - remote_region_nonzero_count
+      - remote_region_observed_count
+    neutral: 0.0
+  worker_task_scan_rows_isf:
+    family: skew_imbalance
+    transform: positive_excess_log_atan
+    neutral: 0.0
+  worker_task_scan_actual_rows_max_share:
+    family: skew_imbalance
+    transform: max_share_excess
+    support_columns:
+      - worker_task_plan_count
+      - task_count
+    neutral: 0.0
+    drop_as_redundant: true
+    redundant_with: worker_task_scan_rows_isf
+  task_count_to_shard_count_ratio:
+    family: citus_topology_normalized
+    transform: nonnegative_log_atan
+    neutral: 0.0
+  active_task_share:
+    family: citus_topology_normalized
+    transform: nonnegative_log_atan
+    neutral: 0.0
+  citus_repartition_query:
+    family: citus_topology_normalized
+    transform: binary
+    neutral: 0.0
+  worker_task_seq_scan_share:
+    family: citus_topology_normalized
+    transform: bounded_share
+    neutral: 0.0
+  root_rows_estimate_error_log:
+    family: estimate_error
+    transform: signed_atan
+    neutral: 0.5
+    neutral_semantics: zero_signed_log_error
+  foreign_scan_rows_estimate_error_log:
+    family: estimate_error
+    transform: signed_atan
+    neutral: 0.5
+    neutral_semantics: zero_signed_log_error
+  aggregate_rows_estimate_error_log:
+    family: estimate_error
+    transform: signed_atan
+    neutral: 0.5
+    neutral_semantics: zero_signed_log_error
+  remote_root_rows_estimate_error_log:
+    family: estimate_error
+    transform: signed_atan
+    neutral: 0.5
+    neutral_semantics: zero_signed_log_error

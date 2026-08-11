@@ -1,0 +1,16 @@
+check_id,observed,expected,status
+region_isf_uniform,0.0,0.0,PASS
+region_isf_all_on_one_of_two,1.0,1.0,PASS
+region_isf_all_on_one_of_four,1.0,1.0,PASS
+region_isf_single_unit,0.0,0.0,PASS
+worker_cv_uniform,0.0,0.0,PASS
+worker_cv_all_on_one_of_two,1.0,1.0,PASS
+worker_cv_all_on_one_of_four,1.0,1.0,PASS
+worker_cv_uniform_scale_invariance,0.5,0.5,PASS
+drf_uniform_scale_invariance,10.0,10.0,PASS
+drf_scalar_output_not_size_invariant_small,1000.0,1000,PASS
+drf_scalar_output_not_size_invariant_large,10000.0,10000,PASS
+estimate_error_exact_zero,0.0,0.0,PASS
+estimate_error_underestimate_positive,True,True,PASS
+estimate_error_overestimate_negative,True,True,PASS
+huge_ratios_remain_finite,True,True,PASS

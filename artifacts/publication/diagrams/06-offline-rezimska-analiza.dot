@@ -1,0 +1,67 @@
+digraph G {
+  graph [
+    rankdir=TB,
+    bgcolor="white",
+    fontname="DejaVu Sans",
+    fontsize=13,
+    pad=0.18,
+    nodesep=0.34,
+    ranksep=0.58,
+    labelloc="t",
+    label="Vanmrežna karakterizacija modelom F19"
+  ];
+
+  node [
+    shape=box,
+    style="filled",
+    fontname="DejaVu Sans",
+    fontsize=9.2,
+    color="#263238",
+    fillcolor="#f3f5f5",
+    margin="0.14,0.09",
+    width=2.15
+  ];
+
+  edge [
+    fontname="DejaVu Sans",
+    fontsize=8.2,
+    color="#4f585b",
+    arrowsize=0.72
+  ];
+
+  corpus [label="Korpus modela F19\n1.964 × 19", shape=cylinder, fillcolor="#dfeceb", color="#176b61"];
+  preprocess [label="Zamrznuti ugovor F19\nsemantička transformacija,\nneutralne vrijednosti i težine porodica"];
+  ablation [label="Razvojne provjere\nporodične ablacije i\nkontrola curenja"];
+  models [label="FCM model F19\nm = 1,7; k = 3 ili 4\n10 inicijalizacija"];
+
+  validation [label="Validacija\nsilhouette, PC i PE,\nstabilnost i izostavljanje SQL porodica"];
+  prototypes [label="Opisni prototipi P0–P3\ncentri, članstva i\nodstupanja pokazatelja"];
+  frozen [label="Zamrznuti F19\n19 pokazatelja\n4 FCM centra", shape=cylinder, fillcolor="#dfeceb", color="#176b61"];
+  projection [label="Vanjski skupovi i ponovljivost\nprojekcija bez\nponovnog fitovanja"];
+
+  { rank=same; corpus; preprocess; ablation; models; }
+  { rank=same; projection; frozen; prototypes; validation; }
+
+  corpus -> preprocess -> ablation -> models;
+  models -> validation;
+  validation -> prototypes -> frozen -> projection;
+
+  note_model [
+    shape=note,
+    label="SQL se u ovom sloju više ne izvršava.\nSve varijante koriste sačuvane artefakte.",
+    width=2.8,
+    fillcolor="#f7f8f8",
+    color="#899194",
+    fontsize=8.2
+  ];
+  note_projection [
+    shape=note,
+    label="Novi red koristi isti redoslijed\n19 pokazatelja, transformacije i centre.",
+    width=2.3,
+    fillcolor="#f7f8f8",
+    color="#899194",
+    fontsize=8.2
+  ];
+  corpus -> note_model [style=dotted, arrowhead=none, constraint=false];
+  projection -> note_projection [style=dotted, arrowhead=none];
+}

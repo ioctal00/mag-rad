@@ -1,0 +1,5 @@
+prototype,descriptive_name,dominant_signature,interpretation
+P0,selective distributed path without spill,low spill and a smaller sequential worker-scan share,"descriptive center, not a cause or intervention"
+P1,"remote fan-in, global finalization and spill","remote flow, temporary I/O and bounded final output","descriptive center, not a cause or intervention"
+P2,distributed sequential path without strong spill,worker sequential access and remote work with less spill than P1,"descriptive center, not a cause or intervention"
+P3,local or materialized path with low remote flow,low global merge ratio and mostly materialized or local execution,"descriptive center, not a cause or intervention"

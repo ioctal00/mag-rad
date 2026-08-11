@@ -1,0 +1,40 @@
+{
+  "checks": {
+    "all_n3": true,
+    "condition_count_60": true,
+    "execution_count_300": true,
+    "explicit_schedule_exact": true,
+    "five_repetitions_per_condition": true,
+    "new_shape_names_do_not_overlap_old_panel": true,
+    "no_result_or_action_outcome_in_schedule": true,
+    "positions_near_balanced": true,
+    "single_rendered_group": true,
+    "three_actions": true,
+    "total_order_present": true
+  },
+  "counts": {
+    "conditions": 60,
+    "executions": 300,
+    "groups": 1,
+    "scenarios": 15
+  },
+  "status": "PASS",
+  "treatment_position_counts": {
+    "baseline::p1": 19,
+    "baseline::p2": 18,
+    "baseline::p3": 19,
+    "baseline::p4": 19,
+    "increase_gac_work_mem::p1": 19,
+    "increase_gac_work_mem::p2": 19,
+    "increase_gac_work_mem::p3": 19,
+    "increase_gac_work_mem::p4": 18,
+    "mitigate_remote_path_bundle::p1": 18,
+    "mitigate_remote_path_bundle::p2": 19,
+    "mitigate_remote_path_bundle::p3": 19,
+    "mitigate_remote_path_bundle::p4": 19,
+    "regional_topk_candidates::p1": 19,
+    "regional_topk_candidates::p2": 19,
+    "regional_topk_candidates::p3": 18,
+    "regional_topk_candidates::p4": 19
+  }
+}

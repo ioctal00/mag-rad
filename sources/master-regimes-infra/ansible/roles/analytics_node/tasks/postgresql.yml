@@ -1,0 +1,415 @@
+---
+- name: Build analytics PostgreSQL UFW CIDRs
+  ansible.builtin.set_fact:
+    analytics_node_postgresql_ufw_allowed_cidrs: "{{ analytics_node_postgresql_allowed_cidrs | reject('equalto', '127.0.0.1/32') | reject('equalto', '::1/128') | list | unique }}"
+    analytics_node_pgbouncer_ufw_allowed_cidrs: "{{ analytics_node_pgbouncer_allowed_cidrs | reject('equalto', '127.0.0.1/32') | reject('equalto', '::1/128') | list | unique }}"
+    analytics_node_pgbouncer_ufw_stale_cidrs: "{{ postgresql_allowed_cidrs | difference(analytics_node_pgbouncer_allowed_cidrs) | reject('equalto', '127.0.0.1/32') | reject('equalto', '::1/128') | list | unique }}"
+
+- name: Ensure PGDG keyring directory exists for analytics PostgreSQL
+  ansible.builtin.file:
+    path: /usr/share/postgresql-common/pgdg
+    state: directory
+    mode: "0755"
+
+- name: Install PGDG signing key for analytics PostgreSQL
+  ansible.builtin.get_url:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    dest: /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+    mode: "0644"
+
+- name: Configure PGDG apt repository for analytics PostgreSQL
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt {{ ansible_facts['distribution_release'] }}-pgdg main"
+    filename: pgdg
+    state: present
+
+- name: Download official Citus repository setup script for analytics PostgreSQL
+  ansible.builtin.get_url:
+    url: https://install.citusdata.com/community/deb.sh
+    dest: /usr/local/bin/install-citus-repo.sh
+    mode: "0755"
+
+- name: Check whether analytics Citus repository marker exists
+  ansible.builtin.stat:
+    path: /usr/local/share/citus-repo-installed
+  register: analytics_node_citus_repo_marker
+
+- name: Configure official Citus apt repository for analytics PostgreSQL
+  ansible.builtin.command:
+    cmd: /usr/local/bin/install-citus-repo.sh
+  when: not analytics_node_citus_repo_marker.stat.exists
+
+- name: Write analytics Citus repository marker
+  ansible.builtin.file:
+    path: /usr/local/share/citus-repo-installed
+    state: touch
+    mode: "0644"
+  when: not analytics_node_citus_repo_marker.stat.exists
+
+- name: Refresh apt cache after adding analytics Citus repository
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: Ensure postgresql-common config directory exists for analytics PostgreSQL
+  ansible.builtin.file:
+    path: /etc/postgresql-common
+    state: directory
+    mode: "0755"
+
+- name: Disable automatic analytics PostgreSQL cluster creation
+  ansible.builtin.lineinfile:
+    path: /etc/postgresql-common/createcluster.conf
+    regexp: "^#?create_main_cluster\\s*="
+    line: "create_main_cluster = false"
+    create: true
+    mode: "0644"
+
+- name: Install analytics PostgreSQL packages
+  ansible.builtin.apt:
+    name:
+      - "postgresql-{{ analytics_node_postgresql_version }}"
+      - "postgresql-client-{{ analytics_node_postgresql_version }}"
+      - "{{ analytics_node_citus_package }}"
+      - python3-psycopg2
+      - pgbouncer
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Hold analytics PostgreSQL and Citus package versions
+  ansible.builtin.command:
+    argv:
+      - apt-mark
+      - hold
+      - "postgresql-{{ analytics_node_postgresql_version }}"
+      - "postgresql-client-{{ analytics_node_postgresql_version }}"
+      - "{{ analytics_node_citus_package }}"
+  register: analytics_node_postgresql_package_hold_result
+  changed_when: "'set on hold' in analytics_node_postgresql_package_hold_result.stdout and 'was already set on hold' not in analytics_node_postgresql_package_hold_result.stdout"
+  when: analytics_node_postgresql_package_hold | bool
+
+- name: Check whether analytics PostgreSQL cluster config exists
+  ansible.builtin.stat:
+    path: "/etc/postgresql/{{ analytics_node_postgresql_version }}/main/postgresql.conf"
+  register: analytics_node_postgresql_cluster_config
+
+- name: Create analytics PostgreSQL cluster
+  ansible.builtin.command:
+    cmd: "pg_createcluster {{ analytics_node_postgresql_version }} main{{ ' -- --data-checksums' if analytics_node_postgresql_data_checksums else '' }}"
+  register: analytics_node_postgresql_createcluster
+  when: not analytics_node_postgresql_cluster_config.stat.exists
+
+- name: Re-check analytics PostgreSQL cluster config after creation
+  ansible.builtin.stat:
+    path: "/etc/postgresql/{{ analytics_node_postgresql_version }}/main/postgresql.conf"
+  register: analytics_node_postgresql_cluster_config_after_create
+
+- name: Fail when analytics PostgreSQL cluster config is missing after creation
+  ansible.builtin.fail:
+    msg: >-
+      analytics PostgreSQL cluster config is missing after pg_createcluster.
+      stdout={{ analytics_node_postgresql_createcluster.stdout | default('') }}
+      stderr={{ analytics_node_postgresql_createcluster.stderr | default('') }}
+  when: not analytics_node_postgresql_cluster_config_after_create.stat.exists
+
+- name: Ensure analytics PostgreSQL service is enabled
+  ansible.builtin.service:
+    name: postgresql
+    enabled: true
+    state: started
+
+- name: Configure analytics PostgreSQL listen addresses
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ analytics_node_postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?listen_addresses\\s*="
+    line: "listen_addresses = '{{ analytics_node_postgresql_listen_addresses }}'"
+  notify: Restart analytics postgresql
+
+- name: Configure analytics PostgreSQL max_connections
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ analytics_node_postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?max_connections\\s*="
+    line: "max_connections = {{ analytics_node_postgresql_max_connections }}"
+  notify: Restart analytics postgresql
+
+- name: Configure analytics PostgreSQL shared_preload_libraries
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ analytics_node_postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?shared_preload_libraries\\s*="
+    line: "shared_preload_libraries = '{{ analytics_node_postgresql_shared_preload_libraries }}'"
+  notify: Restart analytics postgresql
+
+- name: Configure analytics PostgreSQL password encryption
+  ansible.builtin.lineinfile:
+    path: "/etc/postgresql/{{ analytics_node_postgresql_version }}/main/postgresql.conf"
+    regexp: "^#?password_encryption\\s*="
+    line: "password_encryption = {{ analytics_node_postgresql_password_encryption }}"
+  notify: Restart analytics postgresql
+
+- name: Manage analytics PostgreSQL pg_hba.conf access block
+  ansible.builtin.blockinfile:
+    path: "/etc/postgresql/{{ analytics_node_postgresql_version }}/main/pg_hba.conf"
+    marker: "# {mark} ANSIBLE MANAGED THESIS ANALYTICS ACCESS"
+    block: |
+      {% for cidr in analytics_node_postgresql_allowed_cidrs %}
+      host    all             all             {{ cidr }}                 scram-sha-256
+      {% endfor %}
+  notify: Reload analytics postgresql
+
+- name: Check whether UFW is active on analytics node
+  ansible.builtin.command:
+    cmd: ufw status
+  register: analytics_node_ufw_status
+  changed_when: false
+  failed_when: false
+
+- name: Read current UFW rules on analytics node
+  ansible.builtin.command:
+    cmd: ufw status numbered
+  register: analytics_node_ufw_status_numbered
+  changed_when: false
+  failed_when: false
+  when: "'Status: active' in analytics_node_ufw_status.stdout"
+
+- name: Allow analytics PostgreSQL port through UFW for approved CIDRs
+  ansible.builtin.command:
+    cmd: "ufw allow proto tcp from {{ item }} to any port 5432"
+  loop: "{{ analytics_node_postgresql_ufw_allowed_cidrs }}"
+  when:
+    - "'Status: active' in analytics_node_ufw_status.stdout"
+    - analytics_node_ufw_status_numbered.stdout is not search('5432/tcp.*' ~ (item | regex_escape))
+
+- name: Remove stale public PostgreSQL UFW rule for approved CIDRs
+  ansible.builtin.command:
+    cmd: "ufw delete allow proto tcp from {{ item }} to any port 5432"
+  loop: "{{ postgresql_allowed_cidrs | reject('equalto', '127.0.0.1/32') | reject('equalto', '::1/128') | list | unique }}"
+  when:
+    - analytics_node_pgbouncer_enabled
+    - "'Status: active' in analytics_node_ufw_status.stdout"
+    - analytics_node_ufw_status_numbered.stdout is search('5432/tcp.*' ~ (item | regex_escape))
+
+- name: Allow analytics PgBouncer port through UFW for approved CIDRs
+  ansible.builtin.command:
+    cmd: "ufw allow proto tcp from {{ item }} to any port {{ analytics_node_pgbouncer_listen_port }}"
+  loop: "{{ analytics_node_pgbouncer_ufw_allowed_cidrs }}"
+  when:
+    - analytics_node_pgbouncer_enabled
+    - "'Status: active' in analytics_node_ufw_status.stdout"
+    - analytics_node_ufw_status_numbered.stdout is not search((analytics_node_pgbouncer_listen_port | string) ~ '/tcp.*' ~ (item | regex_escape))
+
+- name: Remove stale analytics PgBouncer UFW rules
+  ansible.builtin.command:
+    cmd: "ufw delete allow proto tcp from {{ item }} to any port {{ analytics_node_pgbouncer_listen_port }}"
+  loop: "{{ analytics_node_pgbouncer_ufw_stale_cidrs }}"
+  when:
+    - analytics_node_pgbouncer_enabled
+    - "'Status: active' in analytics_node_ufw_status.stdout"
+    - analytics_node_ufw_status_numbered.stdout is search((analytics_node_pgbouncer_listen_port | string) ~ '/tcp.*' ~ (item | regex_escape))
+
+- name: Flush analytics PostgreSQL handlers before SQL bootstrap
+  ansible.builtin.meta: flush_handlers
+
+- name: Set analytics postgres superuser password
+  ansible.builtin.command:
+    cmd: sudo -u postgres psql -v ON_ERROR_STOP=1
+    stdin: "ALTER USER postgres WITH PASSWORD '{{ analytics_node_postgresql_admin_password | replace(\"'\", \"''\") }}';"
+  no_log: true
+
+- name: Check whether analytics database exists
+  ansible.builtin.command:
+    cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -tAc \"SELECT 1 FROM pg_database WHERE datname='{{ analytics_node_postgresql_app_db }}'\""
+  register: analytics_node_postgresql_db_exists
+  changed_when: false
+
+- name: Create analytics database
+  ansible.builtin.command:
+    cmd: "sudo -u postgres createdb {{ analytics_node_postgresql_app_db }}"
+  when: analytics_node_postgresql_db_exists.stdout != "1"
+
+- name: Check whether analytics application role exists
+  ansible.builtin.command:
+    cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -tAc \"SELECT 1 FROM pg_roles WHERE rolname='{{ analytics_node_postgresql_app_user }}'\""
+  register: analytics_node_postgresql_role_exists
+  changed_when: false
+
+- name: Create analytics application role
+  ansible.builtin.command:
+    cmd: sudo -u postgres psql -v ON_ERROR_STOP=1
+    stdin: "CREATE ROLE {{ analytics_node_postgresql_app_user }} WITH LOGIN PASSWORD '{{ analytics_node_postgresql_app_password | replace(\"'\", \"''\") }}';"
+  when: analytics_node_postgresql_role_exists.stdout != "1"
+  no_log: true
+
+- name: Ensure analytics application role password is current
+  ansible.builtin.command:
+    cmd: sudo -u postgres psql -v ON_ERROR_STOP=1
+    stdin: "ALTER ROLE {{ analytics_node_postgresql_app_user }} WITH PASSWORD '{{ analytics_node_postgresql_app_password | replace(\"'\", \"''\") }}';"
+  no_log: true
+
+- name: Ensure analytics database owner
+  ansible.builtin.command:
+    cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -c \"ALTER DATABASE {{ analytics_node_postgresql_app_db }} OWNER TO {{ analytics_node_postgresql_app_user }};\""
+
+- name: Enable analytics PostgreSQL extensions
+  ansible.builtin.command:
+    cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -d {{ analytics_node_postgresql_app_db }} -c \"CREATE EXTENSION IF NOT EXISTS {{ item }};\""
+  loop: "{{ analytics_node_postgresql_extensions }}"
+
+- name: Grant analytics role usage on postgres_fdw
+  ansible.builtin.command:
+    cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -d {{ analytics_node_postgresql_app_db }} -c \"GRANT USAGE ON FOREIGN DATA WRAPPER postgres_fdw TO {{ analytics_node_postgresql_app_user }};\""
+  when: "'postgres_fdw' in analytics_node_postgresql_extensions"
+
+- name: Ensure analytics PgBouncer controller issued directory exists
+  ansible.builtin.file:
+    path: "{{ analytics_node_tls_issued_dir }}"
+    state: directory
+    mode: "0700"
+  delegate_to: localhost
+  become: false
+  vars:
+    ansible_become: false
+  when: analytics_node_pgbouncer_enabled | bool
+
+- name: Render analytics PgBouncer TLS certificate config
+  ansible.builtin.template:
+    src: server-cert.cnf.j2
+    dest: "{{ analytics_node_tls_issued_dir }}/{{ inventory_hostname }}.cnf"
+    mode: "0600"
+  delegate_to: localhost
+  become: false
+  vars:
+    ansible_become: false
+  register: analytics_node_tls_server_config
+  when: analytics_node_pgbouncer_enabled | bool
+
+- name: Check analytics PgBouncer TLS certificate
+  ansible.builtin.stat:
+    path: "{{ analytics_node_tls_issued_dir }}/{{ inventory_hostname }}.crt"
+  delegate_to: localhost
+  become: false
+  vars:
+    ansible_become: false
+  register: analytics_node_tls_server_cert
+  when: analytics_node_pgbouncer_enabled | bool
+
+- name: Generate analytics PgBouncer TLS private key
+  ansible.builtin.command:
+    argv:
+      - openssl
+      - genrsa
+      - -out
+      - "{{ analytics_node_tls_issued_dir }}/{{ inventory_hostname }}.key"
+      - "{{ analytics_node_tls_server_key_size | string }}"
+    creates: "{{ analytics_node_tls_issued_dir }}/{{ inventory_hostname }}.key"
+  delegate_to: localhost
+  become: false
+  vars:
+    ansible_become: false
+  when: analytics_node_pgbouncer_enabled | bool
+
+- name: Generate analytics PgBouncer TLS CSR
+  ansible.builtin.command:
+    argv:
+      - openssl
+      - req
+      - -new
+      - -key
+      - "{{ analytics_node_tls_issued_dir }}/{{ inventory_hostname }}.key"
+      - -out
+      - "{{ analytics_node_tls_issued_dir }}/{{ inventory_hostname }}.csr"
+      - -config
+      - "{{ analytics_node_tls_issued_dir }}/{{ inventory_hostname }}.cnf"
+  delegate_to: localhost
+  become: false
+  vars:
+    ansible_become: false
+  when:
+    - analytics_node_pgbouncer_enabled
+    - analytics_node_tls_server_config.changed or not analytics_node_tls_server_cert.stat.exists
+
+- name: Sign analytics PgBouncer TLS certificate
+  ansible.builtin.command:
+    argv:
+      - openssl
+      - x509
+      - -req
+      - -in
+      - "{{ analytics_node_tls_issued_dir }}/{{ inventory_hostname }}.csr"
+      - -CA
+      - "{{ analytics_node_tls_ca_src }}"
+      - -CAkey
+      - "{{ analytics_node_tls_ca_key_src }}"
+      - -CAcreateserial
+      - -out
+      - "{{ analytics_node_tls_issued_dir }}/{{ inventory_hostname }}.crt"
+      - -days
+      - "{{ analytics_node_tls_server_days | string }}"
+      - -sha256
+      - -extensions
+      - req_ext
+      - -extfile
+      - "{{ analytics_node_tls_issued_dir }}/{{ inventory_hostname }}.cnf"
+  delegate_to: localhost
+  become: false
+  vars:
+    ansible_become: false
+  when:
+    - analytics_node_pgbouncer_enabled
+    - analytics_node_tls_server_config.changed or not analytics_node_tls_server_cert.stat.exists
+
+- name: Deploy analytics PgBouncer TLS certificate
+  ansible.builtin.copy:
+    src: "{{ analytics_node_tls_issued_dir }}/{{ inventory_hostname }}.crt"
+    dest: "{{ analytics_node_tls_dir }}/{{ analytics_node_tls_server_cert_filename }}"
+    owner: postgres
+    group: postgres
+    mode: "0644"
+  notify: Restart analytics pgbouncer
+  when: analytics_node_pgbouncer_enabled | bool
+
+- name: Deploy analytics PgBouncer TLS private key
+  ansible.builtin.copy:
+    src: "{{ analytics_node_tls_issued_dir }}/{{ inventory_hostname }}.key"
+    dest: "{{ analytics_node_tls_dir }}/{{ analytics_node_tls_server_key_filename }}"
+    owner: postgres
+    group: postgres
+    mode: "0600"
+  notify: Restart analytics pgbouncer
+  when: analytics_node_pgbouncer_enabled | bool
+
+- name: Ensure analytics PgBouncer configuration directory permissions
+  ansible.builtin.file:
+    path: /etc/pgbouncer
+    state: directory
+    owner: postgres
+    group: postgres
+    mode: "0755"
+  when: analytics_node_pgbouncer_enabled | bool
+
+- name: Deploy analytics PgBouncer configuration
+  ansible.builtin.template:
+    src: pgbouncer.ini.j2
+    dest: /etc/pgbouncer/pgbouncer.ini
+    owner: postgres
+    group: postgres
+    mode: "0640"
+  notify: Restart analytics pgbouncer
+  when: analytics_node_pgbouncer_enabled | bool
+
+- name: Deploy analytics PgBouncer userlist
+  ansible.builtin.template:
+    src: userlist.txt.j2
+    dest: /etc/pgbouncer/userlist.txt
+    owner: postgres
+    group: postgres
+    mode: "0640"
+  notify: Restart analytics pgbouncer
+  no_log: true
+  when: analytics_node_pgbouncer_enabled | bool
+
+- name: Ensure analytics PgBouncer service is enabled
+  ansible.builtin.service:
+    name: pgbouncer
+    enabled: true
+    state: started
+  when: analytics_node_pgbouncer_enabled | bool

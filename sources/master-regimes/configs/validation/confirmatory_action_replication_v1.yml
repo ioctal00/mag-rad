@@ -1,0 +1,93 @@
+contract_version: confirmatory-action-replication-v1
+experiment_id: confirmatory-action-replication-v1
+description: >
+  Locked replication panel over fifteen previously unseen N=3 SQL shapes.
+  Every shape is measured under one baseline and three frozen actions with five
+  repetitions. A balanced Williams schedule rotates condition position while
+  the dataset, topology, runtime family, state representation, k and P99 rule
+  remain frozen.
+
+actions:
+  - increase_gac_work_mem
+  - regional_topk_candidates
+  - mitigate_remote_path_bundle
+
+action_applicability:
+  policy: explicit_panel_contract_and_ordered_result_equivalence
+  query_family: gac_topk_confirmatory
+  applicable_actions:
+    - increase_gac_work_mem
+    - regional_topk_candidates
+    - mitigate_remote_path_bundle
+
+dataset:
+  id: topology-isolation-large-n3-v1
+  profile: datasets/profiles/topology-isolation-large-n3.yml
+  load_method: copy_pipe
+  topology_id: eu_us_apac_gac
+  region_count: 3
+
+runtime_profile:
+  id: balanced
+  baseline: dba_topk_balanced_stressed
+  remote: dba_topk_balanced_remote_mitigated
+  gac_memory: dba_topk_balanced_gac_mitigated
+
+model_freeze:
+  model_id: fuzzy-intervention-memory-v1-state-space
+  state_contract: configs/models/fuzzy_intervention_memory_v1.yml
+  reference_report: analysis/reports/fuzzy-intervention-memory-v1
+  pca_components: 6
+  neighbors: 5
+  distance_metric: euclidean
+  coverage_quantile: 0.99
+  minimum_history_for_available: 2
+  refit: false
+  decision_state_policy: componentwise_median_of_baseline_repetitions
+
+execution:
+  repetitions_per_condition: 5
+  expected_condition_count: 60
+  expected_execution_count: 300
+  hard_timeout_seconds: 1800
+  timeout_grace_seconds: 30
+  order_policy: explicit_williams_schedule
+  scenario_order_seed: 202608071
+  result_signature_scope: first_repetition_per_condition
+  retry_policy:
+    attempt_resolution: latest_successful_logical_slot
+    retain_failed_attempts: true
+    timeout_is_explicit_status: true
+    automatic_retry_count: 0
+
+uncertainty:
+  bootstrap_samples: 10000
+  bootstrap_seed: 202608072
+  confidence_level: 0.95
+  practical_tie_relative_gain: 0.05
+  partial_feedback_random_seeds: [11, 29, 47, 71, 101]
+
+collection_validation:
+  workers_per_region: 2
+  gac_node_count: 1
+  provisioned_node_count: 10
+  require_ordered_signature: true
+  require_multiset_signature: true
+  require_runtime_reset_evidence: true
+
+scenarios:
+  - {order: 1, query_id: q16_event_value_squared, query_shape: event_value_squared, cutoff_ts: "2026-06-30 00:00:00+00", limit_k: 25}
+  - {order: 2, query_id: q17_event_log_value, query_shape: event_log_value, cutoff_ts: "2026-06-29 00:00:00+00", limit_k: 50}
+  - {order: 3, query_id: q18_event_recent_high_value, query_shape: event_recent_high_value, cutoff_ts: "2026-06-27 00:00:00+00", limit_k: 100}
+  - {order: 4, query_id: q19_event_old_low_value, query_shape: event_old_low_value, cutoff_ts: "2026-06-24 00:00:00+00", limit_k: 250}
+  - {order: 5, query_id: q20_event_tenant_weighted, query_shape: event_tenant_weighted, cutoff_ts: "2026-06-30 00:00:00+00", limit_k: 500}
+  - {order: 6, query_id: q21_tenant_value_range, query_shape: tenant_value_range, cutoff_ts: "2026-06-29 00:00:00+00", limit_k: 25}
+  - {order: 7, query_id: q22_tenant_distinct_users, query_shape: tenant_distinct_users, cutoff_ts: "2026-06-27 00:00:00+00", limit_k: 50}
+  - {order: 8, query_id: q23_tenant_even_user_count, query_shape: tenant_even_user_count, cutoff_ts: "2026-06-24 00:00:00+00", limit_k: 100}
+  - {order: 9, query_id: q24_tenant_midband_sum, query_shape: tenant_midband_sum, cutoff_ts: "2026-06-30 00:00:00+00", limit_k: 250}
+  - {order: 10, query_id: q25_tenant_day_avg, query_shape: tenant_day_avg, cutoff_ts: "2026-06-29 00:00:00+00", limit_k: 500}
+  - {order: 11, query_id: q26_tenant_hour_count, query_shape: tenant_hour_count, cutoff_ts: "2026-06-30 00:00:00+00", limit_k: 25}
+  - {order: 12, query_id: q27_user_sum, query_shape: user_sum, cutoff_ts: "2026-06-29 00:00:00+00", limit_k: 50}
+  - {order: 13, query_id: q28_user_count, query_shape: user_count, cutoff_ts: "2026-06-27 00:00:00+00", limit_k: 100}
+  - {order: 14, query_id: q29_user_value_range, query_shape: user_value_range, cutoff_ts: "2026-06-24 00:00:00+00", limit_k: 250}
+  - {order: 15, query_id: q30_user_day_sum, query_shape: user_day_sum, cutoff_ts: "2026-06-30 00:00:00+00", limit_k: 500}

@@ -1,0 +1,59 @@
+candidate_id: phase1_m0_flow_no_runtime_v2_reduced
+description: >
+  Runtime-free flow candidate for fuzzy regime clustering. This candidate
+  removes direct execution time and replaces it with interpretable flow,
+  reduction, skew, Citus locality, finalization and estimate-error signals.
+
+inputs:
+  matrix: analysis/features/clean-run-v1-flow-v2/phase1_compact/compact_m0_flow_no_runtime_v2_reduced_scaled.csv
+  context: analysis/features/clean-run-v1-flow-v2/phase1_compact/compact_context.csv
+  phase1_allowlist: configs/features/phase1_compact_allowlist.yml
+
+model_input_contract:
+  observation_id: query_run_id
+  matrix_role: model_input
+  context_role: posthoc_audit_only
+  context_columns_are_features: false
+  missing_indicators_enabled: false
+  expected_feature_count: 26
+  forbidden_feature_columns:
+    - execution_time_seconds
+    - elapsed_seconds
+    - dataset_id
+    - dataset_profile_id
+    - runtime_config_id
+    - template_id
+    - instance_id
+    - corpus_cell_id
+    - logical_question_id
+    - execution_strategy
+    - intervention_axis
+    - expected_regime_targets
+    - pressure_tags
+
+manual_fuzzy_clustering:
+  script: analysis/scripts/agent/17_m0_reduced_fuzzy_clustering.py
+  k_values: [4, 5]
+  seeds: "0..9"
+  fuzzifier: 1.7
+  max_iter: 600
+  tolerance: 0.0001
+  output_dir: analysis/reports/clean-run-v1-m0-flow-no-runtime-v2-reduced-fuzzy
+  progress_log: progress.jsonl
+  progress_report: progress_report.md
+
+readiness_reference:
+  flow_no_runtime_readiness: analysis/reports/clean-run-v1-m0-flow-no-runtime-v2-reduced-readiness/README.md
+  old_m0_reduced_readiness: analysis/reports/clean-run-v1-m0-reduced-readiness/README.md
+  decision: >
+    This candidate is evaluated against the earlier M0 reduced matrix to test
+    whether regime attribution can remain interpretable without direct runtime
+    as a clustering input.
+
+interpretation_rules:
+  - Do not interpret cluster labels as ground truth regimes.
+  - Use memberships, prototypes and feature deviations to name candidate regimes.
+  - Use context association only as post-hoc audit, never as model input.
+  - Compare k=4 and k=5 before choosing the thesis-facing run.
+  - Execution time can be used for validation/severity after clustering, not as
+    a default model input.

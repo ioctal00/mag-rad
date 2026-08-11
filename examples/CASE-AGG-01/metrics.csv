@@ -1,0 +1,21 @@
+state,role,repetitions,metric,median,unit,meaning
+initial_baseline,before,5,elapsed_seconds,8.286617,s,End-to-end trajanje
+initial_baseline,before,5,edge_remote_bytes_sum,24000000,bytes,Procijenjeni udaljeni obim prema GAC-u
+initial_baseline,before,5,edge_boundary_wait_share,0.5448108408,ratio,Udio čekanja na FDW granici
+initial_baseline,before,5,edge_rtt_context_median_ms_max,0.3995,ms,Najveći medijan RTT konteksta
+initial_baseline,before,5,regional_input_to_remote_rows_ratio,1,ratio,Regionalni ulaz po redu vraćenom GAC-u
+initial_baseline,before,5,remote_region_has_aggregate_share,0,ratio,Udio udaljenih grana sa regionalnom agregacijom
+initial_baseline,before,5,gac_fanin_to_final_rows_ratio,3000000,ratio,Broj GAC ulaznih redova po finalnom redu
+initial_baseline,before,5,gac_temp_written_per_final_row,0,blocks/row,Privremeni blokovi zapisani po finalnom redu
+initial_baseline,before,5,gac_hash_batch_excess,NA,count,Dodatne hash serije na GAC-u
+initial_baseline,before,5,spill_location_count,1,count,Broj slojeva sa opaženim preljevom
+final_rollback,after,5,elapsed_seconds,8.486501,s,End-to-end trajanje
+final_rollback,after,5,edge_remote_bytes_sum,24000000,bytes,Procijenjeni udaljeni obim prema GAC-u
+final_rollback,after,5,edge_boundary_wait_share,0.53299142451,ratio,Udio čekanja na FDW granici
+final_rollback,after,5,edge_rtt_context_median_ms_max,0.3915,ms,Najveći medijan RTT konteksta
+final_rollback,after,5,regional_input_to_remote_rows_ratio,1,ratio,Regionalni ulaz po redu vraćenom GAC-u
+final_rollback,after,5,remote_region_has_aggregate_share,0,ratio,Udio udaljenih grana sa regionalnom agregacijom
+final_rollback,after,5,gac_fanin_to_final_rows_ratio,3000000,ratio,Broj GAC ulaznih redova po finalnom redu
+final_rollback,after,5,gac_temp_written_per_final_row,0,blocks/row,Privremeni blokovi zapisani po finalnom redu
+final_rollback,after,5,gac_hash_batch_excess,NA,count,Dodatne hash serije na GAC-u
+final_rollback,after,5,spill_location_count,1,count,Broj slojeva sa opaženim preljevom

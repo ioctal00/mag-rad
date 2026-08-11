@@ -1,0 +1,4 @@
+interface:
+  display_name: "Navigate Master Thesis"
+  short_description: "Find and explain thesis experiments and artifacts"
+  default_prompt: "Locate the requested thesis concept or artifact, explain its structure and role in the work, and answer the user with verified repository paths."

@@ -1,0 +1,62 @@
+analysis_id: repeatability-v1
+selection_seed: 20260724
+condition_count: 96
+sentinel_condition_count: 20
+repetitions_default: 3
+sentinel_repetitions: 5
+expected_execution_count: 328
+minimum_wan_condition_count: 6
+
+selection_sources:
+  - source_plan_id: clean-run-v1
+    logical_run_id: clean-run-v1
+    query_runs: ../master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1/_index/query_runs.csv
+    execution_plan: generated/corpus/clean-run-v1/corpus_execution_plan.yml
+  - source_plan_id: validation-holdout-v1
+    logical_run_id: clean-run-v1-validation-holdout
+    query_runs: ../master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-validation-holdout/_index/query_runs.csv
+    execution_plan: generated/corpus/validation-holdout-v1/corpus_execution_plan.yml
+
+model:
+  frozen_model_id: clean-run-v1-m0_flow_ratio_v3_reduced-fcm-k4
+  retrain: false
+  training_rows_include_repeatability: false
+  feature_count: 21
+  feature_manifest: analysis/reports/clean-run-v1-final-model/final_model_manifest.yml
+
+execution:
+  cache_policy: mixed_cache_repeatability_audit
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  order_policy: deterministic_interleaved_shuffle
+  shuffle_seed: 20260724
+  database_result_rows_stored: false
+
+continuous_stability:
+  center: median
+  dispersion: mad
+  robust_relative_dispersion_scale: 1.4826
+  near_zero_epsilon: 1.0e-9
+
+membership_stability:
+  distance: l1_to_condition_mean
+  report_dominant_agreement: true
+  display_states:
+    clear_prototype:
+      min_max_membership: 0.50
+      min_top2_margin: 0.15
+      max_entropy_exclusive: 1.05
+    mixed_boundary:
+      min_max_membership: 0.35
+    weak_prototype_coverage:
+      fallback: true
+
+required_outputs:
+  - condition_summary.csv
+  - feature_stability.csv
+  - fingerprint_stability.csv
+  - evidence_completeness.csv
+  - membership_stability.csv
+  - display_state_transitions.csv
+  - failure_and_retry_audit.csv
+  - repeatability_manifest.json

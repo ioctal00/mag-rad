@@ -1,0 +1,52 @@
+feature_matrix_contract: master_regimes_feature_matrix_v1
+fdw_pushdown_fidelity_contract: fdw_pushdown_fidelity_v1
+source_index_dir: master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-region-asymmetry/_index
+schema_path: master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs/clean-run-v1-region-asymmetry/_index/feature_schema.yml
+topology: multi_region
+row_count: 150
+outputs:
+  m0: execution_features_m0.csv
+  m1: execution_features_m1.csv
+  context: model_context.csv
+  severity: execution_severity.csv
+  dataset_diagnosis: dataset_diagnosis.csv
+  m0_catalog: feature_catalog_m0.csv
+  m1_catalog: feature_catalog_m1.csv
+  categorical_expansions: categorical_expansions.csv
+  quality_report: feature_quality_report.csv
+matrices:
+  m0:
+    description: core_model_v1 behavioral input features
+    column_count: 158
+    feature_count: 157
+    schema_feature_count: 157
+    non_numeric_source_features_expanded: []
+  m1:
+    description: core_model_v1 plus plan_structure_v1 ablation features
+    column_count: 237
+    feature_count: 236
+    schema_feature_count: 228
+    non_numeric_source_features_expanded:
+    - dominant_rows_node_type
+    - dominant_time_node_type
+    - first_blocking_operator_type
+  context:
+    description: IDs, labels, runtime knobs, audit and quality-gate columns
+    column_count: 152
+  severity:
+    description: post-hoc deployment-relative pressure proxy; not a clustering input
+    column_count: 52
+    row_count: 150
+  dataset_diagnosis:
+    description: dataset profile scale/skew/capability context; not a clustering input
+    column_count: 19
+    row_count: 3
+rules:
+  null_policy: missing values remain blank; zero is emitted only for explicitly derived
+    count/boolean features
+  default_model_filter: included_in_default_model=true and model_role=input
+  severity_policy: execution_severity.csv uses deployment/topology-relative pressure
+    proxy scores and remains separated from M0/M1 clustering inputs
+  m1_extra_filter: structural_feature=true and model_role=input
+  categorical_policy: non-numeric selected input features are one-hot expanded with
+    source_feature__category columns

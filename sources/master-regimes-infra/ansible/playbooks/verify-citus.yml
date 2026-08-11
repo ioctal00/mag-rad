@@ -1,0 +1,106 @@
+---
+- name: Verify PostgreSQL and Citus package versions
+  hosts: db_nodes:analytics_clients
+  become: true
+  gather_facts: false
+  vars_files:
+    - ../group_vars/all.yml
+  tasks:
+    - name: Select expected Citus package for host role
+      ansible.builtin.set_fact:
+        citus_verify_expected_package: >-
+          {{
+            analytics_node_citus_package | default(citus_package)
+            if 'analytics_clients' in group_names
+            else citus_package
+          }}
+
+    - name: Read PostgreSQL client version
+      ansible.builtin.command:
+        cmd: psql --version
+      register: citus_verify_psql_version
+      changed_when: false
+
+    - name: Assert PostgreSQL major version
+      ansible.builtin.assert:
+        that:
+          - citus_verify_psql_version.stdout is search('\\b' ~ postgresql_version ~ '\\.')
+        fail_msg: >-
+          Expected PostgreSQL {{ postgresql_version }}, got:
+          {{ citus_verify_psql_version.stdout }}
+
+    - name: Verify requested Citus package is installed
+      ansible.builtin.command:
+        cmd: "dpkg-query -W -f='${binary:Package} ${Version}' {{ citus_verify_expected_package }}"
+      register: citus_verify_package
+      changed_when: false
+
+    - name: Show installed Citus package
+      ansible.builtin.debug:
+        var: citus_verify_package.stdout
+
+    - name: Read held PostgreSQL/Citus packages
+      ansible.builtin.command:
+        cmd: apt-mark showhold
+      register: citus_verify_held_packages
+      changed_when: false
+
+    - name: Assert PostgreSQL and Citus packages are held
+      ansible.builtin.assert:
+        that:
+          - "'postgresql-' ~ postgresql_version in citus_verify_held_packages.stdout_lines"
+          - "'postgresql-client-' ~ postgresql_version in citus_verify_held_packages.stdout_lines"
+          - citus_verify_expected_package in citus_verify_held_packages.stdout_lines
+        fail_msg: >-
+          Expected PostgreSQL/Citus packages to be apt-mark held. Held packages:
+          {{ citus_verify_held_packages.stdout_lines }}
+
+- name: Verify Citus coordinator and worker registration
+  hosts: coordinators
+  become: true
+  gather_facts: false
+  vars_files:
+    - ../group_vars/all.yml
+  tasks:
+    - name: Read Citus extension version
+      ansible.builtin.command:
+        cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -d {{ postgresql_app_db }} -tAc \"SELECT extversion FROM pg_extension WHERE extname='citus';\""
+      register: citus_verify_extension_version
+      changed_when: false
+
+    - name: Assert Citus extension major/minor version
+      ansible.builtin.assert:
+        that:
+          - citus_verify_extension_version.stdout is match('^14\\.0')
+        fail_msg: >-
+          Expected Citus extension 14.0, got:
+          {{ citus_verify_extension_version.stdout }}
+
+    - name: Read Citus worker metadata
+      ansible.builtin.command:
+        cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -d {{ postgresql_app_db }} -tAc \"SELECT nodename || ':' || nodeport || ' active=' || isactive FROM pg_dist_node ORDER BY nodeid;\""
+      register: citus_verify_nodes
+      changed_when: false
+
+    - name: Show registered Citus nodes
+      ansible.builtin.debug:
+        var: citus_verify_nodes.stdout_lines
+
+    - name: Compute expected active worker count for this coordinator region
+      ansible.builtin.set_fact:
+        citus_verify_expected_worker_count: "{{ groups.get(hostvars[inventory_hostname].logical_region | default(hostvars[inventory_hostname].region_name), []) | select('in', groups.get('workers', [])) | list | length }}"
+
+    - name: Read active worker count for this coordinator
+      ansible.builtin.command:
+        cmd: "sudo -u postgres psql -v ON_ERROR_STOP=1 -d {{ postgresql_app_db }} -tAc \"SELECT count(*) FROM pg_dist_node WHERE isactive AND groupid <> 0;\""
+      register: citus_verify_active_count
+      changed_when: false
+
+    - name: Assert expected worker count
+      ansible.builtin.assert:
+        that:
+          - citus_verify_active_count.stdout | int == citus_verify_expected_worker_count | int
+        fail_msg: >-
+          Expected {{ citus_verify_expected_worker_count }} active Citus worker groups
+          for {{ hostvars[inventory_hostname].logical_region | default(hostvars[inventory_hostname].region_name) }}, got
+          {{ citus_verify_active_count.stdout }}.

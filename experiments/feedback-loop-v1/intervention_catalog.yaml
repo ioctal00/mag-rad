@@ -1,0 +1,265 @@
+contract_version: feedback-loop-intervention-catalog-v1
+execution_policy: dry_run_only_until_task_2_gate
+one_new_decision_per_step: true
+unknown_user_action_ids_allowed_for_recording: true
+unknown_user_action_ids_rankable_without_history: false
+
+forbidden_mutations:
+  - dataset_reload
+  - shard_movement
+  - new_colocation
+  - index_build
+  - destructive_ddl
+
+interventions:
+  - id: gac_work_mem_64mb
+    display_name: GAC session work_mem 64 MB
+    layer: gac_session
+    implementation_status: existing_runner_adapter
+    expected_mechanism: Povećava memoriju dostupnu GAC sort, hash i aggregate operatorima.
+    relevant_domains: [gac_finalization, disk_spill]
+    apply:
+      command: "psql-benchmarks query --pg-option work_mem=64MB"
+      verify_command: "SHOW work_mem; -- očekivano 64MB u istoj GAC sesiji"
+    rollback:
+      command: "RESET work_mem; -- ili završetak izolovane sesije"
+      verify_command: "SHOW work_mem; -- mora odgovarati pre-action snapshotu"
+    applicability: GAC plan sadrži sort, hash, aggregate, join, unique ili window operator osjetljiv na memoriju.
+    not_applicable_when: GAC nema memorijski osjetljiv operator ili session GUC nije moguće izolovati.
+    requires_dataset_reload: false
+    changes_colocation: false
+    changes_shard_placement: false
+
+  - id: regional_work_mem_64mb
+    display_name: Regionalni session work_mem 64 MB
+    layer: regional_coordinator_sessions
+    implementation_status: existing_database_sweep_adapter
+    expected_mechanism: Povećava memoriju regionalnim sort/hash/aggregate operatorima iza FDW granice.
+    relevant_domains: [regional_reduction, disk_spill]
+    apply:
+      command: "runtime_config.regional_pg_options.work_mem=64MB"
+      verify_command: "remote probe: SHOW work_mem; -- na svakom aktivnom regionalnom koordinatoru"
+    rollback:
+      command: "runtime_config.regional_pg_options={} -- obnovi pre-action FDW connection options snapshot"
+      verify_command: "remote probe: SHOW work_mem; -- jednako pre-action snapshotu na svim regionima"
+    applicability: Povezani regionalni plan sadrži memorijski osjetljiv operator i remote session options su podržane.
+    not_applicable_when: Regionalni plan nije dostupan ili izvršenje nema regionalni memorijski osjetljiv rad.
+    requires_dataset_reload: false
+    changes_colocation: false
+    changes_shard_placement: false
+
+  - id: fdw_fetch_size_10000
+    display_name: FDW fetch_size 10000
+    layer: gac_fdw_server
+    implementation_status: existing_database_sweep_adapter
+    expected_mechanism: Smanjuje broj FDW fetch ciklusa bez promjene rezultata udaljenog SQL-a.
+    relevant_domains: [remote_fdw_path]
+    apply:
+      command: "fdw-bootstrap --fdw-server-option fetch_size=10000 --server {{foreign_server}}"
+      verify_command: "SELECT srvoptions FROM pg_foreign_server WHERE srvname={{foreign_server_literal}};"
+    rollback:
+      command: "fdw-bootstrap --restore-server-options {{pre_action_server_options_snapshot}}"
+      verify_command: "SELECT srvoptions FROM pg_foreign_server WHERE srvname={{foreign_server_literal}}; -- mora odgovarati snapshotu"
+    applicability: FDW putanja emituje dovoljno redova da više fetch ciklusa bude moguće i server je izolovan od drugih runova.
+    not_applicable_when: Nema FDW edgea, udaljeni rezultat je trivijalno mali ili server options ne mogu biti ekskluzivno izmijenjene.
+    requires_dataset_reload: false
+    changes_colocation: false
+    changes_shard_placement: false
+
+  - id: strict_explicit_join_order
+    display_name: Eksplicitni redoslijed joinova
+    layer: gac_session
+    implementation_status: catalogued_session_guc
+    expected_mechanism: Ograničava planner collapse kako bi pratio eksplicitni JOIN redoslijed SQL varijante.
+    relevant_domains: [gac_finalization, remote_fdw_path, repartition_locality]
+    apply:
+      command: "SET join_collapse_limit=1; SET from_collapse_limit=1;"
+      verify_command: "SHOW join_collapse_limit; SHOW from_collapse_limit; -- oba 1"
+    rollback:
+      command: "RESET join_collapse_limit; RESET from_collapse_limit;"
+      verify_command: "SHOW join_collapse_limit; SHOW from_collapse_limit; -- jednako pre-action snapshotu"
+    applicability: SQL koristi eksplicitne JOIN izraze i hipoteza unaprijed navodi očekivanu promjenu plana.
+    not_applicable_when: Nema više joinova, koristi se implicitni comma join bez zaključanog rewritea ili je redoslijed semantički osjetljiv.
+    requires_dataset_reload: false
+    changes_colocation: false
+    changes_shard_placement: false
+
+  - id: disable_hashagg_probe
+    display_name: Planner probe bez HashAggregate
+    layer: gac_session
+    implementation_status: catalogued_session_guc
+    expected_mechanism: Omogućava kontrolisano poređenje HashAggregate i alternativne aggregate putanje.
+    relevant_domains: [gac_finalization, disk_spill]
+    apply:
+      command: "SET enable_hashagg=off;"
+      verify_command: "SHOW enable_hashagg; -- off"
+    rollback:
+      command: "RESET enable_hashagg;"
+      verify_command: "SHOW enable_hashagg; -- jednako pre-action snapshotu"
+    applicability: Baseline plan koristi HashAggregate i postoji semantički ekvivalentna alternativna putanja.
+    not_applicable_when: Baseline nema HashAggregate ili alternativa bi gotovo sigurno prešla hard timeout budžet.
+    requires_dataset_reload: false
+    changes_colocation: false
+    changes_shard_placement: false
+
+  - id: jit_off
+    display_name: Isključen JIT u sesiji
+    layer: gac_or_regional_session
+    implementation_status: catalogued_session_guc
+    expected_mechanism: Uklanja JIT compilation overhead kada je on prisutan u planskom ili runtime dokazu.
+    relevant_domains: [gac_finalization, regional_reduction]
+    apply:
+      command: "SET jit=off; -- na unaprijed izabranom jednom sloju"
+      verify_command: "SHOW jit; -- off na ciljanom sloju"
+    rollback:
+      command: "RESET jit;"
+      verify_command: "SHOW jit; -- jednako pre-action snapshotu"
+    applicability: JIT je u baselineu uključen i ciljani sloj je eksplicitno naveden u decision logu.
+    not_applicable_when: JIT je već isključen, nema JIT dokaza ili bi akcija istovremeno zahvatila više neizolovanih slojeva.
+    requires_dataset_reload: false
+    changes_colocation: false
+    changes_shard_placement: false
+
+  - id: gac_parallel_workers_zero
+    display_name: GAC max_parallel_workers_per_gather 0
+    layer: gac_session
+    implementation_status: catalogued_session_guc
+    expected_mechanism: Isključuje GAC Gather paralelizam radi izolovane provjere njegove koristi ili overhead-a.
+    relevant_domains: [gac_finalization]
+    apply:
+      command: "SET max_parallel_workers_per_gather=0;"
+      verify_command: "SHOW max_parallel_workers_per_gather; -- 0"
+    rollback:
+      command: "RESET max_parallel_workers_per_gather;"
+      verify_command: "SHOW max_parallel_workers_per_gather; -- jednako pre-action snapshotu"
+    applicability: Baseline plan ima Gather/Gather Merge ili planner razmatra paralelnu GAC putanju.
+    not_applicable_when: Nema GAC parallel operatora niti primjenjivog paralelnog plana.
+    requires_dataset_reload: false
+    changes_colocation: false
+    changes_shard_placement: false
+
+  - id: fdw_use_remote_estimate_on
+    display_name: postgres_fdw use_remote_estimate on
+    layer: gac_fdw_server
+    implementation_status: catalogued_fdw_option
+    expected_mechanism: Planner koristi udaljene procjene troška i kardinaliteta za FDW putanju.
+    relevant_domains: [remote_fdw_path, gac_finalization]
+    apply:
+      command: "ALTER SERVER {{foreign_server}} OPTIONS (SET use_remote_estimate 'true');"
+      verify_command: "SELECT srvoptions FROM pg_foreign_server WHERE srvname={{foreign_server_literal}};"
+    rollback:
+      command: "restore exact {{pre_action_server_options_snapshot}}; DROP option ako ranije nije postojala"
+      verify_command: "SELECT srvoptions FROM pg_foreign_server WHERE srvname={{foreign_server_literal}}; -- jednako snapshotu"
+    applicability: Udaljeni server dopušta EXPLAIN procjene i izmjena je ekskluzivna za run.
+    not_applicable_when: Nema FDW servera, privilegije nisu dostupne ili dodatni remote planning round-trip krši budžet.
+    requires_dataset_reload: false
+    changes_colocation: false
+    changes_shard_placement: false
+
+  - id: fdw_async_capable_on
+    display_name: postgres_fdw async_capable on
+    layer: gac_fdw_server
+    implementation_status: catalogued_fdw_option
+    expected_mechanism: Omogućava asinhrono dohvaćanje kada plan i više FDW grana to podržavaju.
+    relevant_domains: [remote_fdw_path, gac_finalization]
+    apply:
+      command: "ALTER SERVER {{foreign_server}} OPTIONS (SET async_capable 'true');"
+      verify_command: "SELECT srvoptions FROM pg_foreign_server WHERE srvname={{foreign_server_literal}};"
+    rollback:
+      command: "restore exact {{pre_action_server_options_snapshot}}; DROP option ako ranije nije postojala"
+      verify_command: "SELECT srvoptions FROM pg_foreign_server WHERE srvname={{foreign_server_literal}}; -- jednako snapshotu"
+    applicability: Najmanje dvije nezavisne FDW grane učestvuju i PostgreSQL/FDW verzija podržava asinhrono izvršavanje.
+    not_applicable_when: Single-edge upit, zavisne grane ili nepodržana verzija postgres_fdw.
+    requires_dataset_reload: false
+    changes_colocation: false
+    changes_shard_placement: false
+
+  - id: regional_pushdown_rewrite
+    display_name: Rezultatski ekvivalentan regionalni pushdown rewrite
+    layer: sql_template
+    implementation_status: existing_template_pair
+    expected_mechanism: Pomjera filter, join ili parcijalnu agregaciju prema regionalnim izvorima i smanjuje GAC fan-in.
+    relevant_domains: [regional_reduction, remote_fdw_path, gac_finalization]
+    apply:
+      command: "render {{pushdown_template_id}} with frozen parameters and shared logical_question_id"
+      verify_command: "validate normalized bindings and execute frozen result_contract before acceptance"
+    rollback:
+      command: "restore {{baseline_template_id}} and identical parameter bindings"
+      verify_command: "rendered SQL hash and bindings equal pre-action baseline snapshot"
+    applicability: Postoji unaprijed pregledan rewrite par sa istom deklarisanom analitičkom namjerom.
+    not_applicable_when: Rewrite mijenja skup rezultata, nema ručni logical_question_id ili rezultat ne prolazi ugovor ekvivalentnosti.
+    requires_dataset_reload: false
+    changes_colocation: false
+    changes_shard_placement: false
+
+  - id: cte_not_materialized_rewrite
+    display_name: CTE NOT MATERIALIZED rewrite
+    layer: sql_template
+    implementation_status: catalogued_rewrite_not_selected_by_default
+    expected_mechanism: Omogućava planneru inline CTE-a i potencijalni pushdown/predicate propagation.
+    relevant_domains: [regional_reduction, remote_fdw_path, gac_finalization]
+    apply:
+      command: "render reviewed NOT MATERIALIZED template variant"
+      verify_command: "result_contract passes and plan records CTE/inlining change"
+    rollback:
+      command: "restore baseline MATERIALIZED or implicit CTE template"
+      verify_command: "rendered SQL hash equals pre-action baseline snapshot"
+    applicability: PostgreSQL verzija podržava hint i CTE nema namjerno jednokratno materijalizacijsko ponašanje.
+    not_applicable_when: CTE je višestruko referenciran sa skupim ili volatile izrazom, ili nema CTE-a.
+    requires_dataset_reload: false
+    changes_colocation: false
+    changes_shard_placement: false
+
+  - id: pushdown_type_correction_rewrite
+    display_name: Korekcija tipa izraza radi pushdowna
+    layer: sql_template
+    implementation_status: catalogued_rewrite_requires_reviewed_pair
+    expected_mechanism: Uklanja lokalni cast/funkciju koja sprečava siguran postgres_fdw pushdown bez promjene rezultata.
+    relevant_domains: [regional_reduction, remote_fdw_path, gac_finalization]
+    apply:
+      command: "render reviewed typed-literal/expression template variant"
+      verify_command: "result_contract passes and remote SQL fingerprint contains expected predicate"
+    rollback:
+      command: "restore baseline expression template and bindings"
+      verify_command: "rendered SQL hash equals pre-action baseline snapshot"
+    applicability: Baseline remote SQL dokaz potvrđuje da konkretan filter nije potisnut i tipizirani rewrite je rezultatski ekvivalentan.
+    not_applicable_when: Izraz je volatile, kolacija/tip mijenja semantiku ili filter je već potisnut.
+    requires_dataset_reload: false
+    changes_colocation: false
+    changes_shard_placement: false
+
+  - id: wan_delay_10ms_probe
+    display_name: Dodatni regionalni egress delay 10 ms
+    layer: regional_egress_edge
+    implementation_status: existing_network_profile_adapter
+    expected_mechanism: Kontrolisano povećava RTT-sensitive dio FDW putanje radi provjere relativnog odziva.
+    relevant_domains: [remote_fdw_path]
+    apply:
+      command: "python3 common-scripts/manage_network_pressure.py --action apply --profile-json {{delay_10ms_profile}} --out-dir {{apply_dir}}"
+      verify_command: "python3 common-scripts/manage_network_pressure.py --action status --profile-json {{delay_10ms_profile}} --out-dir {{status_dir}}"
+    rollback:
+      command: "python3 common-scripts/manage_network_pressure.py --action reset --profile-json {{delay_10ms_profile}} --out-dir {{reset_dir}}"
+      verify_command: "tc qdisc show dev {{route_device}}; -- mora odgovarati pre-action snapshotu"
+    applicability: Ciljani edge i route device su jednoznačni, sampler je aktivan i nema konkurentnog mrežnog eksperimenta.
+    not_applicable_when: Shared interface nije moguće izolovati, route je nepoznat ili drugi query koristi isti edge.
+    requires_dataset_reload: false
+    changes_colocation: false
+    changes_shard_placement: false
+
+  - id: wan_bandwidth_50mbit_probe
+    display_name: Regionalni egress bandwidth cap 50 Mbit/s
+    layer: regional_egress_edge
+    implementation_status: existing_network_profile_adapter
+    expected_mechanism: Kontrolisano ograničava propusnost za transfer-volume osjetljivu FDW putanju.
+    relevant_domains: [remote_fdw_path]
+    apply:
+      command: "python3 common-scripts/manage_network_pressure.py --action apply --profile-json {{bandwidth_50mbit_profile}} --out-dir {{apply_dir}}"
+      verify_command: "python3 common-scripts/manage_network_pressure.py --action status --profile-json {{bandwidth_50mbit_profile}} --out-dir {{status_dir}}"
+    rollback:
+      command: "python3 common-scripts/manage_network_pressure.py --action reset --profile-json {{bandwidth_50mbit_profile}} --out-dir {{reset_dir}}"
+      verify_command: "tc qdisc show dev {{route_device}}; -- mora odgovarati pre-action snapshotu"
+    applicability: Udaljeni volumen nije trivijalan, edge je izolovan i tc/ifb profil je unaprijed validiran.
+    not_applicable_when: Shared interface ili konkurentni promet onemogućava izolaciju, ili query nema mjerljiv remote payload.
+    requires_dataset_reload: false
+    changes_colocation: false
+    changes_shard_placement: false

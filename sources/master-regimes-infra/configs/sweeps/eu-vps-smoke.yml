@@ -1,0 +1,21 @@
+sweep_id: eu-vps-smoke
+region: eu
+
+datasets:
+  - id: smoke
+    profile: ../master-regimes/datasets/profiles/smoke.yml
+    load_method: sql
+
+runtime_configs:
+  - id: wm4mb-fetch1000
+    pg_options:
+      work_mem: 4MB
+    psql_variables:
+      FETCH_COUNT: "1000"
+
+workload:
+  instance_manifest: ../master-regimes/generated/workloads/dev-rendered-smoke/instance_manifest.csv
+  max_instances: 1
+
+collection:
+  global_stats_scope: none

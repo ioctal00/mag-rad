@@ -1,0 +1,61 @@
+clustering_dataset_contract: master_regimes_clustering_dataset_v1
+source_features_dir: master-regimes/analysis/features/clean-run-v1-region-asymmetry
+status: ready
+outputs:
+  m0: clustering_input_m0.csv
+  m1: clustering_input_m1.csv
+  context: clustering_context.csv
+  row_filter_report: row_filter_report.csv
+  feature_preprocessing_report: feature_preprocessing_report.csv
+  dropped_features: dropped_features.csv
+  clustering_readiness_report: clustering_readiness_report.csv
+matrices:
+  m0:
+    source_file: execution_features_m0.csv
+    status: ready
+    row_count_before_filter: 150
+    row_count_after_filter: 150
+    feature_count_after_preprocessing: 234
+    feature_to_row_ratio: 1.56
+    readiness_warnings:
+    - rows_less_than_5x_feature_count
+    output: clustering_input_m0.csv
+  m1:
+    source_file: execution_features_m1.csv
+    status: ready
+    row_count_before_filter: 150
+    row_count_after_filter: 150
+    feature_count_after_preprocessing: 318
+    feature_to_row_ratio: 2.12
+    readiness_warnings:
+    - rows_less_than_5x_feature_count
+    output: clustering_input_m1.csv
+row_quality_gate:
+  drop_bad_execution_statuses:
+  - canceled
+  - cancelled
+  - error
+  - errored
+  - failed
+  - failure
+  - timed_out
+  - timeout
+  drop_timed_out: true
+  drop_collection_error_count_gt_zero: true
+  drop_remote_error_count_gt_zero: true
+  drop_warmup_runs: true
+feature_quality_gate:
+  max_null_fraction: 0.8
+  min_non_null: 2
+  drop_non_numeric: true
+  drop_constant: true
+  add_missing_indicators: true
+  imputation: median
+  scaling: z_score_population_std
+  log_transform: auto
+rules:
+  null_policy: NULL is never encoded as zero. Missing numeric values are median-imputed
+    after optional log transform, and variable missingness is exposed through *__is_missing
+    indicators.
+  context_policy: IDs, labels, runtime knobs, fingerprints and audit columns are preserved
+    in clustering_context.csv, not injected into clustering_input_*.csv.

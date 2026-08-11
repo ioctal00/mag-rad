@@ -1,0 +1,702 @@
+corpus_id: clean-run-eu-us-gac-v1
+vocabulary: ../../docs/corpus-vocabulary.md
+query_groups: query-groups.yml
+runtime_catalog: runtime-configs.yml
+topology_id: eu_us_gac
+topology_scope: eu_us_gac
+description: >
+  Clean-run corpus for the manual pre-feature-extraction execution dataset.
+  This manifest is intentionally larger than Plan C pilot, but still bounded:
+  it expands controlled template parameters across two pilot dataset profiles
+  and applies runtime interventions only where template sensitivity metadata
+  says the intervention is meaningful.
+execution_budget:
+  hard_timeout_seconds: 900
+  timeout_grace_seconds: 30
+execution_policy:
+  cache_policy: mixed_cache_first_observed
+  warmup_per_instance: false
+  explicit_cache_reset: false
+  repetitions_default: 1
+  cache_features_in_default_model: false
+  order_policy: deterministic_shuffle
+  shuffle_seed: 20260626
+  record_run_order: true
+  record_buffer_features: true
+  fdw_auto_explain: true
+  gac_etl_bootstrap_lookback_days: 1
+  gac_etl_bootstrap_timeout_seconds: 600
+
+dataset_profiles:
+  pilot-balanced-v1:
+    profile: ../../datasets/profiles/pilot-balanced.yml
+    load_method: copy_pipe
+  pilot-skew-heavy-v1:
+    profile: ../../datasets/profiles/pilot-skew-heavy.yml
+    load_method: copy_pipe
+
+cells:
+  # Single-region Citus controls. These run on regional coordinators and give a
+  # direct Citus baseline for the same logical questions used by GAC/FDW.
+  - corpus_cell_id: single_daily_rollup_default
+    logical_question_id: daily_tenant_rollup
+    execution_strategy: single_region_citus
+    template_id: q01_tenant_rollup
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      min_value: [0, 100, 500, 900]
+
+  - corpus_cell_id: single_event_filter_default
+    logical_question_id: event_filter_summary
+    execution_strategy: single_region_citus
+    template_id: q03_event_filter_summary
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      min_value: [0, 100, 500, 900]
+
+  - corpus_cell_id: single_tenant_point_default
+    logical_question_id: tenant_point_rollup
+    execution_strategy: single_region_citus
+    template_id: q04_tenant_point_rollup
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      tenant_id: [1, 5, 10, 100, 500, 1000]
+      lookback_days: [1, 3, 7, 14, 30]
+
+  - corpus_cell_id: single_tenant_tier_join_default
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: single_region_citus
+    template_id: q05_tenant_tier_daily_join
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+
+  - corpus_cell_id: single_user_segment_default
+    logical_question_id: user_segment_topk
+    execution_strategy: single_region_citus
+    template_id: q06_user_segment_join
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: single_global_user_default
+    logical_question_id: global_user_topk
+    execution_strategy: single_region_citus
+    template_id: q07_global_user_segment_join
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [join_movement]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: single_user_value_default
+    logical_question_id: user_value_topk
+    execution_strategy: single_region_citus
+    template_id: q02_global_user_topk
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: single_multi_dimension_default
+    logical_question_id: multi_dimension_rollup
+    execution_strategy: single_region_citus
+    template_id: q08_multi_dimension_rollup
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [join_movement, gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: single_top_tenants_default
+    logical_question_id: top_tenants
+    execution_strategy: single_region_citus
+    template_id: q10_top_tenants
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: single_event_full_scan_default
+    logical_question_id: event_full_scan_summary
+    execution_strategy: single_region_citus
+    template_id: q09_event_full_scan_summary
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [well_reduced_localized]
+
+  # FDW/ETL/multiregion paired families. These are the main GAC evidence cells.
+  - corpus_cell_id: fdw_daily_rollup_default
+    logical_question_id: daily_tenant_rollup
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_daily_rollup
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      min_value: [0, 100, 500, 900]
+
+  - corpus_cell_id: etl_daily_rollup_default
+    logical_question_id: daily_tenant_rollup
+    execution_strategy: etl_materialized
+    template_id: gac_etl_local_rollup
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+
+  - corpus_cell_id: mr_daily_rollup_default
+    logical_question_id: daily_tenant_rollup
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_daily_tenant_rollup
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      min_value: [0, 100, 500, 900]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: fdw_top_tenants_default
+    logical_question_id: top_tenants
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_top_tenants
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [remote_fetch_heavy, gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: etl_top_tenants_default
+    logical_question_id: top_tenants
+    execution_strategy: etl_materialized
+    template_id: gac_etl_top_tenants
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: mr_top_tenants_default
+    logical_question_id: top_tenants
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_top_tenants
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [remote_fetch_heavy, gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: fdw_tenant_point_default
+    logical_question_id: tenant_point_rollup
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_tenant_point_rollup
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      tenant_id: [1, 5, 10, 100, 500, 1000]
+      lookback_days: [1, 3, 7, 14, 30]
+
+  - corpus_cell_id: etl_tenant_point_default
+    logical_question_id: tenant_point_rollup
+    execution_strategy: etl_materialized
+    template_id: gac_etl_tenant_point_rollup
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      tenant_id: [1, 5, 10, 100, 500, 1000]
+      lookback_days: [1, 3, 7, 14, 30]
+
+  - corpus_cell_id: mr_tenant_point_default
+    logical_question_id: tenant_point_rollup
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_tenant_point_rollup
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      eu_tenant_id: [1, 5, 10, 100, 1000]
+      us_tenant_id: [10001, 10005, 10010, 10100, 11000]
+      lookback_days: [1, 7, 14, 30]
+
+  - corpus_cell_id: fdw_tenant_tier_default
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_tenant_tier_join
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+
+  - corpus_cell_id: fdw_tenant_tier_left_default
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_tenant_tier_left_join
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: etl_tenant_tier_default
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: etl_materialized
+    template_id: gac_etl_tenant_tier_daily_rollup
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+
+  - corpus_cell_id: mr_tenant_tier_default
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_tenant_tier_join
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: mr_tenant_tier_left_default
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_tenant_tier_left_join
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: fdw_global_user_default
+    logical_question_id: global_user_topk
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_global_user_join
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [join_movement, gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: etl_global_user_default
+    logical_question_id: global_user_topk
+    execution_strategy: etl_materialized
+    template_id: gac_etl_global_user_topk
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: mr_global_user_default
+    logical_question_id: global_user_topk
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_global_user_join
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [join_movement, gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: fdw_user_segment_default
+    logical_question_id: user_segment_topk
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_user_segment_join
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: etl_user_segment_default
+    logical_question_id: user_segment_topk
+    execution_strategy: etl_materialized
+    template_id: gac_etl_user_segment_topk
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: mr_user_segment_default
+    logical_question_id: user_segment_topk
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_user_segment_join
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: fdw_user_value_default
+    logical_question_id: user_value_topk
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_user_value_topk
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: mr_user_value_default
+    logical_question_id: user_value_topk
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_user_value_topk
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: fdw_multi_dimension_default
+    logical_question_id: multi_dimension_rollup
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_multi_dimension_rollup
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [join_movement, gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: etl_multi_dimension_default
+    logical_question_id: multi_dimension_rollup
+    execution_strategy: etl_materialized
+    template_id: gac_etl_multi_dimension_rollup
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: negative_control
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: mr_multi_dimension_default
+    logical_question_id: multi_dimension_rollup
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_multi_dimension_rollup
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [join_movement, gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: fdw_event_filter_default
+    logical_question_id: event_filter_summary
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_event_filter_summary
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      min_value: [0, 100, 500, 900]
+
+  - corpus_cell_id: mr_event_filter_default
+    logical_question_id: event_filter_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_filter_summary
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [well_reduced_localized]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      min_value: [0, 100, 500, 900]
+
+  - corpus_cell_id: fdw_event_full_scan_default
+    logical_question_id: event_full_scan_summary
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_event_full_scan_summary
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [remote_fetch_heavy]
+
+  - corpus_cell_id: mr_event_full_scan_default
+    logical_question_id: event_full_scan_summary
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_full_scan_summary
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [remote_fetch_heavy]
+
+  - corpus_cell_id: fdw_raw_wide_default
+    logical_question_id: event_raw_wide_sample
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_event_raw_wide_sample
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [remote_fetch_heavy]
+    parameters:
+      lookback_days: [1, 7]
+      min_value: [500, 900]
+      limit_k: [100, 250]
+      payload_repeat: [16, 64]
+      payload_width: [512]
+
+  - corpus_cell_id: mr_raw_wide_default
+    logical_question_id: event_raw_wide_sample
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_raw_wide_sample
+    dataset_profile_id: [pilot-balanced-v1, pilot-skew-heavy-v1]
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [remote_fetch_heavy]
+    parameters:
+      lookback_days: [1, 7]
+      min_value: [500, 900]
+      limit_k: [100, 250]
+      payload_repeat: [16, 64]
+      payload_width: [512]
+
+  # Legacy multiregion analytics-client shapes. Keep them renderable and
+  # documented, but outside the default pilot clean-run because they are not
+  # paired with single-region/FDW/ETL equivalents.
+  - corpus_cell_id: daily_kpi_multiregion_optional
+    logical_question_id: daily_kpi
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_daily_kpi
+    execution_class: long_budget
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [1]
+
+  - corpus_cell_id: region_daily_join_multiregion_optional
+    logical_question_id: region_daily_join
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_region_daily_join
+    execution_class: long_budget
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: default
+    topology_id: eu_us_gac
+    intervention_role: baseline
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [30]
+
+  # Runtime interventions. These are intentionally selective and remain
+  # context/validation variables, not default clustering inputs.
+  - corpus_cell_id: fdw_top_tenants_fetch_sensitivity
+    logical_question_id: top_tenants
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_top_tenants
+    dataset_profile_id: pilot-skew-heavy-v1
+    runtime_config_id: [fetch_small, fetch_large]
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: fetch_size
+    expected_regime_targets: [remote_fetch_heavy, gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: mr_top_tenants_fetch_sensitivity
+    logical_question_id: top_tenants
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_top_tenants
+    dataset_profile_id: pilot-skew-heavy-v1
+    runtime_config_id: [fetch_small, fetch_large]
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: fetch_size
+    expected_regime_targets: [remote_fetch_heavy, gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: fdw_raw_wide_fetch_sensitivity
+    logical_question_id: event_raw_wide_sample
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_event_raw_wide_sample
+    dataset_profile_id: pilot-skew-heavy-v1
+    runtime_config_id: [fetch_small, fetch_large]
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: fetch_size
+    expected_regime_targets: [remote_fetch_heavy]
+    parameters:
+      lookback_days: [1, 7]
+      min_value: [500, 900]
+      limit_k: [100, 250]
+      payload_repeat: [16, 64]
+      payload_width: [512]
+
+  - corpus_cell_id: mr_raw_wide_fetch_sensitivity
+    logical_question_id: event_raw_wide_sample
+    execution_strategy: multiregion_union
+    template_id: gac_fdw_multiregion_event_raw_wide_sample
+    dataset_profile_id: pilot-skew-heavy-v1
+    runtime_config_id: [fetch_small, fetch_large]
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: fetch_size
+    expected_regime_targets: [remote_fetch_heavy]
+    parameters:
+      lookback_days: [1, 7]
+      min_value: [500, 900]
+      limit_k: [100, 250]
+      payload_repeat: [16, 64]
+      payload_width: [512]
+
+  - corpus_cell_id: fdw_top_tenants_work_mem_sensitivity
+    logical_question_id: top_tenants
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_top_tenants
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: [work_mem_low, work_mem_high]
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: work_mem
+    expected_regime_targets: [remote_fetch_heavy, gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]
+
+  - corpus_cell_id: fdw_tenant_tier_work_mem_sensitivity
+    logical_question_id: tenant_tier_daily_join
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_tenant_tier_join
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: [work_mem_low, work_mem_high]
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: work_mem
+    expected_regime_targets: [gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+
+  - corpus_cell_id: fdw_multi_dimension_work_mem_sensitivity
+    logical_question_id: multi_dimension_rollup
+    execution_strategy: fdw_raw
+    template_id: gac_fdw_multi_dimension_rollup
+    dataset_profile_id: pilot-balanced-v1
+    runtime_config_id: [work_mem_low, work_mem_high]
+    topology_id: eu_us_gac
+    intervention_role: positive_case
+    intervention_axis: work_mem
+    expected_regime_targets: [join_movement, gac_finalization_heavy]
+    parameters:
+      lookback_days: [1, 3, 7, 14, 30]
+      limit_k: [10, 25, 50, 100]

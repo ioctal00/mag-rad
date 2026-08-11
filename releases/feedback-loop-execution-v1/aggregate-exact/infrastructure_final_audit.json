@@ -1,0 +1,129 @@
+{
+  "captured_at_utc": "2026-08-07T15:53:15.154370Z",
+  "fdw_fetch_size_restored": true,
+  "gate": "GO",
+  "hardware_snapshot_repeated": false,
+  "mutable_snapshot": {
+    "captured_at_utc": "2026-08-07T15:53:15.153931Z",
+    "contract_version": "pressure-feedback-loop-live-v1",
+    "hardware_snapshot_count": 0,
+    "label": "aggregate_exact_final",
+    "results": {
+      "capture_processes": {
+        "command": [
+          "master-regimes-infra/common-scripts/run_ansible.sh",
+          "ansible",
+          "db_nodes:analytics_clients",
+          "-b",
+          "-m",
+          "shell",
+          "-a",
+          "pgrep -af '[m]ain.py capture-agent' || true"
+        ],
+        "exit_code": 0,
+        "output": "master-regimes/generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/phase_d/aggregate_exact_final/capture_processes.txt",
+        "sha256": "42f5877c49fc0ea4acfb8d45e03c058115da9a9f049e481e163d2f91c36bff08"
+      },
+      "clock_status": {
+        "command": [
+          "master-regimes-infra/common-scripts/run_ansible.sh",
+          "ansible",
+          "db_nodes:analytics_clients",
+          "-b",
+          "-m",
+          "shell",
+          "-a",
+          "date -u +%Y-%m-%dT%H:%M:%S.%NZ; timedatectl show -p NTPSynchronized --value"
+        ],
+        "exit_code": 0,
+        "output": "master-regimes/generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/phase_d/aggregate_exact_final/clock_status.txt",
+        "sha256": "8d29fa0f4e1218df7e94474de729724c60a212a7be253b3a98ba2cbfb644ff91"
+      },
+      "dataset_identity": {
+        "command": [
+          "master-regimes-infra/common-scripts/run_ansible.sh",
+          "ansible",
+          "coordinators",
+          "-b",
+          "--become-user",
+          "postgres",
+          "-m",
+          "shell",
+          "-a",
+          "psql -XAt -v ON_ERROR_STOP=1 -d app -c \"SELECT 'events', count(*) FROM events UNION ALL SELECT 'users', count(*) FROM users ORDER BY 1; SELECT logicalrelid::regclass::text, partmethod, colocationid FROM pg_dist_partition WHERE logicalrelid IN ('events'::regclass,'users'::regclass) ORDER BY 1;\""
+        ],
+        "exit_code": 0,
+        "output": "master-regimes/generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/phase_d/aggregate_exact_final/dataset_identity.txt",
+        "sha256": "4dae8db1c76ab7775ccacd5ec7fc40ab167cc8779431e7d7418f71adb24e25ff"
+      },
+      "fdw_server_options": {
+        "command": [
+          "master-regimes-infra/common-scripts/run_ansible.sh",
+          "ansible",
+          "analytics_clients",
+          "-b",
+          "--become-user",
+          "postgres",
+          "-m",
+          "shell",
+          "-a",
+          "psql -XAt -v ON_ERROR_STOP=1 -d analytics -c \"SELECT srvname, array_to_string(srvoptions, ',') FROM pg_foreign_server ORDER BY srvname;\""
+        ],
+        "exit_code": 0,
+        "output": "master-regimes/generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/phase_d/aggregate_exact_final/fdw_server_options.txt",
+        "sha256": "3a311625909552a8b36646fcaea9fadb81f81f0a1b8494d0669da88c21d96550"
+      },
+      "gac_gucs": {
+        "command": [
+          "master-regimes-infra/common-scripts/run_ansible.sh",
+          "ansible",
+          "analytics_clients",
+          "-b",
+          "--become-user",
+          "postgres",
+          "-m",
+          "shell",
+          "-a",
+          "psql -XAt -v ON_ERROR_STOP=1 -d analytics -c \"SELECT current_database(), current_setting('work_mem'), current_setting('join_collapse_limit'), current_setting('from_collapse_limit'), current_setting('enable_hashagg'), current_setting('jit'), current_setting('max_parallel_workers_per_gather');\""
+        ],
+        "exit_code": 0,
+        "output": "master-regimes/generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/phase_d/aggregate_exact_final/gac_gucs.txt",
+        "sha256": "4ede2f2de238a1377ce4bf22b804e294b59f12972fade951113cd5a26cb6eb76"
+      },
+      "regional_gucs": {
+        "command": [
+          "master-regimes-infra/common-scripts/run_ansible.sh",
+          "ansible",
+          "coordinators",
+          "-b",
+          "--become-user",
+          "postgres",
+          "-m",
+          "shell",
+          "-a",
+          "psql -XAt -v ON_ERROR_STOP=1 -d app -c \"SELECT current_database(), current_setting('work_mem'), current_setting('join_collapse_limit'), current_setting('from_collapse_limit'), current_setting('enable_hashagg'), current_setting('jit'), current_setting('max_parallel_workers_per_gather');\""
+        ],
+        "exit_code": 0,
+        "output": "master-regimes/generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/phase_d/aggregate_exact_final/regional_gucs.txt",
+        "sha256": "8ecd057d03cfa5be5011e9b464141ce57f23e3fa0ad43ed82c4df88201473141"
+      },
+      "traffic_control": {
+        "command": [
+          "master-regimes-infra/common-scripts/run_ansible.sh",
+          "ansible",
+          "db_nodes:analytics_clients",
+          "-b",
+          "-m",
+          "shell",
+          "-a",
+          "tc qdisc show"
+        ],
+        "exit_code": 0,
+        "output": "master-regimes/generated/feedback-loop-runs/20260807T152322Z-pressure-feedback-loop-aggregate-exact-v1/phase_d/aggregate_exact_final/traffic_control.txt",
+        "sha256": "1aab4529a394c608a3bebfbea9a913037880fcfa81cb259e9dd2f0bb72e7cf09"
+      }
+    }
+  },
+  "network_profile_reset": true,
+  "rollback_result_equivalent": true
+}

@@ -1,0 +1,7 @@
+rank_by_absolute_support,feature,family,raw_value,scaled_value,support,direction,interpretation
+1,worker_task_scan_rows_isf,skew_imbalance,6.4,3.672075210157694,-4.278095030040259,R2,"strongly pulls the case toward the skew-amplified competitor"
+2,remote_path_share,remote_fanin_fetch,0.9942874599053002,0.6967640030148946,-3.4401939472745933,R2,"near-total remote-path share pulls toward R2"
+3,aggregate_rows_estimate_error_log,estimate_error,-2.890371757896165,-1.6019400658128542,3.302737064016428,R1,"aggregate estimate-error geometry supports GAC/finalization prototype"
+4,temp_blocks_per_final_row,normalized_spill_pressure,0.0,-0.9186346130954639,1.6404669705821517,R1,"relative absence of spill is closer to the R1 center than to R2 in the frozen scaled space"
+5,remote_to_final_rows_ratio,remote_fanin_fetch,200.0,-0.7466194875750354,1.1041392243322965,R1,"remote-to-final amplification supports R1 against the closest competitor"
+6,temp_bytes_to_wan_bytes_ratio,normalized_spill_pressure,0.0,-1.093893596256877,1.1038077104461592,R1,"normalized no-spill relation supports R1 against R2"

@@ -1,0 +1,71 @@
+contract_version: consolidated-evaluation-v1
+evaluation_id: consolidated-evaluation-v1
+description: >
+  Offline konsolidacija sirokog intervencijskog korpusa, razvojnog panela,
+  zavrsnog DBA panela, representation ablationa i kontrolisanog N2/N3 panela.
+
+inputs:
+  broad_query_runs: generated/pressure-raw-runs/_program/pressure-raw-v1/_index/query_runs.csv
+  broad_consolidation: releases/pressure-actionability-v1/corpus/consolidation_manifest.json
+  broad_action_summary: releases/pressure-actionability-v1/action_audit/summary.json
+  development_report: analysis/reports/fuzzy-intervention-memory-v1
+  final_panel_report: analysis/reports/dba-local-memory-panel-v1
+  topology_report: analysis/reports/n3-topology-memory-v1
+  topology_index_root: ../master-regimes-infra/generated/runs/corpus-sweeps/_logical-runs
+  representation_release: releases/representation-ablation-e1-e4-v1
+  representation_contract: configs/validation/representation_ablation_e1_e4_v1.yml
+  frozen_full_model: analysis/reports/n3-topology-memory-v1/model_freeze_recomputed.json
+
+policy:
+  actions:
+    - increase_gac_work_mem
+    - regional_topk_candidates
+    - mitigate_remote_path_bundle
+  frozen_neighbors: 5
+  frozen_distance_metric: euclidean
+  frozen_coverage_quantile: 0.99
+  minimum_history_for_available: 2
+  distance_epsilon: 0.000001
+  sensitivity_neighbors: [1, 3, 5]
+  sensitivity_metrics: [euclidean, cosine, manhattan]
+  sensitivity_quantiles: [0.90, 0.95, 0.99, 1.00]
+
+bootstrap:
+  cluster_key: query_id
+  samples: 10000
+  random_seed: 20260808
+  confidence_level: 0.95
+
+expected:
+  broad_executions: 2607
+  broad_conditions: 869
+  broad_pairs: 418
+  development_states: 26
+  development_action_episodes: 78
+  development_executions: 312
+  final_sql_shapes: 15
+  final_states: 45
+  final_action_episodes: 135
+  final_executions: 180
+  final_n2_states: 21
+  final_n3_states: 24
+  topology_scenarios: 15
+  topology_states: 45
+  topology_action_episodes: 135
+  topology_executions: 180
+  topology_rounds:
+    n2_control: 15
+    phase_a: 15
+    phase_b: 15
+  r3_candidate_features: 93
+  r3_active_features: 64
+  r3_components: 6
+  r3_p99_threshold: 1.9533554892194174
+  topology_phase_b_cross_query:
+    coverage_count: 15
+    correct_count: 12
+    top1_accuracy: 0.8
+    mean_regret_log2: 0.230691762991854
+    static_top1_accuracy: 0.6
+    static_mean_regret_log2: 0.3677567977671438
+  q08_regret_log2: 2.720945230477005

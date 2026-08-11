@@ -1,0 +1,6 @@
+---
+db_readonly_user_enabled: "{{ web_portal_enabled | default(false) }}"
+db_readonly_user_name: "{{ web_portal_db_readonly_user | default('prof_demo') }}"
+db_readonly_user_password: "{{ web_portal_db_readonly_password | default('') }}"
+db_readonly_user_statement_timeout: 30s
+db_readonly_user_idle_timeout: 60s

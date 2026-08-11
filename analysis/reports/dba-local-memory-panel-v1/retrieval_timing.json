@@ -1,0 +1,10 @@
+{
+  "case_base_state_count": 70,
+  "exact_lookup_median_us": 0.29,
+  "exact_lookup_p95_us": 0.37,
+  "interpretation": "Implementation timing at the current small case-base size; not a scalability claim.",
+  "knn_retrieval_median_us": 33829.2915,
+  "knn_retrieval_p95_us": 43625.56464999999,
+  "scope": "single_process_offline_microbenchmark",
+  "timing_repetitions": 500
+}

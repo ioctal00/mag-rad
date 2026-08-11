@@ -1,0 +1,60 @@
+{
+  "catalog_id": "Q08-NEIGHBORS",
+  "dataset_time_contract": {
+    "allowed_cutoff_offsets_days": [
+      1,
+      2,
+      7,
+      14,
+      30
+    ],
+    "base_time_unix": 1782864000,
+    "base_time_utc": "2026-07-01T00:00:00Z",
+    "generated_lookback_days": 30,
+    "wall_clock_functions_allowed_in_measured_sql": false
+  },
+  "neighbor_round": "phase_a",
+  "schema_version": 1,
+  "source_artifacts": [
+    {
+      "path": "generated/corpus/n3-topology-memory-v1/rendered/phase_a_baseline/groups/n3-topology-memory-v1-phase_a_baseline__topology-isolation-small-n3-v1__runtime-bundle-multi-edge__analytics_clients/queries/q03_event_recent__baseline__gac_fdw_dba_topk_raw__query_shape-event_recent__cutoff_ts-2026-06-24-00-00-00-00__limit_k-250__include_apac-True.sql",
+      "sha256": "5d333bb683fbe7e77a41cab12eb2cd65fc68fc32460aace22ccf0fa3f7fe590f"
+    },
+    {
+      "path": "generated/corpus/n3-topology-memory-v1/rendered/phase_a_baseline/groups/n3-topology-memory-v1-phase_a_baseline__topology-isolation-small-n3-v1__runtime-bundle-multi-edge__analytics_clients/queries/q04_event_oldest__baseline__gac_fdw_dba_topk_raw__query_shape-event_oldest__cutoff_ts-2026-06-17-00-00-00-00__limit_k-500__include_apac-True.sql",
+      "sha256": "48d8cf556f6191cc9f07dbc7d851bf4de88ea38a98823e3c79f340e6df752f07"
+    },
+    {
+      "path": "generated/corpus/n3-topology-memory-v1/rendered/phase_a_baseline/groups/n3-topology-memory-v1-phase_a_baseline__topology-isolation-large-n3-v1__runtime-bundle-multi-edge__analytics_clients/queries/q05_event_deviation__baseline__gac_fdw_dba_topk_raw__query_shape-event_deviation__cutoff_ts-2026-06-30-00-00-00-00__limit_k-50__include_apac-True.sql",
+      "sha256": "de24c9054460ace8bc5eb96c1ba358bbacbd8a32b67e6aa20bf58c9cbd5b4eb3"
+    },
+    {
+      "path": "generated/corpus/n3-topology-memory-v1/rendered/phase_a_baseline/groups/n3-topology-memory-v1-phase_a_baseline__topology-isolation-large-n3-v1__runtime-bundle-multi-edge__analytics_clients/queries/q06_tenant_sum__baseline__gac_fdw_dba_topk_raw__query_shape-tenant_sum__cutoff_ts-2026-06-29-00-00-00-00__limit_k-100__include_apac-True.sql",
+      "sha256": "d820fe5b8d76db0a43890638b6ee8f90eb5a63550bc8883049ad75cf516ab6cf"
+    },
+    {
+      "path": "generated/corpus/n3-topology-memory-v1/rendered/phase_a_baseline/groups/n3-topology-memory-v1-phase_a_baseline__topology-isolation-large-n3-v1__runtime-bundle-multi-edge__analytics_clients/queries/q07_tenant_count__baseline__gac_fdw_dba_topk_raw__query_shape-tenant_count__cutoff_ts-2026-06-24-00-00-00-00__limit_k-250__include_apac-True.sql",
+      "sha256": "a9d7dbac8a71be90a8ab97745ac5221ea97baef1fff9bb6e1de935faa54af35a"
+    },
+    {
+      "path": "generated/corpus/n3-topology-memory-v1/rendered/phase_b_baseline/groups/n3-topology-memory-v1-phase_b_baseline__topology-isolation-large-n3-v1__runtime-bundle-multi-edge__analytics_clients/queries/q08_tenant_avg__baseline__gac_fdw_dba_topk_raw__query_shape-tenant_avg__cutoff_ts-2026-06-17-00-00-00-00__limit_k-500__include_apac-True.sql",
+      "sha256": "fa193ee23b0bceaffc482fd640bb0cd17bb8aa7179b69f96573ef603a5d028a0"
+    },
+    {
+      "path": "releases/consolidated-evaluation-v1/q08_neighbors.csv",
+      "sha256": "d37bed4c705374ef642faae148e2b901315d3fdf97df0c65436ac2d21fbdb4bd"
+    },
+    {
+      "path": "releases/consolidated-evaluation-v1/q08_action_rankings.csv",
+      "sha256": "b20f0b9bd2c627e370ab91972c6e59288b36f9966bec9e04be47161aa306ad93"
+    },
+    {
+      "path": "releases/consolidated-evaluation-v1/q08_failure_analysis.json",
+      "sha256": "79101baff22f5253c1a82384fd7b7d892300d6670646d227fe8e00fa001f7ddc"
+    }
+  ],
+  "source_repository_commit": "1892a85c0576017f898df9162c4c1b5ac21f1d03",
+  "target_query_id": "q08_tenant_avg",
+  "target_round": "phase_b",
+  "topology_id": "eu_us_apac_gac"
+}

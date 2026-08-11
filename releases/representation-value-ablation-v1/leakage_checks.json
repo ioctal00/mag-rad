@@ -1,0 +1,20 @@
+{
+  "action_outcome_count": 135,
+  "actual_gain_sha256_by_representation": {
+    "coordinator_physical": "7477e9a0f16b1408b20a0f9ebaceeb6cf3e325c9eb7f319a883b19c2bd5ef692",
+    "full_multilayer": "7477e9a0f16b1408b20a0f9ebaceeb6cf3e325c9eb7f319a883b19c2bd5ef692",
+    "sql_structural": "7477e9a0f16b1408b20a0f9ebaceeb6cf3e325c9eb7f319a883b19c2bd5ef692"
+  },
+  "checks": {
+    "abstentions_separate_from_top1_denominator": true,
+    "development_only_fit": true,
+    "full_representation_reproduces_existing_frozen_timeline": true,
+    "future_neighbors_excluded": true,
+    "identical_action_outcomes": true,
+    "identical_episode_sets": true,
+    "same_normalized_sql_neighbors_excluded": true,
+    "same_query_neighbors_excluded": true
+  },
+  "episode_count": 45,
+  "status": "PASS"
+}
