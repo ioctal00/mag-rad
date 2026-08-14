@@ -22,7 +22,7 @@
       ],
       "id": "logical-index-graph",
       "status": "PASS",
-      "summary": "9 logical archives checked; 3185 query rows inspected."
+      "summary": "9 logical archives checked. 3185 query rows inspected."
     },
     {
       "evidence": [
@@ -30,7 +30,7 @@
       ],
       "id": "raw-artifact-presence",
       "status": "PASS",
-      "summary": "9 raw archives checked; 3145 query directories inspected."
+      "summary": "9 raw archives checked. 3145 query directories inspected."
     },
     {
       "evidence": [
@@ -112,7 +112,7 @@
         "master-regimes/src/master_regimes/extract/query_sweep_index.py:505"
       ],
       "id": "COL-004",
-      "impact": "The runner creates a unique FDW application name, but the indexer ingests every auto_explain document in the captured log suffix. The link is strong only under the declared serial, controlled workload; concurrent regional statements could be misattributed.",
+      "impact": "The runner creates a unique FDW application name, but the indexer ingests every auto_explain document in the captured log suffix. The link is strong only under the declared serial, controlled workload. Concurrent regional statements could be misattributed.",
       "recommendation": "Persist the PostgreSQL log prefix fields and filter documents by application_name, backend PID, or a query marker before claiming production-grade correlation.",
       "severity": "medium",
       "title": "Regional auto_explain attribution is window-scoped but not parser-enforced by application name"
@@ -190,7 +190,7 @@
       "title": "One specialized logical archive is not a full collector index"
     }
   ],
-  "generated_from": "packaged offline evidence; deterministic output",
+  "generated_from": "packaged offline evidence. Deterministic output",
   "metrics": {
     "code_contract": {
       "indexer_filters_auto_explain_by_application_name": false,

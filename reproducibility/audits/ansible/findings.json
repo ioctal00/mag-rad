@@ -6,7 +6,7 @@
       "evidence": [
         {
           "location": "sources/master-regimes-infra/",
-          "note": "Compared 39 explicit files by SHA-256; mismatches: 0."
+          "note": "Compared 39 explicit files by SHA-256. Mismatches: 0."
         }
       ],
       "id": "snapshot-parity",
@@ -90,7 +90,7 @@
       "status": "warn"
     },
     {
-      "description": "psql-benchmarks has an exact-HEAD sync path; citus-datagen deployment remains branch-oriented.",
+      "description": "psql-benchmarks has an exact-HEAD sync path. Citus-datagen deployment remains branch-oriented.",
       "evidence": [
         {
           "location": "master-regimes-infra/configs/systems/eu-us-gac-vps.yml:100",
@@ -230,7 +230,7 @@
       "evidence": [
         {
           "location": "sources/master-regimes-infra/",
-          "note": "Compared 39 explicit files by SHA-256; mismatches: 0."
+          "note": "Compared 39 explicit files by SHA-256. Mismatches: 0."
         }
       ],
       "id": "A-001",

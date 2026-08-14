@@ -15,7 +15,7 @@ Za naučni argument važni su izvršenje, rekonstruisano stanje, deklarisana int
 
 | Tok | Ključni corpusi | Uloga |
 | --- | --- | --- |
-| Karakterizacija | `clean-run-v1`, companion i STATS-CEB | `F19`, RQ1-RQ4 i vanjske projekcije; `F21-dev` ostaje razvojna ablacija |
+| Karakterizacija | `clean-run-v1`, companion i STATS-CEB | `F19`, RQ1-RQ4 i vanjske projekcije. `F21-dev` ostaje razvojna ablacija |
 | Intervencije i paneli | `pressure-raw-v1`, DBA, N2/N3 i confirmatory | prije/poslije dokaz, ablation i granice prenosa |
 | Longitudinalne putanje | `feedback-loop-v1` i aggregate-exact | odluka, tranzicija, rollback i replay |
 
@@ -61,7 +61,7 @@ make corpus-index CORPUS=clean-run-v1
 make feature-matrix CORPUS=clean-run-v1
 ```
 
-Runner za svaki segment učitava odgovarajući dataset, primjenjuje runtime i mrežni profil, obnavlja FDW/ETL strukture, izvršava SQL, prikuplja GAC, regionalni i worker/task dokaz te zapisuje status poslije svakog slota. Rezultatni redovi se ne čuvaju; jednakost se provjerava ordered ili multiset hashom prema ugovoru upita.
+Runner za svaki segment učitava odgovarajući dataset, primjenjuje runtime i mrežni profil, obnavlja FDW/ETL strukture, izvršava SQL, prikuplja GAC, regionalni i worker/task dokaz te zapisuje status poslije svakog slota. Rezultatni redovi se ne čuvaju. Jednakost se provjerava ordered ili multiset hashom prema ugovoru upita.
 
 ## Prekid i nastavak
 
@@ -78,4 +78,4 @@ Mrežni uslovi su kontrolisano emulirani pomoću `tc/netem` u fizički kolociran
 
 ## STATS-CEB
 
-STATS-CEB je vanjski schema/workload audit, a ne dataset glavnih intervencijskih panela. Svih 146 upita ostaje u planu bez selekcije prema ishodu. Potpuni collector i no-refit projekcija postoje za 130 upita; timeouti ostaju u statusnom tragu.
+STATS-CEB je vanjski schema/workload audit, a ne dataset glavnih intervencijskih panela. Svih 146 upita ostaje u planu bez selekcije prema ishodu. Potpuni collector i no-refit projekcija postoje za 130 upita. Timeouti ostaju u statusnom tragu.

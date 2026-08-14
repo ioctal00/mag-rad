@@ -12,7 +12,7 @@ Aktivni N2 infrastrukturni profil kreira sedam PostgreSQL čvorova:
 | US Citus worker                |    2 |
 | Globalni analitički čvor (GAC) |    1 |
 
-U kuriranom profilu EU i US su logički regioni u istom Vultr `ams` regionu. Kontrolisana WAN latencija, jitter i loss uvode se pomoću `tc netem`; geografska udaljenost providera nije skriveni eksperimentalni faktor.
+U kuriranom profilu EU i US su logički regioni u istom Vultr `ams` regionu. Kontrolisana WAN latencija, jitter i loss uvode se pomoću `tc netem`. Geografska udaljenost providera nije skriveni eksperimentalni faktor.
 
 N3 profil dodaje APAC coordinator i dva APAC workera, pa ukupno ima deset čvorova. APAC je također logička uloga u `ams` i priključuje se postojećem VPC-u. Stariji `clean-run-v1` je izuzetak: njegovi EU, US i GAC čvorovi bili su u `ams`, `ewr` i `cdg`. Te dvije fizičke topologije ne treba objedinjavati u jednu tvrdnju.
 
@@ -26,12 +26,12 @@ sources/master-regimes-infra/configs/systems/eu-us-gac-vps.yml
 
 Preporučeno okruženje je Linux ili WSL2 sa:
 
-- Python 3.12;
-- `uv`;
-- Terraform 1.5 ili noviji;
-- Ansible;
-- OpenSSH klijentom;
-- `make`, `rsync` i standardnim GNU alatima;
+- Python 3.12.
+- `uv`.
+- Terraform 1.5 ili noviji.
+- Ansible.
+- OpenSSH klijentom.
+- `make`, `rsync` i standardnim GNU alatima.
 - Vultr nalogom sa dovoljnim limitom instanci.
 
 Lokalne tajne se čuvaju u:
@@ -68,9 +68,9 @@ make infra-up    # renderuje i primjenjuje puni N2 lifecycle
 make infra-ping
 ```
 
-Postojeći `infra-plan` nije neprimjenjujući plan cijelog N2 grafa. US plan se formira unutar shared-VPC `infra-up` skripte, a N3 APAC extension također zahtijeva postojeće N2 stanje i zatim primjenjuje plan. Prije troškovnog live reruna potrebno je pregledati lifecycle skripte; paket trenutno nema jednu plan-only komandu za kompletan N2 ili N3 graf.
+Postojeći `infra-plan` nije neprimjenjujući plan cijelog N2 grafa. US plan se formira unutar shared-VPC `infra-up` skripte, a N3 APAC extension također zahtijeva postojeće N2 stanje i zatim primjenjuje plan. Prije troškovnog live reruna potrebno je pregledati lifecycle skripte. Paket trenutno nema jednu plan-only komandu za kompletan N2 ili N3 graf.
 
-`infra-up` renderuje Terraform/Ansible konfiguraciju, kreira VPS/VPC resurse, instalira PostgreSQL 18 i Citus 14, formira oba Citus klastera, postavlja GAC i sinhronizuje alate. Paket čuva tačne source snapshot commitove u `config/release-spec.json`, ali live Ansible konfiguracija još koristi granu za `citus-datagen`; prije reruna treba eksplicitno checkoutovati objavljeni commit. Terraform lock datoteke čuvaju Vultr provider `2.31.2` za EU/US i `2.32.0` za APAC. Verzija Ansible corea, `ansible.posix` i tačni apt buildovi nisu potpuno zaključani.
+`infra-up` renderuje Terraform/Ansible konfiguraciju, kreira VPS/VPC resurse, instalira PostgreSQL 18 i Citus 14, formira oba Citus klastera, postavlja GAC i sinhronizuje alate. Paket čuva tačne source snapshot commitove u `config/release-spec.json`, ali live Ansible konfiguracija još koristi granu za `citus-datagen`. Prije reruna treba eksplicitno checkoutovati objavljeni commit. Terraform lock datoteke čuvaju Vultr provider `2.31.2` za EU/US i `2.32.0` za APAC. Verzija Ansible corea, `ansible.posix` i tačni apt buildovi nisu potpuno zaključani.
 
 ## Gasenje
 

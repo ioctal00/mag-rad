@@ -19,11 +19,11 @@ releases/feedback-loop-execution-v1/
 
 Najvažniji fajlovi su:
 
-- `decision_log.jsonl`: hipoteza zapisana prije ishoda;
-- `execution_manifest.csv`: stvarno izvršeni slotovi;
-- `trajectory_states.csv` i `trajectory_transitions.csv`: putanja stanja;
-- `raw_signal_deltas.csv` i `domain_profile_deltas.csv`: fizička promjena;
-- `result_equivalence_audit.csv`: provjera rezultata;
+- `decision_log.jsonl`: hipoteza zapisana prije ishoda.
+- `execution_manifest.csv`: stvarno izvršeni slotovi.
+- `trajectory_states.csv` i `trajectory_transitions.csv`: putanja stanja.
+- `raw_signal_deltas.csv` i `domain_profile_deltas.csv`: fizička promjena.
+- `result_equivalence_audit.csv`: provjera rezultata.
 - `rollback_audit.csv`: povrat konfiguracije.
 
 Analitički sažetak, stabilnost, heatmape i lokalni replay nalaze se u `releases/feedback-loop-analysis-v1/`. Taj direktorij čuva izvorni izvedeni release. Naknadno je utvrđeno da je tekstualna vrijednost `false` indikatora reparticionisanja bila izgubljena pri numeričkoj konverziji. Obrazloženje je u `docs/05-feedback-loop-r6-correction.md`, a audit i korigovane heatmape u `releases/feedback-loop-r6-correction-v1/`. Izvorna izvršenja i planovi nisu mijenjani.

@@ -156,7 +156,7 @@
         "('3', '9')": 33
       },
       "id": "pressure.pair_contract",
-      "note": "All 418 groups contain the stressed/mitigated contrast; 33 additionally retain an intermediate condition.",
+      "note": "All 418 groups contain the stressed/mitigated contrast. 33 additionally retain an intermediate condition.",
       "status": "PASS"
     },
     {
@@ -819,7 +819,7 @@
       "rendered_executions": 1964,
       "rendered_sql_files": 1964,
       "repetitions_per_condition": 1,
-      "temporal_contract": "legacy moving wall clock; eight sweeps regenerated their datasets immediately before collection"
+      "temporal_contract": "legacy moving wall clock. Eight sweeps regenerated their datasets immediately before collection"
     },
     "confirmatory_300": {
       "collection_validation_counts": {
@@ -880,7 +880,7 @@
       "physical_executions": 180,
       "query_shapes": 15,
       "rendered_sql_files": 60,
-      "sql_reuse": "one rendered SQL file per condition is referenced by every temporal repetition; runtime/network treatments are applied outside SQL"
+      "sql_reuse": "one rendered SQL file per condition is referenced by every temporal repetition. Runtime/network treatments are applied outside SQL"
     },
     "feedback_loop": {
       "aggregate_exact_executions": 25,
@@ -922,16 +922,16 @@
       "conditions": 869,
       "counterfactual_pairs": 418,
       "dataset_profile_count": 13,
-      "order": "deterministic interleaving for standard lanes; explicit 30-slot placement-state lanes for skew interventions",
+      "order": "deterministic interleaving for standard lanes. Explicit 30-slot placement-state lanes for skew interventions",
       "physical_executions": 2607,
       "rendered_sql_files": 799,
-      "temporal_contract": "397 frozen/time-independent substantive pairs; 21 current_date empty-result negative controls"
+      "temporal_contract": "397 frozen/time-independent substantive pairs. 21 current_date empty-result negative controls"
     }
   },
   "limitations": [
     {
       "id": "L1_path_rewrite",
-      "statement": "Public manifests have no local home prefix, but some historical path fields retain their source-repository-relative generated layout. The query catalog is portable; a live rerun should regenerate manifests from the packaged corpus contract instead of treating archived path fields as executable inputs."
+      "statement": "Public manifests have no local home prefix, but some historical path fields retain their source-repository-relative generated layout. The query catalog is portable. A live rerun should regenerate manifests from the packaged corpus contract instead of treating archived path fields as executable inputs."
     },
     {
       "id": "L2_no_database_snapshot",
@@ -939,7 +939,7 @@
     },
     {
       "id": "L3_partial_raw_indexes",
-      "statement": "The shared clean/F19-F21 corpus includes raw and logical index archives. Pressure, DBA, N2/N3, confirmatory and feedback-loop releases mainly contain rendered designs and consolidated validations; their complete raw query-run indexes or collection directories are not all packaged."
+      "statement": "The shared clean/F19-F21 corpus includes raw and logical index archives. Pressure, DBA, N2/N3, confirmatory and feedback-loop releases mainly contain rendered designs and consolidated validations. Their complete raw query-run indexes or collection directories are not all packaged."
     },
     {
       "id": "L4_historical_source_state",
@@ -951,7 +951,7 @@
     },
     {
       "id": "L6_pressure_dynamic_controls",
-      "statement": "Twenty-one pressure pairs use current_date and produced empty no-work controls. They validate collection and equivalence only, not intervention effectiveness; 397 substantive pairs use frozen or time-independent contracts."
+      "statement": "Twenty-one pressure pairs use current_date and produced empty no-work controls. They validate collection and equivalence only, not intervention effectiveness. 397 substantive pairs use frozen or time-independent contracts."
     },
     {
       "id": "L7_feedback_dataset_profile",

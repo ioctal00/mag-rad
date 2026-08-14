@@ -20,9 +20,9 @@ DDL je zajednička osnova, dok YAML profil određuje obim, regionalne raspone, n
 | balansiran | `pilot-balanced-v1` | približno jednak regionalni obim i bez namjernog hot-tenanta |
 | regionalno nebalansiran | `pilot-region-imbalanced-v1` | različit obim redova između EU i US |
 | globalni hot-tenant | `pilot-skew-heavy-v1` | neravnomjerna frekvencija tenant ključeva u cijelom skupu |
-| lokalno asimetričan | `pilot-region-local-skew-asymmetric-medium-v1` | EU hot-tenant opterećenje uz uniformniji US; worker/task neravnomjernost se mjeri iz izvršenja |
+| lokalno asimetričan | `pilot-region-local-skew-asymmetric-medium-v1` | EU hot-tenant opterećenje uz uniformniji US, dok se worker/task neravnomjernost mjeri iz izvršenja |
 | N2/N3 topology isolation | `topology-isolation-*-n2/n3-v1` | upareni profili za kontrolisanu promjenu broja logičkih regiona |
 
 Lokalno asimetričan profil ne mijenja broj shardova po workeru. Oznaka worker skew odnosi se na opaženu neravnomjernost redova, taskova ili vremena rada koja nastaje iz hot-tenant podataka i stvarnog placementa.
 
-Vremenski presjeci i poznati stariji izuzeci objedinjeni su u [`temporal-validity-audit-v1`](../releases/temporal-validity-audit-v1/). Glavni noviji paneli koriste verzionisani `base_time_unix`; zajednički stariji korpus modela F19 i F21-dev ima slabiji temporalni ugovor i u radu se tumači samo kao arhivirani deskriptivni dokaz.
+Vremenski presjeci i poznati stariji izuzeci objedinjeni su u [`temporal-validity-audit-v1`](../releases/temporal-validity-audit-v1/). Glavni noviji paneli koriste verzionisani `base_time_unix`. Zajednički stariji korpus modela F19 i F21-dev ima slabiji temporalni ugovor i u radu se tumači samo kao arhivirani deskriptivni dokaz.

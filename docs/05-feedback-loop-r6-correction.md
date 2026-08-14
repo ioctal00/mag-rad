@@ -6,10 +6,10 @@ Naknadni offline audit pokazao je da je tekstualna vrijednost `false` za `citus_
 
 Provjereni nalaz je:
 
-- svih 84 query runova ima `citus_repartition_observed_v2=false`;
-- svih 84 query runova ima MapMerge broj jednak nuli;
-- svih 184 regionalna planska fragmenta ima `parse_status=ok` i `parse_confidence=high`;
-- zavisni map/merge i fan-out brojevi ostaju nedostupni jer MapMerge graf nije opažen;
+- svih 84 query runova ima `citus_repartition_observed_v2=false`.
+- svih 84 query runova ima MapMerge broj jednak nuli.
+- svih 184 regionalna planska fragmenta ima `parse_status=ok` i `parse_confidence=high`.
+- zavisni map/merge i fan-out brojevi ostaju nedostupni jer MapMerge graf nije opažen.
 - klasa lokalnosti je `colocated_join_candidate` u 6, a `distributed_task_plan` u 78 query runova.
 
 Zato korigovana numerička koordinata R6 iznosi nula. To je opaženo odsustvo reparticionisanja, a ne imputacija nedostajućeg dokaza. Klasa lokalnosti ostaje kategorički kontekst i ne pretvara se u broj.

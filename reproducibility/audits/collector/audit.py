@@ -4,7 +4,7 @@
 The validator reads source snapshots, packaged raw attempts, packaged logical
 indexes, and published audit tables. It never connects to experiment hosts or
 executes SQL. By default it verifies hashes only for audit-critical release
-files; pass --full-hash to verify every entry in artifacts/release-manifest.json.
+files. Pass --full-hash to verify every entry in artifacts/release-manifest.json.
 """
 
 from __future__ import annotations
@@ -569,7 +569,7 @@ def build_findings(metrics: dict[str, Any]) -> list[dict[str, Any]]:
                     "documents = _extract_auto_explain_json_documents",
                 ),
             ],
-            "The runner creates a unique FDW application name, but the indexer ingests every auto_explain document in the captured log suffix. The link is strong only under the declared serial, controlled workload; concurrent regional statements could be misattributed.",
+            "The runner creates a unique FDW application name, but the indexer ingests every auto_explain document in the captured log suffix. The link is strong only under the declared serial, controlled workload. Concurrent regional statements could be misattributed.",
             "Persist the PostgreSQL log prefix fields and filter documents by application_name, backend PID, or a query marker before claiming production-grade correlation.",
         ),
         finding(
@@ -687,7 +687,7 @@ def render_report(payload: dict[str, Any]) -> str:
         "",
         "## Pipeline trace",
         "",
-        "1. **Planned identity.** The corpus adapter derives a condition identity and an `execution_slot_id = condition_id::repetition`; the sweep writes a completed slot only after an indexable manifest exists and the checkpoint is flushed with `fsync`.",
+        "1. **Planned identity.** The corpus adapter derives a condition identity and an `execution_slot_id = condition_id::repetition`. The sweep writes a completed slot only after an indexable manifest exists and the checkpoint is flushed with `fsync`.",
         "2. **Primary GAC execution.** The runner uploads one rendered SQL file and invokes the benchmark wrapper with `EXPLAIN (ANALYZE, BUFFERS, VERBOSE, FORMAT JSON)` and `citus.explain_all_tasks=on`. One top-level execution manifest binds the SQL, coordinator, runtime options, query window, status, and artifact paths.",
         "3. **FDW and regional evidence.** The GAC plan exposes FDW `Remote SQL`. For the primary execution path, regional role-scoped `auto_explain` is enabled and unique FDW application names are configured. The runner records each regional PostgreSQL log start line and later copies the appended suffix.",
         "4. **Regional Citus and worker/task evidence.** The indexer classifies regional documents as diagnostic, remote query, or internal statement. Citus task plans embedded in regional JSON/text are parsed into worker fragments linked by query ID and regional plan ID.",
@@ -820,13 +820,13 @@ def main() -> int:
         check_row(
             "logical-index-graph",
             "PASS" if not logical_errors else "FAIL",
-            f"{len(logical)} logical archives checked; {sum(row['query_count'] for row in logical)} query rows inspected.",
+            f"{len(logical)} logical archives checked. {sum(row['query_count'] for row in logical)} query rows inspected.",
             ["master-thesis-final/artifacts/logical-indexes/:1"],
         ),
         check_row(
             "raw-artifact-presence",
             "PASS" if not raw_errors else "FAIL",
-            f"{len(raw)} raw archives checked; {sum(row['query_collection_count'] for row in raw)} query directories inspected.",
+            f"{len(raw)} raw archives checked. {sum(row['query_collection_count'] for row in raw)} query directories inspected.",
             ["master-thesis-final/artifacts/raw-attempts/:1"],
         ),
         check_row(
@@ -884,7 +884,7 @@ def main() -> int:
     findings = build_findings(metrics)
     payload = {
         "schema_version": "collector-offline-audit-v1",
-        "generated_from": "packaged offline evidence; deterministic output",
+        "generated_from": "packaged offline evidence. Deterministic output",
         "scope": {
             "mode": "offline_read_only",
             "repositories": [

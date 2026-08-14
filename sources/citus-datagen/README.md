@@ -2,7 +2,7 @@
 
 Dataset generator for the master-regimes thesis Citus environment.
 
-The generator is intentionally narrow. Its job is not to be a general benchmark-data framework; its job is to make repeatable regional Citus datasets for the `master-regimes` workload and plan-parser pipeline:
+The generator is intentionally narrow. Its job is not to be a general benchmark-data framework. Its job is to make repeatable regional Citus datasets for the `master-regimes` workload and plan-parser pipeline:
 
 - understand FDW, ETL, and merge flows
 - play with SQL queries
@@ -116,7 +116,7 @@ Reference SQL lives in [sql/minimal_schema.sql](sql/minimal_schema.sql).
 
 `tenant_id` is the distribution key because it keeps tenant-owned data on the same shard placement. `tenants` is a reference table because it is small lookup data and can be replicated to workers. `events` and `users` are colocated distributed tables, which lets worker-local fact/dimension joins happen inside a regional Citus cluster before the global analytics layer receives partial results. Mutable tenant attributes (`tenant_tier`, `tenant_status`, `updated_at`, `dimension_version`) support stale ETL and eventual-consistency experiments.
 
-`global_users` is an optional sensitivity table controlled by `DATAGEN_ENABLE_GLOBAL_USERS`. It has the same logical `(tenant_id, user_id)` grain as `users`, but is distributed by `user_id`, so joins with `events` intentionally break the `tenant_id` colocation used by the core workload. By default it uses the same per-tenant cardinality as `users`; override `DATAGEN_GLOBAL_USERS_PER_TENANT` when a sweep needs a larger or smaller non-colocated dimension without changing the event/user domain.
+`global_users` is an optional sensitivity table controlled by `DATAGEN_ENABLE_GLOBAL_USERS`. It has the same logical `(tenant_id, user_id)` grain as `users`, but is distributed by `user_id`, so joins with `events` intentionally break the `tenant_id` colocation used by the core workload. By default it uses the same per-tenant cardinality as `users`. Override `DATAGEN_GLOBAL_USERS_PER_TENANT` when a sweep needs a larger or smaller non-colocated dimension without changing the event/user domain.
 
 ## Runtime model
 
@@ -281,9 +281,9 @@ Useful sizing variables:
 
 - `DATAGEN_EVENTS_PER_TENANT`: fact-table scale
 - `DATAGEN_USERS_PER_TENANT`: colocated user dimension scale and the user id range referenced by generated events
-- `DATAGEN_GLOBAL_USERS_PER_TENANT`: optional `global_users` scale; defaults to `DATAGEN_USERS_PER_TENANT`
+- `DATAGEN_GLOBAL_USERS_PER_TENANT`: optional `global_users` scale. Defaults to `DATAGEN_USERS_PER_TENANT`
 
-Keep `DATAGEN_GLOBAL_USERS_PER_TENANT` equal to `DATAGEN_USERS_PER_TENANT` for a full one-to-one non-colocated stress table. Larger values add unmatched global users and increase dimension size; smaller values intentionally reduce join coverage and should be documented as a selectivity/sensitivity variant.
+Keep `DATAGEN_GLOBAL_USERS_PER_TENANT` equal to `DATAGEN_USERS_PER_TENANT` for a full one-to-one non-colocated stress table. Larger values add unmatched global users and increase dimension size. Smaller values intentionally reduce join coverage and should be documented as a selectivity/sensitivity variant.
 
 ## C++ `copy_pipe` generator
 
@@ -408,9 +408,9 @@ master-regimes-infra -> remote deploy, reset-and-load, query/database sweeps
 
 Recommended next steps:
 
-- keep dataset profiles controlled by `master-regimes` / `master-regimes-infra` sweep config;
-- add post-load validation output when a new dataset capability is introduced;
-- keep `global_users` enabled for non-colocated join stress profiles where the workload suite needs it;
-- avoid adding query templates here; put them in `../master-regimes/workloads/templates/`.
+- keep dataset profiles controlled by `master-regimes` / `master-regimes-infra` sweep config.
+- add post-load validation output when a new dataset capability is introduced.
+- keep `global_users` enabled for non-colocated join stress profiles where the workload suite needs it.
+- avoid adding query templates here. Put them in `../master-regimes/workloads/templates/`.
 
 More detailed notes live in [docs/minimal-dataset.md](docs/minimal-dataset.md).

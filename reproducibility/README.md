@@ -4,8 +4,8 @@ Ovaj direktorij povezuje SQL, sintetičke skupove podataka, izvorni kod i rezult
 
 Za brzi ljudski pregled koristiti top-level direktorije:
 
-- [`queries/`](../queries/) za `q01`-`q30`, njihove N2/N3 instance i šablone;
-- [`datasets/`](../datasets/) za stvarno korištene profile;
+- [`queries/`](../queries/) za `q01`-`q30`, njihove N2/N3 instance i šablone.
+- [`datasets/`](../datasets/) za stvarno korištene profile.
 - [`corpora/`](../corpora/) za vezu između SQL ulaza i rezultata.
 
 ## Najkraći put
@@ -44,13 +44,13 @@ make public-check
 make public-audit-full
 ```
 
-Druga komanda uključuje kompresovane arhive i pregled Git historije. Runtime IP adrese i lokalne home putanje uklonjene su iz trenutnog release stabla; logički nazivi čvorova, planovi i mjerne vrijednosti ostaju sačuvani.
+Druga komanda uključuje kompresovane arhive i pregled Git historije. Runtime IP adrese i lokalne home putanje uklonjene su iz trenutnog release stabla. Logički nazivi čvorova, planovi i mjerne vrijednosti ostaju sačuvani.
 
 ## Glavni eksperimentalni blokovi
 
 | Blok | SQL ulaz | Dataset ugovor | Rezultat |
 | --- | --- | --- | --- |
-| Široki intervencijski korpus | `artifacts/rendered-corpora/pressure-raw-v1/` | profili iz `dataset-catalog.csv`; 869 uslova, tri ponavljanja | `artifacts/results/pressure-actionability-v1/` |
+| Široki intervencijski korpus | `artifacts/rendered-corpora/pressure-raw-v1/` | profili iz `dataset-catalog.csv`. 869 uslova, tri ponavljanja | `artifacts/results/pressure-actionability-v1/` |
 | Završni DBA panel | `artifacts/rendered-corpora/dba-local-memory-v1/` | N2/N3 i raw profili | `releases/consolidated-evaluation-v1/` |
 | Kontrolisani topology-memory panel | `artifacts/rendered-corpora/n3-topology-memory-v1/` | upareni `topology-isolation-*-n2/n3` profili | `releases/consolidated-evaluation-v1/` |
 | Potvrdni panel | `artifacts/rendered-corpora/confirmatory-action-replication-v1/` | `topology-isolation-large-n3-v1` | `releases/confirmatory-action-replication-v1/` |
@@ -76,7 +76,7 @@ Materijalizovani row-level checksum cijelog dataseta nije sačuvan. Zato paket g
 
 ## Historijski SQL izuzeci
 
-`pressure-raw-v1` sadrži i 80 starijih rendera iz razvoja skew segmenta. Oni nisu povezani sa završnom matricom od 869 uslova i zato nisu u `query-catalog.csv`; ostavljeni su radi audita historije. Katalog obuhvata 799 jedinstvenih SQL fajlova koje autoritativni manifest stvarno referencira.
+`pressure-raw-v1` sadrži i 80 starijih rendera iz razvoja skew segmenta. Oni nisu povezani sa završnom matricom od 869 uslova i zato nisu u `query-catalog.csv`. Ostavljeni su radi audita historije. Katalog obuhvata 799 jedinstvenih SQL fajlova koje autoritativni manifest stvarno referencira.
 
 Kod `confirmatory-skew-v1` originalni render direktorij nije sačuvao SQL uz manifest. Svih 48 stvarno izvršenih `input/query.sql` fajlova zato je deterministički izdvojeno iz objavljene raw arhive u `artifacts/rendered-corpora/confirmatory-skew-v1/queries/`.
 

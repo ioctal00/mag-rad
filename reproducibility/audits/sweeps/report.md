@@ -20,9 +20,9 @@ Osnovna jedinica manifesta je uslov, odnosno jedna kombinacija SQL instance, sku
 
 Ovaj ugovor je neposredno vidljiv u:
 
-- `sources/master-regimes/src/master_regimes/corpus_adapter.py:501-555` za prosirenje uslova i formiranje fizickog slota;
-- istoj datoteci, redovi 422-444, za deterministicki SHA-256 poredak;
-- redovi 447-498 za eksplicitni raspored koji mora jednoznacno pokriti svaki prosireni red;
+- `sources/master-regimes/src/master_regimes/corpus_adapter.py:501-555` za prosirenje uslova i formiranje fizickog slota.
+- istoj datoteci, redovi 422-444, za deterministicki SHA-256 poredak.
+- redovi 447-498 za eksplicitni raspored koji mora jednoznacno pokriti svaki prosireni red.
 - redovi 557-588 za izbor politike i dodjelu `run_order`.
 
 Runner cita vec uredjen `instance_manifest.csv` i izvrsava redove sekvencijalno. Ne pokrece paralelne upite i podrazumijevano ne radi eksplicitan cache reset ni poseban warm-up. To je zapisano u `sources/master-regimes-infra/common-scripts/run_query_collection_sweep.py:617-648`.
@@ -36,7 +36,7 @@ To objasnjava sljedece odnose:
 | Program | SQL datoteke | Uslovi | Fizicka izvrsenja | Razlog |
 | --- | --: | --: | --: | --- |
 | zajednički clean/F19-F21 | 1.964 | 1.964 | 1.964 | nema ponavljanja uslova |
-| pressure | 799 | 869 | 2.607 | tri ponavljanja; placement stanja mogu dijeliti SQL |
+| pressure | 799 | 869 | 2.607 | tri ponavljanja. Placement stanja mogu dijeliti SQL |
 | DBA panel | 60 | 60 | 180 | broj pojava SQL-a raste od 1 do 5 |
 | N2/N3 | 180 | 180 | 180 | faze su zasebno renderovane, bez ponavljanja |
 | confirmatory | 60 | 60 | 300 | pet ponavljanja istog uslova |
@@ -114,11 +114,11 @@ Zakljucani ugovor je u `sources/master-regimes/configs/validation/confirmatory_a
 
 Glavni `execution_manifest.csv` sadrzi 85 fizickih redova:
 
-- jedan smoke;
-- 15 pocetnih;
-- pet correctness-only;
-- 15 adaptivnih;
-- devet rollback;
+- jedan smoke.
+- 15 pocetnih.
+- pet correctness-only.
+- 15 adaptivnih.
+- devet rollback.
 - 40 replay izvrsenja.
 
 Od 40 replay redova, 20 je kanonsko, a 20 je zadrzano sa statusom `superseded_invalid_configuration`. Completion manifest zato pravilno razlikuje 60 kanonskih instrumentovanih, pet correctness-only i 20 superseded izvrsenja.
@@ -133,8 +133,8 @@ Sweep runner je sekvencijalan. Za svaki red poziva jedan query collector i prosl
 
 Dokaz je u:
 
-- `sources/master-regimes-infra/common-scripts/run_query_collection_sweep.py:562-580`;
-- ista datoteka, redovi 698-715, za skip samo potvrdenih slotova;
+- `sources/master-regimes-infra/common-scripts/run_query_collection_sweep.py:562-580`.
+- ista datoteka, redovi 698-715, za skip samo potvrdenih slotova.
 - redovi 1094-1165 za redoslijed manifest, checkpoint i `fsync`.
 
 Pressure orchestration dodatno dijeli program na dataset/runtime segmente. Zavrseni segment se priznaje samo ako checkpoint pokriva sve ocekivane slotove. Pri nastavku se povecava broj pokusaja segmenta, a ponovno se izvrsavaju samo nedostajuci slotovi. Izvor: `sources/master-regimes/analysis/scripts/agent/78_run_pressure_raw_batch.py:685-780,846-875,1148-1159`.
@@ -145,14 +145,14 @@ To znaci da retry ne prepisuje historiju. Stari i novi pokusaji ostaju dostupni,
 
 Paket omogucava nezavisnu offline provjeru:
 
-1. broja SQL uslova i fizickih slotova;
-2. SHA-256 vrijednosti svih 3.819 katalogizovanih SQL datoteka;
-3. prosirenja ponavljanja i jedinstvenosti slotova;
-4. deterministickih sjemena i potpunosti `run_order` zapisa;
-5. Williamsovog rasporeda i njegove pozicijske ravnoteze;
-6. temporalnih modova i zamrznutih `as_of` parametara;
-7. objavljenih completion, leakage, result-equivalence i consolidation gateova;
-8. redoslijeda decision log odluka prije njihovih ishoda;
+1. broja SQL uslova i fizickih slotova.
+2. SHA-256 vrijednosti svih 3.819 katalogizovanih SQL datoteka.
+3. prosirenja ponavljanja i jedinstvenosti slotova.
+4. deterministickih sjemena i potpunosti `run_order` zapisa.
+5. Williamsovog rasporeda i njegove pozicijske ravnoteze.
+6. temporalnih modova i zamrznutih `as_of` parametara.
+7. objavljenih completion, leakage, result-equivalence i consolidation gateova.
+8. redoslijeda decision log odluka prije njihovih ishoda.
 9. zajedničkog clean/F19-F21 sirovog i logičkog index arhiva.
 
 ## Sta se ne moze ponovo izvesti iz paketa bez dodatnog rada

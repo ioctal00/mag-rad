@@ -237,7 +237,7 @@ su ukljucene u ovaj paket, ali historijski primijenjeni plan/state nije. Javni
 Ansible cuva topoloske uloge i redoslijed konfiguracije, ali ne zakljucava svaki
 binarni ulaz. Verzija `ansible.posix`, tacni apt buildovi i dio udaljenih
 instalera ostaju runtime zavisnosti. Dataset load i FDW bootstrap su
-konvergentni, ali nisu distribuirano transakcijski; neuspjelo destruktivno
+konvergentni, ali nisu distribuirano transakcijski. Neuspjelo destruktivno
 ucitavanje ne vraca prethodni dataset.
 
 ## Dataset i skew
@@ -250,8 +250,8 @@ program koristi {n(datasets['wide_dataset_count'])} profila,
 
 Tri mehanizma moraju se razlikovati:
 
-1. `pilot-region-imbalanced-v1` daje priblizno 9:1 regionalni volumen;
-2. `pilot-skew-heavy-v1` daje hot-tenant raspodjelu u oba regiona;
+1. `pilot-region-imbalanced-v1` daje priblizno 9:1 regionalni volumen.
+2. `pilot-skew-heavy-v1` daje hot-tenant raspodjelu u oba regiona.
 3. `pilot-region-local-skew-asymmetric-medium-v1` daje hot tenant-e samo u EU,
    dok je US uniforman.
 
@@ -271,14 +271,14 @@ result-equivalence ugovor, ali ne dokaz ucinka intervencije.
 
 ## Sweep i prikupljanje
 
-Audit je ponovo izveo glavne brojeve: zajednički F19/F21 korpus 1.964; pressure 869 uslova puta tri
-ponavljanja, odnosno 2.607; DBA 60 uslova i 180 izvrsenja; kontrolisani N2/N3
-180; potvrdni panel 60 uslova puta pet, odnosno 300; feedback loop 85 glavnih i
+Audit je ponovo izveo glavne brojeve: zajednički F19/F21 korpus 1.964. Pressure 869 uslova puta tri
+ponavljanja, odnosno 2.607. DBA 60 uslova i 180 izvrsenja. Kontrolisani N2/N3
+180. Potvrdni panel 60 uslova puta pet, odnosno 300. Feedback loop 85 glavnih i
 25 aggregate-exact izvrsenja.
 
 Od 418 pressure grupa, 385 ima dva uslova i sest fizickih izvrsenja, a 33 cuvaju
 i medjustanje pa imaju tri uslova i devet izvrsenja. Ponavljanja imaju zaseban
-`execution_slot_id`; ista SQL datoteka zato nije isto sto i jedno fizicko
+`execution_slot_id`. Ista SQL datoteka zato nije isto sto i jedno fizicko
 izvrsenje. Williamsov raspored, shuffle sjemena, slotovi i odluke zapisane prije
 ishoda medjusobno su saglasni.
 
@@ -312,7 +312,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--full-hash",
         action="store_true",
-        help="Compatibility flag; every run now verifies the full release manifest.",
+        help="Compatibility flag. Every run now verifies the full release manifest.",
     )
     return parser.parse_args()
 

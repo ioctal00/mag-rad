@@ -250,7 +250,7 @@ Important files from `measure-baseline`:
 - `results/query_timings.csv`: one row per warmup/measurement execution
 - `results/query_timing.csv`: legacy single-row compatibility file for the first measurement only
 - `results/query_summary.csv`: mean, median, standard deviation, min, max, p95, p99, coefficient of variation
-- `results/<query>.result.csv`: sample result from the first measurement execution; later repetitions write to `/dev/null`
+- `results/<query>.result.csv`: sample result from the first measurement execution. Later repetitions write to `/dev/null`
 - `metrics/os_samples.jsonl`: raw CPU, memory, network, and disk counter samples
 - `metrics/os_summary.json`: first/last counter deltas for host-level CPU busy and CPU steal percentages, network bytes, and disk bytes. CPU steal remains a separate VPS scheduling diagnostic and is not query CPU.
 - `snapshots/before_*` and `snapshots/after_*`: PostgreSQL/Citus metadata snapshots
@@ -289,7 +289,7 @@ Recommended initial sampling:
 - `BENCH_SAMPLE_INTERVAL_SECONDS=0.25` for short debugging runs where queries finish very quickly
 - `BENCH_SAMPLE_INTERVAL_SECONDS=5` for long runs where overhead and output size matter more than fine time resolution
 
-The current sampler reads kernel counters from procfs/sysfs, so overhead should be small. Do not use `EXPLAIN ANALYZE` or eBPF tracing inside the main latency loop; use `profile-baseline` separately.
+The current sampler reads kernel counters from procfs/sysfs, so overhead should be small. Do not use `EXPLAIN ANALYZE` or eBPF tracing inside the main latency loop. Use `profile-baseline` separately.
 
 Use `BENCH_APPLICATION_NAME` to identify benchmark sessions in `pg_stat_activity` and, later, in logs or query-level statistics.
 
@@ -332,4 +332,4 @@ For legacy local benchmarking, the first useful result is a repeatable run direc
 - PostgreSQL/Citus metadata snapshots
 - CPU, storage I/O, and network byte counters
 
-For the current master-regimes pipeline, the useful result is a query/database sweep in `../master-regimes-infra/generated/runs/**` plus a normalized `_index/` created by `master-regimes index-query-sweep` or the database-sweep indexer. Corpus-level terms such as `corpus_cell_id`, `logical_question_id` and `execution_strategy` are defined in `../master-regimes/docs/corpus-vocabulary.md`; this repo should preserve them as metadata when present, not interpret them as benchmark labels.
+For the current master-regimes pipeline, the useful result is a query/database sweep in `../master-regimes-infra/generated/runs/**` plus a normalized `_index/` created by `master-regimes index-query-sweep` or the database-sweep indexer. Corpus-level terms such as `corpus_cell_id`, `logical_question_id` and `execution_strategy` are defined in `../master-regimes/docs/corpus-vocabulary.md`. This repo should preserve them as metadata when present, not interpret them as benchmark labels.

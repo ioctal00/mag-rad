@@ -17,7 +17,7 @@ Historijski identiteti izvornog dijagnostickog izlaza ostaju u CSV redovima zbog
 
 - FCM prototipi su opisni geometrijski sažeci, ne ground-truth klase i ne nezavisni intenziteti fizičkih pritisaka.
 - `support` je razlika kvadriranih udaljenosti obilježja do vodećeg i konkurentskog centra. Nije fizička vrijednost niti kauzalni doprinos.
-- NMI audit podržava manju zavisnost konačnog prostora od identiteta skupa podataka u posmatranom korpusu; ne dokazuje univerzalnu invarijantnost.
+- NMI audit podržava manju zavisnost konačnog prostora od identiteta skupa podataka u posmatranom korpusu. Ne dokazuje univerzalnu invarijantnost.
 - Mješoviti slučaj pokazuje da fuzzy članstvo čuva sekundarnu geometrijsku sličnost. Downstream poređenje nije pokazalo dosljednu operativnu prednost fuzzy kompresije.
 
 ## Datoteke

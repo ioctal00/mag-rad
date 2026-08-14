@@ -25,23 +25,23 @@ Tačne putanje nalaze se u `reproducibility/evidence-blocks.json`, a svaki SQL u
 
 ## Uključeni izvori
 
-- collector, indexer i infrastrukturni runner;
-- generator i loader sintetičkih podataka;
-- dataset profili, seedovi, temporalni oslonci i regionalni rasponi;
-- SQL template-i i stvarno renderovani SQL glavnih eksperimenata;
-- raw planovi i logical-run indeksi potrebni za objavljene tvrdnje;
-- feature matrice i odvojeni zamrznuti ugovori `F19` i `P64->6`, uz historijski `F21-dev`;
-- puni feedback-loop decision, execution, result i rollback audit;
-- representation ablacije, potvrdni rezultati i temporalni audit;
+- collector, indexer i infrastrukturni runner.
+- generator i loader sintetičkih podataka.
+- dataset profili, seedovi, temporalni oslonci i regionalni rasponi.
+- SQL template-i i stvarno renderovani SQL glavnih eksperimenata.
+- raw planovi i logical-run indeksi potrebni za objavljene tvrdnje.
+- feature matrice i odvojeni zamrznuti ugovori `F19` i `P64->6`, uz historijski `F21-dev`.
+- puni feedback-loop decision, execution, result i rollback audit.
+- representation ablacije, potvrdni rezultati i temporalni audit.
 - kurirane studije `CASE-*` i `Q08-NEIGHBORS`.
 
 ## Namjerno izostavljeno
 
-- database dumpovi i SQL rezultatni redovi;
-- Terraform state, privatni ključevi, lozinke i cloud credential-i;
-- višekratne kopije gigabajtnih worker fragmenata kada isti dokaz postoji u logical indeksu i sažetom releaseu;
-- smoke/probe runovi koji nisu dio tvrdnji;
-- napušteni modeli, notebooki, interni promptovi i razvojne biljeske;
+- database dumpovi i SQL rezultatni redovi.
+- Terraform state, privatni ključevi, lozinke i cloud credential-i.
+- višekratne kopije gigabajtnih worker fragmenata kada isti dokaz postoji u logical indeksu i sažetom releaseu.
+- smoke/probe runovi koji nisu dio tvrdnji.
+- napušteni modeli, notebooki, interni promptovi i razvojne biljeske.
 - rukopis, LaTeX i PDF renderi.
 
 Odsustvo database dumpa ne znači da dataset ugovor nedostaje. Sintetički skup se rekonstruise iz verzionisanog generatora i profila. Nije, međutim, sačuvan puni row-level checksum svake tabele, pa paket ne tvrdi nezavisnu bit-po-bit potvrdu novog učitavanja.

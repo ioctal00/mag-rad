@@ -164,7 +164,7 @@ def build_queries() -> None:
         "## Važna napomena o oznakama",
         "",
         "Broj poput `q07` nije globalni identitet kroz sve corpuse. U završnom i N3 panelu",
-        "oznaka je `q07_tenant_count`; stariji karakterizacijski corpus ima zaseban šablon",
+        "oznaka je `q07_tenant_count`. Stariji karakterizacijski corpus ima zaseban šablon",
         "`q07_global_user_segment_join`. Zato u citatima i indeksima uvijek treba koristiti puni naziv",
         "i corpus, a ne samo redni broj.",
         "",
@@ -218,7 +218,7 @@ ponavljanje konkretnog eksperimentalnog skupa.
 | balansiran | `pilot-balanced-v1` | približno jednak regionalni obim i bez namjernog hot-tenanta |
 | regionalno nebalansiran | `pilot-region-imbalanced-v1` | različit obim redova između EU i US |
 | globalni hot-tenant | `pilot-skew-heavy-v1` | neravnomjerna frekvencija tenant ključeva u cijelom skupu |
-| lokalno asimetričan | `pilot-region-local-skew-asymmetric-medium-v1` | EU hot-tenant opterećenje uz uniformniji US; worker/task neravnomjernost se mjeri iz izvršenja |
+| lokalno asimetričan | `pilot-region-local-skew-asymmetric-medium-v1` | EU hot-tenant opterećenje uz uniformniji US, dok se worker/task neravnomjernost mjeri iz izvršenja |
 | N2/N3 topology isolation | `topology-isolation-*-n2/n3-v1` | upareni profili za kontrolisanu promjenu broja logičkih regiona |
 
 Lokalno asimetričan profil ne mijenja broj shardova po workeru. Oznaka worker
@@ -227,7 +227,7 @@ nastaje iz hot-tenant podataka i stvarnog placementa.
 
 Vremenski presjeci i poznati stariji izuzeci objedinjeni su u
 [`temporal-validity-audit-v1`](../releases/temporal-validity-audit-v1/). Glavni
-noviji paneli koriste verzionisani `base_time_unix`; zajednički stariji korpus
+noviji paneli koriste verzionisani `base_time_unix`. Zajednički stariji korpus
 modela F19 i F21-dev ima
 slabiji temporalni ugovor i u radu se tumači samo kao arhivirani deskriptivni
 dokaz.

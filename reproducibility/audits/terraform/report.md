@@ -88,7 +88,7 @@ Required correction: add a non-applying N3 target and a documented placeholder c
 
 **Severity: MEDIUM**
 
-The authoritative YAML uses `ams` for EU, US, APAC, and GAC with `vhf-1c-2gb`. The US example still uses `ewr`; the EU example still names GAC `cdg` and older `vc2` plans. The renderer produces the intended values, but direct use of the examples would provision a materially different experiment.
+The authoritative YAML uses `ams` for EU, US, APAC, and GAC with `vhf-1c-2gb`. The US example still uses `ewr`. The EU example still names GAC `cdg` and older `vc2` plans. The renderer produces the intended values, but direct use of the examples would provision a materially different experiment.
 
 Evidence:
 

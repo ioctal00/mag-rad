@@ -3,7 +3,7 @@
 
 The script reads only the curated master-thesis-final package. It does not
 connect to PostgreSQL, Terraform, Ansible, or any live host. Upstream source
-files are cited in report.md; this validator checks the package that a reader
+files are cited in report.md. This validator checks the package that a reader
 actually receives.
 """
 
@@ -169,7 +169,7 @@ def validate_clean() -> None:
         "dataset_split": groups,
         "order": "deterministic_shuffle(seed=20260626)",
         "repetitions_per_condition": 1,
-        "temporal_contract": "legacy moving wall clock; eight sweeps regenerated their datasets immediately before collection",
+        "temporal_contract": "legacy moving wall clock. Eight sweeps regenerated their datasets immediately before collection",
         "max_sweep_lag_hours": temporal["maximum_lag_hours"],
     }
 
@@ -195,7 +195,7 @@ def validate_pressure() -> None:
         pair_shapes == {("2", "6"): 385, ("3", "9"): 33}
         and all(row["structurally_complete_stressed_mitigated_pair"] == "True" for row in pair_rows),
         pair_shapes,
-        note="All 418 groups contain the stressed/mitigated contrast; 33 additionally retain an intermediate condition.",
+        note="All 418 groups contain the stressed/mitigated contrast. 33 additionally retain an intermediate condition.",
     )
     fixed_as_of = 0
     for row in rows:
@@ -250,10 +250,10 @@ def validate_pressure() -> None:
         "backend_counts": Counter(row["backend"] for row in rows),
         "axis_counts": Counter(row["pressure_axis"] for row in rows),
         "dataset_profile_count": len({row["dataset_profile_id"] for row in rows}),
-        "order": "deterministic interleaving for standard lanes; explicit 30-slot placement-state lanes for skew interventions",
+        "order": "deterministic interleaving for standard lanes. Explicit 30-slot placement-state lanes for skew interventions",
         "attempt_policy": consolidation["training_policy"]["attempt_resolution"],
         "attempt_candidates": consolidation["attempt_candidate_count"],
-        "temporal_contract": "397 frozen/time-independent substantive pairs; 21 current_date empty-result negative controls",
+        "temporal_contract": "397 frozen/time-independent substantive pairs. 21 current_date empty-result negative controls",
     }
 
 
@@ -296,7 +296,7 @@ def validate_dba() -> None:
         "physical_executions": len(rows),
         "rendered_sql_files": len(paths),
         "order": "deterministic_interleaved_shuffle(seed=20260805) within four dataset groups",
-        "sql_reuse": "one rendered SQL file per condition is referenced by every temporal repetition; runtime/network treatments are applied outside SQL",
+        "sql_reuse": "one rendered SQL file per condition is referenced by every temporal repetition. Runtime/network treatments are applied outside SQL",
     }
 
 
@@ -444,7 +444,7 @@ def validate_portability() -> None:
 LIMITATIONS = [
     {
         "id": "L1_path_rewrite",
-        "statement": "Public manifests have no local home prefix, but some historical path fields retain their source-repository-relative generated layout. The query catalog is portable; a live rerun should regenerate manifests from the packaged corpus contract instead of treating archived path fields as executable inputs.",
+        "statement": "Public manifests have no local home prefix, but some historical path fields retain their source-repository-relative generated layout. The query catalog is portable. A live rerun should regenerate manifests from the packaged corpus contract instead of treating archived path fields as executable inputs.",
     },
     {
         "id": "L2_no_database_snapshot",
@@ -452,7 +452,7 @@ LIMITATIONS = [
     },
     {
         "id": "L3_partial_raw_indexes",
-        "statement": "The shared clean/F19-F21 corpus includes raw and logical index archives. Pressure, DBA, N2/N3, confirmatory and feedback-loop releases mainly contain rendered designs and consolidated validations; their complete raw query-run indexes or collection directories are not all packaged.",
+        "statement": "The shared clean/F19-F21 corpus includes raw and logical index archives. Pressure, DBA, N2/N3, confirmatory and feedback-loop releases mainly contain rendered designs and consolidated validations. Their complete raw query-run indexes or collection directories are not all packaged.",
     },
     {
         "id": "L4_historical_source_state",
@@ -464,7 +464,7 @@ LIMITATIONS = [
     },
     {
         "id": "L6_pressure_dynamic_controls",
-        "statement": "Twenty-one pressure pairs use current_date and produced empty no-work controls. They validate collection and equivalence only, not intervention effectiveness; 397 substantive pairs use frozen or time-independent contracts.",
+        "statement": "Twenty-one pressure pairs use current_date and produced empty no-work controls. They validate collection and equivalence only, not intervention effectiveness. 397 substantive pairs use frozen or time-independent contracts.",
     },
     {
         "id": "L7_feedback_dataset_profile",

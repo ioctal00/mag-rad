@@ -28,7 +28,7 @@ Za pregled rada nisu potrebni interni nazivi direktorija.
 
 Oznake `q01`-`q30` lokalne su eksperimentalnom panelu. Puni naziv i corpus uvijek su autoritativni. Primjer: `q07_tenant_count` iz N3 panela nije isto što i historijski šablon `q07_global_user_segment_join` iz karakterizacijskog corpusa.
 
-Oznake `S1`-`S6` iz rukopisa grupišu dodatne artefakte. Tabela iznad vodi direktno do najčešće korištenih izvora sa stranica metodologije i rezultata; potpuna podjela releasea data je u [`docs/04-artifact-map.md`](docs/04-artifact-map.md).
+Oznake `S1`-`S6` iz rukopisa grupišu dodatne artefakte. Tabela iznad vodi direktno do najčešće korištenih izvora sa stranica metodologije i rezultata. Potpuna podjela releasea data je u [`docs/04-artifact-map.md`](docs/04-artifact-map.md).
 
 Komanda `make public-check` ponovo gradi ovu navigaciju, provjerava njene veze i odbija paket koji sadrži lokalne home putanje, tajne ili runtime IP adrese u objavljenim podacima.
 

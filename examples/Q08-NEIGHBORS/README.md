@@ -1,6 +1,6 @@
 # Q08-NEIGHBORS: tačni SQL identiteti analize greške
 
-Ovaj katalog dokumentuje ciljni upit `q08_tenant_avg` iz N3 faze B i pet susjeda iz N3 faze A koji su korišteni u procjeni. Svi upiti prvo povezuju EU, US i APAC granu pomoću `UNION ALL`. Tabela navodi instancirane vremenske granice, `LIMIT` vrijednosti i primarni ključ sortiranja; SQL datoteke čuvaju i determinističke sekundarne ključeve.
+Ovaj katalog dokumentuje ciljni upit `q08_tenant_avg` iz N3 faze B i pet susjeda iz N3 faze A koji su korišteni u procjeni. Svi upiti prvo povezuju EU, US i APAC granu pomoću `UNION ALL`. Tabela navodi instancirane vremenske granice, `LIMIT` vrijednosti i primarni ključ sortiranja. SQL datoteke čuvaju i determinističke sekundarne ključeve.
 
 Datumi su izvedeni iz zamrznutog oslonca skupa `2026-07-01T00:00:00Z`, a kolona `cutoff_offset_days` u `query-index.csv` čuva njihov relativni odmak. Oni nisu vezani za datum pokretanja eksperimenta.
 

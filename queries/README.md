@@ -12,7 +12,7 @@ Svaki upit ima `baseline` i `regional-topk` SQL. Akcije `work_mem` i udaljena mi
 
 ## Važna napomena o oznakama
 
-Broj poput `q07` nije globalni identitet kroz sve corpuse. U završnom i N3 panelu oznaka je `q07_tenant_count`; stariji karakterizacijski corpus ima zaseban šablon `q07_global_user_segment_join`. Zato u citatima i indeksima uvijek treba koristiti puni naziv i corpus, a ne samo redni broj.
+Broj poput `q07` nije globalni identitet kroz sve corpuse. U završnom i N3 panelu oznaka je `q07_tenant_count`. Stariji karakterizacijski corpus ima zaseban šablon `q07_global_user_segment_join`. Zato u citatima i indeksima uvijek treba koristiti puni naziv i corpus, a ne samo redni broj.
 
 ## q01-q30
 

@@ -69,7 +69,7 @@ Zavrseni dataset manifest biljezi stvarni udaljeni datagen commit, sto omogucava
 
 ## Topologija i inventar
 
-Renderiranje iz YAML-a je deterministicno za logicke uloge i postavke, uz izuzetak vremenske oznake manifesta. N2 konfiguracija definise EU i US sa po dva radnika, dok N3 dodaje APAC sa dva radnika. Sve tri logicke regije koriste `vultr_region: ams`; APAC komentar eksplicitno navodi da je to logicka regija kolocirana radi kontrolisanih mreznih profila (`configs/systems/eu-us-apac-gac-vps.yml:58`).
+Renderiranje iz YAML-a je deterministicno za logicke uloge i postavke, uz izuzetak vremenske oznake manifesta. N2 konfiguracija definise EU i US sa po dva radnika, dok N3 dodaje APAC sa dva radnika. Sve tri logicke regije koriste `vultr_region: ams`. APAC komentar eksplicitno navodi da je to logicka regija kolocirana radi kontrolisanih mreznih profila (`configs/systems/eu-us-apac-gac-vps.yml:58`).
 
 Konkretni inventar nastaje iz trenutnog `terraform output -json` (`ansible/inventory/terraform_inventory.py:29`). Izuzetak ili neispravan JSON vracaju prazan izlaz (`ansible/inventory/terraform_inventory.py:35`). Glavne lifecycle skripte to djelimicno zatvaraju:
 
@@ -104,7 +104,7 @@ Vremenska korelacija nije Ansible-managed NTP ugovor. Collector umjesto toga kal
 
 1. Zakljucati Ansible core, `ansible.posix`, OS image, tacne apt buildove i checksumove udaljenih instalera.
 2. Uvesti commit-pin i stvarni exact-sync put za `citus-datagen`.
-3. Gateovati eksperiment na post-load dataset audit; za potpuni rollback koristiti DB snapshot ili replacement-database obrazac.
+3. Gateovati eksperiment na post-load dataset audit. Za potpuni rollback koristiti DB snapshot ili replacement-database obrazac.
 4. Proglasiti no-root-qdisc kao obavezan mrezni baseline i reset failure kao sigurnosni stop.
 5. Objediniti read-only live-state audit za GUC, FDW, tool commit, dataset, tc/netem i vrijeme.
 6. U dataset/corpus auditu utvrditi koji je regionalni distribution profil stvarno koristen u svakom objavljenom korpusu.

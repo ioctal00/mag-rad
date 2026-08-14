@@ -10,11 +10,11 @@ Ponavljanje istog SQL-a u kompatibilnom kontekstu.
 
 ## Šta je opaženo
 
-Povrat konfiguracije reprodukuje početni fizički profil; mala razlika trajanja ostaje unutar unaprijed definisanog mjernog šuma.
+Povrat konfiguracije vraća početni fizički profil. Mala razlika trajanja ostaje unutar unaprijed definisanog mjernog šuma.
 
 ## Vremenski ugovor
 
-Skup je generisan oko zamrznutog oslonca `2026-07-01T00:00:00Z` (`base_time_unix=1782864000`) sa verzionisanim sjemenom i prozorom od 30 dana. Kalendarski datumi u SQL-u su renderovani odmaci od tog oslonca, a ne datumi izvođenja eksperimenta. Tačni odmaci ovog slučaja zapisani su u `manifest.json`; mjereni SQL ne koristi `now()` ni `current_timestamp`.
+Skup je generisan oko zamrznutog oslonca `2026-07-01T00:00:00Z` (`base_time_unix=1782864000`) sa verzionisanim sjemenom i prozorom od 30 dana. Kalendarski datumi u SQL-u su renderovani odmaci od tog oslonca, a ne datumi izvođenja eksperimenta. Tačni odmaci ovog slučaja zapisani su u `manifest.json`. Mjereni SQL ne koristi `now()` ni `current_timestamp`.
 
 `metrics.csv` sadrži medijane stvarnih ponavljanja. Direktorij `plans/` sadrži izvorne GAC planske artefakte, a gdje je relevantno i sanitizovane regionalne `auto_explain` planove sa stvarnim brojem redova i petlji. Potpuno porijeklo i SHA-256 izvornih artefakata zapisani su u `manifest.json`.
 

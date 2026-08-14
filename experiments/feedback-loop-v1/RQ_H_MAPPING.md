@@ -26,14 +26,14 @@ Formulacije u ovom dokumentu doslovno su preuzete iz prijave teme. Ne predstavlj
 
 | Ugovor iz prijave | Uloga feedback-loop eksperimenta | Dozvoljena tvrdnja |
 | --- | --- | --- |
-| RQ1 | Manifest zamrzava ulazne pokazatelje, porijeklo, NA pravila i tri lokalne reference. | Task 1 definiše reproducibilan relativni profil; ne daje novi empirijski odgovor bez Taska 2. |
+| RQ1 | Manifest zamrzava ulazne pokazatelje, porijeklo, NA pravila i tri lokalne reference. | Task 1 definiše ponovljiv relativni profil. Ne daje novi empirijski odgovor bez Taska 2. |
 | RQ2 | Šestodimenzionalna stanja i njihove tranzicije postaju ulaz za postojeći FCM postupak. | Ispituje se može li neizrazito grupisanje sažeti lokalne putanje u interpretabilne prototipe. |
 | RQ3 | Za stanja sa konfliktom više domena porede se fuzzy pripadnosti i tvrda dodjela. | Daje dodatni lokalni dokaz o tome da li raspodijeljena pripadnost čuva mješovitu promjenu. |
-| RQ4 | Komponente domenskih koordinata ostaju auditabilne; FCM i tvrda prototipska kompresija porede se po gubitku komponentnog i tranzicijskog dokaza. | RQ4 ostaje pitanje doprinosa pokazatelja i arhitektonskog tumačenja, ne action recommender pitanje. |
+| RQ4 | Komponente domenskih koordinata ostaju auditabilne. FCM i tvrda prototipska kompresija porede se po gubitku komponentnog i tranzicijskog dokaza. | RQ4 ostaje pitanje doprinosa pokazatelja i arhitektonskog tumačenja, ne action recommender pitanje. |
 | H1 | Za svako stanje čuvaju se raw apsolutne vrijednosti i relativni profil prema origin/previous/history referenci. | Omogućava direktno offline poređenje apsolutnog i relativnog opisa bez promjene definicije nakon ishoda. |
-| H2 | FCM se poredi sa tvrdom dodjelom na istim stanjima. | Feedback loop ne pretpostavlja da je H2 potvrđena; zadržava je kao originalnu komparativnu hipotezu. |
-| H3 | Putanje koriste kontrolisane reverzibilne promjene WAN i konfiguracijskih parametara; dataset i skew se u ovom dodatku ne mijenjaju. | Može dati dodatni lokalni dokaz za podskup H3, ali ne novu potvrdu cijele hipoteze. |
-| H4 | Join putanja zadržava regionalne, repartition i WAN komponente iako se u Tasku 1 ne mijenjaju kolokacija ni shard placement. | Postojeći H4 dokaz ostaje nepromijenjen; novi profil samo čuva potrebnu observability vezu. |
+| H2 | FCM se poredi sa tvrdom dodjelom na istim stanjima. | Feedback loop ne pretpostavlja da je H2 potvrđena. Zadržava je kao originalnu komparativnu hipotezu. |
+| H3 | Putanje koriste kontrolisane reverzibilne promjene WAN i konfiguracijskih parametara. Dataset i skew se u ovom dodatku ne mijenjaju. | Može dati dodatni lokalni dokaz za podskup H3, ali ne novu potvrdu cijele hipoteze. |
+| H4 | Join putanja zadržava regionalne, repartition i WAN komponente iako se u Tasku 1 ne mijenjaju kolokacija ni shard placement. | Postojeći H4 dokaz ostaje nepromijenjen. Novi profil samo čuva potrebnu observability vezu. |
 
 ## Granice
 

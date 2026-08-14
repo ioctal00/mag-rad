@@ -102,7 +102,7 @@
       "physical_executions": 180,
       "query_shapes": 15,
       "rendered_sql_files": 60,
-      "sql_reuse": "one rendered SQL file per condition is referenced by every temporal repetition; runtime/network treatments are applied outside SQL"
+      "sql_reuse": "one rendered SQL file per condition is referenced by every temporal repetition. Runtime/network treatments are applied outside SQL"
     },
     "feedback": {
       "aggregate_exact_executions": 25,
@@ -175,10 +175,10 @@
       "conditions": 869,
       "counterfactual_pairs": 418,
       "dataset_profile_count": 13,
-      "order": "deterministic interleaving for standard lanes; explicit 30-slot placement-state lanes for skew interventions",
+      "order": "deterministic interleaving for standard lanes. Explicit 30-slot placement-state lanes for skew interventions",
       "physical_executions": 2607,
       "rendered_sql_files": 799,
-      "temporal_contract": "397 frozen/time-independent substantive pairs; 21 current_date empty-result negative controls"
+      "temporal_contract": "397 frozen/time-independent substantive pairs. 21 current_date empty-result negative controls"
     }
   },
   "topology": {

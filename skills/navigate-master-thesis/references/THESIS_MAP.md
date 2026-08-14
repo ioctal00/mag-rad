@@ -86,9 +86,9 @@ U potvrdnom panelu prequential politika izdaje 14 preporuka i tačno bira 8 pobj
 
 Razlikuj:
 
-1. isti normalizovani SQL;
-2. isti SQL prije i poslije deklarisane intervencije;
-3. različite SQL varijante koje je korisnik povezao istim `logical_question_id`;
+1. isti normalizovani SQL.
+2. isti SQL prije i poslije deklarisane intervencije.
+3. različite SQL varijante koje je korisnik povezao istim `logical_question_id`.
 4. fizički bliska stanja u `P64->6`, koja nisu semantički identitet.
 
 Kratka oznaka nije dovoljna. Na primjer, `q07_tenant_count` iz završnog/N3 panela nije historijski `q07_global_user_segment_join` iz karakterizacijskog corpusa.
@@ -97,10 +97,10 @@ Kratka oznaka nije dovoljna. Na primjer, `q07_tenant_count` iz završnog/N3 pane
 
 Za numeričko pitanje koristi ovaj redoslijed:
 
-1. specifični release CSV/JSON;
-2. `artifacts/claim-evidence-map.json`;
-3. `reproducibility/evidence-blocks.json` za nazivnike;
-4. rukopis za tumačenje;
+1. specifični release CSV/JSON.
+2. `artifacts/claim-evidence-map.json`.
+3. `reproducibility/evidence-blocks.json` za nazivnike.
+4. rukopis za tumačenje.
 5. README samo kao navigaciju.
 
 Ako se broj izvršenja, stanja, odluka i SQL oblika razlikuje, to obično nisu kontradiktorni brojevi nego različite jedinice. Objasni svaku jedinicu prije zaključka.

@@ -13,8 +13,8 @@ Izvorni replay počinje sa 26 stanja jer zamrznuti ugovor upravo taj razvojni iz
 ## Glavni brojevi
 
 - Stvarni pobjednici: `{'mitigate_remote_path_bundle': 83, 'regional_topk_candidates': 48}`.
-- Retrospektivna pokrivenost pri n=5: 0.531; pri n=130: 1.000.
-- Top-1 kandidata bez apstinencije pri n=5: 0.524; pri n=130: 0.600.
+- Retrospektivna pokrivenost pri n=5: 0.531. Pri n=130: 1.000.
+- Top-1 kandidata bez apstinencije pri n=5: 0.524. Pri n=130: 0.600.
 - Među najbližih 5% svih parova isti pobjednik se javlja u 0.775 slučajeva, naspram marginalne osnove 0.532.
 - Spearmanova veza state-distance i centriranog response-distance iznosi 0.003, uz stratifikovani permutacijski p=0.9074.
 

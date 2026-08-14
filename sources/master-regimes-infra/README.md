@@ -11,7 +11,7 @@ Ovaj repo polazi od sanitizovane stare implementacije, ali novi cilj nije samo "
 | `configs/systems/` | Jedan topološki source-of-truth po sistemu. |
 | `terraform/` | Stari Terraform envs/modules, zadržani kao deploy podloga. |
 | `ansible/` | Stari Ansible playbook/roles, zadržani kao provisioning podloga. |
-| `generated/` | Lokalni renderi, Terraform planovi i run artefakti. Gitignored; struktura je opisana u `generated/README.md`. |
+| `generated/` | Lokalni renderi, Terraform planovi i run artefakti. Gitignored. Struktura je opisana u `generated/README.md`. |
 | `src/master_regimes_infra/` | Početni render/validate CLI. |
 | `pki/` | Samo PKI dokumentacija i lokalno generisani materijal. |
 
@@ -77,7 +77,7 @@ make eu-us-gac-vps-ansible
 make eu-us-gac-vps-tools-sync
 ```
 
-`make eu-us-gac-vps-up` podiže oba Terraform stacka: `terraform/envs/eu` za EU + GAC + web portal host i `terraform/envs/us` za logički US Citus klaster. Fizički su oba regionalna klastera u `ams`; `us` je logički region za eksperimente, a WAN latencija/jitter/loss se po potrebi uvode kontrolisano kroz `tc netem`.
+`make eu-us-gac-vps-up` podiže oba Terraform stacka: `terraform/envs/eu` za EU + GAC + web portal host i `terraform/envs/us` za logički US Citus klaster. Fizički su oba regionalna klastera u `ams`. `us` je logički region za eksperimente, a WAN latencija/jitter/loss se po potrebi uvode kontrolisano kroz `tc netem`.
 
 Model mašina se bira centralno u `configs/systems/eu-us-gac-vps.yml`, kroz:
 
@@ -97,22 +97,22 @@ compute_profiles:
 active_profile: vps
 ```
 
-Za jeftini VPS run koristi se `active_profile: vps`, trenutno sa Vultr planom `vhf-1c-2gb` za koordinatore, workere i analytics/GAC čvor. Ranije korišteni bare-metal profil je zabilježen kao `vbm-6c-32gb`; za povratak na njega promijeni `active_profile` na `baremetal` i prije apply-a pregledaj Terraform plan.
+Za jeftini VPS run koristi se `active_profile: vps`, trenutno sa Vultr planom `vhf-1c-2gb` za koordinatore, workere i analytics/GAC čvor. Ranije korišteni bare-metal profil je zabilježen kao `vbm-6c-32gb`. Za povratak na njega promijeni `active_profile` na `baremetal` i prije apply-a pregledaj Terraform plan.
 
-Trenutna brza eksperimentalna varijanta stavlja logičke EU, US i GAC čvorove u isti Vultr VPC u `ams`. To namjerno nije geografski razdvojen deployment; koristi se da se ubrza plan/parser rad, a regionalna latencija se kasnije kontroliše eksplicitno.
+Trenutna brza eksperimentalna varijanta stavlja logičke EU, US i GAC čvorove u isti Vultr VPC u `ams`. To namjerno nije geografski razdvojen deployment. Koristi se da se ubrza plan/parser rad, a regionalna latencija se kasnije kontroliše eksplicitno.
 
 ### cloudb-web portal
 
 `configs/systems/eu-us-gac-vps.yml` uključuje i mali `web_portal` VPS u istom VPC-u. Taj čvor drži:
 
-- `nginx` kao javni ulaz;
+- `nginx` kao javni ulaz.
 - tri Pgweb instance:
   - `/gac/` za analytics/GAC PostgreSQL,
   - `/eu/` za EU coordinator,
-  - `/us/` za logički US coordinator;
+  - `/us/` za logički US coordinator.
 - `/viewer/` za `regime-diagnosis-viewer`.
 
-Portal ne otvara PostgreSQL javno. Pgweb se spaja kroz VPC/private IP adrese i koristi read-only PostgreSQL role `prof_demo`. U cloud deploymentu nginx je jedini javni Basic Auth guard za `/viewer/`, `/gac/`, `/eu/` i `/us/`; viewer zadržava vlastiti `.env` auth guard samo za standalone/local pokretanje bez nginx-a ispred njega.
+Portal ne otvara PostgreSQL javno. Pgweb se spaja kroz VPC/private IP adrese i koristi read-only PostgreSQL role `prof_demo`. U cloud deploymentu nginx je jedini javni Basic Auth guard za `/viewer/`, `/gac/`, `/eu/` i `/us/`. Viewer zadržava vlastiti `.env` auth guard samo za standalone/local pokretanje bez nginx-a ispred njega.
 
 Portal je dio istog lifecycle-a kao ostala EU+US+GAC infrastruktura:
 
@@ -120,7 +120,7 @@ Portal je dio istog lifecycle-a kao ostala EU+US+GAC infrastruktura:
 - `make eu-us-gac-vps-down` ruši US stack, zatim EU stack, uključujući Terraform-managed `web_portal` instancu i shared VPC.
 - `common-scripts/recreate_eu_us_gac_vhp_shared_vpc.sh` radi isti full lifecycle tok i nakon inventory generisanja eksplicitno provjerava da postoji `web_portals` host kada je `web_portal.enabled: true`.
 
-Za običan update aplikacijskog koda ne treba Terraform niti rušenje hosta; tada koristi samo `make eu-us-gac-vps-apps-deploy`.
+Za običan update aplikacijskog koda ne treba Terraform niti rušenje hosta. Tada koristi samo `make eu-us-gac-vps-apps-deploy`.
 
 Env vrijednosti koje treba popuniti preko `make configure-env` ili lokalnog `~/.config/master-regimes-infra/env`:
 
@@ -224,7 +224,7 @@ Za Let's Encrypt HTTP-01 izdavanje domena tada mora javno isporučiti:
 http://thesis-demo.example.org/.well-known/acme-challenge/<token>
 ```
 
-sa web portal hosta. Najjednostavnije je da DNS A zapis za `thesis-demo.example.org` pokazuje na `web_portal_public_ip` bez proxyja dok se certifikat izdaje. Taj fallback ne koristi poseban email env; certbot se pokreće u non-interactive modu bez email registracije.
+sa web portal hosta. Najjednostavnije je da DNS A zapis za `thesis-demo.example.org` pokazuje na `web_portal_public_ip` bez proxyja dok se certifikat izdaje. Taj fallback ne koristi poseban email env. Certbot se pokreće u non-interactive modu bez email registracije.
 
 Nakon uspješnog TLS podešavanja rute su:
 
@@ -244,7 +244,7 @@ http://<web_portal_public_ip>/eu/
 http://<web_portal_public_ip>/us/
 ```
 
-Za potpuno rušenje trenutnog EU/US/GAC stanja i ponovno podizanje ove shared-VPC varijante postoji neinteraktivna skripta. Ne pita za `yes`; traži samo eksplicitnu env potvrdu prije starta:
+Za potpuno rušenje trenutnog EU/US/GAC stanja i ponovno podizanje ove shared-VPC varijante postoji neinteraktivna skripta. Ne pita za `yes`. Traži samo eksplicitnu env potvrdu prije starta:
 
 ```bash
 MASTER_REGIMES_RECREATE_CONFIRM=destroy-and-recreate \
@@ -271,7 +271,7 @@ MASTER_REGIMES_UP_CONFIRM=create-eu-us-gac-vhp-shared-vpc \
 
 Napomena: lifecycle helper imena i confirmation stringovi i dalje sadrže historijski `vhp` naziv radi kompatibilnosti. Stvarni model mašine se ne bira iz naziva skripte, nego iz `compute_profiles` / `active_profile` u system YAML-u.
 
-`destroy` ruši `us` prije `eu` da ne ostane US stack zakačen na EU VPC. Zatim provjerava da su Terraform state-ovi prazni; ako EU VPC još javlja attachovane servere, skripta sačeka 60 sekundi i jednom ponovi EU destroy. `up` prvo kreira `eu` + GAC + web portal, zatim prikači `us` na isti EU VPC i ponovo pokrene Ansible provisioning/verify za `eu:us`.
+`destroy` ruši `us` prije `eu` da ne ostane US stack zakačen na EU VPC. Zatim provjerava da su Terraform state-ovi prazni. Ako EU VPC još javlja attachovane servere, skripta sačeka 60 sekundi i jednom ponovi EU destroy. `up` prvo kreira `eu` + GAC + web portal, zatim prikači `us` na isti EU VPC i ponovo pokrene Ansible provisioning/verify za `eu:us`.
 
 `eu-us-gac-vps-tools-sync` je namijenjen brzom eksperimentalnom ciklusu kada lokalni `psql-benchmarks` ima izmjene koje još nisu pushane. Target radi:
 
@@ -292,7 +292,7 @@ make eu-us-gac-vps-etl-bootstrap GAC_ETL_BOOTSTRAP_REGION=eu
 
 Za multi-region FDW query-je bootstrapaj oba regionalna servera (`eu` i `us`). Single-region debug smije namjerno koristiti samo jedan region.
 
-`fdw-bootstrap` podržava eksplicitne `postgres_fdw` server opcije. Corpus runtime katalog ih prenosi kroz generated sweep polje `runtime_configs[].fdw_server_options`; npr. `fetch_size=100` ili `fetch_size=10000`. Kada database-sweep runtime config sadrži `fdw_server_options`, runner radi FDW rebootstrap prije pokretanja query sweepa za tu runtime grupu. `psql_variables.FETCH_COUNT` ostaje samo query/audit context i ne zamjenjuje FDW server opciju.
+`fdw-bootstrap` podržava eksplicitne `postgres_fdw` server opcije. Corpus runtime katalog ih prenosi kroz generated sweep polje `runtime_configs[].fdw_server_options`. Npr. `fetch_size=100` ili `fetch_size=10000`. Kada database-sweep runtime config sadrži `fdw_server_options`, runner radi FDW rebootstrap prije pokretanja query sweepa za tu runtime grupu. `psql_variables.FETCH_COUNT` ostaje samo query/audit context i ne zamjenjuje FDW server opciju.
 
 Za GAC query-sweep nad analytics čvorom:
 
@@ -321,7 +321,7 @@ uv run master-regimes index-query-sweep \
   --sweep-dir ../master-regimes-infra/generated/runs/query-sweeps/<sweep-id>
 ```
 
-`instance_manifest.csv` sada može nositi corpus/workload metadata kao `logical_question_id`, `execution_strategy`, `expected_regime_targets`, `runtime_sensitivity`, `corpus_id` i `corpus_cell_id`. Infra ne tumači te vrijednosti kao model signale; samo ih mora očuvati kroz `query_sweep_manifest.json`, `_index/query_runs.csv` i `_index/corpus_cells.csv`.
+`instance_manifest.csv` sada može nositi corpus/workload metadata kao `logical_question_id`, `execution_strategy`, `expected_regime_targets`, `runtime_sensitivity`, `corpus_id` i `corpus_cell_id`. Infra ne tumači te vrijednosti kao model signale. Samo ih mora očuvati kroz `query_sweep_manifest.json`, `_index/query_runs.csv` i `_index/corpus_cells.csv`.
 
 Za historijski EU+GAC parser/collector readiness referentni clean smoke je database sweep:
 
@@ -423,7 +423,7 @@ uv run python analysis/scripts/agent/run_all.py \
   --index-dir ../master-regimes-infra/generated/runs/database-sweeps/<sweep-id>/_index
 ```
 
-Logički US region i `fdw_us` su aktivni za Plan C smoke i N+1/GAC provjere. `eu-us-gac-vps` zato treba čitati kao EU Citus + US Citus + GAC topologiju, ne kao EU-only GAC pripremu. U shared-VPC fazi EU/US nisu geografski razdvojeni; smoke output nije finalni WAN dokaz. Za WAN tvrdnje treba veći Plan C corpus uz eksplicitno kontrolisanu latenciju/network pressure.
+Logički US region i `fdw_us` su aktivni za Plan C smoke i N+1/GAC provjere. `eu-us-gac-vps` zato treba čitati kao EU Citus + US Citus + GAC topologiju, ne kao EU-only GAC pripremu. U shared-VPC fazi EU/US nisu geografski razdvojeni. Smoke output nije finalni WAN dokaz. Za WAN tvrdnje treba veći Plan C corpus uz eksplicitno kontrolisanu latenciju/network pressure.
 
 Terminologija: `query-sweep` i `database-sweep` su ovdje execution backend nazivi za postojeće Make/runner korake. Eksperimentalni dizajn u novom `master-regimes` sloju treba se voditi kroz `corpus_id`, `corpus_cell_id`, `logical_question_id`, `execution_strategy`, `dataset_profile_id`, `runtime_config_id` i `intervention_role`, kako je definisano u `../master-regimes/docs/corpus-vocabulary.md`. Infra runner treba očuvati ta polja u manifestima i `_index` tabelama kada ih dobije iz corpus manifesta. Za runtime intervencije dodatno očuvava `runtime_intervention_axis`, `runtime_expected_effect`, `pg_options_json`, `psql_variables_json` i `fdw_server_options_json` u database-sweep `_index/runtime_sweeps.csv`. Za corpus-aware runove database-sweep `_index/corpus_cells.csv` je dimenzijska tabela, a `query_runs.csv` ostaje fact tabela pojedinačnih izvršenja.
 
@@ -454,12 +454,12 @@ make eu-vps-single-query-collect \
 
 Ovaj workflow:
 
-- u normalnom modu starta samo coordinator query-capture direktorij;
-- izvršava tačno jedan `EXPLAIN (ANALYZE, BUFFERS, VERBOSE, FORMAT JSON)` na coordinatoru;
-- prije toga snima i tekstualni `EXPLAIN (BUFFERS, VERBOSE)` bez `ANALYZE`, kao dodatni izvor keyword/signala koji se nekad ne vidi u JSON obliku;
-- uključuje `citus.explain_all_tasks=on`, tako da plan sadrži sve Citus taskove;
-- ne čuva query rezultate;
-- zaustavlja capture odmah nakon završetka upita;
+- u normalnom modu starta samo coordinator query-capture direktorij.
+- izvršava tačno jedan `EXPLAIN (ANALYZE, BUFFERS, VERBOSE, FORMAT JSON)` na coordinatoru.
+- prije toga snima i tekstualni `EXPLAIN (BUFFERS, VERBOSE)` bez `ANALYZE`, kao dodatni izvor keyword/signala koji se nekad ne vidi u JSON obliku.
+- uključuje `citus.explain_all_tasks=on`, tako da plan sadrži sve Citus taskove.
+- ne čuva query rezultate.
+- zaustavlja capture odmah nakon završetka upita.
 - fetchuje artefakte u `generated/runs/query-collections/<execution_id>/`.
 
 Važna politika za statistike: PostgreSQL/Citus statistički pogledi (`pg_stat_*`, `pg_statio_*`, `pg_stat_statements`, `citus_stat_*`) su globalni ili kumulativni za node/database, pa se u normalnom sweepu ne skupljaju uz svaki pojedinačni query. OS/network counters također nisu primarni izvor za core pokazatelje. Ako ti treba debugging/profiling, uključi ga eksplicitno:
@@ -497,7 +497,7 @@ make eu-vps-single-query-sweep \
   QUERY_SWEEP_GLOBAL_STATS_SCOPE=none
 ```
 
-Za puni sweep povećaj ili ukloni limit tek kad smoke artefakti izgledaju dobro. Sam query sweep ne treba ručno analizirati kroz duboke foldere; poslije njega pokreni `master-regimes index-query-sweep` i koristi `_index/*.csv`.
+Za puni sweep povećaj ili ukloni limit tek kad smoke artefakti izgledaju dobro. Sam query sweep ne treba ručno analizirati kroz duboke foldere. Poslije njega pokreni `master-regimes index-query-sweep` i koristi `_index/*.csv`.
 
 Za dataset/config backend petlju koristi database sweep YAML. Minimalni primjer je:
 
@@ -530,7 +530,7 @@ collection:
   global_stats_scope: none
 ```
 
-Runner ide redom: snimi hardware snapshot jednom za cijeli database sweep, učitaj dataset profil preko `citus-datagen reset-and-load`, sekvencijalno izvrši SQL instance, pa zapiši normalizovani index. `work_mem` se primjenjuje kao session `PGOPTIONS`, a `FETCH_COUNT` kao psql varijabla; ne mijenja se globalni PostgreSQL config i ne pokreću se dva upita paralelno.
+Runner ide redom: snimi hardware snapshot jednom za cijeli database sweep, učitaj dataset profil preko `citus-datagen reset-and-load`, sekvencijalno izvrši SQL instance, pa zapiši normalizovani index. `work_mem` se primjenjuje kao session `PGOPTIONS`, a `FETCH_COUNT` kao psql varijabla. Ne mijenja se globalni PostgreSQL config i ne pokreću se dva upita paralelno.
 
 Nakon svakog dataset load-a runner sada snima capability audit u `dataset-loads/<load-id>/`:
 
@@ -575,9 +575,9 @@ Svaki database sweep na kraju piše i normalizovani `_index/` folder. Primarni u
 
 `collection.global_stats_scope` može biti:
 
-- `none`: default; preskoči globalne DB statistike i ostavi samo core EXPLAIN/timing/bindings artefakte.
-- `sweep`: debug/profiling mod; globalne DB statistike se snime prije i poslije svih query instanci za taj dataset/runtime config.
-- `query`: debug mod; globalne DB statistike se snime prije i poslije svake query instance.
+- `none`: default. Preskoči globalne DB statistike i ostavi samo core EXPLAIN/timing/bindings artefakte.
+- `sweep`: debug/profiling mod. Globalne DB statistike se snime prije i poslije svih query instanci za taj dataset/runtime config.
+- `query`: debug mod. Globalne DB statistike se snime prije i poslije svake query instance.
 
 ### STATS-CEB vanjski portability adapter
 
@@ -589,7 +589,7 @@ Priprema na već podignutoj EU+US+GAC infrastrukturi:
 make eu-us-gac-vps-stats-ceb-prepare
 ```
 
-Komanda MD5-provjerava javni dump, obnavlja `app.stats` u oba regiona, obnavlja `analytics.stats_baseline`, importuje `stats_eu` i `stats_us` foreign schema te poredi osam zaključanih scalar-count upita. U result-validation artefaktima ostaju samo hash vrijednosti i statusi; database result redovi se ne čuvaju.
+Komanda MD5-provjerava javni dump, obnavlja `app.stats` u oba regiona, obnavlja `analytics.stats_baseline`, importuje `stats_eu` i `stats_us` foreign schema te poredi osam zaključanih scalar-count upita. U result-validation artefaktima ostaju samo hash vrijednosti i statusi. Database result redovi se ne čuvaju.
 
 Za provjeru orchestration ugovora bez SQL izvršenja:
 

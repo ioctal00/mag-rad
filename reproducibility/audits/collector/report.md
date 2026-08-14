@@ -6,7 +6,7 @@ This is an offline, read-only audit. It did not connect to infrastructure, execu
 
 ## Pipeline trace
 
-1. **Planned identity.** The corpus adapter derives a condition identity and an `execution_slot_id = condition_id::repetition`; the sweep writes a completed slot only after an indexable manifest exists and the checkpoint is flushed with `fsync`.
+1. **Planned identity.** The corpus adapter derives a condition identity and an `execution_slot_id = condition_id::repetition`. The sweep writes a completed slot only after an indexable manifest exists and the checkpoint is flushed with `fsync`.
 2. **Primary GAC execution.** The runner uploads one rendered SQL file and invokes the benchmark wrapper with `EXPLAIN (ANALYZE, BUFFERS, VERBOSE, FORMAT JSON)` and `citus.explain_all_tasks=on`. One top-level execution manifest binds the SQL, coordinator, runtime options, query window, status, and artifact paths.
 3. **FDW and regional evidence.** The GAC plan exposes FDW `Remote SQL`. For the primary execution path, regional role-scoped `auto_explain` is enabled and unique FDW application names are configured. The runner records each regional PostgreSQL log start line and later copies the appended suffix.
 4. **Regional Citus and worker/task evidence.** The indexer classifies regional documents as diagnostic, remote query, or internal statement. Citus task plans embedded in regional JSON/text are parsed into worker fragments linked by query ID and regional plan ID.
@@ -21,8 +21,8 @@ This is an offline, read-only audit. It did not connect to infrastructure, execu
 | --- | --- | --- |
 | `source-snapshots` | **PASS** | 8 collector/indexer source files and repository provenance entries checked. |
 | `release-hashes` | **PASS** | 6474 files verified (all scope). |
-| `logical-index-graph` | **PASS** | 9 logical archives checked; 3185 query rows inspected. |
-| `raw-artifact-presence` | **PASS** | 9 raw archives checked; 3145 query directories inspected. |
+| `logical-index-graph` | **PASS** | 9 logical archives checked. 3185 query rows inspected. |
+| `raw-artifact-presence` | **PASS** | 9 raw archives checked. 3145 query directories inspected. |
 | `published-correctness-gate` | **PASS** | Published gate reports 2603/2603 complete queries and 2 resolved retries. |
 | `equivalence-table-consistency` | **PASS** | 13 feedback-loop equivalence rows and 16 N3 pairs checked. |
 | `correlation-concurrency-boundary` | **WARN** | Unique FDW application names are configured, but the indexer does not filter parsed log documents by that identity. |
@@ -92,7 +92,7 @@ Evidence: `master-regimes/src/master_regimes/corpus_adapter.py:554`, `master-reg
 
 **Disposition:** open limitation
 
-The runner creates a unique FDW application name, but the indexer ingests every auto_explain document in the captured log suffix. The link is strong only under the declared serial, controlled workload; concurrent regional statements could be misattributed.
+The runner creates a unique FDW application name, but the indexer ingests every auto_explain document in the captured log suffix. The link is strong only under the declared serial, controlled workload. Concurrent regional statements could be misattributed.
 
 **Recommendation:** Persist the PostgreSQL log prefix fields and filter documents by application_name, backend PID, or a query marker before claiming production-grade correlation.
 

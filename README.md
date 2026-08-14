@@ -8,17 +8,17 @@ Sistem ne pretpostavlja da unaprijed poznaje sve PostgreSQL/Citus promjene. On p
 
 Najkraća navigacija je u [`START_HERE.md`](START_HERE.md). Direktni ulazi su:
 
-- [`queries/`](queries/) za `q01`-`q30`, SQL šablone i tačne instance;
-- [`datasets/`](datasets/) za stvarno korištene dataset profile;
-- [`corpora/`](corpora/) za vezu corpusa, SQL ulaza i rezultata;
+- [`queries/`](queries/) za `q01`-`q30`, SQL šablone i tačne instance.
+- [`datasets/`](datasets/) za stvarno korištene dataset profile.
+- [`corpora/`](corpora/) za vezu corpusa, SQL ulaza i rezultata.
 - [`examples/`](examples/) za nekoliko čitljivih prije/poslije slučajeva.
 
 Za potpunu navigaciju kroz SQL, dataset profile, izvorne commitove i rezultate otvoriti [`reproducibility/`](reproducibility/). Katalog sadrži 3.819 tačnih renderovanih SQL fajlova iz 14 corpusa i 29 dataset ugovora. Svaki red navodi SHA-256, eksperimentalnu ulogu, parametre, topologiju i pripadajući dataset.
 
 Za razumijevanje rada nije potrebno pregledati cijeli generisani korpus. Direktorij [`examples/`](examples/) sadrži tri kurirana slučaja sa punim SQL-om, stvarnim planskim artefaktima, medijanama mjerenja i provjerljivim porijeklom:
 
-1. [`CASE-AGG-01`](examples/CASE-AGG-01/) - početak i završni povrat vođene tačne agregacijske putanje;
-2. [`CASE-WAN-01`](examples/CASE-WAN-01/) - WAN tranzicija iste putanje nakon regionalne redukcije;
+1. [`CASE-AGG-01`](examples/CASE-AGG-01/) - početak i završni povrat vođene tačne agregacijske putanje.
+2. [`CASE-WAN-01`](examples/CASE-WAN-01/) - WAN tranzicija iste putanje nakon regionalne redukcije.
 3. [`CASE-JOIN-01`](examples/CASE-JOIN-01/) - komplementarna planska dubinska studija dvije SQL varijante iste analitičke namjere.
 
 Za analizu najveće greške sekundarne memorije, katalog [`Q08-NEIGHBORS`](examples/Q08-NEIGHBORS/) čuva ciljni upit, svih pet susjednih SQL upita i potpuni trag njihove procjene. Katalog je odvojen od tri reprezentativna korisnička slučaja.
@@ -46,11 +46,11 @@ SHA-256 vrijednosti svih objavljenih fajlova nalaze se u [`artifacts/release-man
 
 Podrazumijevani demonstrator ne pokreće infrastrukturu. Čita već provjerene SQL-ove, planove, mjerne sažetke i manifeste ovim redom:
 
-1. `CASE-AGG-01` prikazuje početno i vraćeno stanje iste analitičke namjere;
-2. `CASE-WAN-01` prikazuje jednu fizičku tranziciju između tih stanja;
+1. `CASE-AGG-01` prikazuje početno i vraćeno stanje iste analitičke namjere.
+2. `CASE-WAN-01` prikazuje jednu fizičku tranziciju između tih stanja.
 3. `CASE-JOIN-01` prikazuje kako SQL preoblikovanje iste ručno deklarisane namjere mijenja više slojeva plana i toka podataka.
 
-Komande `make examples-check` i `make verify` provjeravaju taj prikaz bez SQL izvršenja. Živo ponovno izvršavanje je zasebna, opciona putanja opisana u odjeljku `Potpuno ponovno izvršavanje`; nije potrebno za pregled rezultata.
+Komande `make examples-check` i `make verify` provjeravaju taj prikaz bez SQL izvršenja. Živo ponovno izvršavanje je zasebna, opciona putanja opisana u odjeljku `Potpuno ponovno izvršavanje`. Nije potrebno za pregled rezultata.
 
 ## Vremenski ugovor skupa podataka
 
@@ -126,7 +126,7 @@ make corpus-index CORPUS=clean-run-v1
 make infra-down
 ```
 
-Runner ponovo učitava odgovarajući dataset i izvršava FDW/ETL bootstrap po segmentu. Prekid ne briše uspješne artefakte; novi attempt se spaja preko logical-run indeksa.
+Runner ponovo učitava odgovarajući dataset i izvršava FDW/ETL bootstrap po segmentu. Prekid ne briše uspješne artefakte. Novi attempt se spaja preko logical-run indeksa.
 
 ## Dokumentacija
 

@@ -199,7 +199,7 @@ def audit(source: Path, package: Path) -> dict[str, Any]:
             [
                 {
                     "location": "sources/master-regimes-infra/",
-                    "note": f"Compared {len(parity)} explicit files by SHA-256; mismatches: "
+                    "note": f"Compared {len(parity)} explicit files by SHA-256. Mismatches: "
                     f"{sum(not row['match'] for row in parity)}.",
                 }
             ],
@@ -395,7 +395,7 @@ def audit(source: Path, package: Path) -> dict[str, Any]:
         make_check(
             "experiment-tool-source",
             "warn",
-            "psql-benchmarks has an exact-HEAD sync path; citus-datagen deployment remains branch-oriented.",
+            "psql-benchmarks has an exact-HEAD sync path. Citus-datagen deployment remains branch-oriented.",
             tool_evidence,
         )
     )

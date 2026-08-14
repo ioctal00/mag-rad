@@ -231,7 +231,7 @@ def audit(root: Path) -> dict[str, Any]:
             "Shared-VPC relationship is explicit",
             (
                 "The EU anchor creates the VPC. The lifecycle script reads its ID/CIDR "
-                "from Terraform outputs and injects them into US; the N3 extension does "
+                "from Terraform outputs and injects them into US. The N3 extension does "
                 "the same for APAC. The logical region labels therefore do not imply real WAN geography."
             ),
             [
@@ -268,7 +268,7 @@ def audit(root: Path) -> dict[str, Any]:
             "Provider lock files are included in the release candidate",
             (
                 "The package contains all three provider lock files. EU/US resolve Vultr "
-                "2.31.2, while APAC resolves 2.32.0; this difference is now explicit rather "
+                "2.31.2, while APAC resolves 2.32.0. This difference is now explicit rather "
                 "than delegated to a future provider resolution."
             ),
             [

@@ -20,7 +20,7 @@ Kasniji nazivi EU, US i APAC oznacavaju logicke Citus klastere. Pri tim eksperim
 
 Terraform opisuje N2 sa sedam i N3 sa deset VPS cvorova. PostgreSQL je naveden kao major verzija 18, a Citus kao paketna porodica 14.0. Provider lock datoteke su ukljucene u ovaj paket, ali historijski primijenjeni plan/state nije. Javni `infra-plan` target trenutno ne daje kompletan neprimjenjujuci plan N2/N3 grafa.
 
-Ansible cuva topoloske uloge i redoslijed konfiguracije, ali ne zakljucava svaki binarni ulaz. Verzija `ansible.posix`, tacni apt buildovi i dio udaljenih instalera ostaju runtime zavisnosti. Dataset load i FDW bootstrap su konvergentni, ali nisu distribuirano transakcijski; neuspjelo destruktivno ucitavanje ne vraca prethodni dataset.
+Ansible cuva topoloske uloge i redoslijed konfiguracije, ali ne zakljucava svaki binarni ulaz. Verzija `ansible.posix`, tacni apt buildovi i dio udaljenih instalera ostaju runtime zavisnosti. Dataset load i FDW bootstrap su konvergentni, ali nisu distribuirano transakcijski. Neuspjelo destruktivno ucitavanje ne vraca prethodni dataset.
 
 ## Dataset i skew
 
@@ -28,8 +28,8 @@ Svih 29 kataloskih profila postoji, a 29 SHA-256 vrijednosti odgovara. Siroki pr
 
 Tri mehanizma moraju se razlikovati:
 
-1. `pilot-region-imbalanced-v1` daje priblizno 9:1 regionalni volumen;
-2. `pilot-skew-heavy-v1` daje hot-tenant raspodjelu u oba regiona;
+1. `pilot-region-imbalanced-v1` daje priblizno 9:1 regionalni volumen.
+2. `pilot-skew-heavy-v1` daje hot-tenant raspodjelu u oba regiona.
 3. `pilot-region-local-skew-asymmetric-medium-v1` daje hot tenant-e samo u EU, dok je US uniforman.
 
 Worker-skew osa ima 420 izvrsenja. Od toga 60 stvarno koristi treci, regionalno asimetricni profil. Profil ipak ne deklarira razlicit broj shardova ili genericki shard-placement skew. Worker/task neravnomjernost je izmjerena posljedica hot tenant-a i konkretnog rasporeda. Zavrsni DBA, N2/N3 memory i potvrdni action paneli ne pokrivaju worker-skew intervenciju.
@@ -38,9 +38,10 @@ Svih 418 grupa ima provjeren stressed/mitigated kontrast. Njih 397 podrzava sadr
 
 ## Sweep i prikupljanje
 
-Audit je ponovo izveo glavne brojeve: zajednički F19/F21 korpus 1.964; pressure 869 uslova puta tri ponavljanja, odnosno 2.607; DBA 60 uslova i 180 izvrsenja; kontrolisani N2/N3 180; potvrdni panel 60 uslova puta pet, odnosno 300; feedback loop 85 glavnih i 25 aggregate-exact izvrsenja.
+Audit je ponovo izveo glavne brojeve: zajednički F19/F21 korpus 1.964. Pressure 869 uslova puta tri ponavljanja, odnosno 2.607. DBA 60 uslova i 180 izvrsenja. Kontrolisani N2/N3
+180. Potvrdni panel 60 uslova puta pet, odnosno 300. Feedback loop 85 glavnih i 25 aggregate-exact izvrsenja.
 
-Od 418 pressure grupa, 385 ima dva uslova i sest fizickih izvrsenja, a 33 cuvaju i medjustanje pa imaju tri uslova i devet izvrsenja. Ponavljanja imaju zaseban `execution_slot_id`; ista SQL datoteka zato nije isto sto i jedno fizicko izvrsenje. Williamsov raspored, shuffle sjemena, slotovi i odluke zapisane prije ishoda medjusobno su saglasni.
+Od 418 pressure grupa, 385 ima dva uslova i sest fizickih izvrsenja, a 33 cuvaju i medjustanje pa imaju tri uslova i devet izvrsenja. Ponavljanja imaju zaseban `execution_slot_id`. Ista SQL datoteka zato nije isto sto i jedno fizicko izvrsenje. Williamsov raspored, shuffle sjemena, slotovi i odluke zapisane prije ishoda medjusobno su saglasni.
 
 Collector audit pokriva 9 logickih arhiva sa 3.185 indeksiranih upita i 9 sirovih arhiva sa 3.145 fizickih pokusaja. Veze od upita preko GAC i regionalnog plana do worker/task fragmenata prolaze provjere roditeljskih identiteta.
 

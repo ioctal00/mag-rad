@@ -16,21 +16,21 @@ m_t,f = median_r x_t,r,f
 
 Nedostupan ili neprimjenjiv dokaz nije nula. Statusi su:
 
-- `observed`: vrijednost je izmjerena;
-- `not_applicable`: fizički sloj nije primjenjiv;
-- `unavailable`: dokaz bi bio primjenjiv, ali nije prikupljen;
-- `partial`: dostupna je samo dokumentovana podmjera;
+- `observed`: vrijednost je izmjerena.
+- `not_applicable`: fizički sloj nije primjenjiv.
+- `unavailable`: dokaz bi bio primjenjiv, ali nije prikupljen.
+- `partial`: dostupna je samo dokumentovana podmjera.
 - `insufficient_evidence`: nema dovoljno komponenti za domensku koordinatu.
 
 ## 3. Lokalni režim kao relativni profil
 
 Šest domena je zamrznuto u [pressure_domain_manifest.yaml](pressure_domain_manifest.yaml):
 
-1. udaljena FDW putanja;
-2. regionalna redukcija;
-3. GAC finalizacija;
-4. neravnomjernost;
-5. preljev na disk;
+1. udaljena FDW putanja.
+2. regionalna redukcija.
+3. GAC finalizacija.
+4. neravnomjernost.
+5. preljev na disk.
 6. reparticionisanje i lokalnost.
 
 Za referentno stanje `b` komponentna promjena računa se simetrično:
@@ -56,8 +56,8 @@ R_t^(b) = (p_t,1^(b), ..., p_t,6^(b))
 
 Sistem čuva tri takva pogleda:
 
-- `R_t^(origin)`: prema početnom stanju iste putanje;
-- `R_t^(previous)`: prema neposredno prethodnom prihvaćenom stanju;
+- `R_t^(origin)`: prema početnom stanju iste putanje.
+- `R_t^(previous)`: prema neposredno prethodnom prihvaćenom stanju.
 - `R_t^(history)`: prema isključivo ranijoj lokalnoj historiji istog `logical_question_id` i kompatibilnog konteksta.
 
 Vrijednost veća od nule znači samo više relativnog dokaza u imenovanom domenu u odnosu na izabranu lokalnu referencu. Ne predstavlja univerzalno visok pritisak, dokazani osnovni uzrok ni poredivu jedinicu između domena.
@@ -66,13 +66,13 @@ Vrijednost veća od nule znači samo više relativnog dokaza u imenovanom domenu
 
 Agregirana koordinata nikada nije jedini izlaz. Za svaki domen čuvaju se:
 
-- sirove vrijednosti svakog ponavljanja;
-- medijana trenutnog i referentnog stanja;
-- relativna promjena svake komponente;
-- status dostupnosti;
-- broj pozitivnih i negativnih komponentnih promjena;
-- oznaka `conflicting_component_signs`;
-- lokalni MAD i interval ponovljivosti;
+- sirove vrijednosti svakog ponavljanja.
+- medijana trenutnog i referentnog stanja.
+- relativna promjena svake komponente.
+- status dostupnosti.
+- broj pozitivnih i negativnih komponentnih promjena.
+- oznaka `conflicting_component_signs`.
+- lokalni MAD i interval ponovljivosti.
 - porijeklo svakog artefakta.
 
 Kod tri ponavljanja medijana je centralna vrijednost. Smjer ishoda određuje se tek nakon poređenja sa lokalnim šumom ponavljanja i sentinel historijom. Ako interval promjene prelazi nulu, ishod ostaje neodlučiv. Broj aktivnih domena, ako se prikaže, samo je broj domena sa raspoloživim lokalno razlučivim pomakom. Nije broj uzroka niti severity score.
@@ -81,8 +81,8 @@ Kod tri ponavljanja medijana je centralna vrijednost. Smjer ishoda određuje se 
 
 Podržana su tri i samo tri slučaja:
 
-1. `same_normalized_sql`: isti normalizovani SQL i kompatibilan kontekst;
-2. `same_sql_declared_intervention`: isti normalizovani SQL, stabilan `action_id` i korisnički deklarisan `pair_id`;
+1. `same_normalized_sql`: isti normalizovani SQL i kompatibilan kontekst.
+2. `same_sql_declared_intervention`: isti normalizovani SQL, stabilan `action_id` i korisnički deklarisan `pair_id`.
 3. `manual_logical_question_link`: različiti SQL oblici koje korisnik ručno veže istim `logical_question_id`, uz eksplicitan ugovor poređenja rezultata.
 
 Automatska semantička sličnost SQL-a nije implementirana. `logical_question_id` je korisnička tvrdnja o analitičkoj namjeri, a ne modelski izvedena činjenica. Rezultatska provjera može tu tvrdnju prihvatiti ili odbiti za konkretan par.
@@ -119,9 +119,9 @@ Decision i outcome zapisi validiraju se prema [schemas/decision_log.schema.json]
 
 Oznaka se dodjeljuje nakon result-validity i noise audita:
 
-- `positive`: trajanje ili drugi unaprijed zaključani primarni ishod se poboljšao izvan lokalnog šuma, bez jasno suprotnog fizičkog pomaka;
-- `negative`: primarni ishod se pogoršao izvan šuma, bez kompenzirajućeg poboljšanja ciljanog fizičkog dokaza;
-- `mixed`: ishod i fizički domeni se kreću u suprotnim smjerovima ili se domenske komponente međusobno sukobljavaju; kraće trajanje uz rast jednog ili više domena obavezno ostaje `mixed`;
+- `positive`: trajanje ili drugi unaprijed zaključani primarni ishod se poboljšao izvan lokalnog šuma, bez jasno suprotnog fizičkog pomaka.
+- `negative`: primarni ishod se pogoršao izvan šuma, bez kompenzirajućeg poboljšanja ciljanog fizičkog dokaza.
+- `mixed`: ishod i fizički domeni se kreću u suprotnim smjerovima ili se domenske komponente međusobno sukobljavaju. Kraće trajanje uz rast jednog ili više domena obavezno ostaje `mixed`.
 - `indeterminate`: rezultat nije uporediv, dokaz je nepotpun ili je promjena unutar lokalnog mjernog šuma.
 
 Oznaka ne mijenja sirove vrijednosti niti komponentni izvještaj.
@@ -130,8 +130,8 @@ Oznaka ne mijenja sirove vrijednosti niti komponentni izvještaj.
 
 [query_trajectory_manifest.yaml](query_trajectory_manifest.yaml) koristi tri postojeće analitičke namjere:
 
-- puni agregacijski tok nad relevantnim događajima;
-- join sa raw i regionalno potisnutom varijantom;
+- puni agregacijski tok nad relevantnim događajima.
+- join sa raw i regionalno potisnutom varijantom.
 - sortiranje/Top-K kao samo jedan od tri fizička oblika.
 
 Isti manifest zamrzava i vremenski ugovor. Generator koristi `base_time_unix=1782864000`, odnosno `2026-07-01 00:00:00 UTC`, a SQL granice su dozvoljeni cjelobrojni odmaci od tog oslonca. Datumi u renderovanom SQL-u zato nisu vezani za vrijeme pokretanja eksperimenta. Measured SQL putanja ovog protokola ne smije koristiti `now()` ili drugi zidni sat.
@@ -142,9 +142,9 @@ Intervencije dolaze iz unaprijed ograničenog [intervention_catalog.yaml](interv
 
 Plan sadrži:
 
-- 3 putanje;
-- 3 ponavljanja početnog stanja;
-- očekivano 3 adaptivna koraka po putanji;
+- 3 putanje.
+- 3 ponavljanja početnog stanja.
+- očekivano 3 adaptivna koraka po putanji.
 - najviše 4 adaptivna koraka po putanji.
 
 Očekivano je 36, a maksimalno 45 mjerenih SQL izvršenja. Hard timeout je 900 sekundi po izvršenju, pa maksimalni zbir query timeouta iznosi 11,25 sati. Sa rollbackom, provjerama i indeksiranjem ukupni hard budžet je 14 sati.
@@ -155,14 +155,14 @@ Očekivano je 36, a maksimalno 45 mjerenih SQL izvršenja. Hard timeout je 900 s
 
 Task 2 se ne smije pokrenuti dok validator ne potvrdi:
 
-- autoritativne RQ/H formulacije nisu promijenjene;
-- postoji tačno šest domena u zamrznutom redoslijedu;
-- nema globalnih pragova visokog/niskog pritiska;
-- svaka akcija ima apply, rollback i obje provjere;
-- decision zapis prethodi outcome zapisu;
-- budući ishodi ne ulaze u trenutno stanje;
-- sva tri identitetska slučaja su eksplicitna;
-- dry-run broji 36 očekivanih i 45 maksimalnih izvršenja;
+- autoritativne RQ/H formulacije nisu promijenjene.
+- postoji tačno šest domena u zamrznutom redoslijedu.
+- nema globalnih pragova visokog/niskog pritiska.
+- svaka akcija ima apply, rollback i obje provjere.
+- decision zapis prethodi outcome zapisu.
+- budući ishodi ne ulaze u trenutno stanje.
+- sva tri identitetska slučaja su eksplicitna.
+- dry-run broji 36 očekivanih i 45 maksimalnih izvršenja.
 - plan ne zahtijeva reload dataseta, kolokaciju, shard movement ili indeks.
 
 Komanda:

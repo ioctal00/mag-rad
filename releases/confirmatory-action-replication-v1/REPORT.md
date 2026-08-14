@@ -4,8 +4,8 @@ Panel sadrzi 15 novih SQL oblika, cetiri uslova i pet ponavljanja po uslovu. Tra
 
 ## Stabilnost izmjerenih ishoda
 
-- ista akcija pobijedila je u svih pet ponavljanja za 15/15 scenarija;
-- prakticno izjednacenih pobjednika: 0/15;
+- ista akcija pobijedila je u svih pet ponavljanja za 15/15 scenarija.
+- prakticno izjednacenih pobjednika: 0/15.
 - broj pobjeda: remote putanja 8/15, regionalni Top-K 7/15, GAC work_mem 0/15.
 
 ## Zbirni rezultati
